@@ -1,0 +1,33 @@
+{
+    "name": "@ton-community/tinfoil",
+    "version": "0.0.1-alpha.0",
+    "description": "Framework for development of TON smart contracts",
+    "main": "dist/index.js",
+    "bin": {
+        "tinfoil": "./dist/cli.js"
+    },
+    "author": "TonTech",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ton-community/tinfoil.git"
+    },
+    "files": [
+        "dist/**/*"
+    ],
+    "scripts": {
+        "build": "rm -rf dist && tsc",
+        "release": "yarn build && yarn publish --access public"
+    },
+    "devDependencies": {
+        "@types/node": "^18.11.18",
+        "ton-core": "^0.46.0",
+        "typescript": "^4.9.4"
+    },
+    "peerDependencies": {
+        "ton-core": ">=0.36.1"
+    },
+    "dependencies": {
+        "arg": "^5.0.2"
+    }
+}

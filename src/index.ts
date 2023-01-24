@@ -1,0 +1,3 @@
+export {
+    tonDeepLink,
+} from "./utils";
