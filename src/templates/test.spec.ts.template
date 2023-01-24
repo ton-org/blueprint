@@ -1,0 +1,24 @@
+import { Blockchain } from "@ton-community/sandbox";
+import { toNano } from "ton-core";
+import { {{name}} } from "../{{wrapperPathNoExt}}";
+import "@ton-community/test-utils";
+
+describe('{{name}}', () => {
+    it('should deploy', async () => {
+        const blockchain = await Blockchain.create()
+
+        const {{loweredName}} = blockchain.openContract(await {{name}}.createFromConfig({
+
+        }))
+
+        const deployer = await blockchain.treasury('deployer')
+
+        const deployResult = await {{loweredName}}.sendDeploy(deployer.getSender(), toNano('0.05'))
+
+        expect(deployResult.transactions).toHaveTransaction({
+            from: deployer.address,
+            to: {{loweredName}}.address,
+            deploy: true,
+        })
+    })
+})
