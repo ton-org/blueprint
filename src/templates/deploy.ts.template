@@ -1,0 +1,13 @@
+import {toNano} from 'ton-core'
+import {{{name}}} from '../wrappers/{{name}}'
+import {compile, NetworkProvider} from '@ton-community/blueprint'
+
+export async function run(provider: NetworkProvider) {
+    const {{loweredName}} = {{name}}.createFromConfig({}, await compile('{{name}}'))
+
+    await provider.deploy({{loweredName}}, toNano('0.05'))
+
+    const openedContract = provider.open({{loweredName}})
+
+    // run methods on `openedContract`
+}

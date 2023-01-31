@@ -47,6 +47,10 @@ build ContractName - builds a contract that has a .compile.ts file
     await runners[args._[0]](args)
 }
 
+process.on('SIGINT', () => {
+    process.exit(130)
+})
+
 main()
     .catch(console.error)
     .then(() => process.exit(0))

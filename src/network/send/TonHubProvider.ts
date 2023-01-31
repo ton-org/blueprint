@@ -58,9 +58,9 @@ export class TonHubProvider implements SendProvider {
 
         this.#ui.write('\n')
 
-        qrcode.generate(createdSession.link, {small: true})
+        qrcode.generate(createdSession.link, {small: true}, (qr) => this.#ui.write(qr))
 
-        this.#ui.write('\n\n' + createdSession.link + '\n\n')
+        this.#ui.write('\n' + createdSession.link + '\n\n')
 
         this.#ui.setActionPrompt('Scan the QR code in your wallet or open the link...')
 

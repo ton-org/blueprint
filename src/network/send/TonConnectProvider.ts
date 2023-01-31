@@ -73,9 +73,9 @@ export class TonConnectProvider implements SendProvider {
 
         this.#ui.write('\n')
 
-        qrcode.generate(url, {small: true})
+        qrcode.generate(url, {small: true}, (qr) => this.#ui.write(qr))
 
-        this.#ui.write('\n\n' + url + '\n\n')
+        this.#ui.write('\n' + url + '\n\n')
 
         this.#ui.setActionPrompt('Scan the QR code in your wallet or open the link...')
 

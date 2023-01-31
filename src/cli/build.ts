@@ -11,10 +11,13 @@ export const build: Runner = async (args: Args) => {
 
     const ui = new InquirerUIProvider()
 
-    const sel = await selectFile(findCompiles, ui, args._.length > 1 && args._[1].length > 0 ? args._[1] : undefined)
+    const sel = await selectFile(findCompiles, {
+        ui,
+        hint: args._.length > 1 && args._[1].length > 0 ? args._[1] : undefined,
+        import: false,
+    })
 
     const contract = sel.name
-    const module = sel.module
 
     ui.write(`Build script running, compiling ${contract}`)
 

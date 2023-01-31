@@ -23,7 +23,8 @@ export class DeeplinkProvider implements SendProvider {
             stateInit ? beginCell().storeWritable(storeStateInit(stateInit)).endCell() : undefined
         )
 
-        qrcode.generate(deepLink, {small: true})
+        this.#ui.write('\n')
+        qrcode.generate(deepLink, {small: true}, (qr) => this.#ui.write(qr))
         this.#ui.write('\n')
         this.#ui.write(deepLink)
         this.#ui.write('\nScan the QR code above, or open the ton:// link to send this transaction')

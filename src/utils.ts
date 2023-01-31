@@ -42,24 +42,31 @@ export const findCompiles = async () =>
 export const findScripts = async () =>
     (await fs.readdir(SCRIPTS_DIR)).map((f) => ({path: path.join(SCRIPTS_DIR, f), name: path.parse(f).name}))
 
-export async function selectFile(find: () => Promise<{name: string; path: string}[]>, ui: UIProvider, hint?: string) {
+export async function selectFile(
+    find: () => Promise<{name: string; path: string}[]>,
+    opts: {
+        ui: UIProvider
+        hint?: string
+        import?: boolean
+    }
+) {
     const files = await find()
 
     let selected: {name: string; path: string}
 
-    if (hint) {
-        const found = files.find((f) => f.name.toLowerCase() === hint)
+    if (opts.hint) {
+        const found = files.find((f) => f.name.toLowerCase() === opts.hint)
         if (found === undefined) {
-            throw new Error(`Could not find file with name '${hint}'`)
+            throw new Error(`Could not find file with name '${opts.hint}'`)
         }
         selected = found
-        ui.write(`Using file: ${selected.name}`)
+        opts.ui.write(`Using file: ${selected.name}`)
     } else {
-        selected = await ui.choose('Choose file to use', files, (f) => f.name)
+        selected = await opts.ui.choose('Choose file to use', files, (f) => f.name)
     }
 
     return {
         ...selected,
-        module: await import(selected.path),
+        module: opts.import !== false ? await import(selected.path) : undefined,
     }
 }

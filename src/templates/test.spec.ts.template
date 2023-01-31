@@ -1,15 +1,20 @@
-import { Blockchain } from "@ton-community/sandbox";
-import { toNano } from "ton-core";
-import { {{name}} } from "../{{wrapperPathNoExt}}";
-import "@ton-community/test-utils";
+import {Blockchain} from '@ton-community/sandbox'
+import {Cell, toNano} from 'ton-core'
+import {{{name}}} from '../wrappers/{{name}}'
+import '@ton-community/test-utils'
+import {compile} from '@ton-community/blueprint'
 
 describe('{{name}}', () => {
+    let code: Cell
+
+    beforeAll(async () => {
+        code = await compile('{{name}}')
+    })
+
     it('should deploy', async () => {
         const blockchain = await Blockchain.create()
 
-        const {{loweredName}} = blockchain.openContract(await {{name}}.createFromConfig({
-
-        }))
+        const {{loweredName}} = blockchain.openContract(await {{name}}.createFromConfig({}, code))
 
         const deployer = await blockchain.treasury('deployer')
 
