@@ -27,11 +27,11 @@ export const build: Runner = async (args: Args) => {
         await fs.unlink(buildArtifactPath)
     } catch (e) {}
 
-    ui.setActionPrompt('Compiling...')
+    ui.setActionPrompt('⏳ Compiling...')
     try {
         const cell = await compile(contract)
         ui.clearActionPrompt()
-        ui.write('\nCompiled successfully! Cell BOC hex result:\n\n')
+        ui.write('\n✅ Compiled successfully! Cell BOC hex result:\n\n')
         ui.write(cell.toBoc().toString('hex'))
 
         await fs.mkdir(BUILD_DIR, {recursive: true})
@@ -43,7 +43,7 @@ export const build: Runner = async (args: Args) => {
             })
         )
 
-        ui.write(`\nWrote compilation artifact to ${path.relative(process.cwd(), buildArtifactPath)}`)
+        ui.write(`\n✅ Wrote compilation artifact to ${path.relative(process.cwd(), buildArtifactPath)}`)
     } catch (e) {
         ui.clearActionPrompt()
         ui.write((e as any).toString())
