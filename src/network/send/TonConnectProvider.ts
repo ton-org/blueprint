@@ -6,8 +6,8 @@ import TonConnect, {
 } from "@tonconnect/sdk";
 import { Address, beginCell, Cell, StateInit, storeStateInit } from "ton-core";
 import { SendProvider } from "./SendProvider";
-import { Storage } from "./Storage";
-import { UIProvider } from "./UIProvider";
+import { Storage } from "../storage/Storage";
+import { UIProvider } from "../../ui/UIProvider";
 
 class TonConnectStorage implements IStorage {
     #inner: Storage;
@@ -50,6 +50,12 @@ export class TonConnectProvider implements SendProvider {
                 this.#connector.wallet!.account.address
             ).toString()}\n`
         );
+    }
+
+    address(): Address | undefined {
+        if (!this.#connector.wallet) return undefined
+
+        return Address.parse(this.#connector.wallet.account.address)
     }
 
     private async connectWallet(): Promise<void> {

@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import arg from "arg";
 import { create } from "./create";
+import { run } from "./run";
+import { build } from "./build";
 
 const argSpec = {
     '--help': Boolean,
@@ -14,10 +16,14 @@ export type Runner = (args: Args) => Promise<void>
 
 const runners: Record<string, Runner> = {
     create,
+    run,
+    build,
 }
 
 async function main() {
-    const args = arg(argSpec)
+    const args = arg(argSpec, {
+        permissive: true,
+    })
 
     if (args['--help']) {
         console.log(`Usage: tinfoil [OPTIONS] COMMAND ARGS...
@@ -39,4 +45,4 @@ create ContractName - create a new contract, includes .fc source, .ts wrapper, .
     await runners[args._[0]](args)
 }
 
-main()
+main().catch(console.error).then(() => process.exit(0))

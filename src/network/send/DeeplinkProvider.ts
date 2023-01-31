@@ -1,8 +1,8 @@
 import { Address, beginCell, Cell, StateInit, storeStateInit } from "ton-core";
 import { SendProvider } from "./SendProvider";
-import { tonDeepLink } from "../utils";
+import { tonDeepLink } from "../../utils";
 import qrcode from "qrcode-terminal";
-import { UIProvider } from "./UIProvider";
+import { UIProvider } from "../../ui/UIProvider";
 
 export class DeeplinkProvider implements SendProvider {
     #ui: UIProvider;
@@ -36,5 +36,9 @@ export class DeeplinkProvider implements SendProvider {
         );
 
         await this.#ui.prompt("Press enter when transaction was issued");
+    }
+
+    address(): Address | undefined {
+        return undefined;
     }
 }

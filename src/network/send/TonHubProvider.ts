@@ -2,14 +2,14 @@ import { Address, beginCell, Cell, StateInit, storeStateInit } from "ton-core";
 import { SendProvider } from "./SendProvider";
 import { TonhubConnector, TonhubSessionStateReady, TonhubTransactionRequest } from "ton-x";
 import qrcode from "qrcode-terminal";
-import { Storage } from "./Storage";
-import { UIProvider } from "./UIProvider";
+import { Storage } from "../storage/Storage";
+import { UIProvider } from "../../ui/UIProvider";
 
 const KEY_NAME = 'tonhub_session'
 
 type SavedSession = TonhubSessionStateReady & { id: string, seed: string }
 
-export class TonhubProvider implements SendProvider {
+export class TonHubProvider implements SendProvider {
     #connector: TonhubConnector;
     #storage: Storage;
     #ui: UIProvider;
@@ -88,6 +88,12 @@ export class TonhubProvider implements SendProvider {
                 this.#session.wallet.address
             ).toString()}\n`
         );
+    }
+
+    address(): Address | undefined {
+        if (!this.#session) return undefined
+
+        return Address.parse(this.#session.wallet.address)
     }
 
     async sendTransaction(address: Address, amount: bigint, payload?: Cell, stateInit?: StateInit) {
