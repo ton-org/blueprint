@@ -8,4 +8,5 @@ export interface SendProvider {
         payload?: Cell,
         stateInit?: StateInit,
     ): Promise<void>;
+    address(): Address | undefined;
 }
