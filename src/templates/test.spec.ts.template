@@ -1,29 +1,29 @@
-import {Blockchain} from '@ton-community/sandbox'
-import {Cell, toNano} from 'ton-core'
-import {{{name}}} from '../wrappers/{{name}}'
-import '@ton-community/test-utils'
-import {compile} from '@ton-community/blueprint'
+import { Blockchain } from '@ton-community/sandbox';
+import { Cell, toNano } from 'ton-core';
+import { {{name}} } from '../wrappers/{{name}}';
+import '@ton-community/test-utils';
+import { compile } from '@ton-community/blueprint';
 
 describe('{{name}}', () => {
-    let code: Cell
+    let code: Cell;
 
     beforeAll(async () => {
-        code = await compile('{{name}}')
-    })
+        code = await compile('{{name}}');
+    });
 
     it('should deploy', async () => {
-        const blockchain = await Blockchain.create()
+        const blockchain = await Blockchain.create();
 
-        const {{loweredName}} = blockchain.openContract(await {{name}}.createFromConfig({}, code))
+        const {{loweredName}} = blockchain.openContract(await {{name}}.createFromConfig({}, code));
 
-        const deployer = await blockchain.treasury('deployer')
+        const deployer = await blockchain.treasury('deployer');
 
-        const deployResult = await {{loweredName}}.sendDeploy(deployer.getSender(), toNano('0.05'))
+        const deployResult = await {{loweredName}}.sendDeploy(deployer.getSender(), toNano('0.05'));
 
         expect(deployResult.transactions).toHaveTransaction({
             from: deployer.address,
             to: {{loweredName}}.address,
             deploy: true,
-        })
-    })
-})
+        });
+    });
+});

@@ -1,11 +1,11 @@
-import inquirer from 'inquirer'
-import {UIProvider} from '../ui/UIProvider'
+import inquirer from 'inquirer';
+import { UIProvider } from '../ui/UIProvider';
 
-const bottomBar = new inquirer.ui.BottomBar()
+const bottomBar = new inquirer.ui.BottomBar();
 
 export class InquirerUIProvider implements UIProvider {
     write(str: string): void {
-        bottomBar.log.write(str)
+        bottomBar.log.write(str);
     }
 
     async prompt(str: string): Promise<void> {
@@ -14,26 +14,26 @@ export class InquirerUIProvider implements UIProvider {
                 type: 'confirm',
                 name: 'Press enter when transaction was issued',
             },
-        ])
+        ]);
     }
 
     async choose<T>(msg: string, choices: T[], display: (v: T) => string): Promise<T> {
-        const {choice} = await inquirer.prompt([
+        const { choice } = await inquirer.prompt([
             {
                 type: 'list',
                 name: 'choice',
                 message: msg,
-                choices: choices.map((c) => ({name: display(c), value: c})),
+                choices: choices.map((c) => ({ name: display(c), value: c })),
             },
-        ])
-        return choice
+        ]);
+        return choice;
     }
 
     setActionPrompt(str: string): void {
-        bottomBar.updateBottomBar(str)
+        bottomBar.updateBottomBar(str);
     }
 
     clearActionPrompt(): void {
-        bottomBar.updateBottomBar('')
+        bottomBar.updateBottomBar('');
     }
 }

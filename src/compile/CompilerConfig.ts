@@ -1,14 +1,14 @@
-import {SourceResolver, SourcesMap, SourcesArray} from '@ton-community/func-js'
+import { SourceResolver, SourcesMap, SourcesArray } from '@ton-community/func-js';
 
 export type CompilerConfig = {
-    optLevel?: number
+    optLevel?: number;
 } & (
     | {
-          targets: string[]
-          sources?: SourceResolver | SourcesMap
+          targets: string[];
+          sources?: SourceResolver | SourcesMap;
       }
     | {
-          targets?: string[]
-          sources: SourcesArray
+          targets?: string[];
+          sources: SourcesArray;
       }
-)
+);
