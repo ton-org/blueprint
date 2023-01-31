@@ -26,12 +26,14 @@ async function main() {
     })
 
     if (args['--help']) {
-        console.log(`Usage: tinfoil [OPTIONS] COMMAND ARGS...
+        console.log(`Usage: blueprint [OPTIONS] COMMAND ARGS...
 Options:
 -h, --help - print this and exit
 
 Commands:
 create ContractName - create a new contract, includes .fc source, .ts wrapper, .spec.ts test
+run scriptname - runs a script from 'scripts' folder containing a 'run' function
+build ContractName - builds a contract that has a .compile.ts file
 `)
         process.exit(0)
     }
