@@ -1,23 +1,11 @@
-export {
-    tonDeepLink,
-} from "./utils";
+export {tonDeepLink} from './utils'
 
-export {
-    NetworkProvider,
-} from "./network/NetworkProvider";
+export {NetworkProvider} from './network/NetworkProvider'
 
-export {
-    createNetworkProvider,
-} from "./network/createNetworkProvider";
+export {createNetworkProvider} from './network/createNetworkProvider'
 
-export {
-    compile,
-} from "./compile/compile";
+export {compile} from './compile/compile'
 
-export {
-    CompilerConfig,
-} from "./compile/CompilerConfig";
+export {CompilerConfig} from './compile/CompilerConfig'
 
-export {
-    UIProvider,
-} from "./ui/UIProvider";
+export {UIProvider} from './ui/UIProvider'

@@ -1,4 +1,4 @@
-import path from "path"
+import path from 'path'
 
 export const CONTRACTS = 'contracts'
 export const TESTS = 'tests'

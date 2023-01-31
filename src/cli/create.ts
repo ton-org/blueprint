@@ -1,15 +1,15 @@
-import { Args, Runner } from "./cli";
-import { open, mkdir } from "fs/promises";
-import * as path from "path";
-import { executeTemplate } from "../template";
-import { CONTRACTS_DIR, TESTS_DIR, WRAPPERS_DIR } from "../paths";
+import {Args, Runner} from './cli'
+import {open, mkdir} from 'fs/promises'
+import * as path from 'path'
+import {executeTemplate} from '../template'
+import {CONTRACTS_DIR, TESTS_DIR, WRAPPERS_DIR} from '../paths'
 
 function toSnakeCase(v: string): string {
-    const r = v.replace(/[A-Z]/g, sub => '_' + sub.toLowerCase())
+    const r = v.replace(/[A-Z]/g, (sub) => '_' + sub.toLowerCase())
     return r[0] === '_' ? r.substring(1) : r
 }
 
-async function createFile(dir: string, name: string, template: string, replaces: { [k: string]: string }) {
+async function createFile(dir: string, name: string, template: string, replaces: {[k: string]: string}) {
     await mkdir(dir, {
         recursive: true,
     })

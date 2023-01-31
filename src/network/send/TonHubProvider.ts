@@ -1,26 +1,26 @@
-import { Address, beginCell, Cell, StateInit, storeStateInit } from "ton-core";
-import { SendProvider } from "./SendProvider";
-import { TonhubConnector, TonhubSessionStateReady, TonhubTransactionRequest } from "ton-x";
-import qrcode from "qrcode-terminal";
-import { Storage } from "../storage/Storage";
-import { UIProvider } from "../../ui/UIProvider";
+import {Address, beginCell, Cell, StateInit, storeStateInit} from 'ton-core'
+import {SendProvider} from './SendProvider'
+import {TonhubConnector, TonhubSessionStateReady, TonhubTransactionRequest} from 'ton-x'
+import qrcode from 'qrcode-terminal'
+import {Storage} from '../storage/Storage'
+import {UIProvider} from '../../ui/UIProvider'
 
 const KEY_NAME = 'tonhub_session'
 
-type SavedSession = TonhubSessionStateReady & { id: string, seed: string }
+type SavedSession = TonhubSessionStateReady & {id: string; seed: string}
 
 export class TonHubProvider implements SendProvider {
-    #connector: TonhubConnector;
-    #storage: Storage;
-    #ui: UIProvider;
-    #session?: SavedSession;
+    #connector: TonhubConnector
+    #storage: Storage
+    #ui: UIProvider
+    #session?: SavedSession
 
     constructor(network: 'mainnet' | 'testnet', storage: Storage, ui: UIProvider) {
         this.#connector = new TonhubConnector({
             network,
-        });
-        this.#storage = storage;
-        this.#ui = ui;
+        })
+        this.#storage = storage
+        this.#ui = ui
     }
 
     private async getExistingSession() {
@@ -54,15 +54,15 @@ export class TonHubProvider implements SendProvider {
             url: 'https://example.com/',
         })
 
-        this.#ui.setActionPrompt("Connecting to wallet...\n");
+        this.#ui.setActionPrompt('Connecting to wallet...\n')
 
-        this.#ui.write("\n");
+        this.#ui.write('\n')
 
-        qrcode.generate(createdSession.link, { small: true });
+        qrcode.generate(createdSession.link, {small: true})
 
-        this.#ui.write("\n\n" + createdSession.link + "\n\n");
+        this.#ui.write('\n\n' + createdSession.link + '\n\n')
 
-        this.#ui.setActionPrompt("Scan the QR code in your wallet or open the link...");
+        this.#ui.setActionPrompt('Scan the QR code in your wallet or open the link...')
 
         const state = await this.#connector.awaitSessionReady(createdSession.id, 5 * 60 * 1000)
 
@@ -83,11 +83,7 @@ export class TonHubProvider implements SendProvider {
 
     async connect() {
         this.#session = await this.getSession()
-        this.#ui.write(
-            `Connected to wallet at address: ${Address.parse(
-                this.#session.wallet.address
-            ).toString()}\n`
-        );
+        this.#ui.write(`Connected to wallet at address: ${Address.parse(this.#session.wallet.address).toString()}\n`)
     }
 
     address(): Address | undefined {
@@ -106,10 +102,12 @@ export class TonHubProvider implements SendProvider {
             value: amount.toString(),
             timeout: 5 * 60 * 1000,
             payload: payload ? payload.toBoc().toString('base64') : undefined,
-            stateInit: stateInit ? beginCell().storeWritable(storeStateInit(stateInit)).endCell().toBoc().toString('base64') : undefined,
+            stateInit: stateInit
+                ? beginCell().storeWritable(storeStateInit(stateInit)).endCell().toBoc().toString('base64')
+                : undefined,
         }
 
-        this.#ui.setActionPrompt("Sending transaction. Approve it in your wallet...");
+        this.#ui.setActionPrompt('Sending transaction. Approve it in your wallet...')
 
         const response = await this.#connector.requestTransaction(request)
 
@@ -117,6 +115,6 @@ export class TonHubProvider implements SendProvider {
             throw new Error(`Tonhub transaction request was not successful (${response.type})`)
         }
 
-        this.#ui.setActionPrompt("Sent transaction");
+        this.#ui.setActionPrompt('Sent transaction')
     }
 }

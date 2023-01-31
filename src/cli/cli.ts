@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import arg from "arg";
-import { create } from "./create";
-import { run } from "./run";
-import { build } from "./build";
+import arg from 'arg'
+import {create} from './create'
+import {run} from './run'
+import {build} from './build'
 
 const argSpec = {
     '--help': Boolean,
@@ -47,4 +47,6 @@ build ContractName - builds a contract that has a .compile.ts file
     await runners[args._[0]](args)
 }
 
-main().catch(console.error).then(() => process.exit(0))
+main()
+    .catch(console.error)
+    .then(() => process.exit(0))
