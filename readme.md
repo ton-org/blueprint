@@ -1,89 +1,101 @@
-# 🔨Blueprint
+<p align=right><img src="https://i.imgur.com/zNYvmnw.png" width=400 ></p>
 
-A development environment tool for the TON to simplify the process of writing, testing, and deploying smart contracts.
+# Blueprint
 
-### Core Features 🔥
-
-- Quick and easy setup of development environment with just one command: `npx create-ton`
-- Easy way to deploy your contract's
-- Streamlined workflow for efficient smart contract development
-- Toolset for testing multi-contract system's
+A development environment for TON blockchain for writing, testing, and deploying smart contracts.
 
 ### Quick start 🚀
 
-To get started with Blueprint, simply run the following command:
+Run the following in terminal to create a new project and follow the on-screen instructions:
 
-```npx create-ton``` or ```npm create ton```
- 
-This creates folder with your project.
+```console
+npm create ton
+```
 
-### Structure of project
+&nbsp;
 
-- `contracts` - contains the source code of all the smart contracts of the project and their dependencies.
-- `wrappers` - contains the wrapper classes (implementing `Contract` from `ton-core`) for the contracts, including any [de]serialization primitives and compilation functions.
-- `tests` - tests for the contracts. Would typically use the wrappers.
-- `scripts` - contains scripts used by the project, mainly the deployment scripts.   
+### Core features 🔥
 
-### Repo contents / tech stack
+* Create a development environment from template in one click - `npm create ton`
+* Streamlined workflow for building, testing and deploying smart contracts
+* Dead simple deployment to mainnet/testnet using your favorite wallet (eg. Tonkeeper)
+* Blazing fast testing of multiple smart contracts in an isolated blockchain running in-process
 
-1. Compiling FunC - [https://github.com/ton-community/func-js](https://github.com/ton-community/func-js)
-2. Testing TON smart contracts - [https://github.com/ton-community/sandbox/](https://github.com/ton-community/sandbox/)
-3. Deployment of contracts is supported with [TON Connect 2](https://github.com/ton-connect/), [Tonhub wallet](https://tonhub.com/) or via a direct `ton://` deeplink
+### Tech stack
 
+1. Compiling FunC with https://github.com/ton-community/func-js (no cli)
+2. Testing smart contracts with https://github.com/ton-community/sandbox
+3. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect), [Tonhub wallet](https://tonhub.com/) or a `ton://` deeplink
 
-### Building a contract
-1. Interactively
-    1. Run `yarn blueprint build`
-    2. Choose the contract you'd like to build
-1. Non-interactively
-    1. Run `yarn blueprint build <CONTRACT>`
-    2. example: `yarn blueprint build pingpong`
+### Setting up your machine
 
-### Deploying a contract
-1. Interactively
-    1. Run `yarn blueprint run`
-    2. Choose the contract you'd like to deploy
-    3. Choose whether you're deploying on mainnet or testnet
-    4. Choose how to deploy:
-        1. With a TON Connect compatible wallet
-        2. A `ton://` deep link / QR code
-        3. Tonhub wallet
-    5. Deploy the contract
-2. Non-interactively
-    1. Run `yarn blueprint run <CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
-    2. example: `yarn blueprint run pingpong --mainnet --tonconnect`
+* [Node.js](https://nodejs.org) with a recent version like v18, verify version with `node -v`
+* IDE with TypeScript and FunC support like [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode)
 
-### Testing
-1. Run `yarn test`
+&nbsp;
 
-## Adding your own contract
-1. Run `yarn blueprint create <CONTRACT>`
-2. example: `yarn blueprint create MyContract`
+## Create a new project
 
-* Write code
-    * FunC contracts are located in `contracts/*.fc`
-        * Standalone root contracts are located in `contracts/*.fc`
-        * Shared imports (when breaking code to multiple files) are in `contracts/imports/*.fc`
-    * Tests in TypeScript are located in `test/*.spec.ts`
-    * Wrapper classes for interacting with the contract are located in `wrappers/*.ts`
-    * Any scripts (including deployers) are located in `scripts/*.ts`
+1. Run and follow the on-screen instructions: &nbsp;  `npm create ton` &nbsp; or &nbsp; `npx create-ton`
+2. Then from the project directory: &nbsp; `yarn install` &nbsp; or &nbsp; `npm install`
 
-* Build
-    * Builder configs are located in `wrappers/*.compile.ts`
-    * In the root repo dir, run in terminal `yarn blueprint build`
-    * Compilation errors will appear on screen, if applicable
-    * Resulting build artifacts include:
-        * `build/*.compiled.json` - the binary code cell of the compiled contract (for deployment). Saved in a hex format within a json file to support webapp imports
+### Directory structure
 
-* Test
-    * In the root repo dir, run in terminal `yarn test`
-    * Don't forget to build (or rebuild) before running tests
-    * Tests are running inside Node.js by running TVM in web-assembly using [sandbox](https://github.com/ton-community/sandbox)
+* `contracts/` - Source code in [FunC](https://ton.org/docs/develop/func/overview) for all smart contracts and their imports
+* `wrappers/` - TypeScript interface classes for all contracts (implementing `Contract` from [ton-core](https://www.npmjs.com/package/ton-core))
+  * include message [de]serialization primitives, getter wrappers and compilation functions
+  * used by the test suite and client code to interact with the contracts from TypeScript
+* `tests/` - TypeScript test suite for all contracts (relying on [Sandbox](https://github.com/ton-community/sandbox) for in-process tests)
+* `scripts/` - Deployment scripts to mainnet/testnet and other scripts interacting with live contracts
+* `build/` - Compilation artifacts created here after running a build command
 
-* Deploy
-    * Run `yarn blueprint run <deployscript>`
-    * Contracts will be rebuilt on each execution
-    * Follow the on-screen instructions of the deploy script
+### Build one of the contracts
 
-# License
+1. You need a compilation script in `wrappers/<CONTRACT>.compile.ts` - [example](https://github.com/ton-community/create-ton/blob/main/template/variants/counter/wrappers/Counter.compile.ts)
+2. Interactive: &nbsp; `yarn blueprint build` &nbsp; or &nbsp; `npx blueprint build`
+3. Non-interactive: &nbsp; `yarn blueprint build <CONTRACT>`
+   * Example: `yarn blueprint build counter`
+4. Build results are generated in `build/<CONTRACT>.compiled.json`
+
+### Run the test suite
+
+1. Make sure all tested contracts are freshly built
+2. Run in terminal: &nbsp; `yarn test` &nbsp; or &nbsp; `npm test`
+
+### Deploy one of the contracts
+
+1. You need a deploy script in `scripts/deploy<CONTRACT>.ts` - [example](https://github.com/ton-community/create-ton/blob/main/template/variants/counter/scripts/deployCounter.ts)
+2. Interactive: &nbsp; `yarn blueprint run` &nbsp; or &nbsp; `npx blueprint run`
+3. Non-interactive: &nbsp; `yarn blueprint run <CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
+   * Example: `yarn blueprint run counter --mainnet --tonconnect`
+
+&nbsp;
+
+## Develop a new contract
+
+1. Make sure you have a project to host the contract
+2. Run in terminal: &nbsp; `yarn blueprint create <CONTRACT>` &nbsp; or &nbsp; `npx blueprint create <CONTRACT>`
+   * Example: `yarn blueprint create MyNewContract`
+
+### Contract code
+
+1. Implement the standalone FunC root contract in `contracts/<CONTRACT>.fc`
+2. Implement shared FunC imports (if breaking code to multiple files) in `contracts/imports/*.fc`
+3. Implement wrapper TypeScript class in `wrappers/<CONTRACT>.ts` to encode messages and decode getters
+
+### Test suite
+
+1. Implement TypeScript tests in `tests/<CONTRACT>.spec.ts`
+2. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to interact with the contract
+
+### Compilation and deploy
+
+1. Implement a compilation script in `wrappers/<CONTRACT>.compile.ts`
+2. Implement a deployment script in `scripts/deploy<CONTRACT>.ts`
+3. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to initialize the contract
+
+&nbsp;
+
+## License
+
 MIT
