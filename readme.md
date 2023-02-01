@@ -27,7 +27,7 @@ npm create ton
 2. Testing smart contracts with https://github.com/ton-community/sandbox
 3. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect), [Tonhub wallet](https://tonhub.com/) or a `ton://` deeplink
 
-### Setting up your machine
+### Requirements
 
 * [Node.js](https://nodejs.org) with a recent version like v18, verify version with `node -v`
 * IDE with TypeScript and FunC support like [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode)
