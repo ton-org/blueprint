@@ -1,18 +1,22 @@
 import inquirer from 'inquirer';
 import { UIProvider } from '../ui/UIProvider';
 
-const bottomBar = new inquirer.ui.BottomBar();
-
 export class InquirerUIProvider implements UIProvider {
+    #bottomBar: inquirer.ui.BottomBar;
+
+    constructor() {
+        this.#bottomBar = new inquirer.ui.BottomBar();
+    }
+
     write(str: string): void {
-        bottomBar.log.write(str);
+        this.#bottomBar.log.write(str);
     }
 
     async prompt(str: string): Promise<void> {
         await inquirer.prompt([
             {
                 type: 'confirm',
-                name: 'Press enter when transaction was issued',
+                name: str,
             },
         ]);
     }
@@ -30,10 +34,10 @@ export class InquirerUIProvider implements UIProvider {
     }
 
     setActionPrompt(str: string): void {
-        bottomBar.updateBottomBar(str);
+        this.#bottomBar.updateBottomBar(str);
     }
 
     clearActionPrompt(): void {
-        bottomBar.updateBottomBar('');
+        this.#bottomBar.updateBottomBar('');
     }
 }
