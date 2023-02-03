@@ -42,6 +42,25 @@ export const findCompiles = async () =>
 export const findScripts = async () =>
     (await fs.readdir(SCRIPTS_DIR)).map((f) => ({ path: path.join(SCRIPTS_DIR, f), name: path.parse(f).name }));
 
+export async function selectOption(
+    options: { name: string; value: string }[],
+    opts: {
+        ui: UIProvider;
+        msg: string;
+        hint?: string;
+    }
+) {
+    if (opts.hint) {
+        const found = options.find((o) => o.value === opts.hint);
+        if (found === undefined) {
+            throw new Error(`Could not find option '${opts.hint}'`);
+        }
+        return found;
+    } else {
+        return await opts.ui.choose(opts.msg, options, (o) => o.name);
+    }
+}
+
 export async function selectFile(
     find: () => Promise<{ name: string; path: string }[]>,
     opts: {
@@ -55,7 +74,7 @@ export async function selectFile(
     let selected: { name: string; path: string };
 
     if (opts.hint) {
-        const found = files.find((f) => f.name.toLowerCase() === opts.hint);
+        const found = files.find((f) => f.name.toLowerCase() === opts.hint?.toLowerCase());
         if (found === undefined) {
             throw new Error(`Could not find file with name '${opts.hint}'`);
         }

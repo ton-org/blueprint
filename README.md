@@ -9,7 +9,7 @@ A development environment for TON blockchain for writing, testing, and deploying
 Run the following in terminal to create a new project and follow the on-screen instructions:
 
 ```console
-npm create ton
+npm create ton@latest
 ```
 
 &nbsp;
@@ -23,7 +23,7 @@ npm create ton
 
 ### Tech stack
 
-1. Compiling FunC with https://github.com/ton-community/func-js (no cli)
+1. Compiling FunC with https://github.com/ton-community/func-js (no CLI)
 2. Testing smart contracts with https://github.com/ton-community/sandbox
 3. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect), [Tonhub wallet](https://tonhub.com/) or a `ton://` deeplink
 
@@ -37,7 +37,7 @@ npm create ton
 ## Create a new project
 
 1. Run and follow the on-screen instructions: &nbsp;  `npm create ton` &nbsp; or &nbsp; `npx create-ton`
-2. Then from the project directory: &nbsp; `yarn install` &nbsp; or &nbsp; `npm install`
+2. (Optional) Then from the project directory: &nbsp; `yarn install` &nbsp; or &nbsp; `npm install`
 
 ### Directory structure
 
@@ -59,23 +59,23 @@ npm create ton
 
 ### Run the test suite
 
-1. Make sure all tested contracts are freshly built
-2. Run in terminal: &nbsp; `yarn test` &nbsp; or &nbsp; `npm test`
+1. Run in terminal: &nbsp; `yarn test` &nbsp; or &nbsp; `npm test`
 
 ### Deploy one of the contracts
 
 1. You need a deploy script in `scripts/deploy<CONTRACT>.ts` - [example](https://github.com/ton-community/create-ton/blob/main/template/variants/counter/scripts/deployCounter.ts)
 2. Interactive: &nbsp; `yarn blueprint run` &nbsp; or &nbsp; `npx blueprint run`
 3. Non-interactive: &nbsp; `yarn blueprint run <CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
-   * Example: `yarn blueprint run counter --mainnet --tonconnect`
+   * Example: `yarn blueprint run deploycounter --mainnet --tonconnect`
 
 &nbsp;
 
 ## Develop a new contract
 
 1. Make sure you have a project to host the contract
-2. Run in terminal: &nbsp; `yarn blueprint create <CONTRACT>` &nbsp; or &nbsp; `npx blueprint create <CONTRACT>`
-   * Example: `yarn blueprint create MyNewContract`
+2. Interactive: &nbsp; `yarn blueprint create`
+3. Non-interactive: &nbsp; `yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `empty` or `counter`)
+   * Example: `yarn blueprint create MyNewContract --type empty`
 
 ### Contract code
 
@@ -88,7 +88,7 @@ npm create ton
 1. Implement TypeScript tests in `tests/<CONTRACT>.spec.ts`
 2. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to interact with the contract
 
-### Compilation and deploy
+### Compilation and deployment
 
 1. Implement a compilation script in `wrappers/<CONTRACT>.compile.ts`
 2. Implement a deployment script in `scripts/deploy<CONTRACT>.ts`

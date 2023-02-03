@@ -8,33 +8,39 @@ export class InquirerUIProvider implements UIProvider {
         this.#bottomBar = new inquirer.ui.BottomBar();
     }
 
-    write(str: string): void {
-        this.#bottomBar.log.write(str);
+    write(message: string): void {
+        this.#bottomBar.log.write(message);
     }
 
-    async prompt(str: string): Promise<void> {
-        await inquirer.prompt([
-            {
-                type: 'confirm',
-                name: str,
-            },
-        ]);
+    async prompt(message: string): Promise<void> {
+        await inquirer.prompt({
+            type: 'confirm',
+            name: message,
+        });
     }
 
-    async choose<T>(msg: string, choices: T[], display: (v: T) => string): Promise<T> {
+    async input(message: string): Promise<string> {
+        const { val } = await inquirer.prompt({
+            name: 'val',
+            message: message,
+        });
+        return val;
+    }
+
+    async choose<T>(message: string, choices: T[], display: (v: T) => string): Promise<T> {
         const { choice } = await inquirer.prompt([
             {
                 type: 'list',
                 name: 'choice',
-                message: msg,
+                message: message,
                 choices: choices.map((c) => ({ name: display(c), value: c })),
             },
         ]);
         return choice;
     }
 
-    setActionPrompt(str: string): void {
-        this.#bottomBar.updateBottomBar(str);
+    setActionPrompt(message: string): void {
+        this.#bottomBar.updateBottomBar(message);
     }
 
     clearActionPrompt(): void {

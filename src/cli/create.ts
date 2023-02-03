@@ -4,6 +4,8 @@ import path from 'path';
 import { executeTemplate } from '../template';
 import { CONTRACTS, CONTRACTS_DIR, SCRIPTS_DIR, TESTS_DIR, WRAPPERS_DIR } from '../paths';
 import { InquirerUIProvider } from '../ui/InquirerUIProvider';
+import { selectOption } from '../utils';
+import arg from 'arg';
 
 function toSnakeCase(v: string): string {
     const r = v.replace(/[A-Z]/g, (sub) => '_' + sub.toLowerCase());
@@ -30,9 +32,21 @@ async function createFile(dir: string, name: string, template: string, replaces:
 export const create: Runner = async (args: Args) => {
     const ui = new InquirerUIProvider();
 
+    const localArgs = arg({
+        '--type': String,
+    });
+
+    const name = args._.length > 1 && args._[1].trim().length > 0 ? args._[1].trim() : await ui.input('Contract name');
+
+    if (name.length === 0) throw new Error(`Cannot create a contract with an empty name`);
+
+    if (name.toLowerCase() === 'contract' || !/^[a-zA-Z0-9]+$/.test(name))
+        throw new Error(`Cannot create a contract with the name '${name}'`);
+
+    const loweredName = name.substring(0, 1).toLowerCase() + name.substring(1);
+
     const which = (
-        await ui.choose(
-            'What type of contract do you want to create?',
+        await selectOption(
             [
                 {
                     name: 'An empty contract',
@@ -43,14 +57,15 @@ export const create: Runner = async (args: Args) => {
                     value: 'counter',
                 },
             ],
-            (c) => c.name
+            {
+                ui,
+                msg: 'What type of contract do you want to create?',
+                hint: localArgs['--type'],
+            }
         )
     ).value;
 
     const prefix = which === 'counter' ? 'counter.' : '';
-
-    const name = args._[1];
-    const loweredName = name.substring(0, 1).toLowerCase() + name.substring(1);
 
     const replaces = {
         name,
