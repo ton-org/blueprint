@@ -47,7 +47,7 @@ class SendProviderSender implements Sender {
     }
 
     async send(args: SenderArguments): Promise<void> {
-        if (args.bounce !== undefined) {
+        if (!(args.bounce === undefined || args.bounce === false)) {
             throw new Error('Deployer sender does not support `bounce`');
         }
 
