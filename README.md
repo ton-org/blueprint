@@ -36,8 +36,8 @@ npm create ton@latest
 
 ## Create a new project
 
-1. Run and follow the on-screen instructions: &nbsp;  `npm create ton` &nbsp; or &nbsp; `npx create-ton`
-2. (Optional) Then from the project directory: &nbsp; `yarn install` &nbsp; or &nbsp; `npm install`
+1. Run and follow the on-screen instructions: &nbsp;  `npm create ton@latest` &nbsp; or &nbsp; `npx create-ton@latest`
+2. (Optional) Then from the project directory: &nbsp; `npm install` &nbsp; or &nbsp; `yarn install`
 
 ### Directory structure
 
@@ -52,20 +52,20 @@ npm create ton@latest
 ### Build one of the contracts
 
 1. You need a compilation script in `wrappers/<CONTRACT>.compile.ts` - [example](https://github.com/ton-community/create-ton/blob/main/template/variants/counter/wrappers/Counter.compile.ts)
-2. Interactive: &nbsp; `yarn blueprint build` &nbsp; or &nbsp; `npx blueprint build`
-3. Non-interactive: &nbsp; `yarn blueprint build <CONTRACT>`
+2. Interactive: &nbsp; `npx blueprint build` &nbsp; or &nbsp; `yarn blueprint build`
+3. Non-interactive: &nbsp; `npx/yarn blueprint build <CONTRACT>`
    * Example: `yarn blueprint build counter`
 4. Build results are generated in `build/<CONTRACT>.compiled.json`
 
 ### Run the test suite
 
-1. Run in terminal: &nbsp; `yarn test` &nbsp; or &nbsp; `npm test`
+1. Run in terminal: &nbsp; `npm test` &nbsp; or &nbsp; `yarn test`
 
 ### Deploy one of the contracts
 
 1. You need a deploy script in `scripts/deploy<CONTRACT>.ts` - [example](https://github.com/ton-community/create-ton/blob/main/template/variants/counter/scripts/deployCounter.ts)
-2. Interactive: &nbsp; `yarn blueprint run` &nbsp; or &nbsp; `npx blueprint run`
-3. Non-interactive: &nbsp; `yarn blueprint run <CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
+2. Interactive: &nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
+3. Non-interactive: &nbsp; `npx/yarn blueprint run <CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
    * Example: `yarn blueprint run deploycounter --mainnet --tonconnect`
 
 &nbsp;
@@ -73,8 +73,8 @@ npm create ton@latest
 ## Develop a new contract
 
 1. Make sure you have a project to host the contract
-2. Interactive: &nbsp; `yarn blueprint create`
-3. Non-interactive: &nbsp; `yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `empty` or `counter`)
+2. Interactive: &nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint create`
+3. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `empty` or `counter`)
    * Example: `yarn blueprint create MyNewContract --type empty`
 
 ### Contract code
