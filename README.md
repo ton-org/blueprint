@@ -49,6 +49,8 @@ npm create ton@latest
 * `scripts/` - Deployment scripts to mainnet/testnet and other scripts interacting with live contracts
 * `build/` - Compilation artifacts created here after running a build command
 
+Note: Create a directory named `imports` under `contracts` and put [`stdlib.fc`](https://raw.githubusercontent.com/ton-blockchain/ton/master/crypto/smartcont/stdlib.fc) file to resolve any compilation errors due to required standard library funcation.
+
 ### Build one of the contracts
 
 1. You need a compilation script in `wrappers/<CONTRACT>.compile.ts` - [example](https://github.com/ton-community/create-ton/blob/main/template/variants/counter/wrappers/Counter.compile.ts)
