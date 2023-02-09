@@ -6,6 +6,7 @@ import { TonHubProvider } from './send/TonHubProvider';
 import {
     Address,
     Cell,
+    comment,
     Contract,
     ContractProvider,
     openContract,
@@ -13,6 +14,8 @@ import {
     Sender,
     SenderArguments,
     SendMode,
+    toNano,
+    TupleItem,
 } from 'ton-core';
 import { TonClient } from 'ton';
 import { getHttpEndpoint } from '@orbs-network/ton-access';
@@ -59,6 +62,51 @@ class SendProviderSender implements Sender {
     }
 }
 
+class WrappedContractProvider implements ContractProvider {
+    #address: Address;
+    #provider: ContractProvider;
+    #init?: { code?: Cell; data?: Cell };
+
+    constructor(address: Address, provider: ContractProvider, init?: { code?: Cell; data?: Cell }) {
+        this.#address = address;
+        this.#provider = provider;
+        this.#init = init;
+    }
+
+    async getState() {
+        return await this.#provider.getState();
+    }
+
+    async get(name: string, args: TupleItem[]) {
+        return await this.#provider.get(name, args);
+    }
+
+    async external(message: Cell) {
+        return await this.#provider.external(message);
+    }
+
+    async internal(
+        via: Sender,
+        args: {
+            value: string | bigint;
+            bounce: boolean | undefined | null;
+            sendMode?: SendMode;
+            body: string | Cell | undefined | null;
+        }
+    ) {
+        const init = this.#init && (await this.getState()).state.type !== 'active' ? this.#init : undefined;
+
+        return await via.send({
+            to: this.#address,
+            value: typeof args.value === 'string' ? toNano(args.value) : args.value,
+            sendMode: args.sendMode,
+            bounce: args.bounce,
+            init,
+            body: typeof args.body === 'string' ? comment(args.body) : args.body,
+        });
+    }
+}
+
 class NetworkProviderImpl implements NetworkProvider {
     #tc: TonClient;
     #sender: Sender;
@@ -85,7 +133,11 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 
     provider(addr: Address, init?: { code?: Cell; data?: Cell }): ContractProvider {
-        return this.#tc.provider(addr, init ? { code: init.code ?? null, data: init.data ?? null } : null);
+        return new WrappedContractProvider(
+            addr,
+            this.#tc.provider(addr, init ? { code: init.code ?? null, data: init.data ?? null } : null),
+            init
+        );
     }
 
     async deploy(contract: Contract, value: bigint, body?: Cell, waitAttempts: number = 10): Promise<void> {
@@ -128,7 +180,7 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 
     open<T extends Contract>(contract: T): OpenedContract<T> {
-        return openContract(contract, (params) => this.#tc.provider(params.address, params.init));
+        return openContract(contract, (params) => this.provider(params.address, params.init ?? undefined));
     }
 
     ui(): UIProvider {
