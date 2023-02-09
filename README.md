@@ -52,28 +52,33 @@ npm create ton@latest
 ### Build one of the contracts
 
 1. You need a compilation script in `wrappers/<CONTRACT>.compile.ts` - [example](https://github.com/ton-community/create-ton/blob/main/template/variants/counter/wrappers/Counter.compile.ts)
-2. Interactive: &nbsp; `npx blueprint build` &nbsp; or &nbsp; `yarn blueprint build`
+2. Run interactive: &nbsp;&nbsp; `npx blueprint build` &nbsp; or &nbsp; `yarn blueprint build`
 3. Non-interactive: &nbsp; `npx/yarn blueprint build <CONTRACT>`
    * Example: `yarn blueprint build counter`
 4. Build results are generated in `build/<CONTRACT>.compiled.json`
 
 ### Run the test suite
 
-1. Run in terminal: &nbsp; `npm test` &nbsp; or &nbsp; `yarn test`
+1. Run in terminal: &nbsp; `npx blueprint test` &nbsp; or &nbsp; `yarn blueprint test`
+2. Alternative method: &nbsp; `npm test` &nbsp; or &nbsp; `yarn test`
 
 ### Deploy one of the contracts
 
 1. You need a deploy script in `scripts/deploy<CONTRACT>.ts` - [example](https://github.com/ton-community/create-ton/blob/main/template/variants/counter/scripts/deployCounter.ts)
-2. Interactive: &nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
+2. Run interactive: &nbsp;&nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
 3. Non-interactive: &nbsp; `npx/yarn blueprint run <CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
-   * Example: `yarn blueprint run deploycounter --mainnet --tonconnect`
+   * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
+
+### Help and additional commands
+
+Run in terminal: &nbsp; `npx blueprint help` &nbsp; or &nbsp; `yarn blueprint help`
 
 &nbsp;
 
 ## Develop a new contract
 
 1. Make sure you have a project to host the contract
-2. Interactive: &nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint create`
+2. Run interactive: &nbsp;&nbsp; `npx blueprint create` &nbsp; or &nbsp; `yarn blueprint create`
 3. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `empty` or `counter`)
    * Example: `yarn blueprint create MyNewContract --type empty`
 
