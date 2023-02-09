@@ -3,6 +3,7 @@ import arg from 'arg';
 import { create } from './create';
 import { run } from './run';
 import { build } from './build';
+import { test } from './test';
 
 const argSpec = {
     '--help': Boolean,
@@ -18,6 +19,7 @@ const runners: Record<string, Runner> = {
     create,
     run,
     build,
+    test,
 };
 
 async function main() {
@@ -32,8 +34,9 @@ Options:
 
 Commands:
 create ContractName - create a new contract, includes .fc source, .ts wrapper, .spec.ts test
-run scriptname - runs a script from 'scripts' folder containing a 'run' function
 build ContractName - builds a contract that has a .compile.ts file
+test - runs the test suite
+run scriptname - runs a script from 'scripts' folder containing a 'run' function
 `);
         process.exit(0);
     }
