@@ -14,7 +14,7 @@ describe('{{name}}', () => {
     it('should deploy', async () => {
         const blockchain = await Blockchain.create();
 
-        const {{loweredName}} = blockchain.openContract(await {{name}}.createFromConfig({}, code));
+        const {{loweredName}} = blockchain.openContract({{name}}.createFromConfig({}, code));
 
         const deployer = await blockchain.treasury('deployer');
 

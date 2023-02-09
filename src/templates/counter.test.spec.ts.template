@@ -15,7 +15,7 @@ describe('{{name}}', () => {
         const blockchain = await Blockchain.create();
 
         const {{loweredName}} = blockchain.openContract(
-            await {{name}}.createFromConfig(
+            {{name}}.createFromConfig(
                 {
                     id: 0,
                     counter: 0,
@@ -39,7 +39,7 @@ describe('{{name}}', () => {
         const blockchain = await Blockchain.create();
 
         const {{loweredName}} = blockchain.openContract(
-            await {{name}}.createFromConfig(
+            {{name}}.createFromConfig(
                 {
                     id: 0,
                     counter: 0,
