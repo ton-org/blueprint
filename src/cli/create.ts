@@ -36,11 +36,14 @@ export const create: Runner = async (args: Args) => {
         '--type': String,
     });
 
-    const name = args._.length > 1 && args._[1].trim().length > 0 ? args._[1].trim() : await ui.input('Contract name (PascalCase)');
+    const name =
+        args._.length > 1 && args._[1].trim().length > 0
+            ? args._[1].trim()
+            : await ui.input('Contract name (PascalCase)');
 
     if (name.length === 0) throw new Error(`Cannot create a contract with an empty name`);
 
-    if (name.toLowerCase() === 'contract' || !/^[a-zA-Z0-9]+$/.test(name))
+    if (name.toLowerCase() === 'contract' || !/^[A-Z][a-zA-Z0-9]*$/.test(name))
         throw new Error(`Cannot create a contract with the name '${name}'`);
 
     const loweredName = name.substring(0, 1).toLowerCase() + name.substring(1);
