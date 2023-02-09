@@ -35,7 +35,9 @@ async function main() {
 
     const runner = runners[args._[0]];
     if (!runner) {
-        console.log(chalk.redBright(` Error: command not found.`) + ` Run 'blueprint help' to see available commands\n`);
+        console.log(
+            chalk.redBright(` Error: command not found.`) + ` Run 'blueprint help' to see available commands\n`
+        );
         process.exit(1);
     }
 
@@ -63,15 +65,35 @@ function showHelp() {
     console.log(``);
     console.log(` Usage: blueprint [OPTIONS] COMMAND [ARGS]`);
     console.log(``);
-    console.log(chalk.cyanBright(`  blueprint create`) + `\t` + chalk.whiteBright(`create a new contract with .fc source, .ts wrapper, .spec.ts test`));
+    console.log(
+        chalk.cyanBright(`  blueprint create`) +
+            `\t` +
+            chalk.whiteBright(`create a new contract with .fc source, .ts wrapper, .spec.ts test`)
+    );
     console.log(`\t\t\t` + chalk.gray(`blueprint create ContractName`));
-    console.log(chalk.cyanBright(`  blueprint build`) + `\t` + chalk.whiteBright(`builds a contract that has a .compile.ts file`));
+    console.log(
+        chalk.cyanBright(`  blueprint build`) +
+            `\t` +
+            chalk.whiteBright(`builds a contract that has a .compile.ts file`)
+    );
     console.log(`\t\t\t` + chalk.gray(`blueprint build ContractName`));
-    console.log(chalk.cyanBright(`  blueprint test`) + `\t` + chalk.whiteBright(`run the full project test suite with all .spec.ts files`));
+    console.log(
+        chalk.cyanBright(`  blueprint test`) +
+            `\t` +
+            chalk.whiteBright(`run the full project test suite with all .spec.ts files`)
+    );
     console.log(`\t\t\t` + chalk.gray(`blueprint test`));
-    console.log(chalk.cyanBright(`  blueprint run `) + `\t` + chalk.whiteBright(`runs a script from 'scripts' directory (eg. a deploy script)`));
+    console.log(
+        chalk.cyanBright(`  blueprint run `) +
+            `\t` +
+            chalk.whiteBright(`runs a script from 'scripts' directory (eg. a deploy script)`)
+    );
     console.log(`\t\t\t` + chalk.gray(`blueprint run deployContractName`));
-    console.log(chalk.cyanBright(`  blueprint help`) + `\t` + chalk.whiteBright(`shows this help screen, more at https://github.com/ton-community/blueprint`));
+    console.log(
+        chalk.cyanBright(`  blueprint help`) +
+            `\t` +
+            chalk.whiteBright(`shows this help screen, more at https://github.com/ton-community/blueprint`)
+    );
     console.log(`\t\t\t` + chalk.gray(`blueprint help`));
     console.log(``);
 }
