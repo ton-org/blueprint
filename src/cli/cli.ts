@@ -33,7 +33,13 @@ async function main() {
         process.exit(0);
     }
 
-    await runners[args._[0]](args);
+    const runner = runners[args._[0]];
+    if (!runner) {
+        console.log(chalk.redBright(` Error: command not found.`) + ` Run 'blueprint help' to see available commands\n`);
+        process.exit(1);
+    }
+
+    await runner(args);
 }
 
 process.on('SIGINT', () => {
