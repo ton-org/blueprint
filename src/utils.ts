@@ -81,7 +81,12 @@ export async function selectFile(
         selected = found;
         opts.ui.write(`Using file: ${selected.name}`);
     } else {
-        selected = await opts.ui.choose('Choose file to use', files, (f) => f.name);
+        if (files.length === 1) {
+            selected = files[0];
+            opts.ui.write(`Using file: ${selected.name}`);
+        } else {
+            selected = await opts.ui.choose('Choose file to use', files, (f) => f.name);
+        }
     }
 
     return {
