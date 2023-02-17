@@ -88,4 +88,8 @@ export const create: Runner = async (args: Args) => {
     await createFile(TESTS_DIR, name + '.spec.ts', prefix + 'test.spec.ts.template', replaces);
 
     await createFile(SCRIPTS_DIR, 'deploy' + name + '.ts', prefix + 'deploy.ts.template', replaces);
+
+    if (which === 'counter') {
+        await createFile(SCRIPTS_DIR, 'increment' + name + '.ts', 'counter.increment.ts.template', replaces);
+    }
 };

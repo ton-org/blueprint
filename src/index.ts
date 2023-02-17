@@ -1,4 +1,4 @@
-export { tonDeepLink } from './utils';
+export { tonDeepLink, sleep } from './utils';
 
 export { NetworkProvider } from './network/NetworkProvider';
 

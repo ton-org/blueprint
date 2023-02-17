@@ -133,12 +133,16 @@ class NetworkProviderImpl implements NetworkProvider {
         return this.#tc;
     }
 
-    provider(addr: Address, init?: { code?: Cell; data?: Cell }): ContractProvider {
+    provider(address: Address, init?: { code?: Cell; data?: Cell }): ContractProvider {
         return new WrappedContractProvider(
-            addr,
-            this.#tc.provider(addr, init ? { code: init.code ?? null, data: init.data ?? null } : null),
+            address,
+            this.#tc.provider(address, init ? { code: init.code ?? null, data: init.data ?? null } : null),
             init
         );
+    }
+
+    isContractDeployed(address: Address): Promise<boolean> {
+        return this.#tc.isContractDeployed(address);
     }
 
     async waitForDeploy(address: Address, attempts: number = 10, sleepDuration: number = 2000) {
@@ -148,10 +152,10 @@ class NetworkProviderImpl implements NetworkProvider {
 
         for (let i = 1; i <= attempts; i++) {
             this.#ui.setActionPrompt(`Awaiting contract deployment... [Attempt ${i}/${attempts}]`);
-            const isDeployed = await this.#tc.isContractDeployed(address);
+            const isDeployed = await this.isContractDeployed(address);
             if (isDeployed) {
                 this.#ui.clearActionPrompt();
-                this.#ui.write('Contract deployed!');
+                this.#ui.write(`Contract deployed at address ${address.toString()}`);
                 this.#ui.write(
                     `You can view it at https://${
                         this.#network === 'testnet' ? 'testnet.' : ''
@@ -172,7 +176,7 @@ class NetworkProviderImpl implements NetworkProvider {
      * Use your Contract's `sendDeploy` method (or similar) together with `waitForDeploy` instead.
      */
     async deploy(contract: Contract, value: bigint, body?: Cell, waitAttempts: number = 10) {
-        const isDeployed = await this.#tc.isContractDeployed(contract.address);
+        const isDeployed = await this.isContractDeployed(contract.address);
         if (isDeployed) {
             throw new Error('Contract is already deployed!');
         }
