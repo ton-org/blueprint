@@ -107,6 +107,7 @@ export class TonConnectProvider implements SendProvider {
             ],
         });
 
+        this.#ui.clearActionPrompt();
         this.#ui.write('Sent transaction');
     }
 }

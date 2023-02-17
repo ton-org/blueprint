@@ -6,7 +6,8 @@ export interface NetworkProvider {
     network(): 'mainnet' | 'testnet';
     sender(): Sender;
     api(): TonClient;
-    provider(addr: Address): ContractProvider;
+    provider(address: Address, init?: { code?: Cell; data?: Cell }): ContractProvider;
+    isContractDeployed(address: Address): Promise<boolean>;
     waitForDeploy(address: Address, attempts?: number, sleepDuration?: number): Promise<void>;
     /**
      * @deprecated
