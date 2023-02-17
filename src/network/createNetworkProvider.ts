@@ -51,7 +51,8 @@ class SendProviderSender implements Sender {
 
     async send(args: SenderArguments): Promise<void> {
         if (args.bounce !== undefined) {
-            throw new Error('Deployer sender does not support `bounce`');
+            console.warn('Warning: blueprint\'s Sender does not support `bounce` flag, because it is ignored by all used Sender APIs');
+            console.warn('To silence this warning, change your `bounce` flags passed to Senders to unset or undefined');
         }
 
         if (!(args.sendMode === undefined || args.sendMode == SendMode.PAY_GAS_SEPARATLY)) {
