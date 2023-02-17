@@ -140,7 +140,37 @@ class NetworkProviderImpl implements NetworkProvider {
         );
     }
 
-    async deploy(contract: Contract, value: bigint, body?: Cell, waitAttempts: number = 10): Promise<void> {
+    async waitForDeploy(address: Address, attempts: number = 10, sleepDuration: number = 2000) {
+        if (attempts <= 0) {
+            throw new Error('Attempt number must be positive');
+        }
+
+        for (let i = 1; i <= attempts; i++) {
+            this.#ui.setActionPrompt(`Awaiting contract deployment... [Attempt ${i}/${attempts}]`);
+            const isDeployed = await this.#tc.isContractDeployed(address);
+            if (isDeployed) {
+                this.#ui.clearActionPrompt();
+                this.#ui.write('Contract deployed!');
+                this.#ui.write(
+                    `You can view it at https://${
+                        this.#network === 'testnet' ? 'testnet.' : ''
+                    }tonscan.org/address/${address.toString()}`
+                );
+                return;
+            }
+            await sleep(sleepDuration);
+        }
+
+        this.#ui.clearActionPrompt();
+        throw new Error("Contract was not deployed. Check your wallet's transactions");
+    }
+
+    /**
+     * @deprecated
+     *
+     * Use your Contract's `sendDeploy` method (or similar) together with `waitForDeploy` instead.
+     */
+    async deploy(contract: Contract, value: bigint, body?: Cell, waitAttempts: number = 10) {
         const isDeployed = await this.#tc.isContractDeployed(contract.address);
         if (isDeployed) {
             throw new Error('Contract is already deployed!');
@@ -159,24 +189,7 @@ class NetworkProviderImpl implements NetworkProvider {
 
         if (waitAttempts <= 0) return;
 
-        for (let i = 1; i <= waitAttempts; i++) {
-            this.#ui.setActionPrompt(`Awaiting contract deployment... [Attempt ${i}/${waitAttempts}]`);
-            const isDeployed = await this.#tc.isContractDeployed(contract.address);
-            if (isDeployed) {
-                this.#ui.clearActionPrompt();
-                this.#ui.write('Contract deployed!');
-                this.#ui.write(
-                    `You can view it at https://${
-                        this.#network === 'testnet' ? 'testnet.' : ''
-                    }tonscan.org/address/${contract.address.toString()}`
-                );
-                return;
-            }
-            await sleep(2000);
-        }
-
-        this.#ui.clearActionPrompt();
-        throw new Error("Contract was not deployed. Check your wallet's transactions");
+        await this.waitForDeploy(contract.address, waitAttempts);
     }
 
     open<T extends Contract>(contract: T): OpenedContract<T> {
