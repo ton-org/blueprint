@@ -20,7 +20,6 @@ import {
 import { TonClient } from 'ton';
 import { getHttpEndpoint } from '@orbs-network/ton-access';
 import { UIProvider } from '../ui/UIProvider';
-import { InquirerUIProvider } from '../ui/InquirerUIProvider';
 import { NetworkProvider } from './NetworkProvider';
 import { SendProvider } from './send/SendProvider';
 import { FSStorage } from './storage/FSStorage';
@@ -296,10 +295,8 @@ class NetworkProviderBuilder {
     }
 }
 
-export async function createNetworkProvider(): Promise<NetworkProvider> {
+export async function createNetworkProvider(ui: UIProvider): Promise<NetworkProvider> {
     const args = arg(argSpec);
-
-    const ui = new InquirerUIProvider();
 
     return await new NetworkProviderBuilder(args, ui).build();
 }

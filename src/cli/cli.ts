@@ -5,6 +5,8 @@ import { create } from './create';
 import { run } from './run';
 import { build } from './build';
 import { test } from './test';
+import { UIProvider } from '../ui/UIProvider';
+import { InquirerUIProvider } from '../ui/InquirerUIProvider';
 
 const argSpec = {
     '--help': Boolean,
@@ -14,7 +16,7 @@ const argSpec = {
 
 export type Args = arg.Result<typeof argSpec>;
 
-export type Runner = (args: Args) => Promise<void>;
+export type Runner = (args: Args, ui: UIProvider) => Promise<void>;
 
 const runners: Record<string, Runner> = {
     create,
@@ -41,7 +43,11 @@ async function main() {
         process.exit(1);
     }
 
-    await runner(args);
+    const ui = new InquirerUIProvider();
+
+    await runner(args, ui);
+
+    ui.close();
 }
 
 process.on('SIGINT', () => {
