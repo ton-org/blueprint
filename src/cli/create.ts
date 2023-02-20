@@ -3,9 +3,9 @@ import { open, mkdir } from 'fs/promises';
 import path from 'path';
 import { executeTemplate } from '../template';
 import { CONTRACTS, CONTRACTS_DIR, SCRIPTS_DIR, TESTS_DIR, WRAPPERS_DIR } from '../paths';
-import { InquirerUIProvider } from '../ui/InquirerUIProvider';
 import { selectOption } from '../utils';
 import arg from 'arg';
+import { UIProvider } from '../ui/UIProvider';
 
 function toSnakeCase(v: string): string {
     const r = v.replace(/[A-Z]/g, (sub) => '_' + sub.toLowerCase());
@@ -29,9 +29,7 @@ async function createFile(dir: string, name: string, template: string, replaces:
     await file.close();
 }
 
-export const create: Runner = async (args: Args) => {
-    const ui = new InquirerUIProvider();
-
+export const create: Runner = async (args: Args, ui: UIProvider) => {
     const localArgs = arg({
         '--type': String,
     });

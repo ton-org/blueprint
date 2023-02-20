@@ -1,15 +1,13 @@
 import path from 'path';
 import { Args, Runner } from './cli';
-import { InquirerUIProvider } from '../ui/InquirerUIProvider';
 import { BUILD_DIR } from '../paths';
 import { findCompiles, selectFile } from '../utils';
 import fs from 'fs/promises';
 import { compile } from '../compile/compile';
+import { UIProvider } from '../ui/UIProvider';
 
-export const build: Runner = async (args: Args) => {
+export const build: Runner = async (args: Args, ui: UIProvider) => {
     require('ts-node/register');
-
-    const ui = new InquirerUIProvider();
 
     const sel = await selectFile(findCompiles, {
         ui,

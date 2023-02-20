@@ -1,11 +1,17 @@
 import inquirer from 'inquirer';
 import { UIProvider } from '../ui/UIProvider';
 
+class DestroyableBottomBar extends inquirer.ui.BottomBar {
+    destroy() {
+        this.close();
+    }
+}
+
 export class InquirerUIProvider implements UIProvider {
-    #bottomBar: inquirer.ui.BottomBar;
+    #bottomBar: DestroyableBottomBar;
 
     constructor() {
-        this.#bottomBar = new inquirer.ui.BottomBar();
+        this.#bottomBar = new DestroyableBottomBar();
     }
 
     write(message: string): void {
@@ -45,5 +51,9 @@ export class InquirerUIProvider implements UIProvider {
 
     clearActionPrompt(): void {
         this.#bottomBar.updateBottomBar('');
+    }
+
+    close() {
+        this.#bottomBar.destroy();
     }
 }
