@@ -78,7 +78,8 @@ export const create: Runner = async (args: Args) => {
     const contractName = toSnakeCase(name) + '.fc';
 
     await createFile(WRAPPERS_DIR, name + '.compile.ts', 'compile.ts.template', {
-        contractPath: path.join(CONTRACTS, contractName),
+        // not using path.join here because path.join uses platform-specific delimiter, which breaks things on windows
+        contractPath: CONTRACTS + '/' + contractName,
     });
 
     await createFile(CONTRACTS_DIR, contractName, prefix + 'contract.fc.template', replaces);
