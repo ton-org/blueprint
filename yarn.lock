@@ -644,10 +644,10 @@ tmp@^0.0.33:
   dependencies:
     os-tmpdir "~1.0.2"
 
-ton-core@^0.46.0:
-  version "0.46.0"
-  resolved "https://registry.yarnpkg.com/ton-core/-/ton-core-0.46.0.tgz#4138606fccf7fa45dc5c6cd6dcf1d1f17b2d4215"
-  integrity sha512-QUOlL98652rsOPTIvB01+MsAgLI1ehvpsngYzNWr7pxHOk4xk64Adq0StTmqGEchkzjhNowIo3gzwGGPrxo3zw==
+ton-core@^0.48.0:
+  version "0.48.0"
+  resolved "https://registry.yarnpkg.com/ton-core/-/ton-core-0.48.0.tgz#df744c9b13b3193cb7eb8a9cbb715bcf0437e467"
+  integrity sha512-v3QL0CC8iQQ0cjUN0lI9hK7wEpLW2Wnm+N5Ukm+NSbtQ0vq36LGQR/BRywoOQZJm59XzmW4ATbtCWeas9ePrRA==
   dependencies:
     symbol.inspect "1.0.1"
 
