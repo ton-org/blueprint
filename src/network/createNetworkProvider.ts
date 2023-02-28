@@ -56,8 +56,8 @@ class SendProviderSender implements Sender {
             console.warn('To silence this warning, change your `bounce` flags passed to Senders to unset or undefined');
         }
 
-        if (!(args.sendMode === undefined || args.sendMode == SendMode.PAY_GAS_SEPARATLY)) {
-            throw new Error('Deployer sender does not support `sendMode` other than `PAY_GAS_SEPARATLY`');
+        if (!(args.sendMode === undefined || args.sendMode == SendMode.PAY_GAS_SEPARATELY)) {
+            throw new Error('Deployer sender does not support `sendMode` other than `PAY_GAS_SEPARATELY`');
         }
 
         await this.#provider.sendTransaction(args.to, args.value, args.body ?? undefined, args.init ?? undefined);
