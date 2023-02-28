@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import * as dotenv from 'dotenv';
+dotenv.config();
 import arg from 'arg';
 import chalk from 'chalk';
 import { create } from './create';

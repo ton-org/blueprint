@@ -25,6 +25,8 @@ import { SendProvider } from './send/SendProvider';
 import { FSStorage } from './storage/FSStorage';
 import path from 'path';
 import { TEMP_DIR } from '../paths';
+import { mnemonicToPrivateKey } from 'ton-crypto';
+import { MnemonicProvider, WalletVersion } from './send/MnemonicProvider';
 
 const argSpec = {
     '--mainnet': Boolean,
@@ -33,6 +35,7 @@ const argSpec = {
     '--tonconnect': Boolean,
     '--deeplink': Boolean,
     '--tonhub': Boolean,
+    '--mnemonic': Boolean,
 };
 
 type Args = arg.Result<typeof argSpec>;
@@ -223,11 +226,12 @@ class NetworkProviderBuilder {
         return network;
     }
 
-    async chooseSendProvider(network: Network): Promise<SendProvider> {
+    async chooseSendProvider(network: Network, client: TonClient): Promise<SendProvider> {
         let deployUsing = oneOrZeroOf({
             tonconnect: this.args['--tonconnect'],
             deeplink: this.args['--deeplink'],
             tonhub: this.args['--tonhub'],
+            mnemonic: this.args['--mnemonic'],
         });
 
         if (!deployUsing) {
@@ -246,6 +250,10 @@ class NetworkProviderBuilder {
                         {
                             name: 'Tonhub wallet',
                             value: 'tonhub',
+                        },
+                        {
+                            name: 'Mnemonic',
+                            value: 'mnemonic',
                         },
                     ],
                     (c) => c.name
@@ -266,6 +274,22 @@ class NetworkProviderBuilder {
             case 'tonhub':
                 provider = new TonHubProvider(network, new FSStorage(storagePath), this.ui);
                 break;
+            case 'mnemonic':
+                const mnemonic = process.env.WALLET_MNEMONIC ?? '';
+                const walletVersion = process.env.WALLET_VERSION ?? '';
+                if (mnemonic.length === 0 || walletVersion.length === 0) {
+                    throw new Error(
+                        'Mnemonic deployer was chosen, but env variables WALLET_MNEMONIC and WALLET_VERSION are not set'
+                    );
+                }
+                const keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));
+                provider = new MnemonicProvider({
+                    version: walletVersion.toLowerCase() as WalletVersion,
+                    client,
+                    secretKey: keyPair.secretKey,
+                    ui: this.ui,
+                });
+                break;
             default:
                 throw new Error('Unknown deploy option');
         }
@@ -276,7 +300,11 @@ class NetworkProviderBuilder {
     async build(): Promise<NetworkProvider> {
         const network = await this.chooseNetwork();
 
-        const sendProvider = await this.chooseSendProvider(network);
+        const tc = new TonClient({
+            endpoint: await getHttpEndpoint({ network }),
+        });
+
+        const sendProvider = await this.chooseSendProvider(network, tc);
 
         try {
             await sendProvider.connect();
@@ -286,10 +314,6 @@ class NetworkProviderBuilder {
         } finally {
             this.ui.setActionPrompt('');
         }
-
-        const tc = new TonClient({
-            endpoint: await getHttpEndpoint({ network }),
-        });
 
         const sender = new SendProviderSender(sendProvider);
 
