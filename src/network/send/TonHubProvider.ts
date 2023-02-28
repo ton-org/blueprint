@@ -115,6 +115,7 @@ export class TonHubProvider implements SendProvider {
             throw new Error(`Tonhub transaction request was not successful (${response.type})`);
         }
 
-        this.#ui.setActionPrompt('Sent transaction');
+        this.#ui.clearActionPrompt();
+        this.#ui.write('Sent transaction');
     }
 }
