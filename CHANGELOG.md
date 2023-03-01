@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2023-03-01
+
+This release contains a breaking change.
+
+### Changed
+
+- Changed ton-core peer dependency version to `>=0.48.0`. This is a breaking change
+
+### Added
+
+- Added a new mnemonic deployer. Environment variables `WALLET_MNEMONIC` and `WALLET_VERSION` must be set, or a .env file with them must be present in order for it to be usable. Tonkeeper's v4R2 wallet corresponds to v4 version in blueprint
+- Added the ability to choose the explorer for the deployed contracts. Pass one of the CLI flags `--tonscan`, `--tonapi`, `--toncx`, `--dton` to choose. Tonscan is the default
+- Added ton-crypto peer dependency of version `>=3.2.0`
+
+### Fixed
+
+- Fixed TonHub deployer's `Sent transaction` message
+- Fixed `SendMode.PAY_GAS_SEPARATLY` (missing E) typo in accordance with ton-core update
+
 ## [0.3.0] - 2023-02-27
 
 ### Added
