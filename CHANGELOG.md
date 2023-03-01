@@ -23,6 +23,7 @@ This release contains a breaking change.
 
 - Fixed TonHub deployer's `Sent transaction` message
 - Fixed `SendMode.PAY_GAS_SEPARATLY` (missing E) typo in accordance with ton-core update
+- Fixed a crash when using `blueprint run` with flags but no file name
 
 ## [0.3.0] - 2023-02-27
 
