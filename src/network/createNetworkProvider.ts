@@ -172,7 +172,7 @@ class NetworkProviderImpl implements NetworkProvider {
                 this.#ui.clearActionPrompt();
                 this.#ui.write(`Contract deployed at address ${address.toString()}`);
                 this.#ui.write(
-                    `You can view it at ${this.getExplorerLink(address.toString(), this.#network, this.#explorer)}`
+                    `You can view it at ${getExplorerLink(address.toString(), this.#network, this.#explorer)}`
                 );
                 return;
             }
@@ -235,40 +235,13 @@ class NetworkProviderBuilder {
         return network;
     }
 
-    async chooseExplorer(): Promise<Explorer> {
-        let explorer = oneOrZeroOf({
+    chooseExplorer(): Explorer {
+        return oneOrZeroOf({
             tonscan: this.args['--tonscan'],
             tonapi: this.args['--tonapi'],
             toncx: this.args['--toncx'],
             dton: this.args['--dton'],
-        });
-
-        if (!explorer) {
-            explorer = await this.ui.choose(
-                'Which explorer do you want to use?',
-                [
-                    {
-                        name: 'tonscan.org',
-                        value: 'tonscan',
-                    },
-                    {
-                        name: 'tonapi.io',
-                        value: 'tonapi',
-                    },
-                    {
-                        name: 'ton.cx',
-                        value: 'toncx',
-                    },
-                    {
-                        name: 'dton.io',
-                        value: 'dton',
-                    },
-                ],
-                (c) => c
-            );
-        }
-
-        return explorer;
+        }) ?? 'tonscan';
     }
 
     async chooseSendProvider(network: Network): Promise<SendProvider> {
@@ -323,7 +296,7 @@ class NetworkProviderBuilder {
 
     async build(): Promise<NetworkProvider> {
         const network = await this.chooseNetwork();
-        const explorer = await this.chooseExplorer();
+        const explorer = this.chooseExplorer();
 
         const sendProvider = await this.chooseSendProvider(network);
 
