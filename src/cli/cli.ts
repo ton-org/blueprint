@@ -47,7 +47,13 @@ async function main() {
 
     const ui = new InquirerUIProvider();
 
-    await runner(args, ui);
+    await runner(
+        {
+            ...args,
+            _: args._.filter((a) => !(a.length > 1 && a[0] === '-')), // filter out the flags pushed by `permissive`
+        },
+        ui
+    );
 
     ui.close();
 }
