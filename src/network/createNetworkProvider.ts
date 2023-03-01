@@ -1,4 +1,4 @@
-import { oneOrZeroOf, sleep } from '../utils';
+import { oneOrZeroOf, sleep, getExplorerLink } from '../utils';
 import arg from 'arg';
 import { DeeplinkProvider } from './send/DeeplinkProvider';
 import { TonConnectProvider } from './send/TonConnectProvider';
@@ -33,11 +33,18 @@ const argSpec = {
     '--tonconnect': Boolean,
     '--deeplink': Boolean,
     '--tonhub': Boolean,
+
+    '--tonscan': Boolean,
+    '--tonapi': Boolean,
+    '--toncx': Boolean,
+    '--dton': Boolean
 };
 
 type Args = arg.Result<typeof argSpec>;
 
 type Network = 'mainnet' | 'testnet';
+
+type Explorer = 'tonscan' | 'tonapi' | 'toncx' | 'dton';
 
 class SendProviderSender implements Sender {
     #provider: SendProvider;
@@ -113,17 +120,23 @@ class NetworkProviderImpl implements NetworkProvider {
     #tc: TonClient;
     #sender: Sender;
     #network: Network;
+    #explorer: Explorer;
     #ui: UIProvider;
 
-    constructor(tc: TonClient, sender: Sender, network: Network, ui: UIProvider) {
+    constructor(tc: TonClient, sender: Sender, network: Network, explorer: Explorer, ui: UIProvider) {
         this.#tc = tc;
         this.#sender = sender;
         this.#network = network;
+        this.#explorer = explorer;
         this.#ui = ui;
     }
 
     network(): 'mainnet' | 'testnet' {
         return this.#network;
+    }
+
+    explorer(): 'tonscan' | 'tonapi' | 'toncx' | 'dton' {
+        return this.#explorer;
     }
 
     sender(): Sender {
@@ -155,12 +168,11 @@ class NetworkProviderImpl implements NetworkProvider {
             this.#ui.setActionPrompt(`Awaiting contract deployment... [Attempt ${i}/${attempts}]`);
             const isDeployed = await this.isContractDeployed(address);
             if (isDeployed) {
+
                 this.#ui.clearActionPrompt();
                 this.#ui.write(`Contract deployed at address ${address.toString()}`);
                 this.#ui.write(
-                    `You can view it at https://${
-                        this.#network === 'testnet' ? 'testnet.' : ''
-                    }tonscan.org/address/${address.toString()}`
+                    `You can view it at ${this.getExplorerLink(address.toString(), this.#network, this.#explorer)}`
                 );
                 return;
             }
@@ -223,6 +235,42 @@ class NetworkProviderBuilder {
         return network;
     }
 
+    async chooseExplorer(): Promise<Explorer> {
+        let explorer = oneOrZeroOf({
+            tonscan: this.args['--tonscan'],
+            tonapi: this.args['--tonapi'],
+            toncx: this.args['--toncx'],
+            dton: this.args['--dton'],
+        });
+
+        if (!explorer) {
+            explorer = await this.ui.choose(
+                'Which explorer do you want to use?',
+                [
+                    {
+                        name: 'tonscan.org',
+                        value: 'tonscan',
+                    },
+                    {
+                        name: 'tonapi.io',
+                        value: 'tonapi',
+                    },
+                    {
+                        name: 'ton.cx',
+                        value: 'toncx',
+                    },
+                    {
+                        name: 'dton.io',
+                        value: 'dton',
+                    },
+                ],
+                (c) => c
+            );
+        }
+
+        return explorer;
+    }
+
     async chooseSendProvider(network: Network): Promise<SendProvider> {
         let deployUsing = oneOrZeroOf({
             tonconnect: this.args['--tonconnect'],
@@ -275,6 +323,7 @@ class NetworkProviderBuilder {
 
     async build(): Promise<NetworkProvider> {
         const network = await this.chooseNetwork();
+        const explorer = await this.chooseExplorer();
 
         const sendProvider = await this.chooseSendProvider(network);
 
@@ -293,7 +342,7 @@ class NetworkProviderBuilder {
 
         const sender = new SendProviderSender(sendProvider);
 
-        return new NetworkProviderImpl(tc, sender, network, this.ui);
+        return new NetworkProviderImpl(tc, sender, network, explorer, this.ui);
     }
 }
 

@@ -94,3 +94,24 @@ export async function selectFile(
         module: opts.import !== false ? await import(selected.path) : undefined,
     };
 }
+
+export function getExplorerLink(address: string, network: string, explorer: string) {
+    const networkPrefix = network === 'testnet' ? 'testnet.' : ''
+
+    switch (explorer) {
+        case 'tonscan':
+            return `https://${networkPrefix}tonscan.org/address/${address}`;
+
+        case 'tonapi':
+            return `https://${networkPrefix}tonapi.io/account/${address}`;
+
+        case 'toncx':
+            return `https://${networkPrefix}ton.cx/address/${address}`;
+
+        case 'dton':
+            return `https://${networkPrefix}dton.io/a/${address}`;
+
+        default:
+            return `https://${networkPrefix}tonscan.org/address/${address}`;
+    }
+}
