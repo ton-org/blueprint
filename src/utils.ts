@@ -96,7 +96,7 @@ export async function selectFile(
 }
 
 export function getExplorerLink(address: string, network: string, explorer: string) {
-    const networkPrefix = network === 'testnet' ? 'testnet.' : ''
+    const networkPrefix = network === 'testnet' ? 'testnet.' : '';
 
     switch (explorer) {
         case 'tonscan':

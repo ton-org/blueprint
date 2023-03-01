@@ -171,7 +171,6 @@ class NetworkProviderImpl implements NetworkProvider {
             this.#ui.setActionPrompt(`Awaiting contract deployment... [Attempt ${i}/${attempts}]`);
             const isDeployed = await this.isContractDeployed(address);
             if (isDeployed) {
-
                 this.#ui.clearActionPrompt();
                 this.#ui.write(`Contract deployed at address ${address.toString()}`);
                 this.#ui.write(
@@ -239,12 +238,14 @@ class NetworkProviderBuilder {
     }
 
     chooseExplorer(): Explorer {
-        return oneOrZeroOf({
-            tonscan: this.args['--tonscan'],
-            tonapi: this.args['--tonapi'],
-            toncx: this.args['--toncx'],
-            dton: this.args['--dton'],
-        }) ?? 'tonscan';
+        return (
+            oneOrZeroOf({
+                tonscan: this.args['--tonscan'],
+                tonapi: this.args['--tonapi'],
+                toncx: this.args['--toncx'],
+                dton: this.args['--dton'],
+            }) ?? 'tonscan'
+        );
     }
 
     async chooseSendProvider(network: Network, client: TonClient): Promise<SendProvider> {
