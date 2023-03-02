@@ -712,10 +712,10 @@ ton@9.8.0:
     ton-crypto "2.1.0"
     tweetnacl "1.0.3"
 
-ton@^13.3.0:
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/ton/-/ton-13.3.0.tgz#855425fe368d12cea6c784c156ede70d28639cf7"
-  integrity sha512-ygNZ3a8xgDcftudgmq2lNzFNrQtNhUdmBneLJI8C2iBuD9RAfpnjae4eIpjPLfCsLKH8Nmvh2JOESfM7lvsCSw==
+ton@^13.4.1:
+  version "13.4.1"
+  resolved "https://registry.yarnpkg.com/ton/-/ton-13.4.1.tgz#8808370785498a8762848d4cdd8a781964df6a74"
+  integrity sha512-VCHmGE8o1EJBp5JdKNiqjHW5hmUqSfSYYIsMfCje8/GA6sLzhhtMmznuGsrAQhM+MeEAUSt72SeI41z/wnu9MQ==
   dependencies:
     axios "^0.25.0"
     dataloader "^2.0.0"
