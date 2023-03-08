@@ -15,7 +15,7 @@ export class DeeplinkProvider implements SendProvider {
         return;
     }
 
-    async sendTransaction(address: Address, amount: bigint, payload?: Cell, stateInit?: StateInit): Promise<void> {
+    async sendTransaction(address: Address, amount: bigint, payload?: Cell, stateInit?: StateInit) {
         const deepLink = tonDeepLink(
             address,
             amount,

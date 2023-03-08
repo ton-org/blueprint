@@ -117,5 +117,7 @@ export class TonHubProvider implements SendProvider {
 
         this.#ui.clearActionPrompt();
         this.#ui.write('Sent transaction');
+
+        return response;
     }
 }

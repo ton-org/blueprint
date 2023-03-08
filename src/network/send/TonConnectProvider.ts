@@ -90,10 +90,10 @@ export class TonConnectProvider implements SendProvider {
         });
     }
 
-    async sendTransaction(address: Address, amount: bigint, payload?: Cell, stateInit?: StateInit): Promise<void> {
+    async sendTransaction(address: Address, amount: bigint, payload?: Cell, stateInit?: StateInit) {
         this.#ui.setActionPrompt('Sending transaction. Approve in your wallet...');
 
-        await this.#connector.sendTransaction({
+        const result = await this.#connector.sendTransaction({
             validUntil: Date.now() + 5 * 60 * 1000,
             messages: [
                 {
@@ -109,5 +109,7 @@ export class TonConnectProvider implements SendProvider {
 
         this.#ui.clearActionPrompt();
         this.#ui.write('Sent transaction');
+
+        return result;
     }
 }
