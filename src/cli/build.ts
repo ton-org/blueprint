@@ -3,7 +3,7 @@ import { Args, Runner } from './cli';
 import { BUILD_DIR } from '../paths';
 import { findCompiles, selectFile } from '../utils';
 import fs from 'fs/promises';
-import { compile } from '../compile/compile';
+import { doCompile, compileResultToCell } from '../compile/compile';
 import { UIProvider } from '../ui/UIProvider';
 
 export const build: Runner = async (args: Args, ui: UIProvider) => {
@@ -27,7 +27,18 @@ export const build: Runner = async (args: Args, ui: UIProvider) => {
 
     ui.setActionPrompt('⏳ Compiling...');
     try {
-        const cell = await compile(contract);
+        const result = await doCompile(contract);
+
+        if (result.lang === 'tact') {
+            for (const [k, v] of result.result) {
+                await fs.mkdir(path.dirname(k), {
+                    recursive: true,
+                });
+                await fs.writeFile(k, v);
+            }
+        }
+
+        const cell = await compileResultToCell(result);
         ui.clearActionPrompt();
         ui.write('\n✅ Compiled successfully! Cell BOC hex result:\n\n');
         ui.write(cell.toBoc().toString('hex'));
