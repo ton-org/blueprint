@@ -221,6 +221,23 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 }
 
+async function createMnemonicProvider(client: TonClient, ui: UIProvider) {
+    const mnemonic = process.env.WALLET_MNEMONIC ?? '';
+    const walletVersion = process.env.WALLET_VERSION ?? '';
+    if (mnemonic.length === 0 || walletVersion.length === 0) {
+        throw new Error(
+            'Mnemonic deployer was chosen, but env variables WALLET_MNEMONIC and WALLET_VERSION are not set'
+        );
+    }
+    const keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));
+    return new MnemonicProvider({
+        version: walletVersion.toLowerCase() as WalletVersion,
+        client,
+        secretKey: keyPair.secretKey,
+        ui,
+    });
+}
+
 class NetworkProviderBuilder {
     constructor(private args: Args, private ui: UIProvider) {}
 
@@ -297,20 +314,7 @@ class NetworkProviderBuilder {
                 provider = new TonHubProvider(network, new FSStorage(storagePath), this.ui);
                 break;
             case 'mnemonic':
-                const mnemonic = process.env.WALLET_MNEMONIC ?? '';
-                const walletVersion = process.env.WALLET_VERSION ?? '';
-                if (mnemonic.length === 0 || walletVersion.length === 0) {
-                    throw new Error(
-                        'Mnemonic deployer was chosen, but env variables WALLET_MNEMONIC and WALLET_VERSION are not set'
-                    );
-                }
-                const keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));
-                provider = new MnemonicProvider({
-                    version: walletVersion.toLowerCase() as WalletVersion,
-                    client,
-                    secretKey: keyPair.secretKey,
-                    ui: this.ui,
-                });
+                provider = await createMnemonicProvider(client, this.ui);
                 break;
             default:
                 throw new Error('Unknown deploy option');
