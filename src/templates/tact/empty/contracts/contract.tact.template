@@ -1,0 +1,8 @@
+{{snakeName}}.tact
+import "@stdlib/deploy";
+
+contract {{name}} with Deployable {
+    init() {
+        
+    }
+}

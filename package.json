@@ -21,14 +21,14 @@
         "format": "prettier --write src"
     },
     "devDependencies": {
-        "@types/inquirer": "^8.2.5",
-        "@types/node": "^18.11.18",
+        "@types/inquirer": "^8.2.6",
+        "@types/node": "^18.15.5",
         "@types/qrcode-terminal": "^0.12.0",
-        "prettier": "^2.8.3",
+        "prettier": "^2.8.6",
         "ton": "^13.4.1",
         "ton-core": "^0.48.0",
         "ton-crypto": "^3.2.0",
-        "typescript": "^4.9.4"
+        "typescript": "^4.9.5"
     },
     "peerDependencies": {
         "ton": ">=13.4.1",
@@ -36,10 +36,10 @@
         "ton-crypto": ">=3.2.0"
     },
     "dependencies": {
-        "@orbs-network/ton-access": "^2.2.2",
+        "@orbs-network/ton-access": "^2.3.0",
         "@tact-lang/compiler": "^1.0.0",
-        "@ton-community/func-js": "^0.4.0",
-        "@tonconnect/sdk": "^2.0.7",
+        "@ton-community/func-js": "^0.6.0",
+        "@tonconnect/sdk": "^2.1.0",
         "arg": "^5.0.2",
         "chalk": "^4.1.0",
         "dotenv": "^16.0.3",

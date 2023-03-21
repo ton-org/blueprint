@@ -1,32 +1,50 @@
 import { Args, Runner } from './cli';
-import { open, mkdir } from 'fs/promises';
+import { open, mkdir, readdir, lstat, readFile } from 'fs/promises';
 import path from 'path';
-import { executeTemplate } from '../template';
-import { CONTRACTS, CONTRACTS_DIR, SCRIPTS_DIR, TESTS_DIR, WRAPPERS_DIR } from '../paths';
+import { executeTemplate, TEMPLATES_DIR } from '../template';
 import { selectOption } from '../utils';
 import arg from 'arg';
 import { UIProvider } from '../ui/UIProvider';
+import { buildOne } from './build';
 
 function toSnakeCase(v: string): string {
     const r = v.replace(/[A-Z]/g, (sub) => '_' + sub.toLowerCase());
     return r[0] === '_' ? r.substring(1) : r;
 }
 
-async function createFile(dir: string, name: string, template: string, replaces: { [k: string]: string }) {
-    await mkdir(dir, {
-        recursive: true,
-    });
+async function createFile(templatePath: string, realPath: string, replaces: { [k: string]: string }) {
+    const template = (await readFile(templatePath)).toString('utf-8');
+    const lines = template.split('\n');
+    const fileName = executeTemplate(lines.shift()!, replaces);
+    const contents = executeTemplate(lines.join('\n'), replaces);
 
-    const p = path.join(dir, name);
+    const p = path.join(realPath, fileName);
     const file = await open(p, 'a+');
     if ((await file.stat()).size > 0) {
         console.warn(`${p} already exists, not changing.`);
         await file.close();
-        return p;
+        return;
     }
 
-    await file.writeFile(await executeTemplate(template, replaces));
+    await file.writeFile(contents);
     await file.close();
+}
+
+async function createFiles(templatePath: string, realPath: string, replaces: { [k: string]: string }) {
+    const contents = await readdir(templatePath);
+
+    for (const file of contents) {
+        const tp = path.join(templatePath, file);
+        const rp = path.join(realPath, file);
+        if ((await lstat(tp)).isDirectory()) {
+            await createFiles(tp, rp, replaces);
+        } else {
+            await mkdir(path.dirname(rp), {
+                recursive: true,
+            });
+            await createFile(tp, realPath, replaces);
+        }
+    }
 }
 
 export const create: Runner = async (args: Args, ui: UIProvider) => {
@@ -44,18 +62,24 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
     if (name.toLowerCase() === 'contract' || !/^[A-Z][a-zA-Z0-9]*$/.test(name))
         throw new Error(`Cannot create a contract with the name '${name}'`);
 
-    const loweredName = name.substring(0, 1).toLowerCase() + name.substring(1);
-
     const which = (
         await selectOption(
             [
                 {
-                    name: 'An empty contract',
-                    value: 'empty',
+                    name: 'An empty contract (FunC)',
+                    value: 'func-empty',
                 },
                 {
-                    name: 'A simple counter contract',
-                    value: 'counter',
+                    name: 'A simple counter contract (FunC)',
+                    value: 'func-counter',
+                },
+                {
+                    name: 'An empty contract (TACT)',
+                    value: 'tact-empty',
+                },
+                {
+                    name: 'A simple counter contract (TACT)',
+                    value: 'tact-counter',
                 },
             ],
             {
@@ -66,29 +90,22 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
         )
     ).value;
 
-    const prefix = which === 'counter' ? 'counter.' : '';
+    const [lang, template] = which.split('-');
+
+    const snakeName = toSnakeCase(name);
 
     const replaces = {
         name,
-        loweredName,
+        loweredName: name.substring(0, 1).toLowerCase() + name.substring(1),
+        snakeName,
+        contractPath: 'contracts/' + snakeName + '.' + (lang === 'func' ? 'fc' : 'tact'),
     };
 
-    const contractName = toSnakeCase(name) + '.fc';
+    await createFiles(path.join(TEMPLATES_DIR, lang, 'common'), process.cwd(), replaces);
 
-    await createFile(WRAPPERS_DIR, name + '.compile.ts', 'compile.ts.template', {
-        // not using path.join here because path.join uses platform-specific delimiter, which breaks things on windows
-        contractPath: CONTRACTS + '/' + contractName,
-    });
+    await createFiles(path.join(TEMPLATES_DIR, lang, template), process.cwd(), replaces);
 
-    await createFile(CONTRACTS_DIR, contractName, prefix + 'contract.fc.template', replaces);
-
-    await createFile(WRAPPERS_DIR, name + '.ts', prefix + 'wrapper.ts.template', replaces);
-
-    await createFile(TESTS_DIR, name + '.spec.ts', prefix + 'test.spec.ts.template', replaces);
-
-    await createFile(SCRIPTS_DIR, 'deploy' + name + '.ts', prefix + 'deploy.ts.template', replaces);
-
-    if (which === 'counter') {
-        await createFile(SCRIPTS_DIR, 'increment' + name + '.ts', 'counter.increment.ts.template', replaces);
+    if (lang === 'tact') {
+        await buildOne(name, ui);
     }
 };

@@ -7,7 +7,7 @@ import { doCompile, compileResultToCell } from '../compile/compile';
 import { UIProvider } from '../ui/UIProvider';
 import arg from 'arg';
 
-async function buildOne(contract: string, ui: UIProvider) {
+export async function buildOne(contract: string, ui: UIProvider) {
     ui.write(`Build script running, compiling ${contract}`);
 
     const buildArtifactPath = path.join(BUILD_DIR, `${contract}.compiled.json`);
