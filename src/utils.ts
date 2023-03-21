@@ -62,15 +62,13 @@ export async function selectOption(
 }
 
 export async function selectFile(
-    find: () => Promise<{ name: string; path: string }[]>,
+    files: { name: string; path: string }[],
     opts: {
         ui: UIProvider;
         hint?: string;
         import?: boolean;
     }
 ) {
-    const files = await find();
-
     let selected: { name: string; path: string };
 
     if (opts.hint) {

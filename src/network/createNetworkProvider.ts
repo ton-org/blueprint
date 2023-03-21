@@ -300,7 +300,7 @@ class NetworkProviderBuilder {
             ).value as any;
         }
 
-        const storagePath = path.join(TEMP_DIR, network, deployUsing!);
+        const storagePath = path.join(TEMP_DIR, network, deployUsing! + '.json');
 
         let provider: SendProvider;
         switch (deployUsing) {

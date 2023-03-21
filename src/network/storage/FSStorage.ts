@@ -2,6 +2,10 @@ import path from 'path';
 import fs from 'fs/promises';
 import { Storage } from './Storage';
 
+type StorageObject = {
+    [k: string]: string;
+};
+
 export class FSStorage implements Storage {
     #path: string;
 
@@ -9,20 +13,33 @@ export class FSStorage implements Storage {
         this.#path = path;
     }
 
-    async setItem(key: string, value: string): Promise<void> {
-        await fs.mkdir(this.#path, { recursive: true });
-        return fs.writeFile(path.join(this.#path, key), value);
-    }
-
-    async getItem(key: string): Promise<string | null> {
+    async #readObject(): Promise<StorageObject> {
         try {
-            return (await fs.readFile(path.join(this.#path, key))).toString();
+            return JSON.parse((await fs.readFile(this.#path)).toString('utf-8'));
         } catch (e) {
-            return null;
+            return {};
         }
     }
 
+    async #writeObject(obj: StorageObject): Promise<void> {
+        await fs.mkdir(path.dirname(this.#path), { recursive: true });
+        await fs.writeFile(this.#path, JSON.stringify(obj));
+    }
+
+    async setItem(key: string, value: string): Promise<void> {
+        const obj = await this.#readObject();
+        obj[key] = value;
+        await this.#writeObject(obj);
+    }
+
+    async getItem(key: string): Promise<string | null> {
+        const obj = await this.#readObject();
+        return obj[key] ?? null;
+    }
+
     async removeItem(key: string): Promise<void> {
-        return fs.unlink(path.join(this.#path, key));
+        const obj = await this.#readObject();
+        delete obj[key];
+        await this.#writeObject(obj);
     }
 }

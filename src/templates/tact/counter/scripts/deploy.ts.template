@@ -1,0 +1,23 @@
+deploy{{name}}.ts
+import { toNano } from 'ton-core';
+import { {{name}} } from '../wrappers/{{name}}';
+import { NetworkProvider } from '@ton-community/blueprint';
+
+export async function run(provider: NetworkProvider) {
+    const {{loweredName}} = provider.open(await {{name}}.fromInit(BigInt(Math.floor(Math.random() * 10000))));
+
+    await {{loweredName}}.send(
+        provider.sender(),
+        {
+            value: toNano('0.05'),
+        },
+        {
+            $$type: 'Deploy',
+            queryId: 0n,
+        }
+    );
+
+    await provider.waitForDeploy({{loweredName}}.address);
+
+    console.log('ID', await {{loweredName}}.getId());
+}

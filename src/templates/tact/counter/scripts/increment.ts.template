@@ -1,0 +1,45 @@
+increment{{name}}.ts
+import { Address, toNano } from 'ton-core';
+import { {{name}} } from '../wrappers/{{name}}';
+import { NetworkProvider, sleep } from '@ton-community/blueprint';
+
+export async function run(provider: NetworkProvider, args: string[]) {
+    const ui = provider.ui();
+
+    const address = Address.parse(args.length > 0 ? args[0] : await ui.input('{{name}} address'));
+
+    if (!(await provider.isContractDeployed(address))) {
+        ui.write(`Error: Contract at address ${address} is not deployed!`);
+        return;
+    }
+
+    const {{loweredName}} = provider.open({{name}}.fromAddress(address));
+
+    const counterBefore = await {{loweredName}}.getCounter();
+
+    await {{loweredName}}.send(
+        provider.sender(),
+        {
+            value: toNano('0.05'),
+        },
+        {
+            $$type: 'Add',
+            queryId: 0n,
+            amount: 1n,
+        }
+    );
+
+    ui.write('Waiting for counter to increase...');
+
+    let counterAfter = await {{loweredName}}.getCounter();
+    let attempt = 1;
+    while (counterAfter === counterBefore) {
+        ui.setActionPrompt(`Attempt ${attempt}`);
+        await sleep(2000);
+        counterAfter = await {{loweredName}}.getCounter();
+        attempt++;
+    }
+
+    ui.clearActionPrompt();
+    ui.write('Counter increased successfully!');
+}

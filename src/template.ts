@@ -1,11 +1,8 @@
-import { readFile } from 'fs/promises';
-import * as path from 'path';
+import path from 'path';
 
-const TEMPLATES = 'templates';
+export const TEMPLATES_DIR = path.join(__dirname, 'templates');
 
-export async function executeTemplate(template: string, replaces: { [k: string]: string }) {
-    let contents = (await readFile(path.join(__dirname, TEMPLATES, template))).toString();
-
+export function executeTemplate(contents: string, replaces: { [k: string]: string }) {
     for (const k in replaces) {
         contents = contents.replaceAll(`{{${k}}}`, replaces[k]);
     }
