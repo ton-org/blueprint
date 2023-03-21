@@ -5,18 +5,9 @@ import { findCompiles, selectFile } from '../utils';
 import fs from 'fs/promises';
 import { doCompile, compileResultToCell } from '../compile/compile';
 import { UIProvider } from '../ui/UIProvider';
+import arg from 'arg';
 
-export const build: Runner = async (args: Args, ui: UIProvider) => {
-    require('ts-node/register');
-
-    const sel = await selectFile(findCompiles, {
-        ui,
-        hint: args._.length > 1 && args._[1].length > 0 ? args._[1] : undefined,
-        import: false,
-    });
-
-    const contract = sel.name;
-
+async function buildOne(contract: string, ui: UIProvider) {
     ui.write(`Build script running, compiling ${contract}`);
 
     const buildArtifactPath = path.join(BUILD_DIR, `${contract}.compiled.json`);
@@ -57,5 +48,29 @@ export const build: Runner = async (args: Args, ui: UIProvider) => {
         ui.clearActionPrompt();
         ui.write((e as any).toString());
         process.exit(1);
+    }
+}
+
+export const build: Runner = async (args: Args, ui: UIProvider) => {
+    require('ts-node/register');
+
+    const localArgs = arg({
+        '--all': Boolean,
+    });
+
+    const files = await findCompiles();
+
+    if (localArgs['--all']) {
+        for (const file of files) {
+            await buildOne(file.name, ui);
+        }
+    } else {
+        const sel = await selectFile(files, {
+            ui,
+            hint: args._.length > 1 && args._[1].length > 0 ? args._[1] : undefined,
+            import: false,
+        });
+
+        await buildOne(sel.name, ui);
     }
 };
