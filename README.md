@@ -51,7 +51,7 @@ npm create ton@latest
 
 ### Build one of the contracts
 
-1. You need a compilation script in `wrappers/<CONTRACT>.compile.ts` - [example](https://github.com/ton-community/create-ton/blob/main/template/variants/counter/wrappers/Counter.compile.ts)
+1. You need a compilation script in `wrappers/<CONTRACT>.compile.ts` - [example](/example/wrappers/Counter.compile.ts)
 2. Run interactive: &nbsp;&nbsp; `npx blueprint build` &nbsp; or &nbsp; `yarn blueprint build`
 3. Non-interactive: &nbsp; `npx/yarn blueprint build <CONTRACT>`
    * Example: `yarn blueprint build counter`
@@ -64,7 +64,7 @@ npm create ton@latest
 
 ### Deploy one of the contracts
 
-1. You need a deploy script in `scripts/deploy<CONTRACT>.ts` - [example](https://github.com/ton-community/create-ton/blob/main/template/variants/counter/scripts/deployCounter.ts)
+1. You need a deploy script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
 2. Run interactive: &nbsp;&nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
 3. Non-interactive: &nbsp; `npx/yarn blueprint run <CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
    * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
