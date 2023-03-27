@@ -18,11 +18,13 @@ export class InquirerUIProvider implements UIProvider {
         this.#bottomBar.log.write(message);
     }
 
-    async prompt(message: string): Promise<void> {
-        await inquirer.prompt({
+    async prompt(message: string): Promise<boolean> {
+        const { prompt } = await inquirer.prompt({
             type: 'confirm',
-            name: message,
+            name: 'prompt',
+            message,
         });
+        return prompt;
     }
 
     async input(message: string): Promise<string> {
