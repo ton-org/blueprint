@@ -17,8 +17,8 @@ import {
     toNano,
     TupleItem,
 } from 'ton-core';
-import { TonClient } from 'ton';
-import { getHttpEndpoint } from '@orbs-network/ton-access';
+import { TonClient4 } from 'ton';
+import { getHttpV4Endpoint } from '@orbs-network/ton-access';
 import { UIProvider } from '../ui/UIProvider';
 import { NetworkProvider } from './NetworkProvider';
 import { SendProvider } from './send/SendProvider';
@@ -120,13 +120,13 @@ class WrappedContractProvider implements ContractProvider {
 }
 
 class NetworkProviderImpl implements NetworkProvider {
-    #tc: TonClient;
+    #tc: TonClient4;
     #sender: Sender;
     #network: Network;
     #explorer: Explorer;
     #ui: UIProvider;
 
-    constructor(tc: TonClient, sender: Sender, network: Network, explorer: Explorer, ui: UIProvider) {
+    constructor(tc: TonClient4, sender: Sender, network: Network, explorer: Explorer, ui: UIProvider) {
         this.#tc = tc;
         this.#sender = sender;
         this.#network = network;
@@ -146,20 +146,23 @@ class NetworkProviderImpl implements NetworkProvider {
         return this.#sender;
     }
 
-    api(): TonClient {
+    api(): TonClient4 {
         return this.#tc;
     }
 
     provider(address: Address, init?: { code?: Cell; data?: Cell }): ContractProvider {
         return new WrappedContractProvider(
             address,
-            this.#tc.provider(address, init ? { code: init.code ?? null, data: init.data ?? null } : null),
+            this.#tc.provider(
+                address,
+                init ? { code: init.code ?? new Cell(), data: init.data ?? new Cell() } : undefined
+            ),
             init
         );
     }
 
-    isContractDeployed(address: Address): Promise<boolean> {
-        return this.#tc.isContractDeployed(address);
+    async isContractDeployed(address: Address): Promise<boolean> {
+        return this.#tc.isContractDeployed((await this.#tc.getLastBlock()).last.seqno, address);
     }
 
     async waitForDeploy(address: Address, attempts: number = 10, sleepDuration: number = 2000) {
@@ -221,7 +224,7 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 }
 
-async function createMnemonicProvider(client: TonClient, ui: UIProvider) {
+async function createMnemonicProvider(client: TonClient4, ui: UIProvider) {
     const mnemonic = process.env.WALLET_MNEMONIC ?? '';
     const walletVersion = process.env.WALLET_VERSION ?? '';
     if (mnemonic.length === 0 || walletVersion.length === 0) {
@@ -265,7 +268,7 @@ class NetworkProviderBuilder {
         );
     }
 
-    async chooseSendProvider(network: Network, client: TonClient): Promise<SendProvider> {
+    async chooseSendProvider(network: Network, client: TonClient4): Promise<SendProvider> {
         let deployUsing = oneOrZeroOf({
             tonconnect: this.args['--tonconnect'],
             deeplink: this.args['--deeplink'],
@@ -327,8 +330,8 @@ class NetworkProviderBuilder {
         const network = await this.chooseNetwork();
         const explorer = this.chooseExplorer();
 
-        const tc = new TonClient({
-            endpoint: await getHttpEndpoint({ network }),
+        const tc = new TonClient4({
+            endpoint: await getHttpV4Endpoint({ network }),
         });
 
         const sendProvider = await this.chooseSendProvider(network, tc);

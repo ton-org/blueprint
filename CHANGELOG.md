@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2023-04-03
+
+This release contains a breaking change.
+
+### Changed
+
+- Changed the return type of `networkProvider.api()` and the type used internally in `NetworkProvider` from `TonClient` to `TonClient4`. This is a breaking change
+- Updated dependencies
+
 ## [0.6.1] - 2023-03-27
 
 ### Changed

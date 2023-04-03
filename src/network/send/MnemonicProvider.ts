@@ -1,5 +1,5 @@
 import {
-    TonClient,
+    TonClient4,
     WalletContractV1R1,
     WalletContractV1R2,
     WalletContractV1R3,
@@ -59,14 +59,14 @@ const wallets: Record<WalletVersion, WalletClass> = {
 export class MnemonicProvider implements SendProvider {
     #wallet: OpenedContract<WalletInstance>;
     #secretKey: Buffer;
-    #client: TonClient;
+    #client: TonClient4;
     #ui: UIProvider;
 
     constructor(params: {
         version: WalletVersion;
         workchain?: number;
         secretKey: Buffer;
-        client: TonClient;
+        client: TonClient4;
         ui: UIProvider;
     }) {
         if (!(params.version in wallets)) {

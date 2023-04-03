@@ -1,6 +1,6 @@
 {
     "name": "@ton-community/blueprint",
-    "version": "0.6.1",
+    "version": "0.7.0",
     "description": "Framework for development of TON smart contracts",
     "main": "dist/index.js",
     "bin": {
@@ -22,11 +22,11 @@
     },
     "devDependencies": {
         "@types/inquirer": "^8.2.6",
-        "@types/node": "^18.15.5",
+        "@types/node": "^18.15.11",
         "@types/qrcode-terminal": "^0.12.0",
-        "prettier": "^2.8.6",
+        "prettier": "^2.8.7",
         "ton": "^13.4.1",
-        "ton-core": "^0.48.0",
+        "ton-core": "^0.49.0",
         "ton-crypto": "^3.2.0",
         "typescript": "^4.9.5"
     },
@@ -36,10 +36,10 @@
         "ton-crypto": ">=3.2.0"
     },
     "dependencies": {
-        "@orbs-network/ton-access": "^2.3.0",
+        "@orbs-network/ton-access": "^2.3.1",
         "@tact-lang/compiler": "^1.0.0",
         "@ton-community/func-js": "^0.6.0",
-        "@tonconnect/sdk": "^2.1.0",
+        "@tonconnect/sdk": "^2.1.2",
         "arg": "^5.0.2",
         "chalk": "^4.1.0",
         "dotenv": "^16.0.3",
