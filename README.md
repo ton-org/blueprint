@@ -79,8 +79,8 @@ Run in terminal: &nbsp; `npx blueprint help` &nbsp; or &nbsp; `yarn blueprint he
 
 1. Make sure you have a project to host the contract
 2. Run interactive: &nbsp;&nbsp; `npx blueprint create` &nbsp; or &nbsp; `yarn blueprint create`
-3. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `empty` or `counter`)
-   * Example: `yarn blueprint create MyNewContract --type empty`
+3. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `func-empty`, `func-counter`, `tact-empty`, `tact-counter`)
+   * Example: `yarn blueprint create MyNewContract --type func-empty`
 
 ### Contract code
 
