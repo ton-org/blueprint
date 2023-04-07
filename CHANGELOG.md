@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2023-04-07
+
+### Changed
+
+- Changed the `help` command to contain significantly more detailed help for every command
+- Added the `success: true` requirement to every template test
+- Updated dependencies
+
 ## [0.7.0] - 2023-04-03
 
 This release contains a breaking change.
