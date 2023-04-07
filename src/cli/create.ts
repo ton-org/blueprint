@@ -47,6 +47,25 @@ async function createFiles(templatePath: string, realPath: string, replaces: { [
     }
 }
 
+export const templateTypes: { name: string; value: string }[] = [
+    {
+        name: 'An empty contract (FunC)',
+        value: 'func-empty',
+    },
+    {
+        name: 'A simple counter contract (FunC)',
+        value: 'func-counter',
+    },
+    {
+        name: 'An empty contract (TACT)',
+        value: 'tact-empty',
+    },
+    {
+        name: 'A simple counter contract (TACT)',
+        value: 'tact-counter',
+    },
+];
+
 export const create: Runner = async (args: Args, ui: UIProvider) => {
     const localArgs = arg({
         '--type': String,
@@ -63,31 +82,11 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
         throw new Error(`Cannot create a contract with the name '${name}'`);
 
     const which = (
-        await selectOption(
-            [
-                {
-                    name: 'An empty contract (FunC)',
-                    value: 'func-empty',
-                },
-                {
-                    name: 'A simple counter contract (FunC)',
-                    value: 'func-counter',
-                },
-                {
-                    name: 'An empty contract (TACT)',
-                    value: 'tact-empty',
-                },
-                {
-                    name: 'A simple counter contract (TACT)',
-                    value: 'tact-counter',
-                },
-            ],
-            {
-                ui,
-                msg: 'What type of contract do you want to create?',
-                hint: localArgs['--type'],
-            }
-        )
+        await selectOption(templateTypes, {
+            ui,
+            msg: 'What type of contract do you want to create?',
+            hint: localArgs['--type'],
+        })
     ).value;
 
     const [lang, template] = which.split('-');

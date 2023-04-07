@@ -7,14 +7,11 @@ import { create } from './create';
 import { run } from './run';
 import { build } from './build';
 import { test } from './test';
+import { help } from './help';
 import { UIProvider } from '../ui/UIProvider';
 import { InquirerUIProvider } from '../ui/InquirerUIProvider';
 
-const argSpec = {
-    '--help': Boolean,
-
-    '-h': '--help',
-};
+const argSpec = {};
 
 export type Args = arg.Result<typeof argSpec>;
 
@@ -25,6 +22,7 @@ const runners: Record<string, Runner> = {
     run,
     build,
     test,
+    help,
 };
 
 async function main() {
@@ -32,7 +30,7 @@ async function main() {
         permissive: true,
     });
 
-    if (args._.length === 0 || args['--help'] || args._[0] === 'help') {
+    if (args._.length === 0) {
         showHelp();
         process.exit(0);
     }
@@ -106,7 +104,7 @@ function showHelp() {
     console.log(
         chalk.cyanBright(`  blueprint help`) +
             `\t` +
-            chalk.whiteBright(`shows this help screen, more at https://github.com/ton-community/blueprint`)
+            chalk.whiteBright(`shows more detailed help, also see https://github.com/ton-community/blueprint`)
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint help`));
     console.log(``);
