@@ -28,6 +28,7 @@ describe('{{name}}', () => {
             from: deployer.address,
             to: {{loweredName}}.address,
             deploy: true,
+            success: true,
         });
     });
 
