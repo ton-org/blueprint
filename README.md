@@ -16,7 +16,7 @@ npm create ton@latest
 
 ### Core features 🔥
 
-* Create a development environment from template in one click - `npm create ton`
+* Create a development environment from template in one click - `npm create ton@latest`
 * Streamlined workflow for building, testing and deploying smart contracts
 * Dead simple deployment to mainnet/testnet using your favorite wallet (eg. Tonkeeper)
 * Blazing fast testing of multiple smart contracts in an isolated blockchain running in-process
@@ -104,3 +104,7 @@ Run in terminal: &nbsp; `npx blueprint help` &nbsp; or &nbsp; `yarn blueprint he
 ## License
 
 MIT
+
+## Donations
+
+TON - `EQAQR1d1Q4NaE5EefwUMdrr1QvXg-8mDB0XI2-fwDBD0nYxC`
