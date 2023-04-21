@@ -1,4 +1,4 @@
-<p align=right><img src="https://i.imgur.com/zNYvmnw.png" width=400 ></p>
+<img src="https://raw.githubusercontent.com/ton-community/blueprint/main/logo.svg" width=400 >
 
 # Blueprint
 
@@ -100,6 +100,10 @@ Run in terminal: &nbsp; `npx blueprint help` &nbsp; or &nbsp; `yarn blueprint he
 3. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to initialize the contract
 
 &nbsp;
+
+## Contributors
+
+Special thanks to [@qdevstudio](https://t.me/qdevstudio) for their logo for blueprint.
 
 ## License
 
