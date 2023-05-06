@@ -40,7 +40,7 @@ export const findCompiles = async () =>
         .map((f) => ({ path: path.join(WRAPPERS_DIR, f), name: f.slice(0, f.length - compileEnd.length) }));
 
 export const findScripts = async () =>
-    (await fs.readdir(SCRIPTS_DIR)).map((f) => ({ path: path.join(SCRIPTS_DIR, f), name: path.parse(f).name }));
+    (await fs.readdir(SCRIPTS_DIR)).filter(f => /\.ts$/.test(f)).map((f) => ({ path: path.join(SCRIPTS_DIR, f), name: path.parse(f).name }));
 
 export async function selectOption(
     options: { name: string; value: string }[],
