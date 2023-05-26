@@ -1,11 +1,11 @@
-import { TonClient4 } from 'ton';
+import { TonClient4, TonClient } from 'ton';
 import { Address, Cell, Contract, ContractProvider, OpenedContract, Sender } from 'ton-core';
 import { UIProvider } from '../ui/UIProvider';
 
 export interface NetworkProvider {
-    network(): 'mainnet' | 'testnet';
+    network(): 'mainnet' | 'testnet' | 'custom';
     sender(): Sender;
-    api(): TonClient4;
+    api(): TonClient4 | TonClient;
     provider(address: Address, init?: { code?: Cell; data?: Cell }): ContractProvider;
     isContractDeployed(address: Address): Promise<boolean>;
     waitForDeploy(address: Address, attempts?: number, sleepDuration?: number): Promise<void>;
