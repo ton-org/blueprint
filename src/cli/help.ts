@@ -33,7 +33,7 @@ Script name is matched (ignoring case) to a file in the scripts directory. If no
 
 Flags:
 --mainnet, --testnet - specifies the network to use when running the script. If not specified on the command line, it will be asked interactively.
---custom <url-v2-endpoint> - specifies that a custom network should be used when running the script. If not specified on the command line, it will be asked interactively.
+--custom <url-v2-endpoint> - specifies that a custom network should be used when running the script.
 --tonconnect, --tonhub, --deeplink, --mnemonic - specifies the deployer to use when running the script. If not specified on the command line, it will be asked interactively.
 --tonscan, --tonapi, --toncx, --dton - specifies the network explorer to use when displaying links to the deployed contracts. Default: tonscan.`,
     build: `Usage: blueprint build [contract name] [flags]
