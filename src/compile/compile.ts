@@ -21,7 +21,7 @@ async function getCompilerConfigForContract(name: string): Promise<CompilerConfi
 
 export type FuncCompileResult = {
     lang: 'func';
-    result: Cell;
+    code: Cell;
 };
 
 async function doCompileFunc(config: FuncCompilerConfig): Promise<FuncCompileResult> {
@@ -31,14 +31,29 @@ async function doCompileFunc(config: FuncCompilerConfig): Promise<FuncCompileRes
 
     return {
         lang: 'func',
-        result: Cell.fromBase64(cr.codeBoc),
+        code: Cell.fromBase64(cr.codeBoc),
     };
 }
 
 export type TactCompileResult = {
     lang: 'tact';
-    result: Map<string, Buffer>;
+    fs: Map<string, Buffer>;
+    code: Cell;
 };
+
+function findTactBoc(fs: Map<string, Buffer>): Cell {
+    let buf: Buffer | undefined = undefined;
+    for (const [k, v] of fs) {
+        if (k.endsWith('.code.boc')) {
+            buf = v;
+            break;
+        }
+    }
+    if (buf === undefined) {
+        throw new Error('Could not find boc in tact compilation result');
+    }
+    return Cell.fromBoc(buf)[0];
+}
 
 async function doCompileTact(config: TactCompilerConfig, name: string): Promise<TactCompileResult> {
     const fs = new OverwritableVirtualFileSystem();
@@ -57,17 +72,18 @@ async function doCompileTact(config: TactCompilerConfig, name: string): Promise<
         throw new Error('Could not compile tact');
     }
 
+    const code = findTactBoc(fs.overwrites);
+
     return {
         lang: 'tact',
-        result: fs.overwrites,
+        fs: fs.overwrites,
+        code,
     };
 }
 
 export type CompileResult = TactCompileResult | FuncCompileResult;
 
-export async function doCompile(name: string): Promise<CompileResult> {
-    const config = await getCompilerConfigForContract(name);
-
+async function doCompileInner(name: string, config: CompilerConfig): Promise<CompileResult> {
     if (config.lang === 'tact') {
         return await doCompileTact(config, name);
     }
@@ -79,27 +95,24 @@ export async function doCompile(name: string): Promise<CompileResult> {
     } as FuncCompilerConfig);
 }
 
-export function compileResultToCell(result: CompileResult): Cell {
-    switch (result.lang) {
-        case 'func':
-            return result.result;
-        case 'tact':
-            let buf: Buffer | undefined = undefined;
-            for (const [k, v] of result.result) {
-                if (k.endsWith('.code.boc')) {
-                    buf = v;
-                    break;
-                }
-            }
-            if (buf === undefined) {
-                throw new Error('Could not find boc in tact compilation result');
-            }
-            return Cell.fromBoc(buf)[0];
+export async function doCompile(name: string): Promise<CompileResult> {
+    const config = await getCompilerConfigForContract(name);
+
+    if (config.preCompileHook !== undefined) {
+        await config.preCompileHook();
     }
+
+    const res = await doCompileInner(name, config);
+
+    if (config.postCompileHook !== undefined) {
+        await config.postCompileHook(res.code);
+    }
+
+    return res;
 }
 
 export async function compile(name: string): Promise<Cell> {
     const result = await doCompile(name);
 
-    return compileResultToCell(result);
+    return result.code;
 }

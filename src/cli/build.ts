@@ -3,7 +3,7 @@ import { Args, Runner } from './cli';
 import { BUILD_DIR } from '../paths';
 import { findCompiles, selectFile } from '../utils';
 import fs from 'fs/promises';
-import { doCompile, compileResultToCell } from '../compile/compile';
+import { doCompile } from '../compile/compile';
 import { UIProvider } from '../ui/UIProvider';
 import arg from 'arg';
 
@@ -21,7 +21,7 @@ export async function buildOne(contract: string, ui: UIProvider) {
         const result = await doCompile(contract);
 
         if (result.lang === 'tact') {
-            for (const [k, v] of result.result) {
+            for (const [k, v] of result.fs) {
                 await fs.mkdir(path.dirname(k), {
                     recursive: true,
                 });
@@ -29,7 +29,7 @@ export async function buildOne(contract: string, ui: UIProvider) {
             }
         }
 
-        const cell = await compileResultToCell(result);
+        const cell = result.code;
         ui.clearActionPrompt();
         ui.write('\n✅ Compiled successfully! Cell BOC hex result:\n\n');
         ui.write(cell.toBoc().toString('hex'));

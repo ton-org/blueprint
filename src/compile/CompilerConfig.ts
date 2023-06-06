@@ -1,4 +1,10 @@
 import { SourceResolver, SourcesMap, SourcesArray } from '@ton-community/func-js';
+import { Cell } from 'ton-core';
+
+export type CommonCompilerConfig = {
+    preCompileHook?: () => Promise<void>;
+    postCompileHook?: (code: Cell) => Promise<void>;
+};
 
 export type TactCompilerConfig = {
     lang: 'tact';
@@ -19,4 +25,4 @@ export type FuncCompilerConfig = {
       }
 );
 
-export type CompilerConfig = TactCompilerConfig | FuncCompilerConfig;
+export type CompilerConfig = (TactCompilerConfig | FuncCompilerConfig) & CommonCompilerConfig;
