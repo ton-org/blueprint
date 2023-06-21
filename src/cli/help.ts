@@ -34,7 +34,7 @@ Script name is matched (ignoring case) to a file in the scripts directory. If no
 Flags:
 --mainnet, --testnet - specifies the network to use when running the script. If not specified on the command line, it will be asked interactively.
 --tonconnect, --tonhub, --deeplink, --mnemonic - specifies the deployer to use when running the script. If not specified on the command line, it will be asked interactively.
---tonscan, --tonapi, --toncx, --dton - specifies the network explorer to use when displaying links to the deployed contracts. Default: tonscan.`,
+--tonscan, --tonviewer, --toncx, --dton - specifies the network explorer to use when displaying links to the deployed contracts. Default: tonscan.`,
     build: `Usage: blueprint build [contract name] [flags]
 
 Builds the specified contract according to the respective .compile.ts file. If the contract is written in TACT, all TACT-generated files (wrapper class, etc) will be placed in the build/<contract name> folder.
@@ -45,7 +45,7 @@ Flags:
 --all - builds all buildable contracts instead of just one.`,
     test: `Usage: blueprint test
 
-Just runs \`npm test\`, which by default runs \`jest\`.`,
+Just run \`npm test\`, which by default runs \`jest\`.`,
 };
 
 export const help: Runner = async (args: Args, ui: UIProvider) => {

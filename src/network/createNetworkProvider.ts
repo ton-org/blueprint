@@ -38,7 +38,7 @@ const argSpec = {
     '--mnemonic': Boolean,
 
     '--tonscan': Boolean,
-    '--tonapi': Boolean,
+    '--tonviewer': Boolean,
     '--toncx': Boolean,
     '--dton': Boolean,
 };
@@ -47,7 +47,7 @@ type Args = arg.Result<typeof argSpec>;
 
 type Network = 'mainnet' | 'testnet';
 
-type Explorer = 'tonscan' | 'tonapi' | 'toncx' | 'dton';
+type Explorer = 'tonscan' | 'tonviewer' | 'toncx' | 'dton';
 
 class SendProviderSender implements Sender {
     #provider: SendProvider;
@@ -138,7 +138,7 @@ class NetworkProviderImpl implements NetworkProvider {
         return this.#network;
     }
 
-    explorer(): 'tonscan' | 'tonapi' | 'toncx' | 'dton' {
+    explorer(): 'tonscan' | 'tonviewer' | 'toncx' | 'dton' {
         return this.#explorer;
     }
 
@@ -261,7 +261,7 @@ class NetworkProviderBuilder {
         return (
             oneOrZeroOf({
                 tonscan: this.args['--tonscan'],
-                tonapi: this.args['--tonapi'],
+                tonviewer: this.args['--tonviewer'],
                 toncx: this.args['--toncx'],
                 dton: this.args['--dton'],
             }) ?? 'tonscan'
