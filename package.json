@@ -1,5 +1,5 @@
 {
-    "name": "@ton-community/blueprint",
+    "name": "@ton/blueprint",
     "version": "0.10.0",
     "description": "Framework for development of TON smart contracts",
     "main": "dist/index.js",
@@ -10,7 +10,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ton-community/blueprint.git"
+        "url": "git+https://github.com/ton-org/blueprint.git"
     },
     "files": [
         "dist/**/*"
