@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - main
+name: Build, Test and Publish
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && ( github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' )
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          always-auth: true
+      - name: Install Yarn
+        run: npm install -g yarn
+      - name: Build
+        run: yarn
+      - name: Test
+        run: yarn test
+      - name: Publish
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: yarn publish --access public
