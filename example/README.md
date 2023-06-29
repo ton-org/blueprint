@@ -11,7 +11,7 @@ Starter template for a new TON project - FunC contracts, unit tests, compilation
 
 ## Repo contents / tech stack
 1. Compiling FunC - [https://github.com/ton-community/func-js](https://github.com/ton-community/func-js)
-2. Testing TON smart contracts - [https://github.com/ton-community/sandbox](https://github.com/ton-community/sandbox)
+2. Testing TON smart contracts - [https://github.com/ton-org/sandbox](https://github.com/ton-org/sandbox)
 3. Deployment of contracts is supported with [TON Connect 2](https://github.com/ton-connect/), [Tonhub wallet](https://tonhub.com/), using mnemonics, or via a direct `ton://` deeplink
 
 ## How to use
@@ -65,7 +65,7 @@ Starter template for a new TON project - FunC contracts, unit tests, compilation
 * Test
   * In the root repo dir, run in terminal `yarn test`
   * Don't forget to build (or rebuild) before running tests
-  * Tests are running inside Node.js by running TVM in web-assembly using [sandbox](https://github.com/ton-community/sandbox)
+  * Tests are running inside Node.js by running TVM in web-assembly using [sandbox](https://github.com/ton-org/sandbox)
 
 * Deploy
   * Run `yarn blueprint run <deployscript>`
