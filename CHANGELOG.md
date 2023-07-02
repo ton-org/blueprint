@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2023-06-06
+
+### Added
+
+- Added two optional fields to the `CompilerConfig`: `preCompileHook?: () => Promise<void>` and `postCompileHook?: (code: Cell) => Promise<void>`. The former one gets called before any compilation of the respective contract happens, the latter one - after any compilation with the compiled code cell (they are called both during the `build` command and when calling the `compile` function for the respective contracts)
+
+### Changed
+
+- Changed the `run` command to only show `.ts` scripts
+
 ## [0.9.0] - 2023-04-21
 
 ### Changed

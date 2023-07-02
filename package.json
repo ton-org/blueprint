@@ -1,6 +1,6 @@
 {
-    "name": "@ton-community/blueprint",
-    "version": "0.9.0",
+    "name": "@ton/blueprint",
+    "version": "0.10.0",
     "description": "Framework for development of TON smart contracts",
     "main": "dist/index.js",
     "bin": {
@@ -10,7 +10,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ton-community/blueprint.git"
+        "url": "git+https://github.com/ton-org/blueprint.git"
     },
     "files": [
         "dist/**/*"
@@ -22,11 +22,11 @@
     },
     "devDependencies": {
         "@types/inquirer": "^8.2.6",
-        "@types/node": "^18.15.13",
+        "@types/node": "^20.2.5",
         "@types/qrcode-terminal": "^0.12.0",
-        "prettier": "^2.8.7",
-        "ton": "^13.4.1",
-        "ton-core": "^0.49.0",
+        "prettier": "^2.8.8",
+        "ton": "^13.5.0",
+        "ton-core": "^0.49.1",
         "ton-crypto": "^3.2.0",
         "typescript": "^4.9.5"
     },
@@ -37,12 +37,12 @@
     },
     "dependencies": {
         "@orbs-network/ton-access": "^2.3.3",
-        "@tact-lang/compiler": "^1.1.1",
-        "@ton-community/func-js": "^0.6.1",
+        "@tact-lang/compiler": "^1.1.2",
+        "@ton-community/func-js": "^0.6.2",
         "@tonconnect/sdk": "^2.1.3",
         "arg": "^5.0.2",
         "chalk": "^4.1.0",
-        "dotenv": "^16.0.3",
+        "dotenv": "^16.1.4",
         "inquirer": "^8.2.5",
         "qrcode-terminal": "^0.12.0",
         "ton-x": "^2.1.0",

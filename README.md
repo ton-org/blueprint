@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/ton-community/blueprint/main/logo.svg" width=400 >
+<img src="https://raw.githubusercontent.com/ton-org/blueprint/main/logo.svg" width=400 >
 
 # Blueprint
 
@@ -24,7 +24,7 @@ npm create ton@latest
 ### Tech stack
 
 1. Compiling FunC with https://github.com/ton-community/func-js (no CLI)
-2. Testing smart contracts with https://github.com/ton-community/sandbox
+2. Testing smart contracts with https://github.com/ton-org/sandbox
 3. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect), [Tonhub wallet](https://tonhub.com/) or a `ton://` deeplink
 
 ### Requirements
@@ -45,7 +45,7 @@ npm create ton@latest
 * `wrappers/` - TypeScript interface classes for all contracts (implementing `Contract` from [ton-core](https://www.npmjs.com/package/ton-core))
   * include message [de]serialization primitives, getter wrappers and compilation functions
   * used by the test suite and client code to interact with the contracts from TypeScript
-* `tests/` - TypeScript test suite for all contracts (relying on [Sandbox](https://github.com/ton-community/sandbox) for in-process tests)
+* `tests/` - TypeScript test suite for all contracts (relying on [Sandbox](https://github.com/ton-org/sandbox) for in-process tests)
 * `scripts/` - Deployment scripts to mainnet/testnet and other scripts interacting with live contracts
 * `build/` - Compilation artifacts created here after running a build command
 

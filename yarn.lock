@@ -112,10 +112,10 @@
   resolved "https://registry.yarnpkg.com/@scarf/scarf/-/scarf-1.1.1.tgz#d8b9f20037b3a37dbf8dcdc4b3b72f9285bfce35"
   integrity sha512-VGbKDbk1RFIaSmdVb0cNjjWJoRWRI/Weo23AjRCC2nryO0iAS8pzsToJfPVPtVs74WHw4L1UTADNdIYRLkirZQ==
 
-"@tact-lang/compiler@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@tact-lang/compiler/-/compiler-1.1.1.tgz#959e2713a4d7cb4cdb07960ef6f0e1e43ded081d"
-  integrity sha512-3NeVYcCm5+GxzUCwWyivg4u0KctNudohQSr2O1M5ma42DWe3gg8lWarL3/xKWnvZnuZr0oPKyO+9rHCcyB8lLg==
+"@tact-lang/compiler@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@tact-lang/compiler/-/compiler-1.1.2.tgz#e02e9eb81d3e3acb5764a8857f831ca127263ea5"
+  integrity sha512-1XiwaRA7h1AM5b/nB9T5sXVidXZCOEXpWuhWOUyLvaJDjfICBaQfvRCUCHy5c7sP6WoPXlyZOsofXqh9yO9Lpg==
   dependencies:
     "@ipld/dag-pb" "2.1.18"
     "@tact-lang/opcode" "^0.0.13"
@@ -138,17 +138,17 @@
   resolved "https://registry.yarnpkg.com/@tact-lang/opcode/-/opcode-0.0.13.tgz#a168df5269809be7903f663fc216f0b9486a291a"
   integrity sha512-4FGp1p3ahVrXr2QbyD2FqmnvXTMYapTlRJSPhj4O1L2yIq7dp0CkFL9EdKOCUfyirT0X5en78PHLfj0CuQGD7A==
 
-"@ton-community/func-js-bin@0.4.3":
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/@ton-community/func-js-bin/-/func-js-bin-0.4.3.tgz#2eb0ef4fdcd7cfea9d4741173575d581ebb4ac27"
-  integrity sha512-GOKje82hVRWYwuVtfXehLBsnb+kDmDBvHsGRasboPNzrNsl0N4r6AeUeBwQxdPI6/Si2ZKDK1hO5RH0wR/3hYg==
+"@ton-community/func-js-bin@0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@ton-community/func-js-bin/-/func-js-bin-0.4.4.tgz#b7b1b5b5e0939286cf2ccb0b8ff6c1db5774e623"
+  integrity sha512-zCSVXmh+rFMgouzTbWkSVDIt1Z5i36u9rws/Kuqn89/a0vhA1aEoJJ3oJypz0TjWKJQveU4doJsPlqu7UT2zkw==
 
-"@ton-community/func-js@^0.6.1":
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/@ton-community/func-js/-/func-js-0.6.1.tgz#e217485332bed56427c9aa0189e7304d353a3d4f"
-  integrity sha512-C8Hwlv8EMMLGmALbcqAe/omIzv0yFle8W6B+XnEeRWY/O1t5A3+e8+jMIx0k5vk8xa3GtiQh8sQ1d+YlVY41VA==
+"@ton-community/func-js@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@ton-community/func-js/-/func-js-0.6.2.tgz#bd82279e1c489a1422d141d99506bdea12ded9dc"
+  integrity sha512-5bewe8APG2TVgIPLUV5atQfAy+NtdjjGBfsWUeRdVUclzQ5H2wZ8aJsVNLiDBpKSNEKdOAP/1PownOFeodpQHg==
   dependencies:
-    "@ton-community/func-js-bin" "0.4.3"
+    "@ton-community/func-js-bin" "0.4.4"
     arg "^5.0.2"
 
 "@tonconnect/isomorphic-eventsource@^0.0.1":
@@ -232,10 +232,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.15.0.tgz#286a65e3fdffd691e170541e6ecb0410b16a38be"
   integrity sha512-z6nr0TTEOBGkzLGmbypWOGnpSpSIBorEhC4L+4HeQ2iezKCi4f77kyslRwvHeNitymGQ+oFyIWGP96l/DPSV9w==
 
-"@types/node@^18.15.13":
-  version "18.15.13"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.15.13.tgz#f64277c341150c979e42b00e4ac289290c9df469"
-  integrity sha512-N+0kuo9KgrUQ1Sn/ifDXsvg0TTleP7rIy4zOBGECxAljqvqfqpTfzx0Q1NUedOixRMBfe2Whhb056a42cWs26Q==
+"@types/node@^20.2.5":
+  version "20.2.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.2.5.tgz#26d295f3570323b2837d322180dfbf1ba156fefb"
+  integrity sha512-JJulVEQXmiY9Px5axXHeYGLSjhkZEnD+MDPDGbCbIAbMslkKwmygtZFy1X6s/075Yo94sf8GuSlFfPzysQrWZQ==
 
 "@types/qrcode-terminal@^0.12.0":
   version "0.12.0"
@@ -524,10 +524,10 @@ dot-case@^3.0.4:
     no-case "^3.0.4"
     tslib "^2.0.3"
 
-dotenv@^16.0.3:
-  version "16.0.3"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.3.tgz#115aec42bac5053db3c456db30cc243a5a836a07"
-  integrity sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==
+dotenv@^16.1.4:
+  version "16.1.4"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.1.4.tgz#67ac1a10cd9c25f5ba604e4e08bc77c0ebe0ca8c"
+  integrity sha512-m55RtE8AsPeJBpOIFKihEmqUcoVncQIwo7x9U8ZwLEZw9ZpXboz2c+rvog+jUaJvVrZ5kBOeYQBX5+8Aa/OZQw==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -991,10 +991,10 @@ prando@^6.0.1:
   resolved "https://registry.yarnpkg.com/prando/-/prando-6.0.1.tgz#ffa8de84c2adc4975dd9df37ae4ada0458face53"
   integrity sha512-ghUWxQ1T9IJmPu6eshc3VU0OwveUtXQ33ZLXYUcz1Oc5ppKLDXKp0TBDj6b0epwhEctzcQSNGR2iHyvQSn4W5A==
 
-prettier@^2.8.7:
-  version "2.8.7"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.7.tgz#bb79fc8729308549d28fe3a98fce73d2c0656450"
-  integrity sha512-yPngTo3aXUUmyuTjeTUT75txrf+aMh9FiD7q9ZE/i6r0bPb22g4FsE6Y338PQX1bmfy08i9QQCB7/rcUAVntfw==
+prettier@^2.8.8:
+  version "2.8.8"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.8.tgz#e8c5d7e98a4305ffe3de2e1fc4aca1a71c28b1da"
+  integrity sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==
 
 protobufjs@^6.10.2:
   version "6.11.3"
@@ -1182,10 +1182,17 @@ tmp@^0.0.33:
   dependencies:
     os-tmpdir "~1.0.2"
 
-ton-core@>=0.49.0, ton-core@^0.49.0:
+ton-core@>=0.49.0:
   version "0.49.0"
   resolved "https://registry.yarnpkg.com/ton-core/-/ton-core-0.49.0.tgz#69d338daa72e33b36aea4fb02cb0c7b3bf2c668b"
   integrity sha512-t3fhs9rb7JfOccSU966bLSHq5G4PYippaXpQJGZPvUwoNVdlM3/nUwz6S6cr/hsGbthRBzApl4FhJsDlx9r4vA==
+  dependencies:
+    symbol.inspect "1.0.1"
+
+ton-core@^0.49.1:
+  version "0.49.1"
+  resolved "https://registry.yarnpkg.com/ton-core/-/ton-core-0.49.1.tgz#f00b6db841cc212866697adc0ba55a1a0849af5b"
+  integrity sha512-qPQdGPGxCYUuF/ZzfaGU4pftbIU6fxkWCzehB2Ipf5yqo5BabZibLAXEQScgFKgjYDLXcMzptt/6DWQo5/LH+w==
   dependencies:
     symbol.inspect "1.0.1"
 
@@ -1245,18 +1252,16 @@ ton@9.8.0:
     ton-crypto "2.1.0"
     tweetnacl "1.0.3"
 
-ton@^13.4.1:
-  version "13.4.1"
-  resolved "https://registry.yarnpkg.com/ton/-/ton-13.4.1.tgz#8808370785498a8762848d4cdd8a781964df6a74"
-  integrity sha512-VCHmGE8o1EJBp5JdKNiqjHW5hmUqSfSYYIsMfCje8/GA6sLzhhtMmznuGsrAQhM+MeEAUSt72SeI41z/wnu9MQ==
+ton@^13.5.0:
+  version "13.5.0"
+  resolved "https://registry.yarnpkg.com/ton/-/ton-13.5.0.tgz#a9d9ebf8afe7b8f0bf7d817f02ee562369a8d886"
+  integrity sha512-pfuw1HQNurW3OGFTCM2JebLOYIwk8TJEjsbt0aSBUqBmPpayPkfWvkOa4xjJoFdRvb3+q3si2ePOdUfATXsI4g==
   dependencies:
     axios "^0.25.0"
     dataloader "^2.0.0"
-    fp-ts "^2.11.1"
-    io-ts "^2.2.16"
-    io-ts-reporters "^2.0.0"
     symbol.inspect "1.0.1"
     teslabot "^1.3.0"
+    zod "^3.21.4"
 
 tr46@~0.0.3:
   version "0.0.3"
@@ -1377,7 +1382,7 @@ yn@3.1.1:
   resolved "https://registry.yarnpkg.com/yn/-/yn-3.1.1.tgz#1e87401a09d767c1d5eab26a6e4c185182d2eb50"
   integrity sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==
 
-zod@^3.20.2:
+zod@^3.20.2, zod@^3.21.4:
   version "3.21.4"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.21.4.tgz#10882231d992519f0a10b5dd58a38c9dabbb64db"
   integrity sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==
