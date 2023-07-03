@@ -112,10 +112,10 @@
   resolved "https://registry.yarnpkg.com/@scarf/scarf/-/scarf-1.1.1.tgz#d8b9f20037b3a37dbf8dcdc4b3b72f9285bfce35"
   integrity sha512-VGbKDbk1RFIaSmdVb0cNjjWJoRWRI/Weo23AjRCC2nryO0iAS8pzsToJfPVPtVs74WHw4L1UTADNdIYRLkirZQ==
 
-"@tact-lang/compiler@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@tact-lang/compiler/-/compiler-1.1.2.tgz#e02e9eb81d3e3acb5764a8857f831ca127263ea5"
-  integrity sha512-1XiwaRA7h1AM5b/nB9T5sXVidXZCOEXpWuhWOUyLvaJDjfICBaQfvRCUCHy5c7sP6WoPXlyZOsofXqh9yO9Lpg==
+"@tact-lang/compiler@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@tact-lang/compiler/-/compiler-1.1.3.tgz#ecc599427b307cea4e9a7eb26d89e12fffd49a41"
+  integrity sha512-2UnHMW4S1+Rb5hUQAkNZWnQ8XJV4wRq+z3gAjchOzFiZEFNzE/46aIp7E1Jx+dFkfckdWXtGqHbhkRw6rc4CfQ==
   dependencies:
     "@ipld/dag-pb" "2.1.18"
     "@tact-lang/opcode" "^0.0.13"
