@@ -9,6 +9,14 @@ export type CommonCompilerConfig = {
 export type TactCompilerConfig = {
     lang: 'tact';
     target: string;
+    options?: {
+        debug?: boolean;
+        masterchain?: boolean;
+        external?: boolean;
+        experimental?: {
+            inline?: boolean;
+        };
+    };
 };
 
 export type FuncCompilerConfig = {
