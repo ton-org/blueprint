@@ -1,0 +1,422 @@
+{
+  "JettonMinter": {
+    "sendFunctions": {
+      "sendDeploy": {
+        "value": {
+          "type": "bigint"
+        }
+      },
+      "sendMint": {
+        "to": {
+          "type": "Address"
+        },
+        "jetton_amount": {
+          "type": "bigint"
+        },
+        "forward_ton_amount": {
+          "type": "bigint"
+        },
+        "total_ton_amount": {
+          "type": "bigint"
+        }
+      },
+      "sendDiscovery": {
+        "owner": {
+          "type": "Address"
+        },
+        "include_address": {
+          "type": "boolean"
+        },
+        "value": {
+          "type": "bigint",
+          "defaultValue": "toNano('0.1')"
+        }
+      },
+      "sendChangeAdmin": {
+        "newOwner": {
+          "type": "Address"
+        }
+      },
+      "sendChangeContent": {
+        "content": {
+          "type": "Cell"
+        }
+      },
+      "sendCreateSimpleMsgVoting": {
+        "expiration_date": {
+          "type": "bigint"
+        },
+        "minimal_execution_amount": {
+          "type": "bigint"
+        },
+        "payload": {
+          "type": "Cell"
+        },
+        "value?": {
+          "type": "bigint"
+        },
+        "description": {
+          "type": "string",
+          "defaultValue": "\"Sample description\""
+        }
+      },
+      "sendCreatePollVoting": {
+        "duration": {
+          "type": "bigint | number"
+        },
+        "body": {
+          "type": "string | Cell",
+          "defaultValue": "\"Sample description\""
+        },
+        "value": {
+          "type": "bigint",
+          "defaultValue": "toNano(\"0.2\")"
+        }
+      },
+      "sendCodeUpgrade": {
+        "minter_code": {
+          "type": "Cell | null"
+        },
+        "voting_code": {
+          "type": "Cell | null"
+        },
+        "value": {
+          "type": "bigint",
+          "defaultValue": "toNano('0.1')"
+        }
+      }
+    },
+    "getFunctions": {
+      "getWalletAddress": {
+        "owner": {
+          "type": "Address"
+        }
+      },
+      "getJettonData": {},
+      "getTotalSupply": {},
+      "getAdminAddress": {},
+      "getContent": {},
+      "getVotingAddress": {
+        "voting_id": {
+          "type": "bigint"
+        }
+      },
+      "getVotingCode": {}
+    },
+    "path": "./wrappers/JettonMinter.ts",
+    "canBeCreatedFromConfig": true,
+    "codeHex": "b5ee9c72410228010009dc000114ff00f4a413f4bcf2c80b010201620b02020120060302027105040127af16f6a2687d007d206a699fea182dbfc4219840260265adbcfc1444382a380012081a8823881b2ce428037d012802678b2c678b6600fd016597e491646580897a007a00658064ed9e4026250201200807015fb8ce1ed44d0fa00fa40d4d33fd4306c41f8285902700270c8ca0058cf16cb3fc921c8cb0113f40012f400cb00c9db3c8250201eb0a090241a09fe0a165c00dc32328004f332cbc073c5b26208b232c07d003d0032c03276cf21a25001fa243b51343e803e903534cff50c1b1060202cb0d0c02ada77c14440812382a380012081a8823881b2ce428037d012802678b2c678b6600fd016597e491646580897a007a00658064906d9e64400c00e58280e78b117d012009bba801e5b5e6663881600049c020196f6480fd80402625020148100e01f767b68bb7ef434c0cc7e900c7e900c7e800c7d010c7e800c7e800c74cfcc74c7cc7480006388b4800064b50c638674800064dd75c877b4800064dcb5c877bd010c7d010c7d010c78b7b4801480a50c75d334244c388835d27048248c1ff834c7cc08208405e351466ea48c1c380820840c66c3372ea50c1c36cc780820f00be8210d53276dbba943070db31e0208210d1735400ba943070db31e0208210182d8dddba943070db31e020821057fe3672ba943070db31e020820b9a374eba943070db31e020821057fe3672ba943070db31e0821066afdef2ba9370db31e07f04cbd76d176fd906380492f827000e8698180b8d8492f82707d207d2018fd0018b8eb90fd0018fd001839d4da0001698f8080e99f80f6a2687d007d206a699fea1813c1080b3a58505d718113c1083deecbef5d718113c108163b5cb9dd718113c10824203327dd42723211104fa8e2135363737375035c705f2e04c01fa403003c85005fa025003cf16cccb3fccc9ed54e02782105773d1f5ba8e243234353636365123c705f2e04d01d43010344033c85005fa025003cf16cccb3fccc9ed54e027821034aea60dbae3022782101c7f9a1abae302395f0336362182104f0f7510bae30234820a22fdcbba2016141204fe8ffd02d33ff828400302700270c8ca0058cf16cb3fc921c8cb0113f40012f400cb00c9db3c12c705f2e04efa40d1f82888705470002410351047103659c85006fa025004cf1658cf16cc01fa02cb2fc922c8cb0112f400f400cb00c9db3cc8801801cb0501cf1670fa027001cb6a820b9a374e01cb1f0101cb3fc98042fb0025262513000ee05f04840ff2f002d431d33fd32fd33ff82854204702700270c8ca0058cf16cb3fc921c8cb0113f40012f400cb00c9db3c14c705f2e04ef82301bef2e0f602fa00fa00f4043023c0008e2633333443135321a0017aa904bc59bcb08e11206e91309b20f005948040fb009130e2e29130e2e30e251502b83502c0018f5303d0d32fd430f8281259700370c8ca0013cccb2f01cf16c98822c8cb01f400f400cb00c9db3cc8801001cb0501cf1670fa027001cb6a821057fe367201cb1f500401cb3fcb3f01fa0201fa02c98040fb00db31e05f051a2502763705d32fd4d33f3020c102f2e05120c0008e913221c001975b10493835355be30d103412e30d03a4440403c85005fa025003cf16cccb3fccc9ed54181701f83c821004c4b400500aa01abcf2e0f7f82329b9f2e0f9810f10f8238208278d00a02abcf2f4f828535602700270c8ca0058cf16cb3fc921c8cb0113f40012f400cb00c920db3cc88210182d8ddd01cb1f500601cb3f1acb2f1acb3f17cc5005cf16c9c8801801cb0558cf1670fa024066775003cb6bccccc98040fb002504fe298208989680b9f2e052821005f5e1002aa052b0bcf2e0f720d0d32f21c200f2e0f9810f108208278d0023bcf2f4f82322a001d430f82853ab02700270c8ca0058cf16cb3fc921c8cb0113f40012f400cb00c920db3cf828435059700370c8ca0013cccb2f01cf16c98822c8cb01f400f400cb00c920db3cc8821066afdef2251a251900dc01cb1f2b01cb3f52c0cb3fc9c8801801cb0558cf168209312d00011110a01ffa02401e775003cb6bccccc970fb00c88210182d8ddd01cb1f500801cb3f17cb2f12cb3fcc5007cf16c9c8801801cb055004cf1670fa024073775003cb6bcccc5076a170fb0204c98306fb001344400114ff00f4a413f4bcf2c80b1b0201621d1c003da1a63bda89a1a401a9a45ff4804933a401a67ff401f400612a60e0fee041c501f8d033d0d3030171b0925f03e0fa4003d31fd33f22821066afdef2ba8e5f345b32ed44d0d200d4d22ffa402499d200d33ffa00fa00309530707f7020e25f0403f2d0f35142c705f2e0f402d33f307f707020103710351034102327c8ca0017cc15cb2f5003cf16059d5004ca0013cb3f58fa0201fa02925f04e2c9ed541e01fee022821057fe3672ba8e6b345b32ed44d0d200d4d22ffa402499d200d33ffa00fa00309530707f7020e25b810f3126f2f401f2d2f55161c705f2e2f604d33f5262baf2e2f7fa00fa00301046103510247f552027c8ca0017cc15cb2f5003cf16059d5004ca0013cb3f58fa0201fa02925f04e2c9ed54e0300182107546a34d1f00aaba8e4b03fa4031fa003171d721fa0031fa003073a9b40082085b8d80a012bef2e2f8ed44d0c8801801cb0558cf1670fa02c88210d1bb747101cb1f500301cb3f01cf16c97158cb6accc98040fb00e05f04840ff2f0006435363737375135c705f2e04ff404216e91319301fb04e2f40430206e91309132e201c85005fa025003cf16cccb3fccc9ed5401a65f053235028208989680a013bcf2e04b02fa40d3003095c821cf16c9916de2c8801801cb055003cf1670fa027001cb6a8210d173540001cb1f500301cb3f22fa4430c00095327058cb01e30df400c98040fb0022026af828881024705470002410351047103659c85006fa025004cf1658cf16cc01fa02cb2fc922c8cb0112f400f400cb00c9db3c12cf16262503da3738383802fa00fa40f828882359705470002410351047103659c85006fa025004cf1658cf16cc01fa02cb2fc922c8cb0112f400f400cb00c9db3c5007c705f2e04a5131a1513848135075c85005fa025003cf16cccb3fccc9ed5401fa40f40430c8801001cb0526d70b01c30026252400c68e335006cf1670fa02c88210319b0cdc01cb1f500301cb3f5004fa0258cf1658cf16226e93328b089202d0e212cf16c97158cb6acc8e2631333302d70b01c300945f03db31e158cf1670fa027001cb6a8210d53276db01cb1f0101cb3fe2c98042fb00001af9007074c8cb02ca07cbffc9d0084202debe7568726785ec469ef706a0d97a109c1f5ecba119730ba90d533d8258e60100c43738395155c705f2e04902fa40fa00fa00fa003020c20097395380bcf2e04b965191bcf2e04be27020c88210178d451901cb1f500601cb3f23fa0215cb0123cf1601fa0213cb00c94170f01e5004a0444403c85005fa025003cf16cccb3fccc9ed54bce0195b"
+  },
+  "JettonMinterTests": {
+    "sendFunctions": {
+      "sendExecuteVotingMessage": {
+        "voting_id": {
+          "type": "bigint"
+        },
+        "expiration_date": {
+          "type": "bigint"
+        },
+        "voting_type": {
+          "type": "bigint"
+        },
+        "voted_for": {
+          "type": "bigint"
+        },
+        "voted_against": {
+          "type": "bigint"
+        },
+        "payload": {
+          "type": "Cell"
+        }
+      },
+      "sendConfirmVoting": {
+        "voting_id": {
+          "type": "bigint"
+        },
+        "voter": {
+          "type": "Address"
+        },
+        "value": {
+          "type": "bigint",
+          "defaultValue": "toNano('0.1')"
+        }
+      }
+    },
+    "getFunctions": {},
+    "path": "./wrappers/JettonMinterTests.ts",
+    "canBeCreatedFromConfig": false
+  },
+  "JettonWallet": {
+    "sendFunctions": {
+      "sendDeploy": {
+        "value": {
+          "type": "bigint"
+        }
+      },
+      "sendTransfer": {
+        "value": {
+          "type": "bigint"
+        },
+        "jetton_amount": {
+          "type": "bigint"
+        },
+        "to": {
+          "type": "Address"
+        },
+        "responseAddress": {
+          "type": "Address"
+        },
+        "customPayload": {
+          "type": "Cell | null"
+        },
+        "forward_ton_amount": {
+          "type": "bigint"
+        },
+        "forwardPayload": {
+          "type": "Cell | null"
+        }
+      },
+      "sendBurn": {
+        "value": {
+          "type": "bigint"
+        },
+        "jetton_amount": {
+          "type": "bigint"
+        },
+        "responseAddress": {
+          "type": "Address"
+        },
+        "customPayload": {
+          "type": "Cell | null"
+        }
+      },
+      "sendWithdrawTons": {},
+      "sendWithdrawJettons": {
+        "from": {
+          "type": "Address"
+        },
+        "amount": {
+          "type": "bigint"
+        }
+      },
+      "sendVote": {
+        "voting_address": {
+          "type": "Address"
+        },
+        "expiration_date": {
+          "type": "bigint"
+        },
+        "vote": {
+          "type": "boolean"
+        },
+        "need_confirmation": {
+          "type": "boolean",
+          "defaultValue": "false"
+        }
+      },
+      "sendCreateSimpleMsgVotingThroughWallet": {
+        "expiration_date": {
+          "type": "bigint"
+        },
+        "minimal_execution": {
+          "type": "bigint"
+        },
+        "proposal": {
+          "type": "Cell"
+        },
+        "voting_type": {
+          "type": "bigint",
+          "defaultValue": "0n"
+        },
+        "value": {
+          "type": "bigint",
+          "defaultValue": "toNano('0.1')"
+        },
+        "query_id": {
+          "type": "bigint",
+          "defaultValue": "0n"
+        },
+        "description": {
+          "type": "string",
+          "defaultValue": "\"Sample description\""
+        }
+      }
+    },
+    "getFunctions": {
+      "getJettonBalance": {},
+      "getVotedWeight": {
+        "voting_id": {
+          "type": "bigint"
+        },
+        "expiration_date": {
+          "type": "bigint"
+        }
+      },
+      "getVoteKeeperAddress": {
+        "voting_address": {
+          "type": "Address"
+        }
+      },
+      "getJettonData": {},
+      "getDaoData": {},
+      "getLockedBalance": {},
+      "getTotalBalance": {}
+    },
+    "path": "./wrappers/JettonWallet.ts",
+    "canBeCreatedFromConfig": true,
+    "codeHex": "b5ee9c7241021f0100070f000114ff00f4a413f4bcf2c80b0102016207020201200403003dbf6bcf6a2687d007d207d206a7d00699798107c11dccb980a50382a0a006f40201580605003fb7605da89a1f401f481f481a9f401a65e6041f047732e602940e0a82801bcb70024db4025f051102404e00590b19e2c039e2ce1f404e1f405924391960227e80025e801960193b67900f1d0202cd09080011d7d221860007970a6c04b3d106380492f827000e8698180b8d8474289af81ed9e707d207d2018fd0018b8eb90fd0018fd001839d4da0001698f8090410807c53f52dd4742981a2ced9e701041080bc6a28cdd474318222201ed9e701a9241082caf83de5d41e1b180a03fe8e843459db3ce06c22ed44d0fa00fa40fa40d4fa00d32f3020f823b9973014a070541400de2882106d8e5e3cba8e3d10455f05335222c705f2e2c1820898968070fb02c8801001cb0558cf1670fa027001cb6a8210d53276db01cb1f01d33f011201cb3f01d1c9810082fb00e0288210768a50b2bae30228821069fb306cba16150b02e8e3025f0332248210318eff17ba8e55345ac705f2e2c601d33f0101d33fd32fd4810f10f8238208278d00a024bcf2f4f82323b9f2e0f9d170c8801801cb055006cf1625fa027001cb6a82101c7f9a1a01cb1f500401cb3f12cb3fcb2fcccb3fc98040fb00e004820b9a374ebae3025f04840ff2f00d0c005a58c705f2e2c6d33f0101d1c8801001cb0558cf1670fa027001cb6a82105fe9b8ca01cb1f0101cb3fc98040fb0003fe385237c705f2e2c604d33f0101fa40d32f810f10f8238208278d00a023bcf2f4f82322b9f2e0f9d200d200d1f828884150027002c858cf1601cf1670fa0270fa02c921c8cb0113f40012f400cb00c920db3c50a8a022700cb609c8801801cb055009cf162bfa02500a7658cb6bcc82102bd6370401cb1f500401cb3f25cf160f1d0e004ccb2f27fa0212ca00ca00c98040fb004343c85006fa025004cf1658cf16cc01fa02cb2fc9ed540114ff00f4a413f4bcf2c80b100201621211001da17197da89a1f481f481f401f400610142d03331d0d3030171b0915be0fa403001d31f0182102bd63704bae3025b840ff2f01301feed44d0fa40fa40fa00fa00305236c705f2e1f403d33ffa40d32ffa00d200d200305128a129a121935188a0955199a00908e228c2fff2e1f5820898968070fb02261038401ac85004cf1658cf1601fa0201fa02c9ed54c8801001cb055004cf1670fa027001cb6a82106edb188901cb1f5801cb3f01cf16cb2f58fa0212ca0014000eca00c98306fb0000a010455f05335222c705f2e2c1d33f0101fa40fa00f404d1c8801801cb055003cf1670fa0270c882100f8a7ea501cb1f500501cb3f58fa0224cf165004cf16f40070fa02ca00c97158cb6accc98040fb0001f6ed44d0fa00fa40fa40d4fa00d32f3020f823b9973014a070541400de09d33f0101fa00fa40f404305182a1527cc705f2e2c12ac2fff2e2c20882095ef3c0a082102cb41780a019bcf2e2c3c882107bdd97de01cb1f0101cb3f5007fa0223cf165005cf1613f400c9c8801801cb0523cf1670fa02017158cb6accc91700388040fb00045035c85006fa025004cf1658cf16cc01fa02cb2fc9ed5402f6ed44d0fa00fa40fa40d4fa00d32f3020f823b9973014a070541400de259d22d76598c823d0cf16c9fb04dfdf0ad33f0101fa005171a007fa40fa40537dc705547387705470002410351047103659c85006fa025004cf1658cf16cc01fa02cb2fc922c8cb0112f400f400cb00c9db3c500fc7051eb1f2e2c30cfa001d1901f051caa1218e39521ca01aa1c882107362d09c01cb1f2401cb3f5003fa0201cf16500acf16c9c8801001cb0526cf165008fa0250077158cb6accc971fb00105795104c3b5f04e2068208989680b60972fb0227d70b01c30005c20015b0923535e30d5025c85006fa025004cf1658cf16cc01fa02cb2fc9ed541a004ec8801001cb055007cf1670fa027001cb6a8210d53276db01cb1f500501cb3fc9810082fb00103402f403d33f0101fa00fa4021f004ed44d0fa00fa40fa40d4fa00d32f3020f823b9973014a070541400de5158a1524cc705f2e2c12ac2fff2e2c2543621705470002410351047103659c85006fa025004cf1658cf16cc01fa02cb2fc922c8cb0112f400f400cb00c920db3c06fa40f40431fa0020d749c200f2e2c4c81d1c00d68210178d451901cb1f500c01cb3f500afa0225cf1601cf1628fa025009cf16c9c8801801cb055006cf1670fa024085775003cb6bcccc2591729171e2500aa815a08209f78a40a016bcf2e2c506c98040fb0050040503c85006fa025004cf1658cf16cc01fa02cb2fc9ed54001af9007074c8cb02ca07cbffc9d000be8020d721ed44d0fa00fa40fa40d4fa00d32f3020f823b9973014a070541400de06d31f018200fff0218210178d4519ba0282107bdd97deba12b1f2f4d33f0130fa003015a00510344130c85006fa025004cf1658cf16cc01fa02cb2fc9ed5401f187c0"
+  },
+  "JettonWalletTests": {
+    "sendFunctions": {
+      "sendConfirmVote": {
+        "value": {
+          "type": "bigint",
+          "defaultValue": "toNano('0.1')"
+        }
+      },
+      "sendVotingCreated": {
+        "voting_address": {
+          "type": "Address"
+        },
+        "value": {
+          "type": "bigint",
+          "defaultValue": "toNano('0.1')"
+        }
+      }
+    },
+    "getFunctions": {},
+    "path": "./wrappers/JettonWalletTests.ts",
+    "canBeCreatedFromConfig": false
+  },
+  "VoteKeeperTests": {
+    "sendFunctions": {
+      "sendRequestVote": {
+        "voter": {
+          "type": "Address"
+        },
+        "expiration_date": {
+          "type": "bigint"
+        },
+        "weight": {
+          "type": "bigint"
+        },
+        "vote_for": {
+          "type": "boolean"
+        },
+        "vote_confirmation": {
+          "type": "boolean"
+        },
+        "value": {
+          "type": "bigint",
+          "defaultValue": "toNano('0.1')"
+        }
+      }
+    },
+    "getFunctions": {},
+    "path": "./wrappers/VoteKeeperTests.ts",
+    "canBeCreatedFromConfig": false
+  },
+  "Voting": {
+    "sendFunctions": {
+      "sendEndVoting": {
+        "value": {
+          "type": "bigint",
+          "defaultValue": "toNano('0.5')"
+        }
+      }
+    },
+    "getFunctions": {
+      "getData": {},
+      "getFullData": {}
+    },
+    "path": "./wrappers/Voting.ts",
+    "canBeCreatedFromConfig": true,
+    "codeHex": "b5ee9c7241021b01000417000114ff00f4a413f4bcf2c80b01020162050202012004030163bfc6276a276a2f6a3c9adf80bf6b3f6b2f6b249780c76a0f6f880f97ffc20fc217c21fc227c22fc23447c23fc247c24fc2541a008fbdba5f6a276a2f6a3c9adf80bf6b3f6b2f6b249780c76a0f6f880f97ffc23687d007a027c20fc24fc217c257c21fc227c22fc23fc240845883d0834882c0823881b081288120811c0202cb0d060201200c0702014809080045431d32f01f864d33f01f865d401f866fa4030f86a7ff86170f86770f86870f869f01980201200b0a00573e127e11be117e113e10fe107232803e10b3c5b2cff2cbf2cff33e11fe80be123e80b2803e12b3c5b27b552000773b51343480007e186043cc7e107cbd3e90007e18b48fc07e18f48bc07e19348fc07e1975007e19be80007e19fe80007e1a3480007e1a7e900c3e1aa0002fff6a268690000fc30fc20f96879fd2000fc31691f987c31c0297d007434c0c05c6c2497c1383e900c0074c7c04074cfc048a084060b63776ea78c8cccfc05fe10b1c17cb83d3c06b83c0608a0841bb6c6226eb8c08c4d0c60841985ce916eb8c096e103fcbc20f0e00f2f823f844bcf2e0f6f849f2d0f86df845c0009f30f846d0fa00f404305222bef2e0f7def845c0019c3082097d7840bef2e0f7f8469131e2f845f844f843c8801001cb05f842cf1670fa027001cb6a82104f0f751001cb1f500501cb3f14cb3f13cb2f12cb3ff847fa02f848fa02f4007ff869f019c98040fb00047032fa40f842882359705470002410351047103659c85006fa025004cf1658cf16cc01fa02cb2fc922c8cb0112f400f400cb00c9db3cf828881a19131003d6027002c858cf1601cf1670fa0270fa02c921c8cb0113f40012f400cb00c9db3c14c705f2e0f5f823f844b9f2e0f902d32f810f32f84413be12f2f4fa00d200d200d10196f84758a0f86796f84858a0f868e2048209c9c38004a113b60970fb0202e30ff019c9810082fb00191211003ac8801001cb0558cf1670fa027001cb6a8210d53276db01cb1f0101cb3f0048f843c8801801cb05f842cf1670fa027001cb6a820a22fdcb01cb1f5801cb3fcb3f01cf160114ff00f4a413f4bcf2c80b140201621615001da17197da89a1f481f481f401f400610142d03331d0d3030171b0915be0fa403001d31f0182102bd63704bae3025b840ff2f01701feed44d0fa40fa40fa00fa00305236c705f2e1f403d33ffa40d32ffa00d200d200305128a129a121935188a0955199a00908e228c2fff2e1f5820898968070fb02261038401ac85004cf1658cf1601fa0201fa02c9ed54c8801001cb055004cf1670fa027001cb6a82106edb188901cb1f5801cb3f01cf16cb2f58fa0212ca0018000eca00c98306fb00001af9007074c8cb02ca07cbffc9d0084202debe7568726785ec469ef706a0d97a109c1f5ecba119730ba90d533d8258e601a29b4e3c"
+  },
+  "VotingResults": {
+    "sendFunctions": {
+      "sendVoteResult": {
+        "votingId": {
+          "type": "bigint | number"
+        },
+        "votedFor": {
+          "type": "bigint"
+        },
+        "votedAgainst": {
+          "type": "bigint"
+        },
+        "value": {
+          "type": "bigint",
+          "defaultValue": "toNano('0.1')"
+        },
+        "query_id": {
+          "type": "bigint | number",
+          "defaultValue": "0"
+        }
+      },
+      "sendProvideVoteResult": {
+        "value": {
+          "type": "bigint",
+          "defaultValue": "toNano('0.1')"
+        },
+        "query_id": {
+          "type": "bigint | number",
+          "defaultValue": "0"
+        }
+      }
+    },
+    "getFunctions": {
+      "getData": {}
+    },
+    "path": "./wrappers/VotingResults.ts",
+    "canBeCreatedFromConfig": true,
+    "codeHex": "b5ee9c724102060100018b000114ff00f4a413f4bcf2c80b010201620302003da1a63bda89a1a401a9a45ff4804933a401a67ff401f400612a60e0fee041c501f8d033d0d3030171b0925f03e0fa4003d31fd33f22821066afdef2ba8e5f345b32ed44d0d200d4d22ffa402499d200d33ffa00fa00309530707f7020e25f0403f2d0f35142c705f2e0f402d33f307f707020103710351034102327c8ca0017cc15cb2f5003cf16059d5004ca0013cb3f58fa0201fa02925f04e2c9ed540401fee022821057fe3672ba8e6b345b32ed44d0d200d4d22ffa402499d200d33ffa00fa00309530707f7020e25b810f3126f2f401f2d2f55161c705f2e2f604d33f5262baf2e2f7fa00fa00301046103510247f552027c8ca0017cc15cb2f5003cf16059d5004ca0013cb3f58fa0201fa02925f04e2c9ed54e0300182107546a34d0500aaba8e4b03fa4031fa003171d721fa0031fa003073a9b40082085b8d80a012bef2e2f8ed44d0c8801801cb0558cf1670fa02c88210d1bb747101cb1f500301cb3f01cf16c97158cb6accc98040fb00e05f04840ff2f02eb5cdd9"
+  },
+  "VotingTests": {
+    "sendFunctions": {
+      "sendInitVoteMessage": {
+        "expiration_date": {
+          "type": "bigint"
+        },
+        "voting_type": {
+          "type": "bigint"
+        },
+        "proposal": {
+          "type": "Cell"
+        },
+        "initiator": {
+          "type": "Address"
+        },
+        "value": {
+          "type": "bigint",
+          "defaultValue": "toNano('0.1')"
+        }
+      },
+      "sendSubmitVote": {
+        "voter": {
+          "type": "Address"
+        },
+        "expiration_date": {
+          "type": "bigint"
+        },
+        "votes": {
+          "type": "bigint"
+        },
+        "vote_for": {
+          "type": "boolean"
+        },
+        "confirm_vote": {
+          "type": "boolean",
+          "defaultValue": "false"
+        },
+        "value": {
+          "type": "bigint",
+          "defaultValue": "toNano('0.1')"
+        }
+      }
+    },
+    "getFunctions": {},
+    "path": "./wrappers/VotingTests.ts",
+    "canBeCreatedFromConfig": false
+  }
+}

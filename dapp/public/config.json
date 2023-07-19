@@ -1,0 +1,363 @@
+{
+  "JettonMinter": {
+    "defaultAddress": "EQBUFfTuiKVivJBNI35fHmDqXHwc2Fy6Eb-RzUI7QWeb3TON",
+    "tabName": "Minter",
+    "sendFunctions": {
+      "sendMint": {
+        "tabName": "Mint",
+        "fieldNames": {
+          "to": "Receiver",
+          "jetton_amount": "Jettons",
+          "forward_ton_amount": "TONs for receiver",
+          "total_ton_amount": "TONs to send"
+        }
+      },
+      "sendChangeAdmin": {
+        "tabName": "",
+        "fieldNames": {
+          "newOwner": ""
+        }
+      },
+      "sendChangeContent": {
+        "tabName": "",
+        "fieldNames": {
+          "content": ""
+        }
+      },
+      "sendCreateSimpleMsgVoting": {
+        "tabName": "",
+        "fieldNames": {
+          "expiration_date": "",
+          "minimal_execution_amount": "",
+          "payload": "",
+          "value?": "",
+          "description": ""
+        }
+      },
+      "sendCreatePollVoting": {
+        "tabName": "",
+        "fieldNames": {
+          "duration": "",
+          "body": "",
+          "value": ""
+        }
+      },
+      "sendCodeUpgrade": {
+        "tabName": "",
+        "fieldNames": {
+          "minter_code": "",
+          "voting_code": "",
+          "value": ""
+        }
+      },
+      "sendDiscovery": {
+        "tabName": "",
+        "fieldNames": {
+          "owner": "",
+          "include_address": "",
+          "value": ""
+        }
+      },
+      "sendDeploy": {
+        "tabName": "",
+        "fieldNames": {
+          "value": ""
+        }
+      }
+    },
+    "getFunctions": {
+      "getWalletAddress": {
+        "tabName": "",
+        "fieldNames": {
+          "owner": ""
+        },
+        "outNames": []
+      },
+      "getJettonData": {
+        "tabName": "",
+        "fieldNames": {},
+        "outNames": []
+      },
+      "getTotalSupply": {
+        "tabName": "",
+        "fieldNames": {},
+        "outNames": []
+      },
+      "getAdminAddress": {
+        "tabName": "",
+        "fieldNames": {},
+        "outNames": []
+      },
+      "getContent": {
+        "tabName": "",
+        "fieldNames": {},
+        "outNames": []
+      },
+      "getVotingAddress": {
+        "tabName": "",
+        "fieldNames": {
+          "voting_id": ""
+        },
+        "outNames": []
+      },
+      "getVotingCode": {
+        "tabName": "",
+        "fieldNames": {},
+        "outNames": []
+      }
+    }
+  },
+  "JettonMinterTests": {
+    "defaultAddress": "",
+    "tabName": "",
+    "sendFunctions": {
+      "sendExecuteVotingMessage": {
+        "tabName": "",
+        "fieldNames": {
+          "voting_id": "",
+          "expiration_date": "",
+          "voting_type": "",
+          "voted_for": "",
+          "voted_against": "",
+          "payload": ""
+        }
+      },
+      "sendConfirmVoting": {
+        "tabName": "",
+        "fieldNames": {
+          "voting_id": "",
+          "voter": "",
+          "value": ""
+        }
+      }
+    },
+    "getFunctions": {}
+  },
+  "JettonWallet": {
+    "defaultAddress": "",
+    "tabName": "",
+    "sendFunctions": {
+      "sendDeploy": {
+        "tabName": "",
+        "fieldNames": {
+          "value": ""
+        }
+      },
+      "sendTransfer": {
+        "tabName": "",
+        "fieldNames": {
+          "value": "",
+          "jetton_amount": "",
+          "to": "",
+          "responseAddress": "",
+          "customPayload": "",
+          "forward_ton_amount": "",
+          "forwardPayload": ""
+        }
+      },
+      "sendBurn": {
+        "tabName": "",
+        "fieldNames": {
+          "value": "",
+          "jetton_amount": "",
+          "responseAddress": "",
+          "customPayload": ""
+        }
+      },
+      "sendWithdrawTons": {
+        "tabName": "",
+        "fieldNames": {}
+      },
+      "sendWithdrawJettons": {
+        "tabName": "",
+        "fieldNames": {
+          "from": "",
+          "amount": ""
+        }
+      },
+      "sendVote": {
+        "tabName": "",
+        "fieldNames": {
+          "voting_address": "",
+          "expiration_date": "",
+          "vote": "",
+          "need_confirmation": ""
+        }
+      },
+      "sendCreateSimpleMsgVotingThroughWallet": {
+        "tabName": "",
+        "fieldNames": {
+          "expiration_date": "",
+          "minimal_execution": "",
+          "proposal": "",
+          "voting_type": "",
+          "value": "",
+          "query_id": "",
+          "description": ""
+        }
+      }
+    },
+    "getFunctions": {
+      "getJettonBalance": {
+        "tabName": "",
+        "fieldNames": {},
+        "outNames": []
+      },
+      "getVotedWeight": {
+        "tabName": "",
+        "fieldNames": {
+          "voting_id": "",
+          "expiration_date": ""
+        },
+        "outNames": []
+      },
+      "getVoteKeeperAddress": {
+        "tabName": "",
+        "fieldNames": {
+          "voting_address": ""
+        },
+        "outNames": []
+      },
+      "getJettonData": {
+        "tabName": "",
+        "fieldNames": {},
+        "outNames": []
+      },
+      "getDaoData": {
+        "tabName": "",
+        "fieldNames": {},
+        "outNames": []
+      },
+      "getLockedBalance": {
+        "tabName": "",
+        "fieldNames": {},
+        "outNames": []
+      },
+      "getTotalBalance": {
+        "tabName": "",
+        "fieldNames": {},
+        "outNames": []
+      }
+    }
+  },
+  "JettonWalletTests": {
+    "defaultAddress": "",
+    "tabName": "",
+    "sendFunctions": {
+      "sendConfirmVote": {
+        "tabName": "",
+        "fieldNames": {
+          "value": ""
+        }
+      },
+      "sendVotingCreated": {
+        "tabName": "",
+        "fieldNames": {
+          "voting_address": "",
+          "value": ""
+        }
+      }
+    },
+    "getFunctions": {}
+  },
+  "VoteKeeperTests": {
+    "defaultAddress": "",
+    "tabName": "",
+    "sendFunctions": {
+      "sendRequestVote": {
+        "tabName": "",
+        "fieldNames": {
+          "voter": "",
+          "expiration_date": "",
+          "weight": "",
+          "vote_for": "",
+          "vote_confirmation": "",
+          "value": ""
+        }
+      }
+    },
+    "getFunctions": {}
+  },
+  "Voting": {
+    "defaultAddress": "",
+    "tabName": "",
+    "sendFunctions": {
+      "sendEndVoting": {
+        "tabName": "",
+        "fieldNames": {
+          "value": ""
+        }
+      }
+    },
+    "getFunctions": {
+      "getData": {
+        "tabName": "",
+        "fieldNames": {},
+        "outNames": []
+      },
+      "getFullData": {
+        "tabName": "",
+        "fieldNames": {},
+        "outNames": []
+      }
+    }
+  },
+  "VotingResults": {
+    "defaultAddress": "",
+    "tabName": "",
+    "sendFunctions": {
+      "sendVoteResult": {
+        "tabName": "",
+        "fieldNames": {
+          "votingId": "",
+          "votedFor": "",
+          "votedAgainst": "",
+          "value": "",
+          "query_id": ""
+        }
+      },
+      "sendProvideVoteResult": {
+        "tabName": "",
+        "fieldNames": {
+          "value": "",
+          "query_id": ""
+        }
+      }
+    },
+    "getFunctions": {
+      "getData": {
+        "tabName": "",
+        "fieldNames": {},
+        "outNames": []
+      }
+    }
+  },
+  "VotingTests": {
+    "defaultAddress": "EQ123",
+    "tabName": "",
+    "sendFunctions": {
+      "sendInitVoteMessage": {
+        "tabName": "",
+        "fieldNames": {
+          "expiration_date": "",
+          "voting_type": "",
+          "proposal": "",
+          "initiator": "",
+          "value": ""
+        }
+      },
+      "sendSubmitVote": {
+        "tabName": "",
+        "fieldNames": {
+          "voter": "",
+          "expiration_date": "",
+          "votes": "",
+          "vote_for": "",
+          "confirm_vote": "",
+          "value": ""
+        }
+      }
+    },
+    "getFunctions": {}
+  }
+}
