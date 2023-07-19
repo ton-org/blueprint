@@ -18,8 +18,6 @@ export type WrapperInfo = {
 	sendFunctions: Functions;
 	getFunctions: Functions;
 	path: string;
-	canBeCreatedFromConfig?: boolean;
-	codeHex?: string;
 };
 
 export type WrappersData = Record<string, WrapperInfo>;
@@ -77,21 +75,9 @@ export async function parseWrappersToJSON(wrappersOut = 'wrappers.json', configO
 			getFunctions[getMethod] = params || {};
 		}
 
-		let canBeCreatedFromConfig = classProperties.includes('createFromConfig');
-		let codeHex = undefined;
-		if (canBeCreatedFromConfig) {
-			try {
-				if (!fs.existsSync(path.replace('.ts', '.compile.ts'))) throw new Error('Wrapper cannot be compiled at all');
-				const compiled = fs.readFileSync(path.replace('wrappers', 'build').replace('.ts', '.compiled.json'), 'utf-8');
-				codeHex = JSON.parse(compiled).hex;
-			} catch (e) {
-				canBeCreatedFromConfig = false;
-			}
-		}
-
 		if (skipFile) continue;
 		const relativePath = path.replace(process.cwd(), '.');
-		wrappers[name] = { sendFunctions, getFunctions, path: relativePath, canBeCreatedFromConfig, codeHex };
+		wrappers[name] = { sendFunctions, getFunctions, path: relativePath };
 		config[name] = {
 			defaultAddress: '',
 			tabName: '',

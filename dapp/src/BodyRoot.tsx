@@ -10,7 +10,6 @@ import { loadWrappersFromJSON } from './wrappersData';
 function BodyRoot() {
 	const [wrappers, setWrappers] = useState<WrappersData | null>(null);
 	const [wrappersConfig, setWrappersConfig] = useState<WrappersConfig | null>(null);
-	const [hasDeploy, setHasDeploy] = useState<boolean>(false);
 	const [destAddr, setDestAddr] = useState<string>('');
 	const [configAddress, setConfigAddress] = useState<Address | null>(null);
 	const [addressError, setAddressError] = useState<boolean>(false);
@@ -108,7 +107,6 @@ function BodyRoot() {
 
 	useEffect(() => {
 		if (wrappers && wrappersConfig) {
-			setHasDeploy('sendDeploy' in wrappers[wrapper]['sendFunctions']);
 			try {
 				setConfigAddress(Address.parse(wrappersConfig[wrapper]['defaultAddress']));
 			} catch (e) {
