@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/ton-org/blueprint/main/logo.svg" width=400 >
 
-# Blueprint
+# 
 
 A development environment for TON blockchain for writing, testing, and deploying smart contracts.
 
