@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { beginCell, Cell } from 'ton-core';
 import { FieldProps } from '../ActionCard/ActionCard';
 
-export function CellField({ paramName, fieldName, sendParam, defaultValue, optional }: FieldProps) {
+export function CellField({ paramName, fieldName, param: sendParam, defaultValue, optional }: FieldProps) {
 	const [cellHexOrB64, setCellHexOrB64] = useState<string>('');
 	const [parseError, setParseError] = useState<boolean>(false);
 	const [touched, setTouched] = useState<boolean>(false);

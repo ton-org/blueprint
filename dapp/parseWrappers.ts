@@ -98,7 +98,7 @@ export async function parseWrappersToJSON(wrappersOut = 'wrappers.json', configO
 			config[name].getFunctions[getMethod] = {
 				tabName: '',
 				fieldNames: {},
-                outNames: [],
+				outNames: [],
 			};
 			for (const param of Object.keys(getFunctions[getMethod])) {
 				config[name].getFunctions[getMethod].fieldNames[param] = '';
@@ -156,5 +156,17 @@ const updateConfig = (configPath: string, newConfig: WrappersConfig) => {
 	}
 
 	// Write the modified config back to the file
-	fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+	fs.writeFileSync(
+		configPath,
+		JSON.stringify(
+			config,
+			(key, value) => {
+				if (Array.isArray(value) && value.length === 0) {
+					return []; // Replace empty arrays with []
+				}
+				return value;
+			},
+			2,
+		),
+	);
 };

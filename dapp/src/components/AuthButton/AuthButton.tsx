@@ -101,6 +101,7 @@ export function AuthButton() {
 							rightIcon={<ChevronDownIcon />}
 							mr={['2', '0', '0', '0']}
 							bg="gray.300"
+							colorScheme="gray"
 						>
 							{address}
 						</MenuButton>
@@ -145,7 +146,7 @@ export function AuthButton() {
 						/>
 					</ModalBody>
 					<ModalFooter>
-						<Button rounded="13" onClick={() => setModalUniversalLink('')}>
+						<Button rounded="13" colorScheme="blue" onClick={() => setModalUniversalLink('')}>
 							Close
 						</Button>
 					</ModalFooter>

@@ -10,8 +10,8 @@ export function MultiTypeField(props: MultiTypeFieldProps) {
 
 	useEffect(() => {
 		console.log(props);
-		if (props.optional) props.sendParam(props.paramName, undefined, true);
-		else props.sendParam(props.paramName, undefined, false);
+		if (props.optional) props.param(props.paramName, undefined, true);
+		else props.param(props.paramName, undefined, false);
 	}, []);
 
 	useEffect(() => {

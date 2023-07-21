@@ -56,6 +56,22 @@ export async function executeSend(
 	const contractProvider = client.open(Wrapper.createFromAddress(contractAddr));
 	const args = Object.values(params).map((param) => param.value);
 	const via = new SendProviderSender(connector);
-
 	return await contractProvider[methodName](via, ...args);
+}
+
+export async function executeGet(
+	contractAddr: Address,
+	wrapperPath: string,
+	className: string,
+	methodName: string,
+	params: ParamsWithValue,
+) {
+	const testnet = connector.wallet?.account.chain === CHAIN.TESTNET;
+	const endpoint = `https://${testnet ? 'testnet.' : ''}toncenter.com/api/v2/jsonRPC`;
+	const client = new TonClient({ endpoint });
+	const Wrapper = require(`${wrapperPath}`)[className];
+	const contractProvider = client.open(Wrapper.createFromAddress(contractAddr));
+	const args = Object.values(params).map((param) => param.value);
+
+	return await contractProvider[methodName](...args);
 }

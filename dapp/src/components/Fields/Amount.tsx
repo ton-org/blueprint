@@ -3,7 +3,7 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import { toNano } from 'ton-core';
 import { FieldProps } from '../ActionCard/ActionCard';
 
-export function AmountField({ paramName, fieldName, sendParam, defaultValue, optional }: FieldProps) {
+export function AmountField({ paramName, fieldName, param: sendParam, defaultValue, optional }: FieldProps) {
 	const [amount, setAmount] = useState<string>('');
 	const [touched, setTouched] = useState<boolean>(false);
 	let defaultAmount: bigint | null = null;
@@ -74,6 +74,7 @@ export function AmountField({ paramName, fieldName, sendParam, defaultValue, opt
 							variant="outline"
 							h="1.65rem"
 							size="xs"
+							colorScheme="gray"
 							onClick={() => setAmount(toNano(amount).toString())}
 						>
 							nano

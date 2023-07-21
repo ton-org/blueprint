@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Address } from 'ton-core';
 import { FieldProps } from '../ActionCard/ActionCard';
 
-export function AddressField({ paramName, fieldName, sendParam, defaultValue, optional }: FieldProps) {
+export function AddressField({ paramName, fieldName, param: sendParam, defaultValue, optional }: FieldProps) {
 	const [sendTo, setSendTo] = useState<string>('');
 	const [addressError, setAddressError] = useState<boolean>(false);
 	const [touched, setTouched] = useState<boolean>(false);

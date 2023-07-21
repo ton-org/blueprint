@@ -2,7 +2,7 @@ import { Box, Checkbox, Flex, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { FieldProps } from '../ActionCard/ActionCard';
 
-export function BoolField({ paramName, fieldName, sendParam, defaultValue }: FieldProps) {
+export function BoolField({ paramName, fieldName, param: sendParam, defaultValue }: FieldProps) {
 	const [value, setValue] = useState<boolean>(false);
 
 	useEffect(() => {

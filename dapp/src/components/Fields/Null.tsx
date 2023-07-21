@@ -2,7 +2,7 @@ import { Badge, Box, Checkbox, Flex, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { FieldProps } from '../ActionCard/ActionCard';
 
-export function NullField({ paramName, fieldName, sendParam, defaultValue }: FieldProps) {
+export function NullField({ paramName, fieldName, param: sendParam, defaultValue }: FieldProps) {
 	useEffect(() => {
 		sendParam(paramName, null, true);
 	}, []);

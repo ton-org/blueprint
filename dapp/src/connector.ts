@@ -1,26 +1,34 @@
+import { useToast } from '@chakra-ui/react';
 import { SendTransactionRequest, TonConnect, UserRejectsError, WalletInfo, WalletInfoInjected } from '@tonconnect/sdk';
-import { notification } from 'antd';
 import { isMobile, openLink } from 'src/utils';
 
 const dappMetadata = {
 	manifestUrl:
-		'https://gist.githubusercontent.com/siandreev/75f1a2ccf2f3b4e2771f6089aeb06d7f/raw/d4986344010ec7a2d1cc8a2a9baa57de37aaccb8/gistfile1.txt',
+		'https://gist.githubusercontent.com/1IxI1/d15922c552204bda4eff69c5c135c010/raw/4effadbae1d7b254d5f97cb19c9aec5ff4bc6e2c/manifest.json',
 };
 
 export const connector = new TonConnect(dappMetadata);
+type Toast = ReturnType<typeof useToast>;
 
-export async function sendTransaction(tx: SendTransactionRequest, wallet: WalletInfo): Promise<{ boc: string }> {
+export async function sendTransaction(
+	tx: SendTransactionRequest,
+	wallet: WalletInfo,
+	toast: Toast,
+): Promise<{ boc: string }> {
 	try {
 		if ('universalLink' in wallet && !(wallet as WalletInfoInjected).embedded && isMobile()) {
 			openLink(addReturnStrategy(wallet.universalLink, 'none'), '_blank');
 		}
 
 		const result = await connector.sendTransaction(tx);
-		notification.success({
-			message: 'Successful transaction',
+
+		toast({
+			title: 'Successful transaction',
 			description:
 				'You transaction was successfully sent. Please wait until the transaction is included to the TON blockchain.',
-			duration: 5,
+			status: 'success',
+			duration: 5000,
+			position: 'bottom-right',
 		});
 		console.log(`Send tx result: ${JSON.stringify(result)}`);
 		return result;
@@ -33,9 +41,12 @@ export async function sendTransaction(tx: SendTransactionRequest, wallet: Wallet
 			description = 'Please try again and confirm transaction in your wallet.';
 		}
 
-		notification.error({
-			message,
+		toast({
+			title: message,
 			description,
+			status: 'error',
+			duration: 5000,
+			position: 'bottom-right',
 		});
 		console.log(e);
 		throw e;

@@ -3,7 +3,7 @@ import { Box, Flex, IconButton, Input, InputGroup, InputRightElement, Text } fro
 import React, { useEffect, useState } from 'react';
 import { FieldProps } from '../ActionCard/ActionCard';
 
-export function StringField({ paramName, fieldName, sendParam, defaultValue, optional }: FieldProps) {
+export function StringField({ paramName, fieldName, param: sendParam, defaultValue, optional }: FieldProps) {
 	const [text, setText] = useState<string>('');
 	const [touched, setTouched] = useState<boolean>(false);
 	let defaultText: string | null = null;

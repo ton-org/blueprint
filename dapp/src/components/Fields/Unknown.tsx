@@ -2,7 +2,7 @@ import { Badge, Box, Checkbox, Flex, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { FieldProps } from '../ActionCard/ActionCard';
 
-export function UnknownField({ paramName, fieldName, sendParam, defaultValue }: FieldProps) {
+export function UnknownField({ paramName, fieldName, param: sendParam, defaultValue }: FieldProps) {
 	return (
 		<>
 			<Flex alignItems="center" justifyContent={'left'} gap="2">

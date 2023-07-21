@@ -1,6 +1,5 @@
-import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import { IconButton, Tooltip } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 export function BackForthIcon({ isRotated }: { isRotated: boolean }) {
 	return (
@@ -23,12 +22,8 @@ export function BackForthIcon({ isRotated }: { isRotated: boolean }) {
 	);
 }
 
-export default function Switch() {
+export default function Switch({ setToParent }: { setToParent: (isGetMethods: boolean) => void }) {
 	const [isGet, setIsGet] = useState(false);
-
-	useEffect(() => {
-		console.log('isGet', isGet);
-	}, [isGet]);
 
 	return (
 		<Tooltip label={isGet ? 'Switch to send methods' : 'Switch to get methods'}>
@@ -38,7 +33,10 @@ export default function Switch() {
 				aria-label="Send email"
 				rounded="13"
 				mr="2"
-				onClick={() => setIsGet(!isGet)}
+				onClick={() => {
+					setIsGet(!isGet);
+					setToParent(!isGet);
+				}}
 				icon={<BackForthIcon isRotated={isGet} />}
 			/>
 		</Tooltip>
