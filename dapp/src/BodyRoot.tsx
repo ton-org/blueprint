@@ -1,11 +1,12 @@
 import { Box, Button, Center, Fade, Flex, Input, Tab, TabList, Tabs, useDisclosure } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActionCard, ParamsWithValue } from 'src/components/ActionCard/ActionCard';
-import { executeGet, executeSend } from 'src/genTxByWrapper';
+import { ActionCard, ParamsWithValue } from 'src/components/ActionCard';
+import { executeGet, executeSend } from 'src/utils/genTxByWrapper';
 import { Address } from 'ton-core';
 import { WrapperConfig, WrapperInfo, WrappersConfig, WrappersData } from '../parseWrappers';
-import './app.scss';
-import { loadWrappersFromJSON } from './wrappersData';
+import './fade.scss';
+import './tabs.scss';
+import { loadWrappersFromJSON } from './utils/wrappersData';
 
 interface BodyRootProps {
 	areGetMethods: boolean;
@@ -26,7 +27,8 @@ function BodyRoot(props: BodyRootProps) {
 	const [actionCardKey, setActionCardKey] = useState<string>(''); // to rerender ActionCard
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const [methodTabIndex, setMethodTabIndex] = useState(0);
+	const [wrapperTabIndex, setWrapperTabIndex] = useState<number>(0);
+	const [methodTabIndex, setMethodTabIndex] = useState<number>(0);
 	const [urlValidWrapper, setUrlValidWrapper] = useState<string | null>(null);
 	const [urlValidMethod, setUrlValidMethod] = useState<string | null>(null);
 
@@ -233,7 +235,7 @@ function BodyRoot(props: BodyRootProps) {
 								_after={leftShadowStyle(showLeftShadow)}
 								_before={rightShadowStyle(showRightShadow)}
 							>
-								<Tabs variant="solid-rounded">
+								<Tabs variant="solid-rounded" index={wrapperTabIndex} onChange={(n) => setWrapperTabIndex(n)}>
 									<TabList
 										className="tabs-container"
 										ref={tabsContainerRef}

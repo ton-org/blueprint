@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Input, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { toNano } from 'ton-core';
-import { FieldProps } from '../ActionCard/ActionCard';
+import { FieldProps } from '../ActionCard';
 
 export function AmountField({ paramName, fieldName, param: sendParam, defaultValue, optional }: FieldProps) {
 	const [amount, setAmount] = useState<string>('');

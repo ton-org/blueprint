@@ -1,7 +1,7 @@
 import { RepeatIcon } from '@chakra-ui/icons';
 import { Box, Flex, IconButton, Input, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { FieldProps } from '../ActionCard/ActionCard';
+import { FieldProps } from '../ActionCard';
 
 export function StringField({ paramName, fieldName, param: sendParam, defaultValue, optional }: FieldProps) {
 	const [text, setText] = useState<string>('');

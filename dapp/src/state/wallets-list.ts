@@ -1,6 +1,6 @@
 import { isWalletInfoInjected } from '@tonconnect/sdk';
 import { selector } from 'recoil';
-import { connector } from 'src/connector';
+import { connector } from 'src/utils/connector';
 
 // You can use any state manager, recoil is used just for example.
 

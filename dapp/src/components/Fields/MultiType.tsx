@@ -1,6 +1,6 @@
 import { Box, Flex, Select, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { choseField, FieldProps } from '../ActionCard/ActionCard';
+import { choseField, FieldProps } from '../ActionCard';
 
 type MultiTypeFieldProps = FieldProps & { types: string[] };
 

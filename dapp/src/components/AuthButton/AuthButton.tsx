@@ -15,18 +15,18 @@ import {
 	ModalHeader,
 	ModalOverlay,
 	useMediaQuery,
+	useToast,
 } from '@chakra-ui/react';
-import { Dropdown, notification, Space } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { useRecoilValueLoadable } from 'recoil';
-import { addReturnStrategy, connector } from 'src/connector';
 import { useForceUpdate } from 'src/hooks/useForceUpdate';
 import { useSlicedAddress } from 'src/hooks/useSlicedAddress';
 import { useTonWallet } from 'src/hooks/useTonWallet';
 import { useTonWalletConnectionError } from 'src/hooks/useTonWalletConnectionError';
 import { walletsListQuery } from 'src/state/wallets-list';
-import { isDesktop, isMobile, openLink } from 'src/utils';
+import { addReturnStrategy, connector } from 'src/utils/connector';
+import { isDesktop, isMobile, openLink } from 'src/utils/utils';
 import './style.scss';
 
 export function ConnectIcon() {
@@ -45,11 +45,14 @@ export function AuthButton() {
 	const [isSmallScreen] = useMediaQuery('(max-width: 30em)');
 	const forceUpdate = useForceUpdate();
 	const wallet = useTonWallet();
+	const toast = useToast();
 	const onConnectErrorCallback = useCallback(() => {
 		setModalUniversalLink('');
-		notification.error({
-			message: 'Connection was rejected',
+		toast({
+			title: 'Connection was rejected',
 			description: 'Please approve connection to the dApp in your wallet.',
+			status: 'error',
+			position: 'bottom-right',
 		});
 	}, []);
 	useTonWalletConnectionError(onConnectErrorCallback);

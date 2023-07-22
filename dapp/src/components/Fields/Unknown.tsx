@@ -1,6 +1,6 @@
-import { Badge, Box, Checkbox, Flex, Text } from '@chakra-ui/react';
+import { Badge, Box, Checkbox, Flex, Text, Tooltip } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { FieldProps } from '../ActionCard/ActionCard';
+import { FieldProps } from '../ActionCard';
 
 export function UnknownField({ paramName, fieldName, param: sendParam, defaultValue }: FieldProps) {
 	return (
@@ -12,7 +12,9 @@ export function UnknownField({ paramName, fieldName, param: sendParam, defaultVa
 						{defaultValue ? '(optional)' : ''}:
 					</Text>
 				</Box>
-				<Badge colorScheme="red">Unknown field type</Badge>
+				<Tooltip label="You can implement it in components/Fields and add to ActionCard.">
+					<Badge colorScheme="red">Unknown field type</Badge>
+				</Tooltip>
 			</Flex>
 		</>
 	);

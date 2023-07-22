@@ -1,14 +1,13 @@
 import { Box, ChakraProvider, Flex, Spacer } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { AppTitle } from 'src/components/AppTitle/AppTitle';
+import { AppTitle } from 'src/components/AppTitle';
 import { AuthButton } from 'src/components/AuthButton/AuthButton';
 import Footer from 'src/components/Footer';
-import { connector } from 'src/connector';
-import './app.scss';
+import { connector } from 'src/utils/connector';
 import BodyRoot from './BodyRoot';
 import NetworkBadge from './components/NetBadge';
 import Switch from './components/Switch';
-import { getTheme, sendTheme } from './theme';
+import { getTheme, sendTheme } from './utils/theme';
 
 function App() {
 	const [isGetMethods, setIsGetMethods] = useState(false);

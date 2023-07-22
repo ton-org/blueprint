@@ -1,6 +1,6 @@
 import { UserRejectsError } from '@tonconnect/sdk';
 import { useCallback, useEffect } from 'react';
-import { connector } from '../connector';
+import { connector } from '../utils/connector';
 
 export function useTonWalletConnectionError(callback: () => void) {
 	const errorsHandler = useCallback(

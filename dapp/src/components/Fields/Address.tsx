@@ -1,7 +1,7 @@
 import { Box, Flex, Input, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { Address } from 'ton-core';
-import { FieldProps } from '../ActionCard/ActionCard';
+import { FieldProps } from '../ActionCard';
 
 export function AddressField({ paramName, fieldName, param: sendParam, defaultValue, optional }: FieldProps) {
 	const [sendTo, setSendTo] = useState<string>('');
