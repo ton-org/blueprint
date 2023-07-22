@@ -9,7 +9,6 @@ export function MultiTypeField(props: MultiTypeFieldProps) {
 	const [Field, setReplacingField] = useState<JSX.Element | null>(null);
 
 	useEffect(() => {
-		console.log(props);
 		if (props.optional) props.param(props.paramName, undefined, true);
 		else props.param(props.paramName, undefined, false);
 	}, []);

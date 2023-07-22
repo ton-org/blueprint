@@ -36,7 +36,7 @@ function App() {
 							<AppTitle title={'Jetton DAO Dapp'} />
 							<Spacer />
 							<Flex alignItems="center" mt="-6">
-								<Switch setToParent={setIsGetMethods} />
+								{!!!pathParams?.method && <Switch setToParent={setIsGetMethods} />}
 								<AuthButton />
 							</Flex>
 						</Flex>

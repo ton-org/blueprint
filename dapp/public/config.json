@@ -81,7 +81,7 @@
 			"getTotalSupply": {
 				"tabName": "",
 				"fieldNames": {},
-				"outNames": []
+				"outNames": ["supply"]
 			},
 			"getAdminAddress": {
 				"tabName": "",
