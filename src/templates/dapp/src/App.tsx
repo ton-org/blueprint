@@ -8,6 +8,7 @@ import BodyRoot from './BodyRoot';
 import NetworkBadge from './components/NetBadge';
 import Switch from './components/Switch';
 import { getTheme, sendTheme } from './utils/theme';
+import { appName } from './state/appName';
 
 function App() {
 	const [isGetMethods, setIsGetMethods] = useState(false);
@@ -33,7 +34,7 @@ function App() {
 				<Box minHeight="90vh">
 					<Box fontFamily="Inter" bg="#F7F9FB">
 						<Flex>
-							<AppTitle title={'Jetton DAO Dapp'} />
+							<AppTitle title={appName} />
 							<Spacer />
 							<Flex alignItems="center" mt="-6">
 								{!!!pathParams?.method && <Switch setToParent={setIsGetMethods} />}

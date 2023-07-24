@@ -13,13 +13,11 @@ const WRAPPERS_JSON = path.join(DAPP_DIR, 'public', 'wrappers.json');
 const CONFIG_JSON = path.join(DAPP_DIR, 'public', 'config.json');
 
 export const scaffold: Runner = async (args: Args, ui: UIProvider) => {
-    require('ts-node/register');
-
-    ui.write(`Scaffold script running, searching for wrappers...\n`);
-
     const localArgs = arg({
         '--update': Boolean,
     });
+
+    ui.write(`Scaffold script running, ${localArgs['--update'] ? 'updating' : 'generating'} dapp...\n\n`);
 
     ui.setActionPrompt('⏳ Compiling contracts...');
     for (const file of await findCompiles()) {
@@ -47,6 +45,16 @@ export const scaffold: Runner = async (args: Args, ui: UIProvider) => {
         await fs.cp(path.join(TEMPLATES_DIR, 'dapp'), DAPP_DIR, { recursive: true, force: true });
         ui.clearActionPrompt();
         ui.write('✅ Created dapp directory.\n');
+
+        // convert this module name from snake-case to Camel Case (with space)
+        // and replace "APPNAME" in src/state/appName.ts
+        ui.setActionPrompt('📝 Setting title...');
+        const appName = path.basename(process.cwd().replace(/-/g, ' ')).replace(/\b\w/g, (l) => l.toUpperCase());
+        const appNameFile = path.join(DAPP_DIR, 'src', 'state', 'appName.ts');
+        const appNameFileContents = (await fs.readFile(appNameFile)).toString().replace('APPNAME', appName);
+        await fs.writeFile(appNameFile, appNameFileContents);
+        ui.clearActionPrompt();
+        ui.write('✅ Set title.\n');
     }
     ui.setActionPrompt('📝 Updating dapp configs...');
     await parseWrappersToJSON(WRAPPERS_JSON, CONFIG_JSON);
