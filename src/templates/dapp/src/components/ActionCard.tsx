@@ -14,19 +14,21 @@ import {
 	Text,
 	useToast,
 } from '@chakra-ui/react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTonWallet } from 'src/hooks/useTonWallet';
 import { Address, Builder, Cell, Slice } from 'ton-core';
-import { Parameters, ParamInfo } from '../../parseArguments';
-import { AddressField } from './Fields/Address';
-import { AmountField } from './Fields/Amount';
-import { BoolField } from './Fields/Bool';
-import { BufferField } from './Fields/Buffer';
-import { CellField } from './Fields/Cell';
-import { MultiTypeField } from './Fields/MultiType';
-import { NullField } from './Fields/Null';
-import { StringField } from './Fields/String';
-import { UnknownField } from './Fields/Unknown';
+import { Parameters, ParamInfo } from 'src/utils/wrappersData';
+import {
+	AddressField,
+	AmountField,
+	BoolField,
+	BufferField,
+	CellField,
+	MultiTypeField,
+	NullField,
+	StringField,
+	UnknownField,
+} from './Fields';
 
 export type ParamValue = Address | Buffer | boolean | bigint | Cell | number | string | undefined | null;
 export type ParamWithValue = ParamInfo & { value: ParamValue };

@@ -1,9 +1,9 @@
-import { Box, Button, Center, Fade, Flex, Input, Tab, TabList, Tabs, useDisclosure } from '@chakra-ui/react';
+import { Box, Center, Fade, Flex, Input, Tab, TabList, Tabs, useDisclosure } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActionCard, ParamsWithValue } from 'src/components/ActionCard';
 import { executeGet, executeSend } from 'src/genTxByWrapper';
 import { Address } from 'ton-core';
-import { WrapperConfig, WrapperInfo, WrappersConfig, WrappersData } from '../parseWrappers';
+import { WrappersConfig, WrappersData } from 'src/utils/wrappersData';
 import './fade.scss';
 import './tabs.scss';
 import { loadWrappersFromJSON } from './utils/wrappersData';

@@ -60,9 +60,9 @@ export const scaffold: Runner = async (args: Args, ui: UIProvider) => {
 
     ui.write('✅ Scaffold complete!\n');
 
-    ui.write('\n\nTo start the dapp, run (will take a few minutes):\n\n');
+    ui.write('\nTo start the dapp, run (will take a few minutes):\n');
     ui.write('cd dapp && yarn && yarn start\n\n');
 
-    ui.write('To build for production, run:\n\n');
+    ui.write('To build for production, run (will take some more minutes):\n');
     ui.write('cd dapp && yarn && yarn build && serve -s prod\n\n');
 };

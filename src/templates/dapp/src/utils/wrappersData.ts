@@ -1,4 +1,33 @@
-import { WrappersConfig, WrappersData } from '../../parseWrappers';
+export type ParamInfo = { type: string; defaultValue: string | undefined };
+export type Parameters = Record<string, ParamInfo>;
+
+export type Functions = Record<string, Parameters>;
+
+export type WrapperInfo = {
+	sendFunctions: Functions;
+	getFunctions: Functions;
+	path: string;
+};
+
+export type WrappersData = Record<string, WrapperInfo>;
+
+export type MethodConfig = {
+	tabName: string;
+	fieldNames: Record<string, string>; // key: param name, value: field name in ui
+};
+
+export type GetMethodConfig = MethodConfig & {
+	outNames: string[];
+};
+
+export type WrapperConfig = {
+	defaultAddress: string;
+	tabName: string;
+	sendFunctions: Record<string, MethodConfig>;
+	getFunctions: Record<string, GetMethodConfig>;
+};
+
+export type WrappersConfig = Record<string, WrapperConfig>;
 
 export const loadWrappersFromJSON = async (): Promise<[WrappersData, WrappersConfig]> => {
 	const responseWrappers = await fetch('/wrappers.json');
