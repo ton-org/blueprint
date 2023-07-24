@@ -98,7 +98,7 @@ export async function parseWrappersToJSON(wrappersOut = 'wrappers.json', configO
     }
     await fs.writeFile(wrappersOut, JSON.stringify(wrappers, null, 2));
     updateConfig(configOut, config);
-    return wrappers;
+    return files.map((f) => f.path);
 }
 
 // Custom merge function for objects
