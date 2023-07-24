@@ -1,7 +1,7 @@
 import { Box, Button, Center, Fade, Flex, Input, Tab, TabList, Tabs, useDisclosure } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActionCard, ParamsWithValue } from 'src/components/ActionCard';
-import { executeGet, executeSend } from 'src/utils/genTxByWrapper';
+import { executeGet, executeSend } from 'src/genTxByWrapper';
 import { Address } from 'ton-core';
 import { WrapperConfig, WrapperInfo, WrappersConfig, WrappersData } from '../parseWrappers';
 import './fade.scss';
@@ -27,8 +27,8 @@ function BodyRoot(props: BodyRootProps) {
 	const [actionCardKey, setActionCardKey] = useState<string>(''); // to rerender ActionCard
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const [wrapperTabIndex, setWrapperTabIndex] = useState(0);
-	const [methodTabIndex, setMethodTabIndex] = useState(0);
+	const [wrapperTabIndex, setWrapperTabIndex] = useState<number>(0);
+	const [methodTabIndex, setMethodTabIndex] = useState<number>(0);
 	const [urlValidWrapper, setUrlValidWrapper] = useState<string | null>(null);
 	const [urlValidMethod, setUrlValidMethod] = useState<string | null>(null);
 
@@ -126,30 +126,32 @@ function BodyRoot(props: BodyRootProps) {
 		async function loadWrappers() {
 			const { parsedWrappers, parsedConfig } = await preloadWrappers();
 			var _wrappers = parsedWrappers;
-			if (props.areGetMethods) {
+			if (props.areGetMethods)
 				// filter wrappers with get methods
 				for (const _wrapper in parsedWrappers) {
 					if (Object.keys(parsedWrappers[_wrapper]['getFunctions']).length === 0) {
 						delete _wrappers[_wrapper];
 					}
 				}
-				setWrappers(_wrappers);
-				setWrappersConfig(parsedConfig);
-			}
+			setWrappers(_wrappers);
+			setWrappersConfig(parsedConfig);
+
 			const [wrapperFromUrl, methodFromUrl] = checkUrlParams(_wrappers);
-			const wrapperName = wrapperFromUrl || Object.keys(_wrappers)[0];
+			const wrapperName =
+				wrapperFromUrl || (Object.keys(_wrappers).includes(wrapper) ? wrapper : Object.keys(_wrappers)[0]);
 			// sendDeploy should not be shown in sends, and it cannot present in get methods.
 			const _hasDeploy = 'sendDeploy' in parsedWrappers[wrapperName][methods()];
 			const _methods = Object.keys(_wrappers[wrapperName][methods()]);
 			const methodName = methodFromUrl || _methods[_hasDeploy ? 1 : 0];
 
 			// if mode has changed then correctly update tabs
-			if (method.slice(0, 2) !== methodName.slice(0, 2)) {
+			if (method.slice(0, 2) !== methodName.slice(0, 2) && method !== '') {
 				let wrapperTab = Object.keys(_wrappers).indexOf(wrapper);
 				if (wrapperTab === -1) wrapperTab = 0;
 				setWrapperTabIndex(wrapperTab);
-				setMethodTabIndex(_methods.indexOf(methodName));
+				setMethodTabIndex(0);
 			}
+
 			setWrapper(wrapperName);
 			setMethod(methodName);
 		}
@@ -163,14 +165,12 @@ function BodyRoot(props: BodyRootProps) {
 			try {
 				setConfigAddress(Address.parse(wrappersConfig[wrapper]['defaultAddress']));
 			} catch (e) {
-				console.log('No default address in json, checking arguments');
 				const url = new URL(window.location.href);
 				const searchParams = url.searchParams;
 				const providedAddress = searchParams.get(wrapper);
 				try {
 					setConfigAddress(Address.parse(providedAddress || ''));
 				} catch (e) {
-					console.log('No address in arguments');
 					setConfigAddress(null);
 				}
 			}
@@ -201,7 +201,9 @@ function BodyRoot(props: BodyRootProps) {
 			return;
 		}
 		console.log(
-			'sending transaction from method',
+			'invoking',
+			isGet ? 'get' : 'send',
+			'method',
 			methodName,
 			'with params',
 			params,
@@ -266,6 +268,7 @@ function BodyRoot(props: BodyRootProps) {
 														onClick={() => {
 															onClose();
 															setWrapper(wrapperName);
+															console.log('set wrapper in OnClick:', wrapperName);
 															const _hasDeploy = 'sendDeploy' in wrappers[wrapperName][methods()];
 															const methodName = Object.keys(wrappers[wrapperName][methods()])[_hasDeploy ? 1 : 0];
 															setMethod(methodName);

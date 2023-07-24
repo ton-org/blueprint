@@ -1,6 +1,7 @@
 import { compile } from '@ton-community/blueprint';
 import fs from 'fs';
 import path from 'path';
+import { Cell } from 'ton-core';
 import { Parameters, parseMethodArguments } from './parseArguments';
 
 export const WRAPPERS_DIR = path.join(process.cwd(), 'wrappers');

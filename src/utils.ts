@@ -28,8 +28,7 @@ export function oneOrZeroOf<T extends { [k: string]: boolean | undefined }>(opti
                 throw new Error(`Please pick only one of the options: ${Object.keys(options).join(', ')}`);
             }
         }
-    }
-    return opt;
+    } return opt;
 }
 
 const compileEnd = '.compile.ts';
@@ -43,6 +42,11 @@ export const findScripts = async () =>
     (await fs.readdir(SCRIPTS_DIR))
         .filter((f) => f.endsWith('.ts'))
         .map((f) => ({ path: path.join(SCRIPTS_DIR, f), name: path.parse(f).name }));
+
+export const findWrappers = async () =>
+    (await fs.readdir(WRAPPERS_DIR))
+        .filter((f) => f.match(/^[A-Z][a-zA-Z0-9]*\.ts$/))
+        .map((f) => ({ path: path.join(WRAPPERS_DIR, f), name: path.parse(f).name }));
 
 export async function selectOption(
     options: { name: string; value: string }[],
