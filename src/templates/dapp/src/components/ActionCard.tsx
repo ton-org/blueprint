@@ -180,7 +180,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 			else return JSON.stringify(value);
 		};
 		let outsWithNames: { name: string; strValue: string }[] = [];
-		if (typeof res === 'object' && res !== null && !Address.isAddress(res)) {
+		if (typeof res === 'object' && res !== null && !Address.isAddress(res) && !(res instanceof Cell)) {
 			for (const [key, value] of Object.entries(res)) {
 				outsWithNames.push({ name: key, strValue: stringifyValue(value) });
 			}
@@ -217,7 +217,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 						<Button
 							height="12"
 							mt={buttonPadding()}
-							mb="-2"
+							mb="-1"
 							rounded="100"
 							flex="1"
 							py="4"
