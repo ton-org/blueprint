@@ -62,6 +62,8 @@ npm create ton@latest
 1. Run in terminal: &nbsp; `npx blueprint test` &nbsp; or &nbsp; `yarn blueprint test`
 2. Alternative method: &nbsp; `npm test` &nbsp; or &nbsp; `yarn test`
 
+> Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
+
 ### Deploy one of the contracts
 
 1. You need a deploy script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
@@ -92,6 +94,8 @@ Run in terminal: &nbsp; `npx blueprint help` &nbsp; or &nbsp; `yarn blueprint he
 
 1. Implement TypeScript tests in `tests/<CONTRACT>.spec.ts`
 2. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to interact with the contract
+
+> Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
 
 ### Compilation and deployment
 
