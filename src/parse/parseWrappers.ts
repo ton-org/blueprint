@@ -1,15 +1,6 @@
 import fs from 'fs/promises';
-import path from 'path';
-import { Parameters, parseMethodArguments } from './parseArguments';
+import { WrapperInfo, parseWrapper } from './parseArguments';
 import { findWrappers } from '../utils';
-
-export type Functions = Record<string, Parameters>;
-
-export type WrapperInfo = {
-    sendFunctions: Functions;
-    getFunctions: Functions;
-    path: string;
-};
 
 export type WrappersData = Record<string, WrapperInfo>;
 
@@ -39,36 +30,15 @@ export async function parseWrappersToJSON(wrappersOut = 'wrappers.json', configO
         const wrapperModule = require(path);
         const wrapperClass = wrapperModule[name];
         if (!wrapperClass) continue; // skip this file
-
-        const classProperties = Object.getOwnPropertyNames(wrapperClass);
-        if (!classProperties.includes('createFromAddress')) continue; // cannot be created to send tx
-
-        const instanceProperties = Object.getOwnPropertyNames(wrapperClass.prototype);
-
-        const sendMethods = instanceProperties.filter((p) => p.startsWith('send'));
-        if (sendMethods.length === 0) continue;
-        let skipFile = false;
-        const sendFunctions: Functions = {};
-        for (const sendMethod of sendMethods) {
-            let params = await parseMethodArguments(path, sendMethod);
-            if (!params || params.via?.type != 'Sender' || params.provider?.type != 'ContractProvider') continue;
-            delete params.via;
-            delete params.provider;
-            sendFunctions[sendMethod] = params;
+        let wrapper: WrapperInfo;
+        try {
+            wrapper = await parseWrapper(path, name);
+        } catch (e) {
+            continue;
         }
 
-        const getMethods = instanceProperties.filter((p) => p.startsWith('get'));
-        let getFunctions: Functions = {};
-        for (const getMethod of getMethods) {
-            let params = await parseMethodArguments(path, getMethod);
-            if (!params || params.provider?.type != 'ContractProvider') continue;
-            delete params.provider;
-            getFunctions[getMethod] = params || {};
-        }
+        wrappers[name] = wrapper;
 
-        if (skipFile) continue;
-        const relativePath = path.replace(process.cwd(), '.');
-        wrappers[name] = { sendFunctions, getFunctions, path: relativePath };
         config[name] = {
             defaultAddress: '',
             tabName: '',
@@ -76,22 +46,22 @@ export async function parseWrappersToJSON(wrappersOut = 'wrappers.json', configO
             getFunctions: {},
         };
         // fill sendFunctions and getFunctions config with '' to all params
-        for (const sendMethod of sendMethods) {
+        for (const sendMethod of Object.keys(wrapper.sendFunctions)) {
             config[name].sendFunctions[sendMethod] = {
                 tabName: '',
                 fieldNames: {},
             };
-            for (const param of Object.keys(sendFunctions[sendMethod])) {
+            for (const param of Object.keys(wrapper.sendFunctions[sendMethod])) {
                 config[name].sendFunctions[sendMethod].fieldNames[param] = '';
             }
         }
-        for (const getMethod of getMethods) {
+        for (const getMethod of Object.keys(wrapper.getFunctions)) {
             config[name].getFunctions[getMethod] = {
                 tabName: '',
                 fieldNames: {},
                 outNames: [],
             };
-            for (const param of Object.keys(getFunctions[getMethod])) {
+            for (const param of Object.keys(wrapper.getFunctions[getMethod])) {
                 config[name].getFunctions[getMethod].fieldNames[param] = '';
             }
         }
