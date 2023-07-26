@@ -3,6 +3,7 @@ import * as babelParser from '@babel/parser';
 import traverse from '@babel/traverse';
 import generate from '@babel/generator';
 import { Identifier } from '@babel/types';
+import { readCompiled } from '../utils';
 
 export type ParamInfo = { type: string; defaultValue: string | undefined; optional?: boolean | null };
 export type Parameters = Record<string, ParamInfo>;
@@ -115,12 +116,18 @@ export async function parseWrapper(filePath: string, className: string): Promise
                                     defaultValue = generate(param.right).code;
                                 }
                                 const { name, data } = paramData(p, defaultValue);
-                                if (!isGet && name === 'via') {
+
+                                // remove provider param in all methods,
+                                // and via in send methods
+                                if (name === 'provider') {
+                                } else if (!isGet && name === 'via') {
                                 } else methodParams[name] = data;
                             });
                             if (isGet) getFunctions[node.key.name] = methodParams;
                             else sendFunctions[node.key.name] = methodParams;
-                        } else if (node.kind === 'method' && node.key.type === 'Identifier' && node.static === true) {
+                        }
+                        // checking createFromConfig, createFromAddress existence
+                        else if (node.kind === 'method' && node.key.type === 'Identifier' && node.static === true) {
                             if (node.key.name === 'createFromConfig') {
                                 canBeCreatedFromConfig = true;
                             }
@@ -138,6 +145,12 @@ export async function parseWrapper(filePath: string, className: string): Promise
         throw new Error(`Wrapper ${className} cannot be created from address (needed for dapp)`);
     }
 
+    let codeHex: string | undefined = undefined;
+    if (canBeCreatedFromConfig) {
+        try {
+            codeHex = await readCompiled(className);
+        } catch (e) {}
+    }
     const relativePath = filePath.replace(process.cwd(), '.');
     return {
         sendFunctions,
@@ -145,6 +158,7 @@ export async function parseWrapper(filePath: string, className: string): Promise
         path: relativePath,
         canBeCreatedFromConfig,
         configType,
+        codeHex,
     };
 }
 
@@ -158,9 +172,3 @@ function paramData(param: Identifier, defaultValue?: string): { name: string; da
         },
     };
 }
-
-// parseMethodArguments('/home/victor/Projects/jetton_dao/wrappers/JettonMinter.ts', 'sendMint');
-// parseWrapper('/home/victor/Projects/jetton_dao/wrappers/JettonMinter.ts', 'JettonMinter');
-parseWrapper('/home/victor/Projects/lottery-web3ton-contract/wrappers/Lottery.ts', 'Lottery').then((res) => {
-    console.log(JSON.stringify(res, null, 2));
-});
