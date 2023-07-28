@@ -1,6 +1,6 @@
 import { Args, Runner } from './cli';
 import arg from 'arg';
-import { DAPP_DIR, WRAPPERS_DIR } from '../paths';
+import { DAPP_DIR } from '../paths';
 import fs from 'fs/promises';
 import { UIProvider } from '../ui/UIProvider';
 import { buildOne } from './build';
@@ -36,7 +36,10 @@ export const scaffold: Runner = async (args: Args, ui: UIProvider) => {
 
     let dappExisted = false;
     try {
+        // try to access directories we will be working with
         await fs.access(DAPP_DIR);
+        await fs.access(path.join(DAPP_DIR, 'public'));
+        await fs.access(path.join(DAPP_DIR, 'src'));
         dappExisted = true;
     } catch (e) {}
 
@@ -46,9 +49,10 @@ export const scaffold: Runner = async (args: Args, ui: UIProvider) => {
         ui.clearActionPrompt();
         ui.write('✅ Created dapp directory.\n');
 
-        // convert this module name from snake-case to Camel Case (with space)
-        // and replace "APPNAME" in src/state/appName.ts
         ui.setActionPrompt('📝 Setting title...');
+        // convert this module name (from package.json)
+        // from snake-case to Camel Case (with space)
+        // and replace "APPNAME" in src/state/appName.ts
         const appName = path.basename(process.cwd().replace(/-/g, ' ')).replace(/\b\w/g, (l) => l.toUpperCase());
         const appNameFile = path.join(DAPP_DIR, 'src', 'state', 'appName.ts');
         const appNameFileContents = (await fs.readFile(appNameFile)).toString().replace('APPNAME', appName);
@@ -62,7 +66,6 @@ export const scaffold: Runner = async (args: Args, ui: UIProvider) => {
     ui.write('✅ Updated dapp configs.\n');
 
     ui.setActionPrompt('📁 Moving wrappers into dapp...');
-    // await fs.cp(WRAPPERS_DIR, path.join(DAPP_DIR, 'src', 'wrappers'), { recursive: true, force: true });
     await fs.mkdir(path.join(DAPP_DIR, 'src', 'wrappers'), { recursive: true });
     for (const file of wrappersFiles) {
         await fs.cp(file, path.join(DAPP_DIR, 'src', 'wrappers', path.basename(file)), {
