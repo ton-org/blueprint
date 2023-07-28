@@ -57,7 +57,7 @@ export const scaffold: Runner = async (args: Args, ui: UIProvider) => {
         ui.write('✅ Set title.\n');
     }
     ui.setActionPrompt('📝 Updating dapp configs...');
-    const wrappersFiles = await parseWrappersToJSON(WRAPPERS_JSON, CONFIG_JSON);
+    const wrappersFiles = await parseWrappersToJSON(ui, WRAPPERS_JSON, CONFIG_JSON);
     ui.clearActionPrompt();
     ui.write('✅ Updated dapp configs.\n');
 

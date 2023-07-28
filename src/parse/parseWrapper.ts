@@ -29,7 +29,6 @@ export async function parseWrapper(filePath: string, className: string): Promise
         ranges: false,
         createParenthesizedExpressions: true,
     });
-    // await fs.writeFile('ast.json', JSON.stringify(ast, null, 4));
     if (ast.errors.length > 0) throw ast.errors;
 
     let sendFunctions: Functions = {};
@@ -142,7 +141,7 @@ export async function parseWrapper(filePath: string, className: string): Promise
     });
 
     if (!canBeCreatedFromAddress) {
-        throw new Error(`Wrapper ${className} cannot be created from address (needed for dapp)`);
+        throw new Error(`Cannot be created from address (need to create contract instance when sending)`);
     }
 
     let codeHex: string | undefined = undefined;

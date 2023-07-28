@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import { WrapperInfo, parseWrapper } from './parseWrapper';
 import { findWrappers } from '../utils';
+import { UIProvider } from '../ui/UIProvider';
 
 export type WrappersData = Record<string, WrapperInfo>;
 
@@ -22,7 +23,7 @@ export type WrapperConfig = {
 
 export type WrappersConfig = Record<string, WrapperConfig>;
 
-export async function parseWrappersToJSON(wrappersOut = 'wrappers.json', configOut = 'config.json') {
+export async function parseWrappersToJSON(ui: UIProvider, wrappersOut = 'wrappers.json', configOut = 'config.json') {
     const files = await findWrappers();
     let wrappers: WrappersData = {};
     let config: WrappersConfig = {};
@@ -30,13 +31,16 @@ export async function parseWrappersToJSON(wrappersOut = 'wrappers.json', configO
         const wrapperModule = require(path);
         const wrapperClass = wrapperModule[name];
         if (!wrapperClass) continue; // skip this file
+
         let wrapper: WrapperInfo;
         try {
             wrapper = await parseWrapper(path, name);
         } catch (e) {
+            if (e instanceof Error) {
+                ui.write('⚠️ Omitting `' + name + '`: ' + e.message);
+            }
             continue;
         }
-
         wrappers[name] = wrapper;
 
         config[name] = {
