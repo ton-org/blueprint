@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
-import { WrapperInfo, parseWrapper } from './parseArguments';
+import { WrapperInfo, parseWrapper } from './parseWrapper';
 import { findWrappers } from '../utils';
 
 export type WrappersData = Record<string, WrapperInfo>;

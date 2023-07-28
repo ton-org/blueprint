@@ -5,7 +5,7 @@ import fs from 'fs/promises';
 import { UIProvider } from '../ui/UIProvider';
 import { buildOne } from './build';
 import { findCompiles } from '../utils';
-import { parseWrappersToJSON } from '../parse/parseWrappers';
+import { parseWrappersToJSON } from '../parse/wrappersToJSON';
 import path from 'path';
 import { TEMPLATES_DIR } from '../template';
 
