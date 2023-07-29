@@ -16,8 +16,8 @@ import {
     SendMode,
     toNano,
     TupleItem,
-} from 'ton-core';
-import { TonClient4 } from 'ton';
+} from '@ton/core';
+import { TonClient4 } from '@ton/ton';
 import { getHttpV4Endpoint } from '@orbs-network/ton-access';
 import { UIProvider } from '../ui/UIProvider';
 import { NetworkProvider } from './NetworkProvider';
@@ -25,7 +25,7 @@ import { SendProvider } from './send/SendProvider';
 import { FSStorage } from './storage/FSStorage';
 import path from 'path';
 import { TEMP_DIR } from '../paths';
-import { mnemonicToPrivateKey } from 'ton-crypto';
+import { mnemonicToPrivateKey } from '@ton/crypto';
 import { MnemonicProvider, WalletVersion } from './send/MnemonicProvider';
 
 const argSpec = {

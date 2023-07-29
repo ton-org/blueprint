@@ -1,4 +1,4 @@
-import { Address, Cell, StateInit } from 'ton-core';
+import { Address, Cell, StateInit } from '@ton/core';
 
 export interface SendProvider {
     connect(): Promise<void>;
