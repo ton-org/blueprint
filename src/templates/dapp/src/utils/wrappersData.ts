@@ -1,5 +1,11 @@
-export type ParamInfo = { type: string; defaultValue: string | undefined };
+export type ParamInfo = { type: string; defaultValue: string | undefined; optional?: boolean | null };
 export type Parameters = Record<string, ParamInfo>;
+
+export type DeployData = {
+	canBeCreatedFromConfig: boolean;
+	codeHex?: string;
+	configType?: Parameters;
+};
 
 export type Functions = Record<string, Parameters>;
 
@@ -7,6 +13,7 @@ export type WrapperInfo = {
 	sendFunctions: Functions;
 	getFunctions: Functions;
 	path: string;
+	deploy: DeployData;
 };
 
 export type WrappersData = Record<string, WrapperInfo>;

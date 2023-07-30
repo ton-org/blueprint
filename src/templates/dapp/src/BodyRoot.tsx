@@ -1,7 +1,7 @@
-import { Box, Center, Fade, Flex, Input, Tab, TabList, Tabs, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Center, Fade, Flex, Input, Tab, TabList, Tabs, useDisclosure } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActionCard, ParamsWithValue } from 'src/components/ActionCard';
-import { executeGet, executeSend } from 'src/genTxByWrapper';
+import { executeGet, executeSend, executeDeploy } from 'src/genTxByWrapper';
 import { Address } from 'ton-core';
 import { WrappersConfig, WrappersData } from 'src/utils/wrappersData';
 import './fade.scss';
@@ -24,6 +24,7 @@ function BodyRoot(props: BodyRootProps) {
 	const [addrTouched, setAddrTouched] = useState<boolean>(false);
 	const [wrapper, setWrapper] = useState<string>('');
 	const [method, setMethod] = useState<string>('');
+	const [hasDeploy, setHasDeploy] = useState<boolean>(false);
 	const [actionCardKey, setActionCardKey] = useState<string>(''); // to rerender ActionCard
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -141,6 +142,7 @@ function BodyRoot(props: BodyRootProps) {
 				wrapperFromUrl || (Object.keys(_wrappers).includes(wrapper) ? wrapper : Object.keys(_wrappers)[0]);
 			// sendDeploy should not be shown in sends, and it cannot present in get methods.
 			const _hasDeploy = 'sendDeploy' in parsedWrappers[wrapperName][methods()];
+			setHasDeploy(_hasDeploy);
 			const _methods = Object.keys(_wrappers[wrapperName][methods()]);
 			const methodName = methodFromUrl || _methods[_hasDeploy ? 1 : 0];
 
@@ -210,6 +212,18 @@ function BodyRoot(props: BodyRootProps) {
 			'to address',
 			configAddress?.toString() || destAddr,
 		);
+		if (methodName === 'sendDeploy') {
+			const deployData = wrappers[wrapper]['deploy'];
+			if (deployData['codeHex'] && deployData['configType']) {
+				return await executeDeploy(
+					wrappers[wrapper]['path'],
+					wrapper,
+					params,
+					deployData['configType'],
+					deployData['codeHex'],
+				);
+			} else throw new Error('Deploy data is missing');
+		}
 		if (isGet)
 			return await executeGet(
 				configAddress || Address.parse(destAddr),
@@ -270,8 +284,11 @@ function BodyRoot(props: BodyRootProps) {
 															setWrapper(wrapperName);
 															console.log('set wrapper in OnClick:', wrapperName);
 															const _hasDeploy = 'sendDeploy' in wrappers[wrapperName][methods()];
+															setHasDeploy(_hasDeploy);
 															const methodName = Object.keys(wrappers[wrapperName][methods()])[_hasDeploy ? 1 : 0];
 															setMethod(methodName);
+															setDestAddr('');
+															setAddrTouched(false);
 															setActionCardKey(methodName);
 															setMethodTabIndex(0);
 															setTimeout(() => onOpen(), 150);
@@ -337,27 +354,48 @@ function BodyRoot(props: BodyRootProps) {
 						</Box>
 					</Center>
 				)}
-				{!configAddress && wrappers && (
-					<Center>
-						<Flex align="center" maxWidth={['85%', '60%', '40%', '40%']} mb="4" mt="-5">
-							<Input
-								ref={inputRef}
-								isInvalid={destAddr ? addressError : addrTouched}
-								mr="2"
-								bg="white"
-								placeholder="Contract Address"
-								rounded="100"
-								size="md"
-								value={destAddr}
-								onChange={(e) => setDestAddr(e.target.value)}
-								onClick={() => setAddrTouched(true)}
-							></Input>
-						</Flex>
-					</Center>
-				)}
 				{wrappers && wrappersConfig && method in wrappers[wrapper][methods()] && (
 					<Fade in={isOpen} unmountOnExit>
 						<Box>
+							{!configAddress && (
+								<Center>
+									<Flex align="center" maxWidth={['85%', '60%', '40%', '40%']} mb="4" mt="-5" alignItems="center">
+										<Input
+											ref={inputRef}
+											isInvalid={destAddr ? addressError : addrTouched}
+											mr="2"
+											bg="white"
+											placeholder="Contract Address"
+											rounded="100"
+											size="md"
+											value={destAddr}
+											onChange={(e) => setDestAddr(e.target.value)}
+											onClick={() => setAddrTouched(true)}
+										></Input>
+										{hasDeploy && (
+											<>
+												or
+												<Button
+													ml="2"
+													size="sm"
+													p="4"
+													onClick={() => {
+														onClose();
+														setMethod('sendDeploy');
+														setActionCardKey('sendDeploy');
+														setConfigAddress(
+															Address.parse('0:0000000000000000000000000000000000000000000000000000000000000000'),
+														);
+														setTimeout(() => onOpen(), 100);
+													}}
+												>
+													Deploy
+												</Button>
+											</>
+										)}
+									</Flex>
+								</Center>
+							)}
 							<ActionCard
 								key={actionCardKey}
 								methodName={method}
@@ -367,6 +405,7 @@ function BodyRoot(props: BodyRootProps) {
 								outNames={props.areGetMethods ? wrappersConfig[wrapper]['getFunctions'][method]['outNames'] : []}
 								methodParams={wrappers[wrapper][methods()][method]}
 								buildAndExecute={buildAndExecute}
+								deploy={wrappers[wrapper]['deploy']}
 							/>
 						</Box>
 					</Fade>

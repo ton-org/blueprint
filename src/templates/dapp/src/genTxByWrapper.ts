@@ -1,7 +1,8 @@
 import { CHAIN, TonConnect } from '@tonconnect/sdk';
 import { TonClient } from 'ton';
-import { Address, beginCell, Sender, SenderArguments, SendMode, storeStateInit } from 'ton-core';
+import { Address, beginCell, Cell, Sender, SenderArguments, SendMode, storeStateInit } from 'ton-core';
 import { ParamsWithValue } from './components/ActionCard';
+import { Parameters } from './utils/wrappersData';
 import { connector } from './utils/connector';
 
 class SendProviderSender implements Sender {
@@ -74,4 +75,32 @@ export async function executeGet(
 	const args = Object.values(params).map((param) => param.value);
 
 	return await contractProvider[methodName](...args);
+}
+
+export async function executeDeploy(
+	wrapperPath: string,
+	className: string,
+	params: ParamsWithValue,
+	configType: Parameters,
+	codeHex: string,
+): Promise<Address> {
+	const testnet = connector.wallet?.account.chain === CHAIN.TESTNET;
+	const endpoint = `https://${testnet ? 'testnet.' : ''}toncenter.com/api/v2/jsonRPC`;
+	const client = new TonClient({ endpoint });
+	const Wrapper = require(`${wrapperPath}`)[className];
+
+	const contractConfig: { [key: string]: any } = {};
+	console.log('params', params);
+	console.log('configType', configType);
+	for (const configField in configType) {
+		contractConfig[configField] = params[configField].value;
+		delete params[configField];
+	}
+	const codeCell = Cell.fromBoc(Buffer.from(codeHex, 'hex'))[0];
+	const w = Wrapper.createFromConfig(contractConfig, codeCell);
+	const contractProvider = client.open(w);
+	const args = Object.values(params).map((param) => param.value);
+	const via = new SendProviderSender(connector);
+	await contractProvider.sendDeploy(via, ...args);
+	return contractProvider.address;
 }

@@ -9,6 +9,7 @@ import {
 	Center,
 	Circle,
 	Collapse,
+	Divider,
 	Flex,
 	Heading,
 	Text,
@@ -17,7 +18,7 @@ import {
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTonWallet } from 'src/hooks/useTonWallet';
 import { Address, Builder, Cell, Slice } from 'ton-core';
-import { Parameters, ParamInfo } from 'src/utils/wrappersData';
+import { Parameters, ParamInfo, DeployData } from 'src/utils/wrappersData';
 import {
 	AddressField,
 	AmountField,
@@ -72,9 +73,10 @@ export type ActionCardProps = {
 	methodParams: Parameters;
 	isGet: boolean;
 	outNames: string[];
+	buildAndExecute: (isGet: boolean, methodName: string, params: ParamsWithValue) => Promise<any>;
 	paramNames?: Record<string, string>;
 	tabName?: string;
-	buildAndExecute: (isGet: boolean, methodName: string, params: ParamsWithValue) => Promise<any>;
+	deploy?: DeployData;
 };
 
 export const ActionCard: React.FC<ActionCardProps> = ({
@@ -85,12 +87,20 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 	outNames,
 	tabName,
 	buildAndExecute,
+	deploy,
 }) => {
-	const [enteredParams, setEnteredParams] = useState<ParamsWithValue>(methodParams as ParamsWithValue);
 	const [paramFields, setParamFields] = useState<JSX.Element[]>([]);
+	const [configFields, setConfigFields] = useState<JSX.Element[]>([]);
 	const [correctParams, setCorrectParams] = useState<string[]>([]);
 	const [getResult, setGetResult] = useState<Object | null>(null);
 	const [error, setError] = useState<string | null>(null);
+
+	const isDeploy = methodName === 'sendDeploy';
+	// initializing a map with arguments needed for the method
+	// may incude config fields for `createFromConfig` if sendDeploy
+	const _defaultParams = isDeploy ? { ...methodParams, ...deploy?.configType } : methodParams;
+	const [enteredParams, setEnteredParams] = useState<ParamsWithValue>(_defaultParams as ParamsWithValue);
+
 	const wallet = useTonWallet();
 	const toast = useToast();
 
@@ -107,38 +117,44 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 	};
 
 	useEffect(() => {
-		let fields: JSX.Element[] = [];
-		for (const [paramName, { type, defaultValue }] of Object.entries(methodParams)) {
-			const optional = paramName.endsWith('?');
-			const fieldName = paramNames ? paramNames[paramName] || paramName : paramName;
-			const props: FieldProps = {
-				paramName,
-				fieldName,
-				param: enterParam,
-				defaultValue,
-				optional,
-			};
-			let Field = choseField(type);
-			if (Field == UnknownField) {
-				const types = type.split('|').map((t) => t.trim());
-				if (types.length > 1) {
-					fields.push(<MultiTypeField key={paramName} {...props} types={types} />);
-					continue;
+		function processParams(params: Parameters): JSX.Element[] {
+			let fields: JSX.Element[] = [];
+			for (const [paramName, { type, defaultValue }] of Object.entries(params)) {
+				const optional = paramName.endsWith('?');
+				const fieldName = paramNames ? paramNames[paramName] || paramName : paramName;
+				const props: FieldProps = {
+					paramName,
+					fieldName,
+					param: enterParam,
+					defaultValue,
+					optional,
+				};
+				let Field = choseField(type);
+				if (Field == UnknownField) {
+					const types = type.split('|').map((t) => t.trim());
+					if (types.length > 1) {
+						fields.push(<MultiTypeField key={paramName} {...props} types={types} />);
+						continue;
+					}
 				}
+				fields.push(<Field key={paramName} {...props} />);
 			}
-			fields.push(<Field key={paramName} {...props} />);
+			return fields;
 		}
-		setParamFields(fields);
+		setParamFields(processParams(methodParams));
+		if (deploy?.configType) {
+			setConfigFields(processParams(deploy.configType));
+		}
 	}, []);
 
 	const isInactive = () => {
-		if (correctParams.length !== Object.keys(methodParams).length) return true;
+		if (correctParams.length !== Object.keys(enteredParams).length) return true;
 		if (!wallet) return true;
 		return false;
 	};
 
 	const inactiveButtonText = () => {
-		if (correctParams.length !== Object.keys(methodParams).length) return 'Provide arguments';
+		if (correctParams.length !== Object.keys(enteredParams).length) return 'Provide arguments';
 		if (!wallet) return 'Connect wallet';
 	};
 
@@ -146,17 +162,22 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 		async function run() {
 			setGetResult(null);
 			setError(null);
-			try {
-				const res = await buildAndExecute(isGet, methodName, enteredParams);
-				if (isGet) setGetResult(res);
-			} catch (e) {
-				if (e instanceof Error) {
-					console.error('An error occurred:', e.message);
-					setError(e.message);
-				} else {
-					console.error('An unknown error occurred:', e);
-				}
+			// try {
+			const res = await buildAndExecute(isGet, methodName, enteredParams);
+			// if deploy, then res is the address of deployed contract, show it
+			if (isDeploy) {
+				outNames = ['address'];
+				setGetResult(res);
 			}
+			if (isGet || isDeploy) setGetResult(res);
+			// } catch (e) {
+			// 	if (e instanceof Error) {
+			// 		console.error('An error occurred:', e.message);
+			// 		setError(e.message);
+			// 	} else {
+			// 		console.error('An unknown error occurred:', e);
+			// 	}
+			// }
 		}
 		run();
 	};
@@ -210,6 +231,14 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 					</Center>
 				</CardHeader>
 				<CardBody marginTop="-10" marginBottom="-5">
+					{isDeploy && !!deploy?.configType && (
+						<>
+							<ul>{configFields}</ul>{' '}
+							<Center>
+								<Divider mb="6" width="60%" />
+							</Center>
+						</>
+					)}
 					<ul>{paramFields}</ul>
 				</CardBody>
 				<CardFooter>

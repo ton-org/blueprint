@@ -5,19 +5,22 @@ import generate from '@babel/generator';
 import { Identifier } from '@babel/types';
 import { readCompiled } from '../utils';
 
-export type ParamInfo = { type: string; defaultValue: string | undefined; optional?: boolean | null };
+export type ParamInfo = { type: string; defaultValue?: string; optional?: boolean | null };
 export type Parameters = Record<string, ParamInfo>;
 
+export type DeployData = {
+    canBeCreatedFromConfig: boolean;
+    codeHex?: string;
+    configType?: Parameters;
+};
+
 export type Functions = Record<string, Parameters>;
-export type ConfigTypeInfo = Record<string, { fieldType: string; optional?: boolean | null }>;
 
 export type WrapperInfo = {
     sendFunctions: Functions;
     getFunctions: Functions;
     path: string;
-    canBeCreatedFromConfig: boolean;
-    codeHex?: string;
-    configType?: ConfigTypeInfo;
+    deploy: DeployData;
 };
 
 export async function parseWrapper(filePath: string, className: string): Promise<WrapperInfo> {
@@ -35,7 +38,7 @@ export async function parseWrapper(filePath: string, className: string): Promise
     let getFunctions: Functions = {};
     let canBeCreatedFromConfig = false;
     let canBeCreatedFromAddress = false;
-    let configType: ConfigTypeInfo | undefined = undefined;
+    let configType: Parameters | undefined = undefined;
     traverse(ast, {
         ExportNamedDeclaration(path) {
             // parsing config type
@@ -67,11 +70,11 @@ export async function parseWrapper(filePath: string, className: string): Promise
                             if (typeAnnotation.typeAnnotation.type === 'TSTypeReference') {
                                 const { typeName } = typeAnnotation.typeAnnotation;
                                 if (typeName.type === 'Identifier') {
-                                    configType[name] = { fieldType: typeName.name, optional: member.optional };
+                                    configType[name] = { type: typeName.name, optional: member.optional };
                                 }
                             } else {
                                 configType[name] = {
-                                    fieldType: generate(typeAnnotation.typeAnnotation).code,
+                                    type: generate(typeAnnotation.typeAnnotation).code,
                                     optional: member.optional,
                                 };
                             }
@@ -148,16 +151,21 @@ export async function parseWrapper(filePath: string, className: string): Promise
     if (canBeCreatedFromConfig) {
         try {
             codeHex = await readCompiled(className);
-        } catch (e) {}
+        } catch (e) {
+            canBeCreatedFromConfig = false;
+            if ('sendDeploy' in sendFunctions) delete sendFunctions['sendDeploy'];
+        }
     }
     const relativePath = filePath.replace(process.cwd(), '.');
     return {
         sendFunctions,
         getFunctions,
         path: relativePath,
-        canBeCreatedFromConfig,
-        configType,
-        codeHex,
+        deploy: {
+            canBeCreatedFromConfig,
+            configType,
+            codeHex,
+        },
     };
 }
 
