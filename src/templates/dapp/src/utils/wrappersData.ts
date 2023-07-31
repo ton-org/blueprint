@@ -1,4 +1,10 @@
-export type ParamInfo = { type: string; defaultValue: string | undefined; optional?: boolean | null };
+export type ParamInfo = {
+	type: string;
+	defaultValue?: string;
+	optional?: boolean | null;
+	overrideValueWithDefault?: boolean;
+};
+
 export type Parameters = Record<string, ParamInfo>;
 
 export type DeployData = {

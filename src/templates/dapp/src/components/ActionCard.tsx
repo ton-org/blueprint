@@ -12,9 +12,11 @@ import {
 	Divider,
 	Flex,
 	Heading,
+	IconButton,
 	Text,
 	useToast,
 } from '@chakra-ui/react';
+import { Search2Icon } from '@chakra-ui/icons';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTonWallet } from 'src/hooks/useTonWallet';
 import { Address, Builder, Cell, Slice } from 'ton-core';
@@ -30,6 +32,7 @@ import {
 	StringField,
 	UnknownField,
 } from './Fields';
+import { CHAIN } from '@tonconnect/sdk';
 
 export type ParamValue = Address | Buffer | boolean | bigint | Cell | number | string | undefined | null;
 export type ParamWithValue = ParamInfo & { value: ParamValue };
@@ -40,7 +43,8 @@ export interface FieldProps {
 	fieldName?: string;
 	param: (name: string, value: ParamValue, correct: boolean) => void;
 	defaultValue?: string;
-	optional?: boolean;
+	optional?: boolean | null;
+    override?: boolean;
 }
 
 export const choseField = (type: String) => {
@@ -119,15 +123,18 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 	useEffect(() => {
 		function processParams(params: Parameters): JSX.Element[] {
 			let fields: JSX.Element[] = [];
-			for (const [paramName, { type, defaultValue }] of Object.entries(params)) {
-				const optional = paramName.endsWith('?');
+            const url = new URL(window.location.href);
+            const searchParams = url.searchParams;
+			for (let [paramName, { type, defaultValue, optional, overrideValueWithDefault }] of Object.entries(params)) {
+                const urlValue = searchParams.get(paramName) || undefined;
 				const fieldName = paramNames ? paramNames[paramName] || paramName : paramName;
 				const props: FieldProps = {
 					paramName,
 					fieldName,
 					param: enterParam,
-					defaultValue,
+                    defaultValue: defaultValue || urlValue,
 					optional,
+                    override: overrideValueWithDefault,
 				};
 				let Field = choseField(type);
 				if (Field == UnknownField) {
@@ -162,22 +169,22 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 		async function run() {
 			setGetResult(null);
 			setError(null);
-			// try {
-			const res = await buildAndExecute(isGet, methodName, enteredParams);
-			// if deploy, then res is the address of deployed contract, show it
-			if (isDeploy) {
-				outNames = ['address'];
-				setGetResult(res);
+			try {
+				const res = await buildAndExecute(isGet, methodName, enteredParams);
+				// if deploy, then res is the address of deployed contract, show it
+				if (isDeploy) {
+					outNames = ['address'];
+					setGetResult(res);
+				}
+				if (isGet || isDeploy) setGetResult(res);
+			} catch (e) {
+				if (e instanceof Error) {
+					console.error('An error occurred:', e.message);
+					setError(e.message);
+				} else {
+					console.error('An unknown error occurred:', e);
+				}
 			}
-			if (isGet || isDeploy) setGetResult(res);
-			// } catch (e) {
-			// 	if (e instanceof Error) {
-			// 		console.error('An error occurred:', e.message);
-			// 		setError(e.message);
-			// 	} else {
-			// 		console.error('An unknown error occurred:', e);
-			// 	}
-			// }
 		}
 		run();
 	};
@@ -261,17 +268,36 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 							{/* prevent text from going out of the card */}
 							<Flex mt="8" direction="column" maxWidth={['22em', '45px', '58em', '70em']} whiteSpace="normal">
 								<Text fontSize="14" color="gray.500" fontWeight="semibold" align="center">
-									Result:
+									{isDeploy ? 'The new contract address:' : 'Result:'}
 								</Text>
 								{stringifyResult(getResult).map(({ name, strValue }) => (
 									<Box key={name} mt="2">
-										<Text _hover={{ color: 'blue.500' }} cursor="pointer" onClick={() => handleCopy(strValue)}>
+										<Text
+											_hover={{ color: 'blue.500' }}
+											cursor="pointer"
+											onClick={() => {
+												handleCopy(strValue);
+											}}
+										>
 											{name ? (
 												<>
 													<Badge>{name}: </Badge> {strValue}
 												</>
 											) : (
-												<Center>{strValue}</Center>
+												<Center>
+													{strValue}
+													{isDeploy && (
+														<a
+															href={`https://${
+																wallet?.account.chain === CHAIN.TESTNET && 'testnet.'
+															}ton.cx/address/${strValue}`}
+															target="_blank"
+															rel="noreferrer"
+														>
+															<IconButton size="xs" aria-label="Scanner" variant="link" icon={<Search2Icon />} />
+														</a>
+													)}
+												</Center>
 											)}
 										</Text>
 									</Box>

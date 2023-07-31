@@ -1,4 +1,4 @@
-import { Badge, Box, Center, Text } from '@chakra-ui/react';
+import { Box, Center, Text } from '@chakra-ui/react';
 import { CHAIN } from '@tonconnect/sdk';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTonWallet } from 'src/hooks/useTonWallet';
