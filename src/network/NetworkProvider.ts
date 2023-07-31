@@ -1,5 +1,5 @@
-import { TonClient4 } from 'ton';
-import { Address, Cell, Contract, ContractProvider, OpenedContract, Sender } from 'ton-core';
+import { TonClient4 } from '@ton/ton';
+import { Address, Cell, Contract, ContractProvider, OpenedContract, Sender } from '@ton/core';
 import { UIProvider } from '../ui/UIProvider';
 
 export interface NetworkProvider {

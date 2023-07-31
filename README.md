@@ -42,7 +42,7 @@ npm create ton@latest
 ### Directory structure
 
 * `contracts/` - Source code in [FunC](https://ton.org/docs/develop/func/overview) for all smart contracts and their imports
-* `wrappers/` - TypeScript interface classes for all contracts (implementing `Contract` from [ton-core](https://www.npmjs.com/package/ton-core))
+* `wrappers/` - TypeScript interface classes for all contracts (implementing `Contract` from [@ton/core](https://www.npmjs.com/package/@ton/core))
   * include message [de]serialization primitives, getter wrappers and compilation functions
   * used by the test suite and client code to interact with the contracts from TypeScript
 * `tests/` - TypeScript test suite for all contracts (relying on [Sandbox](https://github.com/ton-org/sandbox) for in-process tests)

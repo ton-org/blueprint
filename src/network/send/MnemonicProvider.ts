@@ -8,7 +8,7 @@ import {
     WalletContractV3R1,
     WalletContractV3R2,
     WalletContractV4,
-} from 'ton';
+} from '@ton/ton';
 import {
     Address,
     Cell,
@@ -19,9 +19,9 @@ import {
     OpenedContract,
     SendMode,
     StateInit,
-} from 'ton-core';
+} from '@ton/core';
 import { SendProvider } from './SendProvider';
-import { keyPairFromSecretKey } from 'ton-crypto';
+import { keyPairFromSecretKey } from '@ton/crypto';
 import { UIProvider } from '../../ui/UIProvider';
 
 interface WalletInstance extends Contract {

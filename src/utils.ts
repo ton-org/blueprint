@@ -1,4 +1,4 @@
-import { Address, Cell } from 'ton-core';
+import { Address, Cell } from '@ton/core';
 import path from 'path';
 import fs from 'fs/promises';
 import { UIProvider } from './ui/UIProvider';

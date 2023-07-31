@@ -18,7 +18,15 @@ jobs:
         run: npm install -g yarn
       - name: Install dependencies
         run: yarn
-      - name: Release
+      - name: Build
+        run: yarn build
+      - name: Setup .yarnrc.yml
+        run: |
+          yarn config set npmAuthToken $NPM_AUTH_TOKEN
+          yarn config set npmAlwaysAuth true
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-        run: yarn release
+      - name: Publish
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: yarn npm publish --access public

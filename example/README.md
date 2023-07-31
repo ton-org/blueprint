@@ -5,7 +5,7 @@ Starter template for a new TON project - FunC contracts, unit tests, compilation
 ## Layout
 
 -   `contracts` - contains the source code of all the smart contracts of the project and their dependencies.
--   `wrappers` - contains the wrapper classes (implementing `Contract` from ton-core) for the contracts, including any [de]serialization primitives and compilation functions.
+-   `wrappers` - contains the wrapper classes (implementing `Contract` from @ton/core) for the contracts, including any [de]serialization primitives and compilation functions.
 -   `tests` - tests for the contracts. Would typically use the wrappers.
 -   `scripts` - contains scripts used by the project, mainly the deployment scripts.   
 

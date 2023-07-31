@@ -1,13 +1,20 @@
 import { VirtualFileSystem } from '@tact-lang/compiler';
-import { resolve } from 'path';
+import { resolve, normalize, sep } from 'path';
 import { existsSync, readFileSync } from 'fs';
 
 export class OverwritableVirtualFileSystem implements VirtualFileSystem {
-    root: string = '/';
+    root: string;
     overwrites: Map<string, Buffer> = new Map();
 
+    constructor(root: string) {
+        this.root = normalize(root);
+        if (!this.root.endsWith(sep)) {
+            this.root += sep;
+        }
+    }
+
     resolve(...path: string[]): string {
-        return resolve(...path);
+        return normalize(resolve(this.root, ...path));
     }
 
     exists(path: string): boolean {
