@@ -9,7 +9,6 @@ export type ParamInfo = {
     type: string;
     defaultValue?: string;
     optional?: boolean | null;
-    overrideValueWithDefault?: boolean;
 };
 
 export type Parameters = Record<string, ParamInfo>;
@@ -182,8 +181,6 @@ function paramData(param: Identifier, defaultValue?: string): { name: string; da
             type: param.typeAnnotation ? generate(param.typeAnnotation).code.slice(2) : 'any',
             optional: param.optional,
             defaultValue,
-            // add to config an option to hide input if default value is present
-            overrideValueWithDefault: defaultValue ? false : undefined,
         },
     };
 }

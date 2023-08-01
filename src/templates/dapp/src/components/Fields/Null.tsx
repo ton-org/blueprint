@@ -1,10 +1,10 @@
-import { Badge, Box, Checkbox, Flex, Text } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import { Badge, Box, Flex, Text } from '@chakra-ui/react';
+import React, { useEffect } from 'react';
 import { FieldProps } from '../ActionCard';
 
-export function NullField({ paramName, fieldName, param: sendParam, defaultValue }: FieldProps) {
+export function NullField(props: FieldProps) {
 	useEffect(() => {
-		sendParam(paramName, null, true);
+		props.sendParam(props.paramName, null, true);
 	}, []);
 
 	return (
@@ -12,7 +12,7 @@ export function NullField({ paramName, fieldName, param: sendParam, defaultValue
 			<Flex alignItems="center" justifyContent={'left'} gap="2">
 				<Box display="flex" alignItems="end">
 					<Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
-						{fieldName || paramName}:
+						{props.fieldName || props.paramName}:
 					</Text>
 				</Box>
 				<Badge colorScheme="blue">NULL</Badge>

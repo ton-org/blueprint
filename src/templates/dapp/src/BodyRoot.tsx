@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActionCard, ParamsWithValue } from 'src/components/ActionCard';
 import { executeGet, executeSend, executeDeploy } from 'src/genTxByWrapper';
 import { Address } from 'ton-core';
-import { WrappersConfig, WrappersData } from 'src/utils/wrappersData';
+import { ParamConfig, WrappersConfig, WrappersData } from 'src/utils/wrappersData';
 import './fade.scss';
 import './tabs.scss';
 import { loadWrappersFromJSON } from './utils/wrappersData';
@@ -399,13 +399,16 @@ function BodyRoot(props: BodyRootProps) {
 							<ActionCard
 								key={actionCardKey}
 								methodName={method}
-								tabName={tabNameFromConfig(method)}
 								isGet={props.areGetMethods}
-								paramNames={wrappersConfig[wrapper][methods()][method]['fieldNames']}
-								outNames={props.areGetMethods ? wrappersConfig[wrapper]['getFunctions'][method]['outNames'] : []}
 								methodParams={wrappers[wrapper][methods()][method]}
 								buildAndExecute={buildAndExecute}
 								deploy={wrappers[wrapper]['deploy']}
+
+								// tabName={tabNameFromConfig(method)}
+								// paramsConfig={wrappersConfig[wrapper][methods()][method].params}
+								// outNames={props.areGetMethods ? wrappersConfig[wrapper]['getFunctions'][method]['outNames'] : []}
+
+                                methodConfig={wrappersConfig[wrapper][methods()][method]}
 							/>
 						</Box>
 					</Fade>

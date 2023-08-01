@@ -20,7 +20,7 @@ import { Search2Icon } from '@chakra-ui/icons';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTonWallet } from 'src/hooks/useTonWallet';
 import { Address, Builder, Cell, Slice } from 'ton-core';
-import { Parameters, ParamInfo, DeployData } from 'src/utils/wrappersData';
+import { Parameters, ParamInfo, DeployData, ParamsConfig, MethodConfig, GetMethodConfig } from 'src/utils/wrappersData';
 import {
 	AddressField,
 	AmountField,
@@ -41,10 +41,10 @@ export type ParamsWithValue = Record<string, ParamWithValue>;
 export interface FieldProps {
 	paramName: string;
 	fieldName?: string;
-	param: (name: string, value: ParamValue, correct: boolean) => void;
+	sendParam: (name: string, value: ParamValue, correct: boolean) => void;
 	defaultValue?: string;
 	optional?: boolean | null;
-    override?: boolean;
+	overridden?: boolean;
 }
 
 export const choseField = (type: String) => {
@@ -76,22 +76,28 @@ export type ActionCardProps = {
 	methodName: string;
 	methodParams: Parameters;
 	isGet: boolean;
-	outNames: string[];
 	buildAndExecute: (isGet: boolean, methodName: string, params: ParamsWithValue) => Promise<any>;
-	paramNames?: Record<string, string>;
-	tabName?: string;
 	deploy?: DeployData;
+
+	// tabName?: string;
+	// paramsConfig?: ParamsConfig;
+	// outNames: string[];
+
+	methodConfig: MethodConfig | GetMethodConfig;
 };
 
 export const ActionCard: React.FC<ActionCardProps> = ({
 	methodName,
 	methodParams,
 	isGet,
-	paramNames,
-	outNames,
-	tabName,
 	buildAndExecute,
 	deploy,
+
+	// tabName,
+	// paramsConfig,
+	// outNames,
+
+	methodConfig,
 }) => {
 	const [paramFields, setParamFields] = useState<JSX.Element[]>([]);
 	const [configFields, setConfigFields] = useState<JSX.Element[]>([]);
@@ -108,6 +114,9 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 	const wallet = useTonWallet();
 	const toast = useToast();
 
+	const [paramsConfig, setParamsConfig] = useState<ParamsConfig>(methodConfig.params);
+	const [outNames, setOutNames] = useState<string[]>('outNames' in methodConfig ? methodConfig.outNames : []);
+
 	const enterParam = (name: string, value: ParamValue, correct = true) => {
 		console.log('enterParam', name, value, correct);
 		let newParams = { ...enteredParams };
@@ -123,18 +132,23 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 	useEffect(() => {
 		function processParams(params: Parameters): JSX.Element[] {
 			let fields: JSX.Element[] = [];
-            const url = new URL(window.location.href);
-            const searchParams = url.searchParams;
-			for (let [paramName, { type, defaultValue, optional, overrideValueWithDefault }] of Object.entries(params)) {
-                const urlValue = searchParams.get(paramName) || undefined;
-				const fieldName = paramNames ? paramNames[paramName] || paramName : paramName;
+			const url = new URL(window.location.href);
+			const searchParams = url.searchParams;
+			for (let [paramName, { type, defaultValue, optional }] of Object.entries(params)) {
+				const urlValue = searchParams.get(paramName) || undefined;
+				let fieldName = paramName;
+				let overridden: boolean | undefined = false;
+				try {
+					fieldName = methodConfig.params[paramName].fieldTitle;
+					overridden = methodConfig.params[paramName].overrideWithDefault;
+				} catch (e) {}
 				const props: FieldProps = {
 					paramName,
 					fieldName,
-					param: enterParam,
-                    defaultValue: defaultValue || urlValue,
+					sendParam: enterParam,
+					defaultValue: defaultValue || urlValue,
 					optional,
-                    override: overrideValueWithDefault,
+					overridden,
 				};
 				let Field = choseField(type);
 				if (Field == UnknownField) {
@@ -173,7 +187,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 				const res = await buildAndExecute(isGet, methodName, enteredParams);
 				// if deploy, then res is the address of deployed contract, show it
 				if (isDeploy) {
-					outNames = ['address'];
+					setOutNames(['address']);
 					setGetResult(res);
 				}
 				if (isGet || isDeploy) setGetResult(res);
@@ -234,7 +248,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 			>
 				<CardHeader marginTop={['0', '-2', '-2', '-2']}>
 					<Center>
-						<Heading size="lg">{tabName || methodName}</Heading>
+						<Heading size="lg">{methodConfig.tabName || methodName}</Heading>
 					</Center>
 				</CardHeader>
 				<CardBody marginTop="-10" marginBottom="-5">

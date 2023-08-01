@@ -3,18 +3,18 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import { toNano } from 'ton-core';
 import { FieldProps } from '../ActionCard';
 
-export function AmountField({ paramName, fieldName, param: sendParam, defaultValue, optional }: FieldProps) {
+export function AmountField(props: FieldProps) {
 	const [amount, setAmount] = useState<string>('');
 	const [touched, setTouched] = useState<boolean>(false);
 	let defaultAmount: bigint | null = null;
-	if (defaultValue) {
+	if (props.defaultValue) {
 		try {
-			const parsedDefault = eval(`(toNano) => { return ${defaultValue}; }`)(toNano);
+			const parsedDefault = eval(`(toNano) => { return ${props.defaultValue}; }`)(toNano);
 			const type = typeof parsedDefault;
 			if (type == 'bigint' || type == 'number') defaultAmount = parsedDefault;
 			else throw new Error('defaultValue is not a number');
 		} catch (e) {
-			console.log('Failed to parse default amount', e);
+			console.warn('Failed to parse default amount', e);
 		}
 	}
 	useEffect(() => {
@@ -22,17 +22,17 @@ export function AmountField({ paramName, fieldName, param: sendParam, defaultVal
 			setTouched(true);
 			try {
 				if (amount.includes('.')) {
-					sendParam(paramName, Number(amount), true);
+					props.sendParam(props.paramName, Number(amount), true);
 				} else {
-					sendParam(paramName, BigInt(amount), true);
+					props.sendParam(props.paramName, BigInt(amount), true);
 				}
 			} catch {
-				sendParam(paramName, undefined, optional || false);
+				props.sendParam(props.paramName, undefined, props.optional || false);
 			}
 			return;
 		}
-		if (defaultAmount) sendParam(paramName, defaultAmount, true);
-		else sendParam(paramName, undefined, optional || false);
+		if (defaultAmount) props.sendParam(props.paramName, defaultAmount, true);
+		else props.sendParam(props.paramName, undefined, props.optional || false);
 	}, [amount]);
 
 	const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -51,37 +51,39 @@ export function AmountField({ paramName, fieldName, param: sendParam, defaultVal
 
 	return (
 		<>
-			<Flex alignItems="center" justifyContent={'center'} gap="2">
-				<Box display="flex" alignItems="end">
-					<Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
-						{fieldName || paramName}
-						{defaultValue || optional ? '(optional)' : ''}:
-					</Text>
-				</Box>
-				<InputGroup>
-					<Input
-						isInvalid={!amount ? (defaultValue || optional ? false : touched) : false}
-						placeholder={defaultAmount ? defaultAmount.toString() : '12300'}
-						size="md"
-						value={amount}
-						onChange={handleInputChange}
-						onClick={() => setTouched(true)}
-					></Input>
-					<InputRightElement width="4rem">
-						<Button
-							fontSize="12px"
-							fontWeight="medium"
-							variant="outline"
-							h="1.65rem"
-							size="xs"
-							colorScheme="gray"
-							onClick={() => setAmount(toNano(amount).toString())}
-						>
-							nano
-						</Button>
-					</InputRightElement>
-				</InputGroup>
-			</Flex>
+			{!(props.overridden && (defaultAmount || props.optional)) && (
+				<Flex alignItems="center" justifyContent={'center'} gap="2">
+					<Box display="flex" alignItems="end">
+						<Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
+							{props.fieldName || props.paramName}
+							{props.defaultValue || props.optional ? '(optional)' : ''}:
+						</Text>
+					</Box>
+					<InputGroup>
+						<Input
+							isInvalid={!amount ? (props.defaultValue || props.optional ? false : touched) : false}
+							placeholder={defaultAmount ? defaultAmount.toString() : '12300'}
+							size="md"
+							value={amount}
+							onChange={handleInputChange}
+							onClick={() => setTouched(true)}
+						></Input>
+						<InputRightElement width="4rem">
+							<Button
+								fontSize="12px"
+								fontWeight="medium"
+								variant="outline"
+								h="1.65rem"
+								size="xs"
+								colorScheme="gray"
+								onClick={() => setAmount(toNano(amount).toString())}
+							>
+								nano
+							</Button>
+						</InputRightElement>
+					</InputGroup>
+				</Flex>
+			)}
 		</>
 	);
 }

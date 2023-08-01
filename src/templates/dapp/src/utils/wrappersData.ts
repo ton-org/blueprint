@@ -2,7 +2,6 @@ export type ParamInfo = {
 	type: string;
 	defaultValue?: string;
 	optional?: boolean | null;
-	overrideValueWithDefault?: boolean;
 };
 
 export type Parameters = Record<string, ParamInfo>;
@@ -24,9 +23,16 @@ export type WrapperInfo = {
 
 export type WrappersData = Record<string, WrapperInfo>;
 
+export type ParamConfig = {
+	fieldTitle: string;
+	overrideWithDefault?: boolean;
+};
+
+export type ParamsConfig = Record<string, ParamConfig>;
+
 export type MethodConfig = {
 	tabName: string;
-	fieldNames: Record<string, string>; // key: param name, value: field name in ui
+	params: ParamsConfig;
 };
 
 export type GetMethodConfig = MethodConfig & {

@@ -9,8 +9,8 @@ export function MultiTypeField(props: MultiTypeFieldProps) {
 	const [Field, setReplacingField] = useState<JSX.Element | null>(null);
 
 	useEffect(() => {
-		if (props.optional) props.param(props.paramName, undefined, true);
-		else props.param(props.paramName, undefined, false);
+		if (props.optional) props.sendParam(props.paramName, undefined, true);
+		else props.sendParam(props.paramName, undefined, false);
 	}, []);
 
 	useEffect(() => {
@@ -22,24 +22,28 @@ export function MultiTypeField(props: MultiTypeFieldProps) {
 
 	return (
 		<>
-			{Field ? (
-				Field
-			) : (
-				<Flex alignItems="center" justifyContent={'left'} gap="2">
-					<Box display="flex" alignItems="end">
-						<Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
-							{props.fieldName || props.paramName}
-							{props.optional ? '(optional)' : ''}:
-						</Text>
-					</Box>
-					<Select colorScheme="blue" placeholder="Select type" onChange={(e) => setSelectedType(e.target.value)}>
-						{props.types.map((type: string) => (
-							<option key={type} value={type}>
-								{type}
-							</option>
-						))}
-					</Select>
-				</Flex>
+			{!(props.overridden && props.optional) && (
+				<>
+					{Field ? (
+						Field
+					) : (
+						<Flex alignItems="center" justifyContent={'left'} gap="2">
+							<Box display="flex" alignItems="end">
+								<Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
+									{props.fieldName || props.paramName}
+									{props.optional ? '(optional)' : ''}:
+								</Text>
+							</Box>
+							<Select placeholder="Select type" onChange={(e) => setSelectedType(e.target.value)}>
+								{props.types.map((type: string) => (
+									<option key={type} value={type}>
+										{type}
+									</option>
+								))}
+							</Select>
+						</Flex>
+					)}
+				</>
 			)}
 		</>
 	);

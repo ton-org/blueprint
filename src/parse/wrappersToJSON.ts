@@ -5,9 +5,16 @@ import { UIProvider } from '../ui/UIProvider';
 
 export type WrappersData = Record<string, WrapperInfo>;
 
+export type ParamConfig = {
+    fieldTitle: string;
+    overrideWithDefault?: boolean;
+};
+
+export type ParamsConfig = Record<string, ParamConfig>;
+
 export type MethodConfig = {
     tabName: string;
-    fieldNames: Record<string, string>; // key: param name, value: field name in ui
+    params: ParamsConfig;
 };
 
 export type GetMethodConfig = MethodConfig & {
@@ -53,20 +60,27 @@ export async function parseWrappersToJSON(ui: UIProvider, wrappersOut = 'wrapper
         for (const sendMethod of Object.keys(wrapper.sendFunctions)) {
             config[name].sendFunctions[sendMethod] = {
                 tabName: '',
-                fieldNames: {},
+                params: {},
             };
-            for (const param of Object.keys(wrapper.sendFunctions[sendMethod])) {
-                config[name].sendFunctions[sendMethod].fieldNames[param] = '';
+            for (const [paramName, paramData] of Object.entries(wrapper.sendFunctions[sendMethod])) {
+                config[name].sendFunctions[sendMethod].params[paramName] = {
+                    fieldTitle: '',
+                    // add to config an option to hide input if default value is present
+                    overrideWithDefault: paramData.defaultValue || paramData.optional ? false : undefined,
+                };
             }
         }
         for (const getMethod of Object.keys(wrapper.getFunctions)) {
             config[name].getFunctions[getMethod] = {
                 tabName: '',
-                fieldNames: {},
+                params: {},
                 outNames: [],
             };
-            for (const param of Object.keys(wrapper.getFunctions[getMethod])) {
-                config[name].getFunctions[getMethod].fieldNames[param] = '';
+            for (const [paramName, paramData] of Object.entries(wrapper.getFunctions[getMethod])) {
+                config[name].getFunctions[getMethod].params[paramName] = {
+                    fieldTitle: '',
+                    overrideWithDefault: paramData.defaultValue || paramData.optional ? false : undefined,
+                };
             }
         }
     }
