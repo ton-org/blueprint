@@ -20,7 +20,14 @@ import { Search2Icon } from '@chakra-ui/icons';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTonWallet } from 'src/hooks/useTonWallet';
 import { Address, Builder, Cell, Slice } from 'ton-core';
-import { Parameters, ParamInfo, DeployData, ParamsConfig, MethodConfig, GetMethodConfig } from 'src/utils/wrappersData';
+import {
+	Parameters,
+	ParamInfo,
+	DeployData,
+	ParamsConfig,
+	MethodConfig,
+	GetMethodConfig,
+} from 'src/utils/wrappersConfigTypes';
 import {
 	AddressField,
 	AmountField,

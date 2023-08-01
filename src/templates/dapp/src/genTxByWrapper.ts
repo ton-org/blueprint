@@ -2,7 +2,7 @@ import { CHAIN, TonConnect } from '@tonconnect/sdk';
 import { TonClient } from 'ton';
 import { Address, beginCell, Cell, Sender, SenderArguments, SendMode, storeStateInit } from 'ton-core';
 import { ParamsWithValue } from './components/ActionCard';
-import { Parameters } from './utils/wrappersData';
+import { Parameters } from './utils/wrappersConfigTypes';
 import { connector } from './utils/connector';
 
 class SendProviderSender implements Sender {

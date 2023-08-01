@@ -3,10 +3,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActionCard, ParamsWithValue } from 'src/components/ActionCard';
 import { executeGet, executeSend, executeDeploy } from 'src/genTxByWrapper';
 import { Address } from 'ton-core';
-import { ParamConfig, WrappersConfig, WrappersData } from 'src/utils/wrappersData';
+import { ParamConfig, WrappersConfig, WrappersData } from 'src/utils/wrappersConfigTypes';
 import './fade.scss';
 import './tabs.scss';
-import { loadWrappersFromJSON } from './utils/wrappersData';
+import { loadWrappersFromJSON } from './utils/loadWrappers';
 
 interface BodyRootProps {
 	areGetMethods: boolean;
@@ -403,12 +403,11 @@ function BodyRoot(props: BodyRootProps) {
 								methodParams={wrappers[wrapper][methods()][method]}
 								buildAndExecute={buildAndExecute}
 								deploy={wrappers[wrapper]['deploy']}
-
 								// tabName={tabNameFromConfig(method)}
 								// paramsConfig={wrappersConfig[wrapper][methods()][method].params}
 								// outNames={props.areGetMethods ? wrappersConfig[wrapper]['getFunctions'][method]['outNames'] : []}
 
-                                methodConfig={wrappersConfig[wrapper][methods()][method]}
+								methodConfig={wrappersConfig[wrapper][methods()][method]}
 							/>
 						</Box>
 					</Fade>

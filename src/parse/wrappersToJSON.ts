@@ -2,33 +2,7 @@ import fs from 'fs/promises';
 import { WrapperInfo, parseWrapper } from './parseWrapper';
 import { findWrappers } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
-
-export type WrappersData = Record<string, WrapperInfo>;
-
-export type ParamConfig = {
-    fieldTitle: string;
-    overrideWithDefault?: boolean;
-};
-
-export type ParamsConfig = Record<string, ParamConfig>;
-
-export type MethodConfig = {
-    tabName: string;
-    params: ParamsConfig;
-};
-
-export type GetMethodConfig = MethodConfig & {
-    outNames: string[];
-};
-
-export type WrapperConfig = {
-    defaultAddress: string;
-    tabName: string;
-    sendFunctions: Record<string, MethodConfig>;
-    getFunctions: Record<string, GetMethodConfig>;
-};
-
-export type WrappersConfig = Record<string, WrapperConfig>;
+import { WrappersData, WrapperConfig, WrappersConfig } from '../templates/dapp/src/utils/wrappersConfigTypes';
 
 export async function parseWrappersToJSON(ui: UIProvider, wrappersOut = 'wrappers.json', configOut = 'config.json') {
     const files = await findWrappers();
