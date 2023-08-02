@@ -85,11 +85,6 @@ export type ActionCardProps = {
 	isGet: boolean;
 	buildAndExecute: (isGet: boolean, methodName: string, params: ParamsWithValue) => Promise<any>;
 	deploy?: DeployData;
-
-	// tabName?: string;
-	// paramsConfig?: ParamsConfig;
-	// outNames: string[];
-
 	methodConfig: MethodConfig | GetMethodConfig;
 };
 
@@ -99,11 +94,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 	isGet,
 	buildAndExecute,
 	deploy,
-
-	// tabName,
-	// paramsConfig,
-	// outNames,
-
 	methodConfig,
 }) => {
 	const [paramFields, setParamFields] = useState<JSX.Element[]>([]);
@@ -121,7 +111,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 	const wallet = useTonWallet();
 	const toast = useToast();
 
-	const [paramsConfig, setParamsConfig] = useState<ParamsConfig>(methodConfig.params);
 	const [outNames, setOutNames] = useState<string[]>('outNames' in methodConfig ? methodConfig.outNames : []);
 
 	const enterParam = (name: string, value: ParamValue, correct = true) => {
@@ -286,7 +275,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 							{isGet ? 'Run get method' : 'Send transaction'}
 						</Button>
 						<Collapse in={!!getResult} animateOpacity>
-							{/* prevent text from going out of the card */}
 							<Flex mt="8" direction="column" maxWidth={['22em', '45px', '58em', '70em']} whiteSpace="normal">
 								<Text fontSize="14" color="gray.500" fontWeight="semibold" align="center">
 									{isDeploy ? 'The new contract address:' : 'Result:'}
@@ -327,7 +315,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 						</Collapse>
 
 						<Collapse in={!!error} animateOpacity>
-							{/* prevent text from going out of the card */}
 							<Flex mt="8" direction="column" maxWidth={['22em', '45px', '58em', '70em']} whiteSpace="normal">
 								<Text fontSize="14" color="gray.500" fontWeight="semibold" align="center">
 									Error:

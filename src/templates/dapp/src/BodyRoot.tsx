@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActionCard, ParamsWithValue } from 'src/components/ActionCard';
 import { executeGet, executeSend, executeDeploy } from 'src/genTxByWrapper';
 import { Address } from 'ton-core';
-import { ParamConfig, WrappersConfig, WrappersData } from 'src/utils/wrappersConfigTypes';
+import { WrappersConfig, WrappersData } from 'src/utils/wrappersConfigTypes';
 import './fade.scss';
 import './tabs.scss';
 import { loadWrappersFromJSON } from './utils/loadWrappers';
@@ -359,11 +359,11 @@ function BodyRoot(props: BodyRootProps) {
 						<Box>
 							{!configAddress && (
 								<Center>
-									<Flex align="center" maxWidth={['85%', '60%', '40%', '40%']} mb="4" mt="-5" alignItems="center">
+									<Flex align="center" maxWidth={['85%', '60%', '38%', '38%']} mb="4" mt="-5" alignItems="center">
 										<Input
 											ref={inputRef}
 											isInvalid={destAddr ? addressError : addrTouched}
-											mr="2"
+											mr={hasDeploy ? '2' : '0'}
 											bg="white"
 											placeholder="Contract Address"
 											rounded="100"
@@ -378,7 +378,7 @@ function BodyRoot(props: BodyRootProps) {
 												<Button
 													ml="2"
 													size="sm"
-													p="4"
+													px="6"
 													onClick={() => {
 														onClose();
 														setMethod('sendDeploy');
@@ -403,10 +403,6 @@ function BodyRoot(props: BodyRootProps) {
 								methodParams={wrappers[wrapper][methods()][method]}
 								buildAndExecute={buildAndExecute}
 								deploy={wrappers[wrapper]['deploy']}
-								// tabName={tabNameFromConfig(method)}
-								// paramsConfig={wrappersConfig[wrapper][methods()][method].params}
-								// outNames={props.areGetMethods ? wrappersConfig[wrapper]['getFunctions'][method]['outNames'] : []}
-
 								methodConfig={wrappersConfig[wrapper][methods()][method]}
 							/>
 						</Box>
