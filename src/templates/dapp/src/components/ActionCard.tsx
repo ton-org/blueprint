@@ -18,7 +18,6 @@ import {
 } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useTonWallet } from 'src/hooks/useTonWallet';
 import { Address, Builder, Cell, Slice } from 'ton-core';
 import {
 	Parameters,
@@ -40,6 +39,7 @@ import {
 	UnknownField,
 } from './Fields';
 import { CHAIN } from '@tonconnect/sdk';
+import { useTonConnectUI } from '@tonconnect/ui-react';
 
 export type ParamValue = Address | Buffer | boolean | bigint | Cell | number | string | undefined | null;
 export type ParamWithValue = ParamInfo & { value: ParamValue };
@@ -108,8 +108,9 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 	const _defaultParams = isDeploy ? { ...methodParams, ...deploy?.configType } : methodParams;
 	const [enteredParams, setEnteredParams] = useState<ParamsWithValue>(_defaultParams as ParamsWithValue);
 
-	const wallet = useTonWallet();
+	const [tonConnectUI] = useTonConnectUI();
 	const toast = useToast();
+	tonConnectUI.sendTransaction;
 
 	const [outNames, setOutNames] = useState<string[]>('outNames' in methodConfig ? methodConfig.outNames : []);
 
@@ -166,19 +167,17 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
 	const isInactive = () => {
 		if (correctParams.length !== Object.keys(enteredParams).length) return true;
-		if (!wallet) return true;
+		if (!isGet && !tonConnectUI.wallet) return true;
 		return false;
 	};
 
 	const inactiveButtonText = () => {
 		if (correctParams.length !== Object.keys(enteredParams).length) return 'Provide arguments';
-		if (!wallet) return 'Connect wallet';
+		if (!isGet && !tonConnectUI.wallet) return 'Connect wallet';
 	};
 
 	const handleAction = () => {
 		async function run() {
-			setGetResult(null);
-			setError(null);
 			try {
 				const res = await buildAndExecute(isGet, methodName, enteredParams);
 				// if deploy, then res is the address of deployed contract, show it
@@ -196,7 +195,12 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 				}
 			}
 		}
-		run();
+		setGetResult(null);
+		setError(null);
+		if (!!getResult) {
+			// if running not for the first time, then wait for animation to clear
+			setTimeout(run, 500);
+		} else run();
 	};
 
 	const handleCopy = useCallback((text: string) => {
@@ -272,7 +276,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 							spinner={<Circle />}
 							onClick={handleAction}
 						>
-							{isGet ? 'Run get method' : 'Send transaction'}
+							{isGet ? 'Execute' : 'Send transaction'}
 						</Button>
 						<Collapse in={!!getResult} animateOpacity>
 							<Flex mt="8" direction="column" maxWidth={['22em', '45px', '58em', '70em']} whiteSpace="normal">
@@ -282,6 +286,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 								{stringifyResult(getResult).map(({ name, strValue }) => (
 									<Box key={name} mt="2">
 										<Text
+											key={name + '_txt'}
 											_hover={{ color: 'blue.500' }}
 											cursor="pointer"
 											onClick={() => {
@@ -290,7 +295,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 										>
 											{name ? (
 												<>
-													<Badge>{name}: </Badge> {strValue}
+													<Badge key={name + '_badge'}>{name}: </Badge> {strValue}
 												</>
 											) : (
 												<Center>
@@ -298,7 +303,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 													{isDeploy && (
 														<a
 															href={`https://${
-																wallet?.account.chain === CHAIN.TESTNET && 'testnet.'
+																tonConnectUI.wallet?.account.chain === CHAIN.TESTNET && 'testnet.'
 															}ton.cx/address/${strValue}`}
 															target="_blank"
 															rel="noreferrer"

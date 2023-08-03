@@ -1,21 +1,33 @@
 import { Box, ChakraProvider, Flex, Spacer } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { AppTitle } from 'src/components/AppTitle';
-import { AuthButton } from 'src/components/AuthButton/AuthButton';
+import { ConnectButton } from 'src/components/ConnectButton';
 import Footer from 'src/components/Footer';
-import { connector } from 'src/utils/connector';
 import BodyRoot from './BodyRoot';
 import NetworkBadge from './components/NetBadge';
 import Switch from './components/Switch';
 import { getTheme, sendTheme } from './utils/theme';
 import { appName } from './state/appName';
+import { THEME, useTonConnectUI } from '@tonconnect/ui-react';
 
 function App() {
 	const [isGetMethods, setIsGetMethods] = useState(false);
 	const [pathParams, setPathParams] = useState<{ wrapper?: string; method?: string; address?: string } | null>(null);
+	const [tcUI, setTcUIOptions] = useTonConnectUI();
 
 	useEffect(() => {
-		connector.restoreConnection();
+		tcUI.connector.restoreConnection();
+		setTcUIOptions({
+			uiPreferences: {
+				theme: THEME.LIGHT,
+				borderRadius: 's',
+				colorsSet: {
+					[THEME.LIGHT]: {
+						accent: '#2b6cb0',
+					},
+				},
+			},
+		});
 		const url = new URL(window.location.href);
 		const pathParts = url.pathname.split('/').filter((part) => part !== '');
 		const [providedWrapperFromPath, providedMethodFromPath, providedAddressFromPath] = pathParts.slice(0, 3);
@@ -38,7 +50,7 @@ function App() {
 							<Spacer />
 							<Flex alignItems="center" mt="-6">
 								{!!!pathParams?.method && <Switch setToParent={setIsGetMethods} />}
-								<AuthButton />
+								<ConnectButton />
 							</Flex>
 						</Flex>
 						{pathParams && (

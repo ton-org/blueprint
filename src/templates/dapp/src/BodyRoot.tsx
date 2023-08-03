@@ -1,12 +1,13 @@
 import { Box, Button, Center, Fade, Flex, Input, Tab, TabList, Tabs, useDisclosure } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActionCard, ParamsWithValue } from 'src/components/ActionCard';
-import { executeGet, executeSend, executeDeploy } from 'src/genTxByWrapper';
+import { Executor } from 'src/genTxByWrapper';
 import { Address } from 'ton-core';
 import { WrappersConfig, WrappersData } from 'src/utils/wrappersConfigTypes';
 import './fade.scss';
 import './tabs.scss';
 import { loadWrappersFromJSON } from './utils/loadWrappers';
+import { useTonConnectUI } from '@tonconnect/ui-react';
 
 interface BodyRootProps {
 	areGetMethods: boolean;
@@ -39,6 +40,9 @@ function BodyRoot(props: BodyRootProps) {
 	const [showRightShadow, setShowRightShadow] = useState(true);
 	const [showLeftShadow2, setShowLeftShadow2] = useState(false);
 	const [showRightShadow2, setShowRightShadow2] = useState(true);
+
+	const [tcUI] = useTonConnectUI();
+	const [executor, setExecutor] = useState<Executor | null>(null);
 
 	const handleScroll = () => {
 		// First tabs container
@@ -87,7 +91,6 @@ function BodyRoot(props: BodyRootProps) {
 			}
 		}
 	};
-
 	useEffect(() => {
 		const container1 = tabsContainerRef.current;
 		if (container1) container1.addEventListener('scroll', handleScroll);
@@ -99,6 +102,13 @@ function BodyRoot(props: BodyRootProps) {
 			if (container2) container2.removeEventListener('scroll', handleScroll);
 		};
 	}, []);
+
+	useEffect(() => {
+		const updateExecutor = async () => {
+			setExecutor(await Executor.createFromUI(tcUI));
+		};
+		updateExecutor();
+	}, [tcUI.wallet]);
 
 	const checkUrlParams = (_wrappers = wrappers) => {
 		if (_wrappers)
@@ -195,27 +205,20 @@ function BodyRoot(props: BodyRootProps) {
 	}, [destAddr]);
 
 	const buildAndExecute = async (isGet: boolean, methodName: string, params: ParamsWithValue) => {
-		if (wrappers == null) return;
+		if (!wrappers) throw new Error('Wrappers are empty, not loaded?');
+		if (!executor) throw new Error('No executor');
+		// should not happen ^^
+
 		if ((addressError || !destAddr) && !configAddress) {
-			console.log('no address, highlighting input');
-			setAddrTouched(true); // highlight address field
-			if (inputRef.current) inputRef.current.focus();
+			console.warn('no address, highlighting input');
+			setAddrTouched(true);
+			inputRef.current?.focus();
 			return;
 		}
-		console.log(
-			'invoking',
-			isGet ? 'get' : 'send',
-			'method',
-			methodName,
-			'with params',
-			params,
-			'to address',
-			configAddress?.toString() || destAddr,
-		);
 		if (methodName === 'sendDeploy') {
 			const deployData = wrappers[wrapper]['deploy'];
 			if (deployData['codeHex'] && deployData['configType']) {
-				return await executeDeploy(
+				return await executor.deploy(
 					wrappers[wrapper]['path'],
 					wrapper,
 					params,
@@ -224,15 +227,17 @@ function BodyRoot(props: BodyRootProps) {
 				);
 			} else throw new Error('Deploy data is missing');
 		}
-		if (isGet)
-			return await executeGet(
-				configAddress || Address.parse(destAddr),
-				wrappers[wrapper]['path'],
-				wrapper,
-				methodName,
-				params,
-			);
-		await executeSend(configAddress || Address.parse(destAddr), wrappers[wrapper]['path'], wrapper, methodName, params);
+		const executeParams = [
+			configAddress || Address.parse(destAddr),
+			wrappers[wrapper]['path'],
+			wrapper,
+			methodName,
+			params,
+		] as const;
+
+		if (isGet) return await executor.get(...executeParams);
+
+		await executor.send(...executeParams);
 	};
 
 	const tabNameFromConfig = (methodName: string) => {
