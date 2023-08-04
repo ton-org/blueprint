@@ -182,7 +182,26 @@ export class JettonMinter implements Contract {
 }
 ```
 
+## Scaffold it
+
+That's it, now you can run this command in the root of your project and
+generate fully working dapp:
+
+```bash
+yarn blueprint scaffold
+```
+
+Or, if you have changed your wrappers a bit, you can just renew the
+wrappers and the config, instead of copying the whole react app from
+templates.
+
+```bash
+yarn blueprint scaffold --update
+```
+
 ## Configuration
 
 After running `blueprint scaffold`, you will have a config file in
-`dapp/public/config.json`.
+`dapp/public/config.json`. Here you can set the default address for
+wrappers and remove this field from your dapp. Also you can easily set
+every field and tab name in it.
