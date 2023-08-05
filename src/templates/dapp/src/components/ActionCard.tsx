@@ -19,14 +19,7 @@ import {
 import { Search2Icon } from '@chakra-ui/icons';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Address, Builder, Cell, Slice } from 'ton-core';
-import {
-	Parameters,
-	ParamInfo,
-	DeployData,
-	ParamsConfig,
-	MethodConfig,
-	GetMethodConfig,
-} from 'src/utils/wrappersConfigTypes';
+import { Parameters, ParamInfo, DeployData, MethodConfig, GetMethodConfig } from 'src/utils/wrappersConfigTypes';
 import {
 	AddressField,
 	AmountField,
@@ -39,7 +32,7 @@ import {
 	UnknownField,
 } from './Fields';
 import { CHAIN } from '@tonconnect/sdk';
-import { useTonConnectUI } from '@tonconnect/ui-react';
+import { useTonWallet } from '@tonconnect/ui-react';
 
 export type ParamValue = Address | Buffer | boolean | bigint | Cell | number | string | undefined | null;
 export type ParamWithValue = ParamInfo & { value: ParamValue };
@@ -101,6 +94,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 	const [correctParams, setCorrectParams] = useState<string[]>([]);
 	const [getResult, setGetResult] = useState<Object | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [buttonInactive, setButtonInactive] = useState(true);
 
 	const isDeploy = methodName === 'sendDeploy';
 	// initializing a map with arguments needed for the method
@@ -108,9 +102,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 	const _defaultParams = isDeploy ? { ...methodParams, ...deploy?.configType } : methodParams;
 	const [enteredParams, setEnteredParams] = useState<ParamsWithValue>(_defaultParams as ParamsWithValue);
 
-	const [tonConnectUI] = useTonConnectUI();
+	const wallet = useTonWallet();
 	const toast = useToast();
-	tonConnectUI.sendTransaction;
 
 	const [outNames, setOutNames] = useState<string[]>('outNames' in methodConfig ? methodConfig.outNames : []);
 
@@ -165,15 +158,18 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 		}
 	}, []);
 
-	const isInactive = () => {
-		if (correctParams.length !== Object.keys(enteredParams).length) return true;
-		if (!isGet && !tonConnectUI.wallet) return true;
-		return false;
-	};
+	useEffect(() => {
+		const isInactive = () => {
+			if (correctParams.length !== Object.keys(enteredParams).length) return true;
+			if (!isGet && !wallet) return true;
+			return false;
+		};
+		setButtonInactive(isInactive());
+	}, [correctParams, wallet]);
 
 	const inactiveButtonText = () => {
 		if (correctParams.length !== Object.keys(enteredParams).length) return 'Provide arguments';
-		if (!isGet && !tonConnectUI.wallet) return 'Connect wallet';
+		if (!isGet && !wallet) return 'Connect wallet';
 	};
 
 	const handleAction = () => {
@@ -271,7 +267,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 							rounded="100"
 							flex="1"
 							py="4"
-							isLoading={isInactive()}
+							isLoading={buttonInactive}
 							loadingText={inactiveButtonText()}
 							spinner={<Circle />}
 							onClick={handleAction}
@@ -303,7 +299,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 													{isDeploy && (
 														<a
 															href={`https://${
-																tonConnectUI.wallet?.account.chain === CHAIN.TESTNET && 'testnet.'
+																wallet?.account.chain === CHAIN.TESTNET && 'testnet.'
 															}ton.cx/address/${strValue}`}
 															target="_blank"
 															rel="noreferrer"

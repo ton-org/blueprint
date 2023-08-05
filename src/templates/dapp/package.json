@@ -49,7 +49,6 @@
 		"react-dom": "^18.2.0",
 		"react-qr-code": "^2.0.8",
 		"react-refresh": "^0.11.0",
-		"recoil": "^0.7.6",
 		"resolve": "^1.20.0",
 		"resolve-url-loader": "^4.0.0",
 		"sass": "^1.55.0",
@@ -72,13 +71,17 @@
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-prettier": "^4.2.1",
 		"eslint-plugin-react": "^7.31.10",
+		"gh-pages": "^5.0.0",
 		"prettier": "^2.7.1"
 	},
+	"homepage": "https://1ixi1.github.io/blueproject",
 	"scripts": {
 		"start": "node scripts/start.js",
-		"build": "DISABLE_ESLINT_PLUGIN=true BUILD_PATH='./docs' node scripts/build.js",
+		"build": "DISABLE_ESLINT_PLUGIN=true node scripts/build.js",
 		"test": "node scripts/test.js",
-		"lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+		"lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+		"predeploy": "yarn build",
+		"deploy": "gh-pages -d build"
 	},
 	"eslintConfig": {
 		"extends": [

@@ -191,7 +191,13 @@ generate fully working dapp:
 yarn blueprint scaffold
 ```
 
-Or, if you have changed your wrappers a bit, you can just renew the
+To run the app, run this:
+
+```bash
+cd dapp && yarn && yarn start
+```
+
+Or, if you have changed your wrappers only a bit, you can just renew the
 wrappers and the config, instead of copying the whole react app from
 templates.
 
@@ -203,5 +209,5 @@ yarn blueprint scaffold --update
 
 After running `blueprint scaffold`, you will have a config file in
 `dapp/public/config.json`. Here you can set the default address for
-wrappers and remove this field from your dapp. Also you can easily set
-every field and tab name in it.
+wrappers and remove the address field from the specified tab. Also you can
+easily set every field and tab name in it.

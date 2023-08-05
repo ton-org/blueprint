@@ -46,17 +46,25 @@ export const scaffold: Runner = async (args: Args, ui: UIProvider) => {
     if (!localArgs['--update'] || !dappExisted) {
         ui.setActionPrompt('📁 Creating dapp directory...');
         await fs.cp(path.join(TEMPLATES_DIR, 'dapp'), DAPP_DIR, { recursive: true, force: true });
+        // wrappersConfigTypes.ts is imported in blueprint, to parse wrappers,
+        // we remove the compiled files from the destination.
+        await fs.rm(path.join(DAPP_DIR, 'src', 'utils', 'wrappersConfigTypes.d.ts'));
+        await fs.rm(path.join(DAPP_DIR, 'src', 'utils', 'wrappersConfigTypes.js'));
         ui.clearActionPrompt();
         ui.write('✅ Created dapp directory.\n');
 
         ui.setActionPrompt('📝 Setting title...');
-        // convert this module name (from package.json)
-        // from snake-case to Camel Case (with space)
-        // and replace "APPNAME" in src/state/appName.ts
-        const appName = path.basename(process.cwd().replace(/-/g, ' ')).replace(/\b\w/g, (l) => l.toUpperCase());
-        const appNameFile = path.join(DAPP_DIR, 'src', 'state', 'appName.ts');
-        const appNameFileContents = (await fs.readFile(appNameFile)).toString().replace('APPNAME', appName);
-        await fs.writeFile(appNameFile, appNameFileContents);
+        // convert module name from package.json
+        // from kebab-case to CamelCase with space
+        // e.g. my-contract -> My Contract
+        const appName = require(path.join(process.cwd(), 'package.json'))
+            .name.split('-')
+            .map((s: string) => s[0].toUpperCase() + s.slice(1))
+            .join(' ');
+        const envFile = path.join(DAPP_DIR, '.env');
+        const env = await fs.readFile(envFile, 'utf-8');
+        await fs.writeFile(envFile, env.replace('My Contract', appName));
+
         ui.clearActionPrompt();
         ui.write('✅ Set title.\n');
     }
@@ -82,5 +90,5 @@ export const scaffold: Runner = async (args: Args, ui: UIProvider) => {
     ui.write('cd dapp && yarn && yarn start\n\n');
 
     ui.write('To build for production, run (will take some more minutes):\n');
-    ui.write('cd dapp && yarn && yarn build && serve -s prod\n\n');
+    ui.write('cd dapp && yarn && yarn build && serve -s build\n\n');
 };

@@ -7,7 +7,7 @@ import { WrappersConfig, WrappersData } from 'src/utils/wrappersConfigTypes';
 import './fade.scss';
 import './tabs.scss';
 import { loadWrappersFromJSON } from './utils/loadWrappers';
-import { useTonConnectUI } from '@tonconnect/ui-react';
+import { useTonConnectUI, useTonWallet } from '@tonconnect/ui-react';
 
 interface BodyRootProps {
 	areGetMethods: boolean;
@@ -42,6 +42,8 @@ function BodyRoot(props: BodyRootProps) {
 	const [showRightShadow2, setShowRightShadow2] = useState(true);
 
 	const [tcUI] = useTonConnectUI();
+	// tcUI's wallet doesn't calls useEffect for some reason
+	const wallet = useTonWallet();
 	const [executor, setExecutor] = useState<Executor | null>(null);
 
 	const handleScroll = () => {
@@ -108,7 +110,7 @@ function BodyRoot(props: BodyRootProps) {
 			setExecutor(await Executor.createFromUI(tcUI));
 		};
 		updateExecutor();
-	}, [tcUI.wallet]);
+	}, [wallet]);
 
 	const checkUrlParams = (_wrappers = wrappers) => {
 		if (_wrappers)
@@ -127,8 +129,8 @@ function BodyRoot(props: BodyRootProps) {
 	}, [wrappers]);
 
 	const preloadWrappers = useCallback(async () => {
-		// cache it to refetch on switching from get to send.
-		// because not all wrappers have get methods and there is a filter below in useEffect.
+		// cache it to refetch on switching from get to send or versa.
+		// because some wrappers may not have get or send methods.
 		const [parsedWrappers, parsedConfig] = await loadWrappersFromJSON();
 		return { parsedWrappers, parsedConfig };
 	}, []);
@@ -137,13 +139,12 @@ function BodyRoot(props: BodyRootProps) {
 		async function loadWrappers() {
 			const { parsedWrappers, parsedConfig } = await preloadWrappers();
 			var _wrappers = parsedWrappers;
-			if (props.areGetMethods)
-				// filter wrappers with get methods
-				for (const _wrapper in parsedWrappers) {
-					if (Object.keys(parsedWrappers[_wrapper]['getFunctions']).length === 0) {
-						delete _wrappers[_wrapper];
-					}
+			// filter wrappers with selected methods
+			for (const _wrapper in parsedWrappers) {
+				if (Object.keys(parsedWrappers[_wrapper][methods()]).length === 0) {
+					delete _wrappers[_wrapper];
 				}
+			}
 			setWrappers(_wrappers);
 			setWrappersConfig(parsedConfig);
 

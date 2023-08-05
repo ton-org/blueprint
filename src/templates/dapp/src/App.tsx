@@ -7,7 +7,6 @@ import BodyRoot from './BodyRoot';
 import NetworkBadge from './components/NetBadge';
 import Switch from './components/Switch';
 import { getTheme, sendTheme } from './utils/theme';
-import { appName } from './state/appName';
 import { THEME, useTonConnectUI } from '@tonconnect/ui-react';
 
 function App() {
@@ -28,14 +27,38 @@ function App() {
 				},
 			},
 		});
-		const url = new URL(window.location.href);
-		const pathParts = url.pathname.split('/').filter((part) => part !== '');
-		const [providedWrapperFromPath, providedMethodFromPath, providedAddressFromPath] = pathParts.slice(0, 3);
+
+		const origUrl = new URL(window.location.href);
+
+		let base = process.env.PUBLIC_URL || origUrl.origin;
+
+		if (!base.includes(origUrl.origin)) {
+			base = origUrl.origin + base;
+		}
+
+		const urlStringNoBase = window.location.href.replace(base, origUrl.origin);
+		const urlToParse = new URL(urlStringNoBase);
+		const pathParts = urlToParse.pathname.split('/').filter((part) => part !== '');
+
+		let providedWrapperFromPath: string | undefined;
+		let providedMethodFromPath: string | undefined;
+		let providedAddressFromPath: string | undefined;
+		if (pathParts.length > 0) {
+			[providedWrapperFromPath, providedMethodFromPath, providedAddressFromPath] = pathParts.slice(0, 3);
+		} else {
+			const params = new URLSearchParams(urlToParse.search);
+			if ((providedWrapperFromPath = params.get('wrapper') || undefined)) {
+				if ((providedMethodFromPath = params.get('method') || undefined)) {
+					providedAddressFromPath = params.get('address') || undefined;
+				}
+			}
+		}
 		setPathParams({
 			wrapper: providedWrapperFromPath,
 			method: providedMethodFromPath,
 			address: providedAddressFromPath,
 		});
+
 		if (providedMethodFromPath?.startsWith('get')) setIsGetMethods(true);
 	}, []);
 
@@ -46,7 +69,7 @@ function App() {
 				<Box minHeight="90vh">
 					<Box fontFamily="Inter" bg="#F7F9FB">
 						<Flex>
-							<AppTitle title={appName} />
+							<AppTitle title={process.env.REACT_APP_TITLE || 'Blueprint Dapp'} />
 							<Spacer />
 							<Flex alignItems="center" mt="-6">
 								{!!!pathParams?.method && <Switch setToParent={setIsGetMethods} />}
