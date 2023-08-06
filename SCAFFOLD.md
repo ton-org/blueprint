@@ -15,31 +15,31 @@ higher.
 ❌ Not like this:
 
 ```
-contracts/                      
- └── my-contract.fc             
+contracts/
+ └── my-contract.fc
 SendModes.ts <╗                    // will not be included in dapp
 Errors.ts <═══╬═══════════════╗    // will not be included in dapp
 Ops.ts <══════╝               ║    // will not be included in dapp
-wrappers/                     ║ 
- ├── MyContract.compile.ts    ║ 
- └── MyContract.ts ═══════════╣ 
-tests/                        ║ 
- └── MyContract.spec.ts ══════╝ 
+wrappers/                     ║
+ ├── MyContract.compile.ts    ║
+ └── MyContract.ts ═══════════╣
+tests/                        ║
+ └── MyContract.spec.ts ══════╝
 ```
 
 ✅ But like this:
 
 ```
-contracts/                      
- └── my-contract.fc             
-wrappers/                       
- ├── SendModes.ts <╗            
- ├── Errors.ts <═══╬══════════╗ 
- ├── Ops.ts <══════╝          ║ 
- ├── MyContract.compile.ts    ║ 
- └── MyContract.ts ═══════════╣ 
-tests/                        ║ 
- └── MyContract.spec.ts ══════╝ 
+contracts/
+ └── my-contract.fc
+wrappers/
+ ├── SendModes.ts <╗
+ ├── Errors.ts <═══╬══════════╗
+ ├── Ops.ts <══════╝          ║
+ ├── MyContract.compile.ts    ║
+ └── MyContract.ts ═══════════╣
+tests/                        ║
+ └── MyContract.spec.ts ══════╝
 ```
 
 ## Each wrapper requirements
@@ -154,7 +154,7 @@ type must be defined in the wrapper too.
 export type JettonMinterConfig = {
     admin: Address;
     content: Cell;
-    voting_code: Cell
+    voting_code: Cell;
 };
 
 export function jettonMinterConfigToCell(config: JettonMinterConfig): Cell {
@@ -246,9 +246,8 @@ yarn blueprint scaffold --update
 ```
 
 > Your dapp config won't be overwritten by `--update`. \
-Only extended, if script found some new parameters, methods or wrappers.\
-Read more on config in the next section.
-
+> Only extended, if script found some new parameters, methods or wrappers.\
+> Read more on config in the next section.
 
 ## Configuration
 
@@ -287,10 +286,12 @@ config.json for our `JettonMinter`:
             "fieldTitle": ""
           },
           "forward_ton_amount": {
-            "fieldTitle": ""
+            "fieldTitle": "",
+            "overrideWithDefault": false
           },
           "total_ton_amount": {
-            "fieldTitle": ""
+            "fieldTitle": "",
+            "overrideWithDefault": false
           }
         }
       }
@@ -310,4 +311,87 @@ config.json for our `JettonMinter`:
 }
 ```
 
-#### Default Address
+##### Default Address
+
+If you set `defaultAddress`, the address input field and the _Deploy_
+button will disappear from the ui. It will be impossible to replace the
+address specified in the config for the wrapper with the address in the
+url. More on url parameters [here]().
+
+
+##### Tab Names
+
+The `tabName` parameter is just an alias for a wrapper or method in the
+ui.
+
+
+##### Field Titles
+
+Almost like `tabName`, `fieldTitle` is an alias to a parameter in the
+input card.
+
+
+##### Out Names (in get methods)
+
+In `outNames` you can specify the names of the variables that the get function
+returns. They will be read in order for each value in the resulting
+Object. If there are not enough names from `outNames`, the names of the
+keys in the received object will be output.
+
+##### Override
+
+By setting `"overrideWithDefault": "true"` you will make the field
+inaccessible to the user for input, and instead `defaultValue` or
+`undefined` will be passed to the parameter.
+
+
+### Result example config
+
+```json
+{
+  "JettonMinter": {
+    "defaultAddress": "",
+    "tabName": "Minter",
+    "sendFunctions": {
+      "sendDeploy": {
+        "tabName": "",
+        "params": {
+          "value": {
+            "fieldTitle": "TONs"
+          }
+        }
+      },
+      "sendMint": {
+        "tabName": "Mint",
+        "params": {
+          "to": {
+            "fieldTitle": "Receiver"
+          },
+          "jetton_amount": {
+            "fieldTitle": "To mint"
+          },
+          "forward_ton_amount": {
+            "fieldTitle": "",
+            "overrideWithDefault": true
+          },
+          "total_ton_amount": {
+            "fieldTitle": "TONs",
+            "overrideWithDefault": false
+          }
+        }
+      }
+    },
+    "getFunctions": {
+      "getWalletAddress": {
+        "tabName": "Wallet from address",
+        "params": {
+          "owner": {
+            "fieldTitle": "Owner"
+          }
+        },
+        "outNames": ["JWallet Address"]
+      }
+    }
+  }
+}
+```
