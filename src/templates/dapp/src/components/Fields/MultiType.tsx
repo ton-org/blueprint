@@ -31,7 +31,7 @@ export function MultiTypeField(props: MultiTypeFieldProps) {
 							<Box display="flex" alignItems="end">
 								<Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
 									{props.fieldName || props.paramName}
-									{props.optional ? '(optional)' : ''}:
+									{props.optional ? ' (optional)' : ''}:
 								</Text>
 							</Box>
 							<Select placeholder="Select type" onChange={(e) => setSelectedType(e.target.value)}>

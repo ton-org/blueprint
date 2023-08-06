@@ -58,7 +58,7 @@ export function CellField(props: FieldProps) {
 					<Box display="flex" alignItems="end">
 						<Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
 							{props.fieldName || props.paramName}
-							{defaultCell || props.optional ? '(optional)' : ''}:
+							{defaultCell || props.optional ? ' (optional)' : ''}:
 						</Text>
 					</Box>
 					<Input

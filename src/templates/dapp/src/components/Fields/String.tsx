@@ -44,7 +44,7 @@ export function StringField(props: FieldProps) {
 					<Box display="flex" alignItems="end">
 						<Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
 							{props.fieldName || props.paramName}
-							{defaultString || props.optional ? '(optional)' : ''}:
+							{defaultString || props.optional ? ' (optional)' : ''}:
 						</Text>
 					</Box>
 					<InputGroup>

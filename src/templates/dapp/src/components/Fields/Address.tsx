@@ -48,7 +48,7 @@ export function AddressField(props: FieldProps) {
 					<Box display="flex" alignItems="end">
 						<Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
 							{props.fieldName || props.paramName}
-							{defaultAddress ? '(optional)' : ''}:
+							{defaultAddress ? ' (optional)' : ''}:
 						</Text>
 					</Box>
 					<Input
