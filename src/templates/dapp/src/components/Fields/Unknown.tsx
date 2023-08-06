@@ -33,7 +33,7 @@ export function UnknownField(props: FieldProps) {
 					<Box display="flex" alignItems="end">
 						<Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
 							{props.fieldName || props.paramName}
-							{props.defaultValue ? '(optional)' : ''}:
+							{defaultValue || props.optional ? '(optional)' : ''}:
 						</Text>
 					</Box>
 					<Tooltip label="You can implement it in components/Fields and add to ActionCard.">

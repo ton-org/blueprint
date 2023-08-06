@@ -56,7 +56,7 @@ export function AmountField(props: FieldProps) {
 					<Box display="flex" alignItems="end">
 						<Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
 							{props.fieldName || props.paramName}
-							{props.defaultValue || props.optional ? '(optional)' : ''}:
+							{defaultAmount || props.optional ? '(optional)' : ''}:
 						</Text>
 					</Box>
 					<InputGroup>

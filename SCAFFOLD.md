@@ -1,12 +1,48 @@
-# Building a dapp from wrappers
+# Scaffolding
+
+Generating a dapp using wrappers you wrote for your TON contracts in
+Blueprint.
 
 How should the project be organized to ensure that the `blueprint
-scaffold` creates a dapp successfully?
+scaffold` creates a dapp properly?
 
-### 1. The base
+## Structure
 
-All wrappers must lie strictly in the `wrappers/` directory and imports in
-them **cannot go to the root** of the project or higher.
+First, wrappers in your project must lie strictly in the `wrappers/`
+directory and imports in them **cannot go to the root** of the project or
+higher.
+
+❌ Not like this:
+
+```
+contracts/                      
+ └── my-contract.fc             
+SendModes.ts <╗                    // will not be included in dapp
+Errors.ts <═══╬═══════════════╗    // will not be included in dapp
+Ops.ts <══════╝               ║    // will not be included in dapp
+wrappers/                     ║ 
+ ├── MyContract.compile.ts    ║ 
+ └── MyContract.ts ═══════════╣ 
+tests/                        ║ 
+ └── MyContract.spec.ts ══════╝ 
+```
+
+✅ But like this:
+
+```
+contracts/                      
+ └── my-contract.fc             
+wrappers/                       
+ ├── SendModes.ts <╗            
+ ├── Errors.ts <═══╬══════════╗ 
+ ├── Ops.ts <══════╝          ║ 
+ ├── MyContract.compile.ts    ║ 
+ └── MyContract.ts ═══════════╣ 
+tests/                        ║ 
+ └── MyContract.spec.ts ══════╝ 
+```
+
+## Each wrapper requirements
 
 Let's say the contract we created is called `jetton-minter`.
 
@@ -24,7 +60,7 @@ export class JettonMinter implements Contract {
 }
 ```
 
--   The wrapper must contain a `createFromAddress` method, like this:
+-   The wrapper must contain a `createFromAddress` method:
 
 ```typescript
 export class JettonMinter implements Contract {
@@ -40,13 +76,13 @@ export class JettonMinter implements Contract {
 -   And our wrapper must have at least a sendFunction or a getFunction, in
     the format described below.
 
-### 2. sendFunctions
+### sendFunctions
 
 In tests, _sendFunctions_ are often used with _treasuries_, to send some
 info to a contract or start a chain of transactions. Here, in dapp,
 the connected wallet will act like treasury, to execute send.
 
-To be avaliable in the dapp, each sendFunction (here `sendMint`) must
+To be avaliable in dapp, each sendFunction (here `sendMint`) must
 start with `send`, must receive `provider` of type `ContractProvider` and
 `via` of `Sender` in its parameters.
 
@@ -58,8 +94,8 @@ async sendMint(
     via: Sender,
     to: Address,
     jetton_amount: bigint,
-    forward_ton_amount: bigint,
-    total_ton_amount: bigint
+    forward_ton_amount: bigint = toNano('0.05'),
+    total_ton_amount: bigint = toNano('0.1')
 ) {
     await provider.internal(via, {
         sendMode: SendMode.PAY_GAS_SEPARATELY,
@@ -83,9 +119,9 @@ async sendMint(
     will pass `undefined` to a function, otherwise the function won't run.
 
 You can implement other types for your specific proposes in
-`components/Fields/`, you can take any type as a reference.
+`components/Fields/`, take any type as a reference.
 
-### 3. getFunctions
+### getFunctions
 
 The same as sendFunctions, but they don't need `via` argument because they
 are not sending anything to the contract.
@@ -93,7 +129,7 @@ are not sending anything to the contract.
 ##### Example:
 
 ```typescript
-async getWalletAddress(provider: ContractProvider, owner: Address): Promise<Address> {
+async getWalletAddress(provider: ContractProvider, owner: Address) {
     const res = await provider.get('get_wallet_address', [
         { type: 'slice', cell: beginCell().storeAddress(owner).endCell() },
     ]);
@@ -102,15 +138,15 @@ async getWalletAddress(provider: ContractProvider, owner: Address): Promise<Addr
 ```
 
 The result of a get method will be printed just like from `console.log()`,
-except some native TOn types: Cell, Slice, Builder will be printed as hex
+except some native TON types: Cell, Slice, Builder will be printed as hex
 and Address will be in the user-friendly format.
 
-### 4. createFromConfig (optional)
+### createFromConfig (optional)
 
 If we want our contract to have _Deploy_ option in the ui, its wrapper
 must contain `createFromConfig` method, which takes argument `config` of
-type named after main class, e.g. `JettonMinterConfig`. This type must be
-defined in wrapper too.
+type named after main class + `Config`, e.g. `JettonMinterConfig`. This
+type must be defined in the wrapper too.
 
 ##### Result example:
 
@@ -118,8 +154,7 @@ defined in wrapper too.
 export type JettonMinterConfig = {
     admin: Address;
     content: Cell;
-    voting_code: Cell;
-    testValue?: boolean;
+    voting_code: Cell
 };
 
 export function jettonMinterConfigToCell(config: JettonMinterConfig): Cell {
@@ -137,6 +172,12 @@ export class JettonMinter implements Contract {
 
     static createFromAddress(address: Address) {
         return new JettonMinter(address);
+    }
+
+    static createFromConfig(config: JettonMinterConfig, code: Cell, workchain = 0) {
+        const data = jettonMinterConfigToCell(config);
+        const init = { code, data };
+        return new JettonMinter(contractAddress(workchain, init), init);
     }
 
     async sendDeploy(provider: ContractProvider, via: Sender, value: bigint) {
@@ -157,14 +198,13 @@ export class JettonMinter implements Contract {
             .storeCoins(total_ton_amount)
             .endCell();
     }
-
     async sendMint(
         provider: ContractProvider,
         via: Sender,
         to: Address,
         jetton_amount: bigint,
-        forward_ton_amount: bigint,
-        total_ton_amount: bigint
+        forward_ton_amount: bigint = toNano('0.05'),
+        total_ton_amount: bigint = toNano('0.1')
     ) {
         await provider.internal(via, {
             sendMode: SendMode.PAY_GAS_SEPARATELY,
@@ -184,14 +224,14 @@ export class JettonMinter implements Contract {
 
 ## Scaffold it
 
-That's it, now you can run this command in the root of your project and
-generate fully working dapp:
+That's it, now you can run this command in the root of your project to
+generate a dapp for your contracts:
 
 ```bash
 yarn blueprint scaffold
 ```
 
-To run the app, run this:
+To try the app, run this:
 
 ```bash
 cd dapp && yarn && yarn start
@@ -205,9 +245,69 @@ templates.
 yarn blueprint scaffold --update
 ```
 
+> Your dapp config won't be overwritten by `--update`. \
+Only extended, if script found some new parameters, methods or wrappers.\
+Read more on config in the next section.
+
+
 ## Configuration
 
-After running `blueprint scaffold`, you will have a config file in
-`dapp/public/config.json`. Here you can set the default address for
-wrappers and remove the address field from the specified tab. Also you can
-easily set every field and tab name in it.
+Scaffold generates 2 json files for your project that can (or should) be
+customized:
+[dapp/public/wrappers.json](https://github.com/1IxI1/blueproject/blob/main/dapp/public/wrappers.json)
+and
+[dapp/public/config.json](https://github.com/1IxI1/blueproject/blob/main/dapp/public/config.json).
+In the first one, you can simply delete some methods or wrappers and
+optionally set default values (be careful with this).
+
+In the second one, things are much more interesting, here is an example of
+config.json for our `JettonMinter`:
+
+```json
+{
+  "JettonMinter": {
+    "defaultAddress": "",
+    "tabName": "",
+    "sendFunctions": {
+      "sendDeploy": {
+        "tabName": "",
+        "params": {
+          "value": {
+            "fieldTitle": ""
+          }
+        }
+      },
+      "sendMint": {
+        "tabName": "",
+        "params": {
+          "to": {
+            "fieldTitle": ""
+          },
+          "jetton_amount": {
+            "fieldTitle": ""
+          },
+          "forward_ton_amount": {
+            "fieldTitle": ""
+          },
+          "total_ton_amount": {
+            "fieldTitle": ""
+          }
+        }
+      }
+    },
+    "getFunctions": {
+      "getWalletAddress": {
+        "tabName": "",
+        "params": {
+          "owner": {
+            "fieldTitle": ""
+          }
+        },
+        "outNames": []
+      }
+    }
+  }
+}
+```
+
+#### Default Address

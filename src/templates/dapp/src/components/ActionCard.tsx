@@ -158,14 +158,12 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 		}
 	}, []);
 
-	useEffect(() => {
-		const isInactive = () => {
-			if (correctParams.length !== Object.keys(enteredParams).length) return true;
-			if (!isGet && !wallet) return true;
-			return false;
-		};
-		setButtonInactive(isInactive());
-	}, [correctParams, wallet]);
+	const isInactive = () => {
+		console.log(correctParams.length, Object.keys(enteredParams).length);
+		if (correctParams.length !== Object.keys(enteredParams).length) return true;
+		if (!isGet && !wallet) return true;
+		return false;
+	};
 
 	const inactiveButtonText = () => {
 		if (correctParams.length !== Object.keys(enteredParams).length) return 'Provide arguments';
@@ -267,7 +265,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 							rounded="100"
 							flex="1"
 							py="4"
-							isLoading={buttonInactive}
+							isLoading={isInactive()}
 							loadingText={inactiveButtonText()}
 							spinner={<Circle />}
 							onClick={handleAction}

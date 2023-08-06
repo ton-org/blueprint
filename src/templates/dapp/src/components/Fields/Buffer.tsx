@@ -57,7 +57,7 @@ export function BufferField(props: FieldProps) {
 					<Box display="flex" alignItems="end">
 						<Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
 							{props.fieldName || props.paramName}
-							{defaultBuffer ? '(optional)' : ''}:
+							{defaultBuffer || props.optional ? '(optional)' : ''}:
 						</Text>
 					</Box>
 					<Input
