@@ -311,6 +311,10 @@ config.json for our `JettonMinter`:
 }
 ```
 
+### Without configuration:
+<img width="600" src="https://github.com/1IxI1/blueprint/assets/53380262/77eb1686-bb5a-4375-b473-1a7a2d7760a2"/>
+
+
 ##### Default Address
 
 If you set `defaultAddress`, the address input field and the _Deploy_
@@ -395,3 +399,6 @@ inaccessible to the user for input, and instead `defaultValue` or
   }
 }
 ```
+### After configuration:
+<img width="600" src="https://github.com/1IxI1/blueprint/assets/53380262/48292622-e901-489e-b090-883fd2e49e21"/>
+<img width="600" src="https://github.com/1IxI1/blueprint/assets/53380262/659658ae-ae62-4e03-aaf9-103ddce3f947"/>
