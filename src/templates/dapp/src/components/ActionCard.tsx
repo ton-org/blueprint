@@ -159,7 +159,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 	}, []);
 
 	const isInactive = () => {
-		console.log(correctParams.length, Object.keys(enteredParams).length);
 		if (correctParams.length !== Object.keys(enteredParams).length) return true;
 		if (!isGet && !wallet) return true;
 		return false;
