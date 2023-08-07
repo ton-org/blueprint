@@ -1,10 +1,13 @@
-# Scaffolding
+# A dapp from wrappers - `blueprint scaffold`
+<img width="80%" src="https://github.com/1IxI1/blueprint/assets/53380262/c4545d91-c659-414f-9bcc-8bc5d303aea6"/>
+
+[Try the demo here](https://1ixi1.github.io/blueproject/)
 
 Generating a dapp using wrappers you wrote for your TON contracts in
 Blueprint.
 
 How should the project be organized to ensure that the `blueprint
-scaffold` creates a dapp properly?
+ scaffold` creates a dapp properly?
 
 ## Structure
 
