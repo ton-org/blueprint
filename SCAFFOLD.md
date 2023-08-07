@@ -1,13 +1,31 @@
-# A dapp from wrappers - `blueprint scaffold`
-<img width="80%" src="https://github.com/1IxI1/blueprint/assets/53380262/c4545d91-c659-414f-9bcc-8bc5d303aea6"/>
+# Dapp from wrappers - `blueprint scaffold`
 
 [Try the demo here](https://1ixi1.github.io/blueproject/)
 
-Generating a dapp using wrappers you wrote for your TON contracts in
-Blueprint.
+<img width="80%" src="https://github.com/1IxI1/blueprint/assets/53380262/c4545d91-c659-414f-9bcc-8bc5d303aea6"/>
+
 
 How should the project be organized to ensure that the `blueprint
- scaffold` creates a dapp properly?
+scaffold` creates a dapp properly?
+
+- [Structure](#structure)
+- [Project name](#project-name)
+- [Wrapper requirements](#wrapper-requirements)
+  - [sendFunctions](#sendfunctions)
+  - [getFunctions](#getfunctions)
+  - [createFromConfig (optional)](#createfromconfig-(optional))
+- [Scaffold it](#scaffold-it)
+- [Configuration](#configuration)
+  - [Tab Names](#tab-names)
+  - [Field Titles](#field-titles)
+  - [Out Names (in get methods)](#out-names-in-get-methods)
+  - [Override](#override)
+- [Passing URL parameters](#passing-url-parameters)
+  - [Via arguments](#via-arguments)
+  - [Via paths](#via-paths)
+  - [Addresses for individual wrappers](#addresses-for-individual-wrappers)
+  - [Default values for fields](#default-values-for-fields)
+- [Example config](##example-of-edited-config.json)
 
 ## Structure
 
@@ -45,7 +63,25 @@ tests/                        ║
  └── MyContract.spec.ts ══════╝
 ```
 
-## Each wrapper requirements
+## Project name
+
+The dapp title will be generated from package.json. Scaffold script
+expects the `name` field to have a value of _kebab-case_.
+
+```json
+{
+    "name": "jetton-dao",
+    "version": "0.0.1",
+    "license": "MIT",
+    ...
+```
+
+The title will be **Jetton Dao**
+
+Dapp title is written in dapp/.env file and you may edit it easily. It
+won't be overwritten by `blueprint scaffold --update`.
+
+## Wrapper requirements
 
 Let's say the contract we created is called `jetton-minter`.
 
@@ -315,7 +351,7 @@ config.json for our `JettonMinter`:
 ```
 
 ### Without configuration:
-<img width="600" src="https://github.com/1IxI1/blueprint/assets/53380262/77eb1686-bb5a-4375-b473-1a7a2d7760a2"/>
+<img width="75%" src="https://github.com/1IxI1/blueprint/assets/53380262/77eb1686-bb5a-4375-b473-1a7a2d7760a2"/>
 
 
 ##### Default Address
@@ -352,7 +388,99 @@ inaccessible to the user for input, and instead `defaultValue` or
 `undefined` will be passed to the parameter.
 
 
-### Result example config
+## Passing URL parameters
+
+After your dapp was deployed, you can specify the wrapper, method, and contract address in the url using
+parameters or paths.
+
+#### Via arguments
+
+```
+https://my-dapp.xyz/?wrapper=<WrapperName>
+https://my-dapp.xyz/?wrapper=<WrapperName>&method=<methodName>
+https://my-dapp.xyz/?wrapper=<WrapperName>&method=<methodName>&address=<EQAddr>
+```
+
+Use only `JettonMinter` wrapper, and deny select (hide tabs): \
+https://1ixi1.github.io/blueproject/?wrapper=JettonMinter
+
+Use only `sendDiscovery` method: \
+https://1ixi1.github.io/blueproject/?wrapper=JettonMinter&method=sendDiscovery
+
+Also works with get methods: \
+https://1ixi1.github.io/blueproject/?wrapper=JettonMinter&method=getJettonData
+
+Specify an address (won't work if already has an address in config.json): \
+https://1ixi1.github.io/blueproject?wrapper=JettonWallet&method=getJettonData&address=EQCVervJ0JDFlSdOsPos17zHdRBU-kHHl09iXOmRIW-5lwXW
+
+The parameters passed this way should go exactly in the sequence: _wrapper, method, address_.
+
+#### Via paths
+
+You may use paths instead of args, for shorter URLs
+
+```
+https://my-dapp.xyz/<WrapperName>
+https://my-dapp.xyz/<WrapperName>/<methodName>
+https://my-dapp.xyz/<WrapperName>/<methodName>/<EQAddr>
+```
+
+> Paths variant won't work with github pages
+> ([reason](https://create-react-app.dev/docs/deployment/#notes-on-client-side-routing)),
+> but may be used in production, or during development, on localhost:
+> http://localhost:3000/blueproject/JettonWallet/getJettonData/EQCVervJ0JDFlSdOsPos17zHdRBU-kHHl09iXOmRIW-5lwXW
+
+**Example (doesn't work):** \
+https://1ixi1.github.io/blueproject/JettonWallet/getJettonData/EQCVervJ0JDFlSdOsPos17zHdRBU-kHHl09iXOmRIW-5lwXW
+
+
+#### Addresses for individual wrappers
+
+You can specify several addresses for wrappers at once, without specifying one and leaving
+the choice of the desired method and wrapper to the user.
+
+```
+https://my-dapp.xyz/?<WrapperName1>=<EQAddr1>&<WrapperNameN>=<EQAddrN>
+```
+
+**Example (works):** \
+https://1ixi1.github.io/blueproject/?JettonMinter=EQBjEw-SOe8yV2kIbGVZGrsPpLTaaoAOE87CGXI2ca4XdzXA&JettonWallet=EQCVervJ0JDFlSdOsPos17zHdRBU-kHHl09iXOmRIW-5lwXW
+
+
+#### Default values for fields
+
+You can also set default values for parameter fields. The specified
+parameter will act as the `defaultValue` in wrappers.json (only if
+defaultValue was not specified in the file yet). You can combine this with
+or without specifying the exact method, then it will be used where there
+is a parameter with that name.
+
+```
+https://my-dapp.xyz/?<param1>=<value1>&<param2>=<value2>
+```
+
+**Example with exact method:** (<a href="https://1ixi1.github.io/blueproject/?wrapper=JettonMinter&method=sendCreateSimpleMsgVoting&expiration_date=11111111111&minimal_execution_amount=toNano(%270.5%27)&payload=Cell.fromBase64(%27te6cckEBAQEACAAADDAuanNvbuTiyMU=%27)&value=toNano(%27111%27))">link</a>):
+```
+https://1ixi1.github.io/blueproject/?
+    wrapper=JettonMinter&
+    method=sendCreateSimpleMsgVoting&
+    expiration_date=11111111111&
+    minimal_execution_amount=toNano('0.5')&
+    payload=Cell.fromBase64(''te6cckEBAQEACAAADDAuanNvbuTiyMU=')&
+    value=toNano('111')
+```
+
+**Example with parameters for all methods** (<a href="https://1ixi1.github.io/blueproject/?wrapper=JettonMinter&method=sendCreateSimpleMsgVoting&expiration_date=11111111111&minimal_execution_amount=toNano(%270.5%27)&payload=Cell.fromBase64(%27te6cckEBAQEACAAADDAuanNvbuTiyMU=%27)&value=toNano(%27111%27))">link</a>):
+```
+https://1ixi1.github.io/blueproject/?
+    expiration_date=11111111111&
+    minimal_execution_amount=toNano('0.5')&
+    payload=Cell.fromBase64(''te6cckEBAQEACAAADDAuanNvbuTiyMU=')&
+    value=toNano('111')
+```
+
+
+## Example of edited config.json
 
 ```json
 {
@@ -402,6 +530,5 @@ inaccessible to the user for input, and instead `defaultValue` or
   }
 }
 ```
-### After configuration:
-<img width="600" src="https://github.com/1IxI1/blueprint/assets/53380262/48292622-e901-489e-b090-883fd2e49e21"/>
-<img width="600" src="https://github.com/1IxI1/blueprint/assets/53380262/659658ae-ae62-4e03-aaf9-103ddce3f947"/>
+<img width="75%" src="https://github.com/1IxI1/blueprint/assets/53380262/48292622-e901-489e-b090-883fd2e49e21"/>
+<img width="75%" src="https://github.com/1IxI1/blueprint/assets/53380262/659658ae-ae62-4e03-aaf9-103ddce3f947"/>
