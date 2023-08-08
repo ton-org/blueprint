@@ -30,7 +30,7 @@ npm create ton@latest
 ### Requirements
 
 * [Node.js](https://nodejs.org) with a recent version like v18, verify version with `node -v`
-* IDE with TypeScript and FunC support like [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode)
+* IDE with TypeScript and FunC support like [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode) or [IntelliJ Idea](https://www.jetbrains.com/idea/) with the [TON Development plugin](https://plugins.jetbrains.com/plugin/18541-ton-development)
 
 &nbsp;
 
