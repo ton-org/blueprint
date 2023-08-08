@@ -44,6 +44,9 @@ export const scaffold: Runner = async (args: Args, ui: UIProvider) => {
     } catch (e) {}
 
     if (!localArgs['--update'] || !dappExisted) {
+        if (localArgs['--update']) {
+            ui.write('⚠️ Warning: no dapp found, a new one will be created.\n');
+        }
         ui.setActionPrompt('📁 Creating dapp directory...');
         await fs.cp(path.join(TEMPLATES_DIR, 'dapp'), DAPP_DIR, { recursive: true, force: true });
         // wrappersConfigTypes.ts is imported in blueprint, to parse wrappers,
@@ -57,7 +60,7 @@ export const scaffold: Runner = async (args: Args, ui: UIProvider) => {
         // convert module name from package.json
         // from kebab-case to CamelCase with space
         // e.g. my-contract -> My Contract
-        const appName = require(path.join(process.cwd(), 'package.json'))
+        const appName = JSON.parse(await fs.readFile(path.join(process.cwd(), 'package.json'), 'utf-8'))
             .name.split('-')
             .map((s: string) => s[0].toUpperCase() + s.slice(1))
             .join(' ');

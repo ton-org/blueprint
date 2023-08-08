@@ -4,29 +4,7 @@ import traverse from '@babel/traverse';
 import generate from '@babel/generator';
 import { Identifier } from '@babel/types';
 import { readCompiled } from '../utils';
-
-export type ParamInfo = {
-    type: string;
-    defaultValue?: string;
-    optional?: boolean | null;
-};
-
-export type Parameters = Record<string, ParamInfo>;
-
-export type DeployData = {
-    canBeCreatedFromConfig: boolean;
-    codeHex?: string;
-    configType?: Parameters;
-};
-
-export type Functions = Record<string, Parameters>;
-
-export type WrapperInfo = {
-    sendFunctions: Functions;
-    getFunctions: Functions;
-    path: string;
-    deploy: DeployData;
-};
+import { ParamInfo, Parameters, Functions, WrapperInfo } from '../templates/dapp/src/utils/wrappersConfigTypes';
 
 export async function parseWrapper(filePath: string, className: string): Promise<WrapperInfo> {
     const content = await fs.readFile(filePath, 'utf-8');
@@ -98,9 +76,12 @@ export async function parseWrapper(filePath: string, className: string): Promise
                 node.id?.name == className &&
                 node.implements &&
                 node.implements.length === 1 &&
-                node.implements[0].type === 'TSExpressionWithTypeArguments' &&
-                node.implements[0].expression.type === 'Identifier' &&
-                node.implements[0].expression.name === 'Contract'
+                node.implements.findIndex(
+                    (i) =>
+                        i.type == 'TSExpressionWithTypeArguments' &&
+                        i.expression.type == 'Identifier' &&
+                        i.expression.name == 'Contract'
+                ) !== -1
             ) {
                 path.traverse({
                     ClassMethod(path) {
