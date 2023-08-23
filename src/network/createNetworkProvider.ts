@@ -16,8 +16,8 @@ import {
     SendMode,
     toNano,
     TupleItem,
-} from 'ton-core';
-import { TonClient4, TonClient } from 'ton';
+} from '@ton/core';
+import { TonClient4, TonClient } from '@ton/ton';
 import { getHttpV4Endpoint } from '@orbs-network/ton-access';
 import { UIProvider } from '../ui/UIProvider';
 import { NetworkProvider } from './NetworkProvider';
@@ -25,7 +25,7 @@ import { SendProvider } from './send/SendProvider';
 import { FSStorage } from './storage/FSStorage';
 import path from 'path';
 import { TEMP_DIR } from '../paths';
-import { mnemonicToPrivateKey } from 'ton-crypto';
+import { mnemonicToPrivateKey } from '@ton/crypto';
 import { MnemonicProvider, WalletVersion } from './send/MnemonicProvider';
 
 const argSpec = {
@@ -164,10 +164,7 @@ class NetworkProviderImpl implements NetworkProvider {
         } else {
             return new WrappedContractProvider(
                 address,
-                this.#tc.provider(
-                    address,
-                    { code: init?.code ?? new Cell(), data: init?.data ?? new Cell() }
-                ),
+                this.#tc.provider(address, { code: init?.code ?? new Cell(), data: init?.data ?? new Cell() }),
                 init
             );
         }
@@ -268,10 +265,16 @@ class NetworkProviderBuilder {
         });
 
         if (!network) {
-            network = await this.ui.choose('Which network do you want to use?', ['mainnet', 'testnet', 'custom'], (c) => c);
+            network = await this.ui.choose(
+                'Which network do you want to use?',
+                ['mainnet', 'testnet', 'custom'],
+                (c) => c
+            );
             if (network == 'custom') {
-                const defaultCustomEndpoint = 'http://localhost:8081/'
-                this.args['--custom'] = await this.ui.input(`Provide a custom API v2 endpoint (default is ${defaultCustomEndpoint})`);
+                const defaultCustomEndpoint = 'http://localhost:8081/';
+                this.args['--custom'] = await this.ui.input(
+                    `Provide a custom API v2 endpoint (default is ${defaultCustomEndpoint})`
+                );
                 if (this.args['--custom'] == '') this.args['--custom'] = defaultCustomEndpoint;
                 this.args['--custom'] += 'jsonRPC';
             }
@@ -334,11 +337,11 @@ class NetworkProviderBuilder {
                 provider = new DeeplinkProvider(this.ui);
                 break;
             case 'tonconnect':
-                if (network == 'custom') throw new Error("Tonkeeper cannot work with custom network.")
+                if (network == 'custom') throw new Error('Tonkeeper cannot work with custom network.');
                 provider = new TonConnectProvider(new FSStorage(storagePath), this.ui);
                 break;
             case 'tonhub':
-                if (network == 'custom') throw new Error("TonHub cannot work with custom network.")
+                if (network == 'custom') throw new Error('TonHub cannot work with custom network.');
                 provider = new TonHubProvider(network, new FSStorage(storagePath), this.ui);
                 break;
             case 'mnemonic':
@@ -363,7 +366,6 @@ class NetworkProviderBuilder {
                 endpoint: await getHttpV4Endpoint({ network }),
             });
         }
-
 
         const sendProvider = await this.chooseSendProvider(network, tc);
 
