@@ -48,7 +48,7 @@ async function main() {
     await runner(
         {
             ...args,
-            _: args._.filter((a) => !(a.length > 1 && a[0] === '-')), // filter out the flags pushed by `permissive`
+            _: args._.filter((a) => (a == '--custom') || !(a.length > 1 && a[0] === '-')), // filter out the flags pushed by `permissive`
         },
         ui
     );

@@ -15,7 +15,7 @@ export class TonHubProvider implements SendProvider {
     #ui: UIProvider;
     #session?: SavedSession;
 
-    constructor(network: 'mainnet' | 'testnet', storage: Storage, ui: UIProvider) {
+    constructor(network: 'mainnet' | 'testnet' | 'ownnet', storage: Storage, ui: UIProvider) {
         this.#connector = new TonhubConnector({
             network,
         });

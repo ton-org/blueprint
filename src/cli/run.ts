@@ -17,5 +17,8 @@ export const run: Runner = async (args: Args, ui: UIProvider) => {
 
     const networkProvider = await createNetworkProvider(ui);
 
+    if (args._.includes('--custom') == true) {
+        args._ = args._.slice(2);
+    }
     await mod.run(networkProvider, args._.slice(2));
 };
