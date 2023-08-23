@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [0.12.1] - 2023-07-31
+
+### Changed
+
+- Updated all dependencies to @ton organization packages
+
+## [0.12.0] - 2023-07-14
+
+### Fixed
+
+- Fixed TACT imports
+- Fixed missing newlines when printing error messages while building contracts
+
+## [0.11.0] - 2023-07-03
+
+### Added
+
+- Added an `options` field to the `tact` variant of `CompilerConfig`, which is of the same type as the `options` of the TACT compiler, and includes fields such as `debug`, `experimental`, etc
+
+### Changed
+
+- Updated TACT to 1.1.3
+
 ## [0.10.0] - 2023-06-06
 
 ### Added

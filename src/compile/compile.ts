@@ -1,7 +1,7 @@
 import { compileFunc, CompilerConfig as FuncCompilerConfig } from '@ton-community/func-js';
 import { readFileSync } from 'fs';
 import path from 'path';
-import { Cell } from 'ton-core';
+import { Cell } from '@ton/core';
 import { BUILD_DIR, WRAPPERS_DIR } from '../paths';
 import { CompilerConfig, TactCompilerConfig } from './CompilerConfig';
 import { build } from '@tact-lang/compiler';
@@ -56,13 +56,14 @@ function findTactBoc(fs: Map<string, Buffer>): Cell {
 }
 
 async function doCompileTact(config: TactCompilerConfig, name: string): Promise<TactCompileResult> {
-    const fs = new OverwritableVirtualFileSystem();
+    const fs = new OverwritableVirtualFileSystem(process.cwd());
 
     const res = await build({
         config: {
             name: 'tact',
-            path: path.join(process.cwd(), config.target),
+            path: config.target,
             output: path.join(BUILD_DIR, name),
+            options: config.options,
         },
         stdlib: '/stdlib',
         project: fs,

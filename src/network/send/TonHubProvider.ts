@@ -1,4 +1,4 @@
-import { Address, beginCell, Cell, StateInit, storeStateInit } from 'ton-core';
+import { Address, beginCell, Cell, StateInit, storeStateInit } from '@ton/core';
 import { SendProvider } from './SendProvider';
 import { TonhubConnector, TonhubSessionStateReady, TonhubTransactionRequest } from 'ton-x';
 import qrcode from 'qrcode-terminal';

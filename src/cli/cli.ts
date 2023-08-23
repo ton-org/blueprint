@@ -104,7 +104,7 @@ function showHelp() {
     console.log(
         chalk.cyanBright(`  blueprint help`) +
             `\t` +
-            chalk.whiteBright(`shows more detailed help, also see https://github.com/ton-community/blueprint`)
+            chalk.whiteBright(`shows more detailed help, also see https://github.com/ton-org/blueprint`)
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint help`));
     console.log(``);
