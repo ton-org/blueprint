@@ -45,10 +45,19 @@ async function main() {
 
     const ui = new InquirerUIProvider();
 
+    const waitingLink = args._.includes('--custom');
     await runner(
         {
             ...args,
-            _: args._.filter((a) => !(a.length > 1 && a[0] === '-')), // filter out the flags pushed by `permissive`
+            _: args._.filter((a) => {
+                // filter out the flags
+                if (a.length > 1 && a[0] === '-') return false;
+                // and endpoint urls
+                if (waitingLink) {
+                    if (a.startsWith('http')) return false;
+                }
+                return true;
+            }),
         },
         ui
     );
