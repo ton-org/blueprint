@@ -45,16 +45,20 @@ async function main() {
 
     const ui = new InquirerUIProvider();
 
-    const waitingLink = args._.includes('--custom');
+    const waitingForCustomLink = args._.includes('--custom');
     await runner(
         {
             ...args,
-            _: args._.filter((a) => {
+            _: args._.filter((a, inx) => {
                 // filter out the flags
                 if (a.length > 1 && a[0] === '-') return false;
                 // and endpoint urls
-                if (waitingLink) {
-                    if (a.startsWith('http')) return false;
+                if (waitingForCustomLink) {
+                    if (
+                        args._[inx - 1] == '--custom' && // url goes after --custom
+                        a.startsWith('http')
+                    )
+                        return false;
                 }
                 return true;
             }),

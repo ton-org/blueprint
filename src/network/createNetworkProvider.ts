@@ -174,7 +174,7 @@ class NetworkProviderImpl implements NetworkProvider {
         if (this.#tc instanceof TonClient4) {
             return this.#tc.isContractDeployed((await this.#tc.getLastBlock()).last.seqno, address);
         } else {
-            return (await this.#tc.getContractState(address)).state !== 'uninitialized';
+            return (await this.#tc.getContractState(address)).state === 'active';
         }
     }
 
@@ -270,12 +270,12 @@ class NetworkProviderBuilder {
                 ['mainnet', 'testnet', 'custom'],
                 (c) => c
             );
-            if (network == 'custom') {
+            if (network === 'custom') {
                 const defaultCustomEndpoint = 'http://localhost:8081/';
-                this.args['--custom'] = await this.ui.input(
-                    `Provide a custom API v2 endpoint (default is ${defaultCustomEndpoint})`
-                );
-                if (this.args['--custom'] == '') this.args['--custom'] = defaultCustomEndpoint;
+                this.args['--custom'] = (
+                    await this.ui.input(`Provide a custom API v2 endpoint (default is ${defaultCustomEndpoint})`)
+                ).trim();
+                if (this.args['--custom'] === '') this.args['--custom'] = defaultCustomEndpoint;
                 this.args['--custom'] += 'jsonRPC';
             }
         }
