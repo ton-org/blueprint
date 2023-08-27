@@ -1,6 +1,6 @@
 import { Address, toNano } from '@ton/core';
 import { Counter } from '../wrappers/Counter';
-import { NetworkProvider, sleep } from '@ton-community/blueprint';
+import { NetworkProvider, sleep } from '@ton/blueprint';
 
 export async function run(provider: NetworkProvider, args: string[]) {
     const ui = provider.ui();

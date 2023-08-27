@@ -47,10 +47,23 @@ async function main() {
 
     const ui = new InquirerUIProvider();
 
+    const waitingForCustomLink = args._.includes('--custom');
     await runner(
         {
             ...args,
-            _: args._.filter((a) => !(a.length > 1 && a[0] === '-')), // filter out the flags pushed by `permissive`
+            _: args._.filter((a, inx) => {
+                // filter out the flags
+                if (a.length > 1 && a[0] === '-') return false;
+                // and endpoint urls
+                if (waitingForCustomLink) {
+                    if (
+                        args._[inx - 1] === '--custom' && // url goes after --custom
+                        a.startsWith('http')
+                    )
+                        return false;
+                }
+                return true;
+            }),
         },
         ui
     );
@@ -117,7 +130,7 @@ function showHelp() {
     console.log(
         chalk.cyanBright(`  blueprint help`) +
             `\t` +
-            chalk.whiteBright(`shows more detailed help, also see https://github.com/ton-community/blueprint`)
+            chalk.whiteBright(`shows more detailed help, also see https://github.com/ton-org/blueprint`)
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint help`));
 

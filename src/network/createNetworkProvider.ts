@@ -17,7 +17,7 @@ import {
     toNano,
     TupleItem,
 } from '@ton/core';
-import { TonClient4, TonClient } from '@ton/ton';
+import { TonClient, TonClient4 } from '@ton/ton';
 import { getHttpV4Endpoint } from '@orbs-network/ton-access';
 import { UIProvider } from '../ui/UIProvider';
 import { NetworkProvider } from './NetworkProvider';
@@ -25,7 +25,7 @@ import { SendProvider } from './send/SendProvider';
 import { FSStorage } from './storage/FSStorage';
 import path from 'path';
 import { TEMP_DIR } from '../paths';
-import { mnemonicToPrivateKey } from 'ton-crypto';
+import { mnemonicToPrivateKey } from '@ton/crypto';
 import { MnemonicProvider, WalletVersion } from './send/MnemonicProvider';
 
 const argSpec = {
@@ -67,7 +67,7 @@ class SendProviderSender implements Sender {
             console.warn('To silence this warning, change your `bounce` flags passed to Senders to unset or undefined');
         }
 
-        if (!(args.sendMode === undefined || args.sendMode == SendMode.PAY_GAS_SEPARATELY)) {
+        if (!(args.sendMode === undefined || args.sendMode === SendMode.PAY_GAS_SEPARATELY)) {
             throw new Error('Deployer sender does not support `sendMode` other than `PAY_GAS_SEPARATELY`');
         }
 
@@ -174,7 +174,7 @@ class NetworkProviderImpl implements NetworkProvider {
         if (this.#tc instanceof TonClient4) {
             return this.#tc.isContractDeployed((await this.#tc.getLastBlock()).last.seqno, address);
         } else {
-            return (await this.#tc.getContractState(address)).state !== 'uninitialized';
+            return (await this.#tc.getContractState(address)).state === 'active';
         }
     }
 
@@ -270,12 +270,12 @@ class NetworkProviderBuilder {
                 ['mainnet', 'testnet', 'custom'],
                 (c) => c
             );
-            if (network == 'custom') {
+            if (network === 'custom') {
                 const defaultCustomEndpoint = 'http://localhost:8081/';
-                this.args['--custom'] = await this.ui.input(
-                    `Provide a custom API v2 endpoint (default is ${defaultCustomEndpoint})`
-                );
-                if (this.args['--custom'] == '') this.args['--custom'] = defaultCustomEndpoint;
+                this.args['--custom'] = (
+                    await this.ui.input(`Provide a custom API v2 endpoint (default is ${defaultCustomEndpoint})`)
+                ).trim();
+                if (this.args['--custom'] === '') this.args['--custom'] = defaultCustomEndpoint;
                 this.args['--custom'] += 'jsonRPC';
             }
         }
@@ -337,11 +337,11 @@ class NetworkProviderBuilder {
                 provider = new DeeplinkProvider(this.ui);
                 break;
             case 'tonconnect':
-                if (network == 'custom') throw new Error('Tonkeeper cannot work with custom network.');
+                if (network === 'custom') throw new Error('Tonkeeper cannot work with custom network.');
                 provider = new TonConnectProvider(new FSStorage(storagePath), this.ui);
                 break;
             case 'tonhub':
-                if (network == 'custom') throw new Error('TonHub cannot work with custom network.');
+                if (network === 'custom') throw new Error('TonHub cannot work with custom network.');
                 provider = new TonHubProvider(network, new FSStorage(storagePath), this.ui);
                 break;
             case 'mnemonic':
@@ -359,7 +359,7 @@ class NetworkProviderBuilder {
         const explorer = this.chooseExplorer();
 
         let tc;
-        if (network == 'custom') {
+        if (network === 'custom') {
             tc = new TonClient({ endpoint: this.args['--custom']! });
         } else {
             tc = new TonClient4({

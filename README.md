@@ -30,7 +30,7 @@ npm create ton@latest
 ### Requirements
 
 * [Node.js](https://nodejs.org) with a recent version like v18, verify version with `node -v`
-* IDE with TypeScript and FunC support like [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode)
+* IDE with TypeScript and FunC support like [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode) or [IntelliJ Idea](https://www.jetbrains.com/idea/) with the [TON Development plugin](https://plugins.jetbrains.com/plugin/18541-ton-development)
 
 &nbsp;
 
@@ -42,7 +42,7 @@ npm create ton@latest
 ### Directory structure
 
 * `contracts/` - Source code in [FunC](https://ton.org/docs/develop/func/overview) for all smart contracts and their imports
-* `wrappers/` - TypeScript interface classes for all contracts (implementing `Contract` from [ton-core](https://www.npmjs.com/package/ton-core))
+* `wrappers/` - TypeScript interface classes for all contracts (implementing `Contract` from [@ton/core](https://www.npmjs.com/package/@ton/core))
   * include message [de]serialization primitives, getter wrappers and compilation functions
   * used by the test suite and client code to interact with the contracts from TypeScript
 * `tests/` - TypeScript test suite for all contracts (relying on [Sandbox](https://github.com/ton-org/sandbox) for in-process tests)
@@ -61,6 +61,8 @@ npm create ton@latest
 
 1. Run in terminal: &nbsp; `npx blueprint test` &nbsp; or &nbsp; `yarn blueprint test`
 2. Alternative method: &nbsp; `npm test` &nbsp; or &nbsp; `yarn test`
+
+> Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
 
 ### Deploy one of the contracts
 
@@ -92,6 +94,8 @@ Run in terminal: &nbsp; `npx blueprint help` &nbsp; or &nbsp; `yarn blueprint he
 
 1. Implement TypeScript tests in `tests/<CONTRACT>.spec.ts`
 2. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to interact with the contract
+
+> Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
 
 ### Compilation and deployment
 

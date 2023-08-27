@@ -1,4 +1,5 @@
 import {
+    TonClient,
     TonClient4,
     TonClient,
     WalletContractV1R1,
@@ -22,7 +23,7 @@ import {
     StateInit,
 } from '@ton/core';
 import { SendProvider } from './SendProvider';
-import { keyPairFromSecretKey } from 'ton-crypto';
+import { keyPairFromSecretKey } from '@ton/crypto';
 import { UIProvider } from '../../ui/UIProvider';
 
 interface WalletInstance extends Contract {
