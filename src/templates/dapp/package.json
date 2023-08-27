@@ -11,7 +11,7 @@
 		"@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
 		"@svgr/webpack": "^5.5.0",
 		"@ton/blueprint": "^0.12.1",
-        "@ton/ton": "^13.5.1",
+		"@ton/ton": "^13.5.1",
 		"@tonconnect/protocol": "^2.0.0",
 		"@tonconnect/sdk": "^2.0.5",
 		"@tonconnect/ui-react": "^1.0.0-beta.6",

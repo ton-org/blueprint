@@ -397,9 +397,7 @@ function BodyRoot(props: BodyRootProps) {
 														onClose();
 														setMethod('sendDeploy');
 														setActionCardKey('sendDeploy');
-														setConfigAddress(
-															Address.parse('0:0000000000000000000000000000000000000000000000000000000000000000'),
-														);
+														setConfigAddress(Address.parse('EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c'));
 														setTimeout(() => onOpen(), 100);
 													}}
 												>
