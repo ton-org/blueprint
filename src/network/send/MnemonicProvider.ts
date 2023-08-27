@@ -1,7 +1,6 @@
 import {
     TonClient,
     TonClient4,
-    TonClient,
     WalletContractV1R1,
     WalletContractV1R2,
     WalletContractV1R3,
