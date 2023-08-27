@@ -6,6 +6,7 @@ import chalk from 'chalk';
 import { create } from './create';
 import { run } from './run';
 import { build } from './build';
+import { scaffold } from './scaffold';
 import { test } from './test';
 import { help } from './help';
 import { UIProvider } from '../ui/UIProvider';
@@ -21,6 +22,7 @@ const runners: Record<string, Runner> = {
     create,
     run,
     build,
+    scaffold,
     test,
     help,
 };
@@ -96,29 +98,41 @@ function showHelp() {
             chalk.whiteBright(`create a new contract with .fc source, .ts wrapper, .spec.ts test`)
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint create ContractName`));
+
     console.log(
         chalk.cyanBright(`  blueprint build`) +
             `\t` +
             chalk.whiteBright(`builds a contract that has a .compile.ts file`)
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint build ContractName`));
+
+    console.log(
+        chalk.cyanBright(`  blueprint scaffold`) +
+            `\t` +
+            chalk.whiteBright(`generates a dapp using described wrappers`)
+    );
+    console.log(`\t\t\t` + chalk.gray(`blueprint scaffold`));
+
     console.log(
         chalk.cyanBright(`  blueprint test`) +
             `\t` +
             chalk.whiteBright(`run the full project test suite with all .spec.ts files`)
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint test`));
+
     console.log(
         chalk.cyanBright(`  blueprint run `) +
             `\t` +
             chalk.whiteBright(`runs a script from 'scripts' directory (eg. a deploy script)`)
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint run deployContractName`));
+
     console.log(
         chalk.cyanBright(`  blueprint help`) +
             `\t` +
             chalk.whiteBright(`shows more detailed help, also see https://github.com/ton-org/blueprint`)
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint help`));
+
     console.log(``);
 }

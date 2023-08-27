@@ -7,8 +7,8 @@ import { doCompile } from '../compile/compile';
 import { UIProvider } from '../ui/UIProvider';
 import arg from 'arg';
 
-export async function buildOne(contract: string, ui: UIProvider) {
-    ui.write(`Build script running, compiling ${contract}\n`);
+export async function buildOne(contract: string, ui?: UIProvider) {
+    ui?.write(`Build script running, compiling ${contract}`);
 
     const buildArtifactPath = path.join(BUILD_DIR, `${contract}.compiled.json`);
 
@@ -16,7 +16,7 @@ export async function buildOne(contract: string, ui: UIProvider) {
         await fs.unlink(buildArtifactPath);
     } catch (e) {}
 
-    ui.write('⏳ Compiling...\n');
+    ui?.setActionPrompt('⏳ Compiling...');
     try {
         const result = await doCompile(contract);
 
@@ -30,8 +30,9 @@ export async function buildOne(contract: string, ui: UIProvider) {
         }
 
         const cell = result.code;
-        ui.write('✅ Compiled successfully! Cell BOC hex result:\n\n');
-        ui.write(cell.toBoc().toString('hex'));
+        ui?.clearActionPrompt();
+        ui?.write('\n✅ Compiled successfully! Cell BOC hex result:\n\n');
+        ui?.write(cell.toBoc().toString('hex'));
 
         await fs.mkdir(BUILD_DIR, { recursive: true });
 
@@ -42,10 +43,15 @@ export async function buildOne(contract: string, ui: UIProvider) {
             })
         );
 
-        ui.write(`\n✅ Wrote compilation artifact to ${path.relative(process.cwd(), buildArtifactPath)}`);
+        ui?.write(`\n✅ Wrote compilation artifact to ${path.relative(process.cwd(), buildArtifactPath)}`);
     } catch (e) {
-        ui.write((e as any).toString());
-        process.exit(1);
+        if (ui) {
+            ui?.clearActionPrompt();
+            ui?.write((e as any).toString());
+            process.exit(1);
+        } else {
+            throw e;
+        }
     }
 }
 

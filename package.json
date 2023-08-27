@@ -22,6 +22,8 @@
         "@ton/core": "^0.49.2",
         "@ton/crypto": "^3.2.0",
         "@ton/ton": "^13.5.1",
+        "@types/babel__generator": "^7.6.4",
+        "@types/babel__traverse": "^7.20.1",
         "@types/inquirer": "^8.2.6",
         "@types/node": "^20.2.5",
         "@types/qrcode-terminal": "^0.12.0",
@@ -34,6 +36,11 @@
         "@ton/ton": ">=13.4.1"
     },
     "dependencies": {
+        "@babel/generator": "^7.22.9",
+        "@babel/parser": "^7.22.7",
+        "@babel/preset-typescript": "^7.22.5",
+        "@babel/traverse": "^7.22.8",
+        "@babel/types": "^7.22.5",
         "@orbs-network/ton-access": "^2.3.3",
         "@tact-lang/compiler": "^1.1.3",
         "@ton-community/func-js": "^0.6.2",

@@ -1,0 +1,25 @@
+.tabs-container {
+	overflow-y: auto;
+
+	/* hide scrollbar for IE, Edge and Firefox */
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+/* hide scrollbar for chrome, safari and opera */
+.tabs-container::-webkit-scrollbar {
+	display: none;
+}
+
+.tabs-container::-webkit-scrollbar {
+	width: 0.5rem;
+	background-color: transparent;
+}
+
+.tabs-container::-webkit-scrollbar-thumb {
+	background-color: transparent;
+}
+
+.tabs-container::-webkit-scrollbar-thumb:hover {
+	background-color: transparent;
+}

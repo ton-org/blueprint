@@ -13,6 +13,7 @@ List of available commands:
 - create
 - run
 - build
+- scaffold
 - help
 - test`,
     create: `Usage: blueprint create [contract name] [flags]
@@ -44,6 +45,12 @@ If contract name is not specified on the command line, the buildable contracts (
 
 Flags:
 --all - builds all buildable contracts instead of just one.`,
+    scaffold: `Usage: blueprint scaffold [flags]
+
+Generates a dapp using the contracts described in the wrappers/ directory. 
+
+Flags:
+--update - prevents regenerating whole dapp, and just updates wrappers, already included in destination directory. Does not affect if generating very first time.`,
     test: `Usage: blueprint test
 
 Just runs \`npm test\`, which by default runs \`jest\`.`,
