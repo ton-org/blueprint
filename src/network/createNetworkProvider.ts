@@ -16,8 +16,8 @@ import {
     SendMode,
     toNano,
     TupleItem,
-} from 'ton-core';
-import { TonClient4 } from 'ton';
+} from '@ton/core';
+import { TonClient4, TonClient } from '@ton/ton';
 import { getHttpV4Endpoint } from '@orbs-network/ton-access';
 import { UIProvider } from '../ui/UIProvider';
 import { NetworkProvider } from './NetworkProvider';
@@ -31,6 +31,7 @@ import { MnemonicProvider, WalletVersion } from './send/MnemonicProvider';
 const argSpec = {
     '--mainnet': Boolean,
     '--testnet': Boolean,
+    '--custom': String,
 
     '--tonconnect': Boolean,
     '--deeplink': Boolean,
@@ -45,7 +46,7 @@ const argSpec = {
 
 type Args = arg.Result<typeof argSpec>;
 
-type Network = 'mainnet' | 'testnet';
+type Network = 'mainnet' | 'testnet' | 'custom';
 
 type Explorer = 'tonscan' | 'tonapi' | 'toncx' | 'dton';
 
@@ -120,13 +121,13 @@ class WrappedContractProvider implements ContractProvider {
 }
 
 class NetworkProviderImpl implements NetworkProvider {
-    #tc: TonClient4;
+    #tc: TonClient4 | TonClient;
     #sender: Sender;
     #network: Network;
     #explorer: Explorer;
     #ui: UIProvider;
 
-    constructor(tc: TonClient4, sender: Sender, network: Network, explorer: Explorer, ui: UIProvider) {
+    constructor(tc: TonClient4 | TonClient, sender: Sender, network: Network, explorer: Explorer, ui: UIProvider) {
         this.#tc = tc;
         this.#sender = sender;
         this.#network = network;
@@ -134,7 +135,7 @@ class NetworkProviderImpl implements NetworkProvider {
         this.#ui = ui;
     }
 
-    network(): 'mainnet' | 'testnet' {
+    network(): 'mainnet' | 'testnet' | 'custom' {
         return this.#network;
     }
 
@@ -146,23 +147,35 @@ class NetworkProviderImpl implements NetworkProvider {
         return this.#sender;
     }
 
-    api(): TonClient4 {
+    api(): TonClient4 | TonClient {
         return this.#tc;
     }
 
     provider(address: Address, init?: { code?: Cell; data?: Cell }): ContractProvider {
-        return new WrappedContractProvider(
-            address,
-            this.#tc.provider(
+        if (this.#tc instanceof TonClient4) {
+            return new WrappedContractProvider(
                 address,
-                init ? { code: init.code ?? new Cell(), data: init.data ?? new Cell() } : undefined
-            ),
-            init
-        );
+                this.#tc.provider(
+                    address,
+                    init ? { code: init.code ?? new Cell(), data: init.data ?? new Cell() } : undefined
+                ),
+                init
+            );
+        } else {
+            return new WrappedContractProvider(
+                address,
+                this.#tc.provider(address, { code: init?.code ?? new Cell(), data: init?.data ?? new Cell() }),
+                init
+            );
+        }
     }
 
     async isContractDeployed(address: Address): Promise<boolean> {
-        return this.#tc.isContractDeployed((await this.#tc.getLastBlock()).last.seqno, address);
+        if (this.#tc instanceof TonClient4) {
+            return this.#tc.isContractDeployed((await this.#tc.getLastBlock()).last.seqno, address);
+        } else {
+            return (await this.#tc.getContractState(address)).state !== 'uninitialized';
+        }
     }
 
     async waitForDeploy(address: Address, attempts: number = 10, sleepDuration: number = 2000) {
@@ -224,7 +237,7 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 }
 
-async function createMnemonicProvider(client: TonClient4, ui: UIProvider) {
+async function createMnemonicProvider(client: TonClient4 | TonClient, ui: UIProvider) {
     const mnemonic = process.env.WALLET_MNEMONIC ?? '';
     const walletVersion = process.env.WALLET_VERSION ?? '';
     if (mnemonic.length === 0 || walletVersion.length === 0) {
@@ -248,10 +261,23 @@ class NetworkProviderBuilder {
         let network = oneOrZeroOf({
             mainnet: this.args['--mainnet'],
             testnet: this.args['--testnet'],
+            custom: this.args['--custom'] !== undefined,
         });
 
         if (!network) {
-            network = await this.ui.choose('Which network do you want to use?', ['mainnet', 'testnet'], (c) => c);
+            network = await this.ui.choose(
+                'Which network do you want to use?',
+                ['mainnet', 'testnet', 'custom'],
+                (c) => c
+            );
+            if (network == 'custom') {
+                const defaultCustomEndpoint = 'http://localhost:8081/';
+                this.args['--custom'] = await this.ui.input(
+                    `Provide a custom API v2 endpoint (default is ${defaultCustomEndpoint})`
+                );
+                if (this.args['--custom'] == '') this.args['--custom'] = defaultCustomEndpoint;
+                this.args['--custom'] += 'jsonRPC';
+            }
         }
 
         return network;
@@ -268,7 +294,7 @@ class NetworkProviderBuilder {
         );
     }
 
-    async chooseSendProvider(network: Network, client: TonClient4): Promise<SendProvider> {
+    async chooseSendProvider(network: Network, client: TonClient4 | TonClient): Promise<SendProvider> {
         let deployUsing = oneOrZeroOf({
             tonconnect: this.args['--tonconnect'],
             deeplink: this.args['--deeplink'],
@@ -311,9 +337,11 @@ class NetworkProviderBuilder {
                 provider = new DeeplinkProvider(this.ui);
                 break;
             case 'tonconnect':
+                if (network == 'custom') throw new Error('Tonkeeper cannot work with custom network.');
                 provider = new TonConnectProvider(new FSStorage(storagePath), this.ui);
                 break;
             case 'tonhub':
+                if (network == 'custom') throw new Error('TonHub cannot work with custom network.');
                 provider = new TonHubProvider(network, new FSStorage(storagePath), this.ui);
                 break;
             case 'mnemonic':
@@ -330,9 +358,14 @@ class NetworkProviderBuilder {
         const network = await this.chooseNetwork();
         const explorer = this.chooseExplorer();
 
-        const tc = new TonClient4({
-            endpoint: await getHttpV4Endpoint({ network }),
-        });
+        let tc;
+        if (network == 'custom') {
+            tc = new TonClient({ endpoint: this.args['--custom']! });
+        } else {
+            tc = new TonClient4({
+                endpoint: await getHttpV4Endpoint({ network }),
+            });
+        }
 
         const sendProvider = await this.chooseSendProvider(network, tc);
 

@@ -1,5 +1,6 @@
 import {
     TonClient4,
+    TonClient,
     WalletContractV1R1,
     WalletContractV1R2,
     WalletContractV1R3,
@@ -8,7 +9,7 @@ import {
     WalletContractV3R1,
     WalletContractV3R2,
     WalletContractV4,
-} from 'ton';
+} from '@ton/ton';
 import {
     Address,
     Cell,
@@ -19,7 +20,7 @@ import {
     OpenedContract,
     SendMode,
     StateInit,
-} from 'ton-core';
+} from '@ton/core';
 import { SendProvider } from './SendProvider';
 import { keyPairFromSecretKey } from 'ton-crypto';
 import { UIProvider } from '../../ui/UIProvider';
@@ -59,14 +60,14 @@ const wallets: Record<WalletVersion, WalletClass> = {
 export class MnemonicProvider implements SendProvider {
     #wallet: OpenedContract<WalletInstance>;
     #secretKey: Buffer;
-    #client: TonClient4;
+    #client: TonClient4 | TonClient;
     #ui: UIProvider;
 
     constructor(params: {
         version: WalletVersion;
         workchain?: number;
         secretKey: Buffer;
-        client: TonClient4;
+        client: TonClient4 | TonClient;
         ui: UIProvider;
     }) {
         if (!(params.version in wallets)) {

@@ -1,5 +1,5 @@
 import { SourceResolver, SourcesMap, SourcesArray } from '@ton-community/func-js';
-import { Cell } from 'ton-core';
+import { Cell } from '@ton/core';
 
 export type CommonCompilerConfig = {
     preCompileHook?: () => Promise<void>;

@@ -1,6 +1,6 @@
 import qrcode from 'qrcode-terminal';
 import TonConnect, { IStorage, WalletInfo, WalletInfoRemote } from '@tonconnect/sdk';
-import { Address, beginCell, Cell, StateInit, storeStateInit } from 'ton-core';
+import { Address, beginCell, Cell, StateInit, storeStateInit } from '@ton/core';
 import { SendProvider } from './SendProvider';
 import { Storage } from '../storage/Storage';
 import { UIProvider } from '../../ui/UIProvider';

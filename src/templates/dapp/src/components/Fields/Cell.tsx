@@ -1,6 +1,6 @@
 import { Box, Flex, Input, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { beginCell, Cell } from 'ton-core';
+import { beginCell, Cell } from '@ton/core';
 import { FieldProps } from '../ActionCard';
 
 export function CellField(props: FieldProps) {

@@ -1,5 +1,5 @@
 import { Blockchain, SandboxContract } from '@ton-community/sandbox';
-import { Cell, toNano } from 'ton-core';
+import { Cell, toNano } from '@ton/core';
 import { Counter } from '../wrappers/Counter';
 import '@ton-community/test-utils';
 import { compile } from '@ton-community/blueprint';

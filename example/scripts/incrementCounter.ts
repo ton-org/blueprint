@@ -1,4 +1,4 @@
-import { Address, toNano } from 'ton-core';
+import { Address, toNano } from '@ton/core';
 import { Counter } from '../wrappers/Counter';
 import { NetworkProvider, sleep } from '@ton-community/blueprint';
 

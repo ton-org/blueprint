@@ -1,6 +1,6 @@
 import { Box, Flex, Input, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { Address } from 'ton-core';
+import { Address } from '@ton/core';
 import { FieldProps } from '../ActionCard';
 
 export function AddressField(props: FieldProps) {

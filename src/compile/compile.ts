@@ -1,7 +1,7 @@
 import { compileFunc, CompilerConfig as FuncCompilerConfig } from '@ton-community/func-js';
 import { readFileSync } from 'fs';
 import path from 'path';
-import { Cell } from 'ton-core';
+import { Cell } from '@ton/core';
 import { BUILD_DIR, WRAPPERS_DIR } from '../paths';
 import { CompilerConfig, TactCompilerConfig } from './CompilerConfig';
 import { build } from '@tact-lang/compiler';

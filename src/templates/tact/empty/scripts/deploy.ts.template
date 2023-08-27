@@ -1,5 +1,5 @@
 deploy{{name}}.ts
-import { toNano } from 'ton-core';
+import { toNano } from '@ton/core';
 import { {{name}} } from '../wrappers/{{name}}';
 import { NetworkProvider } from '@ton-community/blueprint';
 

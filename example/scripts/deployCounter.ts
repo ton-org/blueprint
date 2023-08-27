@@ -1,4 +1,4 @@
-import { toNano } from 'ton-core';
+import { toNano } from '@ton/core';
 import { Counter } from '../wrappers/Counter';
 import { compile, NetworkProvider } from '@ton-community/blueprint';
 

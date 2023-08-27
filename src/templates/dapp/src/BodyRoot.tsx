@@ -2,7 +2,7 @@ import { Box, Button, Center, Fade, Flex, Input, Tab, TabList, Tabs, useDisclosu
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActionCard, ParamsWithValue } from 'src/components/ActionCard';
 import { Executor } from 'src/genTxByWrapper';
-import { Address } from 'ton-core';
+import { Address } from '@ton/core';
 import { WrappersConfig, WrappersData } from 'src/utils/wrappersConfigTypes';
 import './fade.scss';
 import './tabs.scss';

@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Address, Builder, Cell, Slice } from 'ton-core';
+import { Address, Builder, Cell, Slice } from '@ton/core';
 import { Parameters, ParamInfo, DeployData, MethodConfig, GetMethodConfig } from 'src/utils/wrappersConfigTypes';
 import {
 	AddressField,
