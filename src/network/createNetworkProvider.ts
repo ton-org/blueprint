@@ -67,7 +67,7 @@ class SendProviderSender implements Sender {
             console.warn('To silence this warning, change your `bounce` flags passed to Senders to unset or undefined');
         }
 
-        if (!(args.sendMode === undefined || args.sendMode == SendMode.PAY_GAS_SEPARATELY)) {
+        if (!(args.sendMode === undefined || args.sendMode === SendMode.PAY_GAS_SEPARATELY)) {
             throw new Error('Deployer sender does not support `sendMode` other than `PAY_GAS_SEPARATELY`');
         }
 
@@ -337,11 +337,11 @@ class NetworkProviderBuilder {
                 provider = new DeeplinkProvider(this.ui);
                 break;
             case 'tonconnect':
-                if (network == 'custom') throw new Error('Tonkeeper cannot work with custom network.');
+                if (network === 'custom') throw new Error('Tonkeeper cannot work with custom network.');
                 provider = new TonConnectProvider(new FSStorage(storagePath), this.ui);
                 break;
             case 'tonhub':
-                if (network == 'custom') throw new Error('TonHub cannot work with custom network.');
+                if (network === 'custom') throw new Error('TonHub cannot work with custom network.');
                 provider = new TonHubProvider(network, new FSStorage(storagePath), this.ui);
                 break;
             case 'mnemonic':
@@ -359,7 +359,7 @@ class NetworkProviderBuilder {
         const explorer = this.chooseExplorer();
 
         let tc;
-        if (network == 'custom') {
+        if (network === 'custom') {
             tc = new TonClient({ endpoint: this.args['--custom']! });
         } else {
             tc = new TonClient4({

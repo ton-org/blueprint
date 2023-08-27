@@ -55,7 +55,7 @@ async function main() {
                 // and endpoint urls
                 if (waitingForCustomLink) {
                     if (
-                        args._[inx - 1] == '--custom' && // url goes after --custom
+                        args._[inx - 1] === '--custom' && // url goes after --custom
                         a.startsWith('http')
                     )
                         return false;
