@@ -45,7 +45,7 @@ Flags:
 --all - builds all buildable contracts instead of just one.`,
     test: `Usage: blueprint test
 
-Just run \`npm test\`, which by default runs \`jest\`.`,
+Just runs \`npm test\`, which by default runs \`jest\`.`,
 };
 
 export const help: Runner = async (args: Args, ui: UIProvider) => {
