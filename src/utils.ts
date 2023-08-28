@@ -112,8 +112,8 @@ export function getExplorerLink(address: string, network: string, explorer: stri
         case 'tonscan':
             return `https://${networkPrefix}tonscan.org/address/${address}`;
 
-        case 'tonapi':
-            return `https://${networkPrefix}tonapi.io/account/${address}`;
+        case 'tonviewer':
+            return `https://${networkPrefix}tonviewer.com/${address}`;
 
         case 'toncx':
             return `https://${networkPrefix}ton.cx/address/${address}`;

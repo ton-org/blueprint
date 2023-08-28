@@ -36,7 +36,7 @@ Flags:
 --mainnet, --testnet - specifies the network to use when running the script. If not specified on the command line, it will be asked interactively.
 --custom [api-v2-endpoint] - indicates that a custom API should be used when running the script, and the API URL optionally.
 --tonconnect, --tonhub, --deeplink, --mnemonic - specifies the deployer to use when running the script. If not specified on the command line, it will be asked interactively.
---tonscan, --tonapi, --toncx, --dton - specifies the network explorer to use when displaying links to the deployed contracts. Default: tonscan.`,
+--tonscan, --tonviewer, --toncx, --dton - specifies the network explorer to use when displaying links to the deployed contracts. Default: tonscan.`,
     build: `Usage: blueprint build [contract name] [flags]
 
 Builds the specified contract according to the respective .compile.ts file. If the contract is written in TACT, all TACT-generated files (wrapper class, etc) will be placed in the build/<contract name> folder.
