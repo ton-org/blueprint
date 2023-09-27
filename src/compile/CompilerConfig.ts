@@ -3,7 +3,7 @@ import { Cell } from '@ton/core';
 import { ConfigProject } from '@tact-lang/compiler';
 
 export type CommonCompilerConfig = {
-    preCompileHook?: () => Promise<void>;
+    preCompileHook?: (params?: any) => Promise<void>;
     postCompileHook?: (code: Cell) => Promise<void>;
 };
 

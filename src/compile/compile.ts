@@ -96,11 +96,11 @@ async function doCompileInner(name: string, config: CompilerConfig): Promise<Com
     } as FuncCompilerConfig);
 }
 
-export async function doCompile(name: string): Promise<CompileResult> {
+export async function doCompile(name: string, precompileParams?: any): Promise<CompileResult> {
     const config = await getCompilerConfigForContract(name);
 
     if (config.preCompileHook !== undefined) {
-        await config.preCompileHook();
+        await config.preCompileHook(precompileParams);
     }
 
     const res = await doCompileInner(name, config);
@@ -112,8 +112,8 @@ export async function doCompile(name: string): Promise<CompileResult> {
     return res;
 }
 
-export async function compile(name: string): Promise<Cell> {
-    const result = await doCompile(name);
+export async function compile(name: string, precompileParams?: any): Promise<Cell> {
+    const result = await doCompile(name, precompileParams);
 
     return result.code;
 }
