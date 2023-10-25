@@ -13,6 +13,7 @@ describe('{{name}}', () => {
     });
 
     let blockchain: Blockchain;
+    let deployer: SandboxContract<TreasuryContract>;
     let {{loweredName}}: SandboxContract<{{name}}>;
 
     beforeEach(async () => {
@@ -28,7 +29,7 @@ describe('{{name}}', () => {
             )
         );
 
-        const deployer = await blockchain.treasury('deployer');
+        deployer = await blockchain.treasury('deployer');
 
         const deployResult = await {{loweredName}}.sendDeploy(deployer.getSender(), toNano('0.05'));
 
