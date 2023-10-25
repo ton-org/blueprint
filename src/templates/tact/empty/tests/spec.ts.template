@@ -6,6 +6,7 @@ import '@ton/test-utils';
 
 describe('{{name}}', () => {
     let blockchain: Blockchain;
+    let deployer: SandboxContract<TreasuryContract>;
     let {{loweredName}}: SandboxContract<{{name}}>;
 
     beforeEach(async () => {
@@ -13,7 +14,7 @@ describe('{{name}}', () => {
 
         {{loweredName}} = blockchain.openContract(await {{name}}.fromInit());
 
-        const deployer = await blockchain.treasury('deployer');
+        deployer = await blockchain.treasury('deployer');
 
         const deployResult = await {{loweredName}}.send(
             deployer.getSender(),
