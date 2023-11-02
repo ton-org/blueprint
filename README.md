@@ -49,11 +49,11 @@ npm create ton@latest
 * `scripts/` - Deployment scripts to mainnet/testnet and other scripts interacting with live contracts
 * `build/` - Compilation artifacts created here after running a build command
 
-### Build one of the contracts
+### Build contracts
 
 1. You need a compilation script in `wrappers/<CONTRACT>.compile.ts` - [example](/example/wrappers/Counter.compile.ts)
 2. Run interactive: &nbsp;&nbsp; `npx blueprint build` &nbsp; or &nbsp; `yarn blueprint build`
-3. Non-interactive: &nbsp; `npx/yarn blueprint build <CONTRACT>`
+3. Non-interactive: &nbsp; `npx/yarn blueprint build <CONTRACT>` &nbsp; OR build all contracts &nbsp; `yarn blueprint build --all`
    * Example: `yarn blueprint build counter`
 4. Build results are generated in `build/<CONTRACT>.compiled.json`
 
