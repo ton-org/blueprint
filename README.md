@@ -55,7 +55,7 @@ npm create ton@latest
 2. Run interactive: &nbsp;&nbsp; `npx blueprint build` &nbsp; or &nbsp; `yarn blueprint build`
 3. Non-interactive: &nbsp; `npx/yarn blueprint build <CONTRACT>` &nbsp; OR build all contracts &nbsp; `yarn blueprint build --all`
    * Example: `yarn blueprint build counter`
-5. Build results are generated in `build/<CONTRACT>.compiled.json`
+4. Build results are generated in `build/<CONTRACT>.compiled.json`
 
 ### Run the test suite
 
