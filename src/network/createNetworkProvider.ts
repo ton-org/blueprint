@@ -62,7 +62,7 @@ class SendProviderSender implements Sender {
     async send(args: SenderArguments): Promise<void> {
         if (args.bounce !== undefined) {
             console.warn(
-                "Warning: blueprint's Sender does not support `bounce` flag, because it is ignored by all used Sender APIs"
+                "Warning: blueprint's Sender does not support `bounce` flag, because it is ignored by all used Sender APIs",
             );
             console.warn('To silence this warning, change your `bounce` flags passed to Senders to unset or undefined');
         }
@@ -105,7 +105,7 @@ class WrappedContractProvider implements ContractProvider {
             bounce: boolean | undefined | null;
             sendMode?: SendMode;
             body: string | Cell | undefined | null;
-        }
+        },
     ) {
         const init = this.#init && (await this.getState()).state.type !== 'active' ? this.#init : undefined;
 
@@ -157,15 +157,15 @@ class NetworkProviderImpl implements NetworkProvider {
                 address,
                 this.#tc.provider(
                     address,
-                    init ? { code: init.code ?? new Cell(), data: init.data ?? new Cell() } : undefined
+                    init ? { code: init.code ?? new Cell(), data: init.data ?? new Cell() } : undefined,
                 ),
-                init
+                init,
             );
         } else {
             return new WrappedContractProvider(
                 address,
                 this.#tc.provider(address, { code: init?.code ?? new Cell(), data: init?.data ?? new Cell() }),
-                init
+                init,
             );
         }
     }
@@ -190,7 +190,7 @@ class NetworkProviderImpl implements NetworkProvider {
                 this.#ui.clearActionPrompt();
                 this.#ui.write(`Contract deployed at address ${address.toString()}`);
                 this.#ui.write(
-                    `You can view it at ${getExplorerLink(address.toString(), this.#network, this.#explorer)}`
+                    `You can view it at ${getExplorerLink(address.toString(), this.#network, this.#explorer)}`,
                 );
                 return;
             }
@@ -242,7 +242,7 @@ async function createMnemonicProvider(client: TonClient4 | TonClient, ui: UIProv
     const walletVersion = process.env.WALLET_VERSION ?? '';
     if (mnemonic.length === 0 || walletVersion.length === 0) {
         throw new Error(
-            'Mnemonic deployer was chosen, but env variables WALLET_MNEMONIC and WALLET_VERSION are not set'
+            'Mnemonic deployer was chosen, but env variables WALLET_MNEMONIC and WALLET_VERSION are not set',
         );
     }
     const keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));
@@ -255,7 +255,10 @@ async function createMnemonicProvider(client: TonClient4 | TonClient, ui: UIProv
 }
 
 class NetworkProviderBuilder {
-    constructor(private args: Args, private ui: UIProvider) {}
+    constructor(
+        private args: Args,
+        private ui: UIProvider,
+    ) {}
 
     async chooseNetwork(): Promise<Network> {
         let network = oneOrZeroOf({
@@ -268,7 +271,7 @@ class NetworkProviderBuilder {
             network = await this.ui.choose(
                 'Which network do you want to use?',
                 ['mainnet', 'testnet', 'custom'],
-                (c) => c
+                (c) => c,
             );
             if (network === 'custom') {
                 const defaultCustomEndpoint = 'http://localhost:8081/';
@@ -324,7 +327,7 @@ class NetworkProviderBuilder {
                             value: 'mnemonic',
                         },
                     ],
-                    (c) => c.name
+                    (c) => c.name,
                 )
             ).value as any;
         }

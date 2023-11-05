@@ -43,7 +43,7 @@ export class TonConnectProvider implements SendProvider {
     async connect(): Promise<void> {
         await this.connectWallet();
         this.#ui.write(
-            `Connected to wallet at address: ${Address.parse(this.#connector.wallet!.account.address).toString()}\n`
+            `Connected to wallet at address: ${Address.parse(this.#connector.wallet!.account.address).toString()}\n`,
         );
     }
 

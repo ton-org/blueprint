@@ -50,7 +50,7 @@ export async function selectOption(
         ui: UIProvider;
         msg: string;
         hint?: string;
-    }
+    },
 ) {
     if (opts.hint) {
         const found = options.find((o) => o.value === opts.hint);
@@ -69,7 +69,7 @@ export async function selectFile(
         ui: UIProvider;
         hint?: string;
         import?: boolean;
-    }
+    },
 ) {
     let selected: { name: string; path: string };
 

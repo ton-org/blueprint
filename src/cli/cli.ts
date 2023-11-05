@@ -66,7 +66,7 @@ async function main() {
     const runner = effectiveRunners[args._[0]];
     if (!runner) {
         console.log(
-            chalk.redBright(` Error: command not found.`) + ` Run 'blueprint help' to see available commands\n`
+            chalk.redBright(` Error: command not found.`) + ` Run 'blueprint help' to see available commands\n`,
         );
         process.exit(1);
     }
@@ -91,7 +91,7 @@ async function main() {
                 return true;
             }),
         },
-        ui
+        ui,
     );
 
     ui.close();
@@ -112,7 +112,7 @@ function showHelp() {
     | __ )| |  | | | | ____|  _ \\|  _ \\|_ _| \\ | |_   _|
     |  _ \\| |  | | | |  _| | |_) | |_) || ||  \\| | | |  
     | |_) | |__| |_| | |___|  __/|  _ < | || |\\  | | |  
-    |____/|_____\\___/|_____|_|   |_| \\_\\___|_| \\_| |_|  `)
+    |____/|_____\\___/|_____|_|   |_| \\_\\___|_| \\_| |_|  `),
     );
     console.log(chalk.blue(`                     TON development for professionals`));
     console.log(``);
@@ -121,35 +121,35 @@ function showHelp() {
     console.log(
         chalk.cyanBright(`  blueprint create`) +
             `\t` +
-            chalk.whiteBright(`create a new contract with .fc source, .ts wrapper, .spec.ts test`)
+            chalk.whiteBright(`create a new contract with .fc source, .ts wrapper, .spec.ts test`),
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint create ContractName`));
 
     console.log(
         chalk.cyanBright(`  blueprint build`) +
             `\t` +
-            chalk.whiteBright(`builds a contract that has a .compile.ts file`)
+            chalk.whiteBright(`builds a contract that has a .compile.ts file`),
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint build ContractName`));
 
     console.log(
         chalk.cyanBright(`  blueprint test`) +
             `\t` +
-            chalk.whiteBright(`run the full project test suite with all .spec.ts files`)
+            chalk.whiteBright(`run the full project test suite with all .spec.ts files`),
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint test`));
 
     console.log(
         chalk.cyanBright(`  blueprint run `) +
             `\t` +
-            chalk.whiteBright(`runs a script from 'scripts' directory (eg. a deploy script)`)
+            chalk.whiteBright(`runs a script from 'scripts' directory (eg. a deploy script)`),
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint run deployContractName`));
 
     console.log(
         chalk.cyanBright(`  blueprint help`) +
             `\t` +
-            chalk.whiteBright(`shows more detailed help, also see https://github.com/ton-org/blueprint`)
+            chalk.whiteBright(`shows more detailed help, also see https://github.com/ton-org/blueprint`),
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint help`));
 

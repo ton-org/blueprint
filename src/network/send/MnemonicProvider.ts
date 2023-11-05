@@ -36,7 +36,7 @@ interface WalletInstance extends Contract {
             messages: MessageRelaxed[];
             sendMode?: SendMode;
             timeout?: number;
-        }
+        },
     ): Promise<void>;
 }
 
@@ -81,7 +81,7 @@ export class MnemonicProvider implements SendProvider {
                 workchain: params.workchain ?? 0,
                 publicKey: kp.publicKey,
             }),
-            (params) => this.#client.provider(params.address, params.init)
+            (params) => this.#client.provider(params.address, params.init),
         );
         this.#secretKey = kp.secretKey;
         this.#ui = params.ui;
@@ -95,7 +95,7 @@ export class MnemonicProvider implements SendProvider {
         address: Address,
         amount: bigint,
         payload?: Cell | undefined,
-        stateInit?: StateInit | undefined
+        stateInit?: StateInit | undefined,
     ) {
         await this.#wallet.sendTransfer({
             seqno: await this.#wallet.getSeqno(),

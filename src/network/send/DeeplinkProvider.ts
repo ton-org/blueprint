@@ -20,7 +20,7 @@ export class DeeplinkProvider implements SendProvider {
             address,
             amount,
             payload,
-            stateInit ? beginCell().storeWritable(storeStateInit(stateInit)).endCell() : undefined
+            stateInit ? beginCell().storeWritable(storeStateInit(stateInit)).endCell() : undefined,
         );
 
         this.#ui.write('\n');

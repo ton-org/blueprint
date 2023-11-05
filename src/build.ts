@@ -38,7 +38,7 @@ export async function buildOne(contract: string, ui?: UIProvider) {
             buildArtifactPath,
             JSON.stringify({
                 hex: cell.toBoc().toString('hex'),
-            })
+            }),
         );
 
         ui?.write(`\n✅ Wrote compilation artifact to ${path.relative(process.cwd(), buildArtifactPath)}`);
