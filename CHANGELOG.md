@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.0] - 2023-11-05
+
+### Added
+
+- Added plugin support
+- Added custom API v2 endpoints
+
+### Changed
+
+- Improved docs
+- Changed deployed contract explorer link to use tonviewer
+- Moved `deployer` to the global `describe` context in default tests
 
 ## [0.12.1] - 2023-07-31
 
