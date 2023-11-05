@@ -30,7 +30,7 @@ async function createFile(templatePath: string, realPath: string, replaces: { [k
     await file.close();
 }
 
-export async function createFiles(templatePath: string, realPath: string, replaces: { [k: string]: string }) {
+async function createFiles(templatePath: string, realPath: string, replaces: { [k: string]: string }) {
     const contents = await readdir(templatePath);
 
     for (const file of contents) {

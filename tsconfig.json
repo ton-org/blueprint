@@ -9,6 +9,5 @@
         "strict": true,
         "skipLibCheck": true
     },
-    "include": ["src/**/*", "src/templates/dapp/src/utils/wrappersData.ts"],
-    "exclude": ["src/templates/dapp/**/*"]
+    "include": ["src/**/*"]
 }

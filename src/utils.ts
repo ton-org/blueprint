@@ -2,7 +2,7 @@ import { Address, Cell } from '@ton/core';
 import path from 'path';
 import fs from 'fs/promises';
 import { UIProvider } from './ui/UIProvider';
-import { SCRIPTS_DIR, WRAPPERS_DIR, BUILD_DIR } from './paths';
+import { SCRIPTS_DIR, WRAPPERS_DIR } from './paths';
 
 export const tonDeepLink = (address: Address, amount: bigint, body?: Cell, stateInit?: Cell) =>
     `ton://transfer/${address.toString({
@@ -43,16 +43,6 @@ export const findScripts = async () =>
     (await fs.readdir(SCRIPTS_DIR))
         .filter((f) => f.endsWith('.ts'))
         .map((f) => ({ path: path.join(SCRIPTS_DIR, f), name: path.parse(f).name }));
-
-export const findWrappers = async () =>
-    (await fs.readdir(WRAPPERS_DIR))
-        .filter((f) => f.match(/^[A-Z][a-zA-Z0-9]*\.ts$/))
-        .map((f) => ({ path: path.join(WRAPPERS_DIR, f), name: path.parse(f).name }));
-
-export const readCompiled = async (name: string): Promise<string> => {
-    const filePath = path.join(BUILD_DIR, name + '.compiled.json');
-    return JSON.parse(await fs.readFile(filePath, 'utf-8'))['hex'];
-};
 
 export async function selectOption(
     options: { name: string; value: string }[],

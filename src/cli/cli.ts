@@ -6,7 +6,6 @@ import chalk from 'chalk';
 import { create } from './create';
 import { run } from './run';
 import { build } from './build';
-import { scaffold } from './scaffold';
 import { test } from './test';
 import { additionalHelpMessages, help } from './help';
 import { InquirerUIProvider } from '../ui/InquirerUIProvider';
@@ -18,7 +17,6 @@ const runners: Record<string, Runner> = {
     create,
     run,
     build,
-    scaffold,
     test,
     help,
 };
@@ -133,13 +131,6 @@ function showHelp() {
             chalk.whiteBright(`builds a contract that has a .compile.ts file`)
     );
     console.log(`\t\t\t` + chalk.gray(`blueprint build ContractName`));
-
-    console.log(
-        chalk.cyanBright(`  blueprint scaffold`) +
-            `\t` +
-            chalk.whiteBright(`generates a dapp using described wrappers`)
-    );
-    console.log(`\t\t\t` + chalk.gray(`blueprint scaffold`));
 
     console.log(
         chalk.cyanBright(`  blueprint test`) +
