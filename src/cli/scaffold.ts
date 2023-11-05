@@ -1,9 +1,9 @@
-import { Args, Runner } from './cli';
+import { Args, Runner } from './Runner';
 import arg from 'arg';
 import { DAPP_DIR } from '../paths';
 import fs from 'fs/promises';
 import { UIProvider } from '../ui/UIProvider';
-import { buildOne } from './build';
+import { buildOne } from '../build';
 import { findCompiles } from '../utils';
 import { parseWrappersToJSON } from '../parse/wrappersToJSON';
 import path from 'path';

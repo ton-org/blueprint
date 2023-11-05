@@ -8,15 +8,11 @@ import { run } from './run';
 import { build } from './build';
 import { scaffold } from './scaffold';
 import { test } from './test';
-import { help } from './help';
-import { UIProvider } from '../ui/UIProvider';
+import { additionalHelpMessages, help } from './help';
 import { InquirerUIProvider } from '../ui/InquirerUIProvider';
-
-const argSpec = {};
-
-export type Args = arg.Result<typeof argSpec>;
-
-export type Runner = (args: Args, ui: UIProvider) => Promise<void>;
+import { argSpec, Runner } from './Runner';
+import path from 'path';
+import { Config } from '../config/Config';
 
 const runners: Record<string, Runner> = {
     create,
@@ -28,6 +24,8 @@ const runners: Record<string, Runner> = {
 };
 
 async function main() {
+    require('ts-node/register');
+
     const args = arg(argSpec, {
         permissive: true,
     });
@@ -37,7 +35,37 @@ async function main() {
         process.exit(0);
     }
 
-    const runner = runners[args._[0]];
+    let effectiveRunners: Record<string, Runner> = {};
+
+    try {
+        const configModule = await import(path.join(process.cwd(), 'blueprint.config.ts'));
+
+        try {
+            if ('config' in configModule && typeof configModule.config === 'object') {
+                const config: Config = configModule.config;
+
+                for (const plugin of config.plugins) {
+                    for (const runner of plugin.runners()) {
+                        effectiveRunners[runner.name] = runner.runner;
+                        additionalHelpMessages[runner.name] = runner.help;
+                    }
+                }
+            }
+        } catch (e) {
+            // if plugin.runners() throws
+            console.error('Could not load one or more plugins');
+            console.error(e);
+        }
+    } catch (e) {
+        // no config
+    }
+
+    effectiveRunners = {
+        ...effectiveRunners,
+        ...runners,
+    };
+
+    const runner = effectiveRunners[args._[0]];
     if (!runner) {
         console.log(
             chalk.redBright(` Error: command not found.`) + ` Run 'blueprint help' to see available commands\n`

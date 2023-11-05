@@ -1,4 +1,4 @@
-import { Args, Runner } from './cli';
+import { Args, Runner } from './Runner';
 import { createNetworkProvider } from '../network/createNetworkProvider';
 import { findScripts, selectFile } from '../utils';
 import { UIProvider } from '../ui/UIProvider';

@@ -1,11 +1,11 @@
-import { Args, Runner } from './cli';
+import { Args, Runner } from './Runner';
 import { open, mkdir, readdir, lstat, readFile } from 'fs/promises';
 import path from 'path';
 import { executeTemplate, TEMPLATES_DIR } from '../template';
 import { selectOption } from '../utils';
 import arg from 'arg';
 import { UIProvider } from '../ui/UIProvider';
-import { buildOne } from './build';
+import { buildOne } from '../build';
 
 function toSnakeCase(v: string): string {
     const r = v.replace(/[A-Z]/g, (sub) => '_' + sub.toLowerCase());
