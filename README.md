@@ -103,7 +103,25 @@ Run in terminal: &nbsp; `npx blueprint help` &nbsp; or &nbsp; `yarn blueprint he
 2. Implement a deployment script in `scripts/deploy<CONTRACT>.ts`
 3. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to initialize the contract
 
-&nbsp;
+## Plugins
+
+Blueprint has a plugin system to allow the community to develop their own additions for the ecosystem without the need to change blueprint's code.
+
+In order to use plugins, create a `blueprint.config.ts` file in the root of your project with something like this:
+```typescript
+import { Config } from '@ton/blueprint';
+import { ScaffoldPlugin } from 'blueprint-scaffold';
+
+export const config: Config = {
+   plugins: [new ScaffoldPlugin()],
+};
+```
+(This example shows how to add the [scaffold](https://github.com/1IxI1/blueprint-scaffold) plugin)
+
+It is important that the config is exported, is named `config`, and is not `default` exported.
+
+Here are some of the plugins developed by the community:
+- [scaffold](https://github.com/1IxI1/blueprint-scaffold) - allows developers to quickly create a simple dapp automatically using the wrappers' code
 
 ## Contributors
 
