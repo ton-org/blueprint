@@ -7,6 +7,7 @@ import { create } from './create';
 import { run } from './run';
 import { build } from './build';
 import { test } from './test';
+import { verify } from './verify';
 import { additionalHelpMessages, help } from './help';
 import { InquirerUIProvider } from '../ui/InquirerUIProvider';
 import { argSpec, Runner } from './Runner';
@@ -19,6 +20,7 @@ const runners: Record<string, Runner> = {
     build,
     test,
     help,
+    verify,
 };
 
 async function main() {

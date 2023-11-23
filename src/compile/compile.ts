@@ -1,4 +1,9 @@
-import { compileFunc, CompilerConfig as FuncCompilerConfig } from '@ton-community/func-js';
+import {
+    compileFunc,
+    compilerVersion,
+    CompilerConfig as FuncCompilerConfig,
+    SourcesArray,
+} from '@ton-community/func-js';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { Cell } from '@ton/core';
@@ -8,8 +13,6 @@ import { build } from '@tact-lang/compiler';
 import { OverwritableVirtualFileSystem } from './OverwritableVirtualFileSystem';
 
 async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
-    require('ts-node/register');
-
     const mod = await import(path.join(WRAPPERS_DIR, name + '.compile.ts'));
 
     if (typeof mod.compile !== 'object') {
@@ -22,6 +25,9 @@ async function getCompilerConfigForContract(name: string): Promise<CompilerConfi
 export type FuncCompileResult = {
     lang: 'func';
     code: Cell;
+    targets: string[];
+    snapshot: SourcesArray;
+    version: string;
 };
 
 async function doCompileFunc(config: FuncCompilerConfig): Promise<FuncCompileResult> {
@@ -29,9 +35,19 @@ async function doCompileFunc(config: FuncCompilerConfig): Promise<FuncCompileRes
 
     if (cr.status === 'error') throw new Error(cr.message);
 
+    let targets: string[] = [];
+    if (config.targets) {
+        targets = config.targets;
+    } else if (Array.isArray(config.sources)) {
+        targets = config.sources.map((s) => s.filename);
+    }
+
     return {
         lang: 'func',
         code: Cell.fromBase64(cr.codeBoc),
+        targets,
+        snapshot: cr.snapshot,
+        version: (await compilerVersion()).funcVersion,
     };
 }
 

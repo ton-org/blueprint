@@ -4,8 +4,6 @@ import { findScripts, selectFile } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
 
 export const run: Runner = async (args: Args, ui: UIProvider) => {
-    require('ts-node/register');
-
     const { module: mod } = await selectFile(await findScripts(), {
         ui,
         hint: args._.length > 1 && args._[1].length > 0 ? args._[1] : undefined,

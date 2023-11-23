@@ -4,9 +4,15 @@ import { UIProvider } from '../ui/UIProvider';
 import arg from 'arg';
 import { buildAll, buildOne } from '../build';
 
-export const build: Runner = async (args: Args, ui: UIProvider) => {
-    require('ts-node/register');
+export async function selectCompile(ui: UIProvider, args: Args) {
+    return await selectFile(await findCompiles(), {
+        ui,
+        hint: args._.length > 1 && args._[1].length > 0 ? args._[1] : undefined,
+        import: false,
+    });
+}
 
+export const build: Runner = async (args: Args, ui: UIProvider) => {
     const localArgs = arg({
         '--all': Boolean,
     });
@@ -14,11 +20,7 @@ export const build: Runner = async (args: Args, ui: UIProvider) => {
     if (localArgs['--all']) {
         await buildAll();
     } else {
-        const sel = await selectFile(await findCompiles(), {
-            ui,
-            hint: args._.length > 1 && args._[1].length > 0 ? args._[1] : undefined,
-            import: false,
-        });
+        const sel = await selectCompile(ui, args);
 
         await buildOne(sel.name, ui);
     }

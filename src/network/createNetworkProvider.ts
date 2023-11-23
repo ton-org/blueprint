@@ -258,6 +258,7 @@ class NetworkProviderBuilder {
     constructor(
         private args: Args,
         private ui: UIProvider,
+        private allowCustom = true,
     ) {}
 
     async chooseNetwork(): Promise<Network> {
@@ -268,11 +269,11 @@ class NetworkProviderBuilder {
         });
 
         if (!network) {
-            network = await this.ui.choose(
-                'Which network do you want to use?',
-                ['mainnet', 'testnet', 'custom'],
-                (c) => c,
-            );
+            let nets: ['mainnet', 'testnet', 'custom'] | ['mainnet', 'testnet'] = ['mainnet', 'testnet'];
+            if (this.allowCustom) {
+                nets = ['mainnet', 'testnet', 'custom'];
+            }
+            network = await this.ui.choose('Which network do you want to use?', nets, (c) => c);
             if (network === 'custom') {
                 const defaultCustomEndpoint = 'http://localhost:8081/';
                 this.args['--custom'] = (
@@ -281,6 +282,10 @@ class NetworkProviderBuilder {
                 if (this.args['--custom'] === '') this.args['--custom'] = defaultCustomEndpoint;
                 this.args['--custom'] += 'jsonRPC';
             }
+        }
+
+        if (network === 'custom' && !this.allowCustom) {
+            throw new Error('Custom network is not allowed');
         }
 
         return network;
@@ -387,8 +392,8 @@ class NetworkProviderBuilder {
     }
 }
 
-export async function createNetworkProvider(ui: UIProvider): Promise<NetworkProvider> {
+export async function createNetworkProvider(ui: UIProvider, allowCustom = true): Promise<NetworkProvider> {
     const args = arg(argSpec);
 
-    return await new NetworkProviderBuilder(args, ui).build();
+    return await new NetworkProviderBuilder(args, ui, allowCustom).build();
 }
