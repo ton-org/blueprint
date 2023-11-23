@@ -14,7 +14,8 @@ List of available commands:
 - run
 - build
 - help
-- test`,
+- test
+- verify`,
     create: `Usage: blueprint create [contract name] [flags]
 
 Creates a new contract together with supporting files according to a template.
@@ -47,6 +48,12 @@ Flags:
     test: `Usage: blueprint test
 
 Just runs \`npm test\`, which by default runs \`jest\`.`,
+    verify: `Usage: blueprint verify [contract name] [flags]
+
+Builds a contract (similar to build command) and verifies it on https://verifier.ton.org. The contract must be already deployed on the network. If the contract's name is not specified on the command line, it will be asked interactively.
+
+Flags:
+--mainnet, --testnet - specifies the network on which to verify the contract. If not specified on the command line, it will be asked interactively.`
 };
 
 export let additionalHelpMessages: Record<string, string> = {};

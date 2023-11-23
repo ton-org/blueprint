@@ -1,6 +1,6 @@
 {
     "name": "@ton/blueprint",
-    "version": "0.13.0",
+    "version": "0.14.0",
     "description": "Framework for development of TON smart contracts",
     "main": "dist/index.js",
     "bin": "./dist/cli/cli.js",
