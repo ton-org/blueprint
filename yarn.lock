@@ -153,12 +153,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tact-lang/compiler@npm:^1.1.3":
-  version: 1.1.3
-  resolution: "@tact-lang/compiler@npm:1.1.3"
+"@tact-lang/compiler@npm:^1.1.5":
+  version: 1.1.5
+  resolution: "@tact-lang/compiler@npm:1.1.5"
   dependencies:
     "@ipld/dag-pb": 2.1.18
-    "@tact-lang/opcode": ^0.0.13
+    "@tact-lang/opcode": ^0.0.14
+    "@ton/core": 0.49.2
+    "@ton/crypto": ^3.2.0
     arg: ^5.0.2
     blockstore-core: 1.0.5
     change-case: ^4.1.2
@@ -169,22 +171,20 @@ __metadata:
     path-normalize: ^6.0.10
     prando: ^6.0.1
     qs: ^6.11.0
-    ton-core: ">=0.49.0"
-    ton-crypto: ^3.2.0
     zod: ^3.20.2
   bin:
     tact: bin/tact
-  checksum: 3c71a74db8b3674810e8374d096cb08b41fa7aa74cfab53866c2650e8b08d05469082dfa6a71c46cf4c68d1de6a79c28d55ea58c88d73ac970b9767b4a3f93a0
+  checksum: 00950d5b760df59b4e437aa0987eb0e864a6d62d270ced6e34c10834577802a92fc1fe03d081e7b34482d91448dcd991d90a90f43ea962545676dd62f4e6edea
   languageName: node
   linkType: hard
 
-"@tact-lang/opcode@npm:^0.0.13":
-  version: 0.0.13
-  resolution: "@tact-lang/opcode@npm:0.0.13"
+"@tact-lang/opcode@npm:^0.0.14":
+  version: 0.0.14
+  resolution: "@tact-lang/opcode@npm:0.0.14"
   peerDependencies:
-    ton-core: ">=0.49.0"
-    ton-crypto: ^3.2.0
-  checksum: 455efec010a0e9cfaa48ec2ddb44dfc31938b7fba1b4b46a92adad5b73d5e7c9fd36789773a2c3addae65c0c714d162742990f618dc9c45d4997557de14fee92
+    "@ton/core": ">=0.49.2"
+    "@ton/crypto": ^3.2.0
+  checksum: 1f2ab0a9b291a995cbd14b344a3a2b795b9771d5bab770149d1076ae3b02dd0135f7982356916acfa3ba8ad1d3b6a3c866c4143efc2adaa7c828ae6bebcbdcc8
   languageName: node
   linkType: hard
 
@@ -212,7 +212,7 @@ __metadata:
   resolution: "@ton/blueprint@workspace:."
   dependencies:
     "@orbs-network/ton-access": ^2.3.3
-    "@tact-lang/compiler": ^1.1.3
+    "@tact-lang/compiler": ^1.1.5
     "@ton-community/func-js": ^0.6.2
     "@ton/core": ^0.49.2
     "@ton/crypto": ^3.2.0
@@ -239,7 +239,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ton/core@npm:^0.49.2":
+"@ton/core@npm:0.49.2, @ton/core@npm:^0.49.2":
   version: 0.49.2
   resolution: "@ton/core@npm:0.49.2"
   dependencies:
@@ -1626,17 +1626,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ton-core@npm:>=0.49.0":
-  version: 0.50.0
-  resolution: "ton-core@npm:0.50.0"
-  dependencies:
-    symbol.inspect: 1.0.1
-  peerDependencies:
-    ton-crypto: ">=3.2.0"
-  checksum: cdd0f43f9f1150faa15399411e0ff5cc2f29d353a235c7d7f25c62412f2c5090d5c9f9025ae854cf1027c300c9a9ebd5ed9e83c69dee5743cfa1371df43947c5
-  languageName: node
-  linkType: hard
-
 "ton-crypto-primitives@npm:2.0.0":
   version: 2.0.0
   resolution: "ton-crypto-primitives@npm:2.0.0"
@@ -1657,7 +1646,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ton-crypto@npm:^3.0.0, ton-crypto@npm:^3.2.0":
+"ton-crypto@npm:^3.0.0":
   version: 3.2.0
   resolution: "ton-crypto@npm:3.2.0"
   dependencies:
