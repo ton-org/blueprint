@@ -56,7 +56,11 @@ Just runs \`npm test\`, which by default runs \`jest\`.`,
 Builds a contract (similar to build command) and verifies it on https://verifier.ton.org. The contract must be already deployed on the network. If the contract's name is not specified on the command line, it will be asked interactively.
 
 Flags:
---mainnet, --testnet - specifies the network on which to verify the contract. If not specified on the command line, it will be asked interactively.`,
+--mainnet, --testnet - specifies the network to use when running the script. If not specified on the command line, it will be asked interactively.
+--custom [api-endpoint] - indicates that a custom API should be used when running the script, and the API URL optionally. (example: https://testnet.toncenter.com/api/v2/) Requires --custom-type to be specified.
+--custom-version - specifies the API version to use with the custom API. Options: v2 (defualt), v4.
+--custom-key - specifies the API key to use with the custom API, can only be used with API v2.
+--custom-type - specifies the network type to be indicated to scripts. Options: mainnet, testnet.`,
 };
 
 export let additionalHelpMessages: Record<string, string> = {};
