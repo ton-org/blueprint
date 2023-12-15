@@ -28,10 +28,13 @@ import { TEMP_DIR } from '../paths';
 import { mnemonicToPrivateKey } from '@ton/crypto';
 import { MnemonicProvider, WalletVersion } from './send/MnemonicProvider';
 
-const argSpec = {
+export const argSpec = {
     '--mainnet': Boolean,
     '--testnet': Boolean,
     '--custom': String,
+    '--custom-type': String,
+    '--custom-version': String,
+    '--custom-key': String,
 
     '--tonconnect': Boolean,
     '--deeplink': Boolean,
@@ -44,7 +47,7 @@ const argSpec = {
     '--dton': Boolean,
 };
 
-type Args = arg.Result<typeof argSpec>;
+export type Args = arg.Result<typeof argSpec>;
 
 type Network = 'mainnet' | 'testnet' | 'custom';
 
@@ -269,23 +272,18 @@ class NetworkProviderBuilder {
         });
 
         if (!network) {
-            let nets: ['mainnet', 'testnet', 'custom'] | ['mainnet', 'testnet'] = ['mainnet', 'testnet'];
-            if (this.allowCustom) {
-                nets = ['mainnet', 'testnet', 'custom'];
-            }
-            network = await this.ui.choose('Which network do you want to use?', nets, (c) => c);
+            network = await this.ui.choose(
+                'Which network do you want to use?',
+                ['mainnet', 'testnet', 'custom'],
+                (c) => c,
+            );
             if (network === 'custom') {
                 const defaultCustomEndpoint = 'http://localhost:8081/';
                 this.args['--custom'] = (
                     await this.ui.input(`Provide a custom API v2 endpoint (default is ${defaultCustomEndpoint})`)
                 ).trim();
                 if (this.args['--custom'] === '') this.args['--custom'] = defaultCustomEndpoint;
-                this.args['--custom'] += 'jsonRPC';
             }
-        }
-
-        if (network === 'custom' && !this.allowCustom) {
-            throw new Error('Custom network is not allowed');
         }
 
         return network;
@@ -363,12 +361,46 @@ class NetworkProviderBuilder {
     }
 
     async build(): Promise<NetworkProvider> {
-        const network = await this.chooseNetwork();
+        let network = await this.chooseNetwork();
         const explorer = this.chooseExplorer();
+
+        if (
+            network !== 'custom' &&
+            (this.args['--custom-key'] !== undefined ||
+                this.args['--custom-type'] !== undefined ||
+                this.args['--custom-version'] !== undefined)
+        ) {
+            throw new Error('Cannot use custom parameters with a non-custom network');
+        }
 
         let tc;
         if (network === 'custom') {
-            tc = new TonClient({ endpoint: this.args['--custom']! });
+            const endpoint = this.args['--custom']!;
+            if (this.args['--custom-version'] === undefined || this.args['--custom-version'].toLowerCase() === 'v2') {
+                tc = new TonClient({
+                    endpoint: endpoint + 'jsonRPC',
+                    apiKey: this.args['--custom-key'],
+                });
+            } else if (this.args['--custom-version'].toLowerCase() === 'v4') {
+                if (this.args['--custom-key'] !== undefined) {
+                    throw new Error('Cannot use a custom API key with a v4 API');
+                }
+                tc = new TonClient4({
+                    endpoint,
+                });
+            } else {
+                throw new Error('Unknown API version: ' + this.args['--custom-version']);
+            }
+
+            if (this.args['--custom-type'] !== undefined) {
+                const ct = this.args['--custom-type'].toLowerCase();
+                if (!['mainnet', 'testnet', 'custom'].includes(ct)) {
+                    throw new Error('Unknown network type: ' + ct);
+                }
+                network = ct as Network;
+            } else if (!this.allowCustom) {
+                throw new Error('The usage of this network provider requires either mainnet or testnet');
+            }
         } else {
             tc = new TonClient4({
                 endpoint: await getHttpV4Endpoint({ network }),
@@ -392,8 +424,6 @@ class NetworkProviderBuilder {
     }
 }
 
-export async function createNetworkProvider(ui: UIProvider, allowCustom = true): Promise<NetworkProvider> {
-    const args = arg(argSpec);
-
+export async function createNetworkProvider(ui: UIProvider, args: Args, allowCustom = true): Promise<NetworkProvider> {
     return await new NetworkProviderBuilder(args, ui, allowCustom).build();
 }

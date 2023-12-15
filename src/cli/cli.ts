@@ -75,26 +75,7 @@ async function main() {
 
     const ui = new InquirerUIProvider();
 
-    const waitingForCustomLink = args._.includes('--custom');
-    await runner(
-        {
-            ...args,
-            _: args._.filter((a, inx) => {
-                // filter out the flags
-                if (a.length > 1 && a[0] === '-') return false;
-                // and endpoint urls
-                if (waitingForCustomLink) {
-                    if (
-                        args._[inx - 1] === '--custom' && // url goes after --custom
-                        a.startsWith('http')
-                    )
-                        return false;
-                }
-                return true;
-            }),
-        },
-        ui,
-    );
+    await runner(args, ui);
 
     ui.close();
 }

@@ -72,8 +72,8 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
     });
 
     const name =
-        args._.length > 1 && args._[1].trim().length > 0
-            ? args._[1].trim()
+        localArgs._.length > 1 && localArgs._[1].trim().length > 0
+            ? localArgs._[1].trim()
             : await ui.input('Contract name (PascalCase)');
 
     if (name.length === 0) throw new Error(`Cannot create a contract with an empty name`);

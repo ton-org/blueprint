@@ -3,8 +3,9 @@ import { doCompile } from '../compile/compile';
 import { UIProvider } from '../ui/UIProvider';
 import { Args, Runner } from './Runner';
 import path from 'path';
-import { createNetworkProvider } from '../network/createNetworkProvider';
+import { argSpec, createNetworkProvider } from '../network/createNetworkProvider';
 import { selectCompile } from './build';
+import arg from 'arg';
 
 type FuncCompilerSettings = {
     compiler: 'func';
@@ -97,9 +98,11 @@ class VerifierRegistry implements Contract {
 }
 
 export const verify: Runner = async (args: Args, ui: UIProvider) => {
-    const sel = await selectCompile(ui, args);
+    const localArgs = arg(argSpec);
 
-    const networkProvider = await createNetworkProvider(ui, false);
+    const sel = await selectCompile(ui, localArgs);
+
+    const networkProvider = await createNetworkProvider(ui, localArgs, false);
 
     const sender = networkProvider.sender();
 
