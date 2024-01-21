@@ -298,20 +298,22 @@ export const verify: Runner = async (args: Args, ui: UIProvider) => {
     });
 
     if (sourceResponse.status !== 200) {
-        throw new Error('Could not compile on backend:\n' + (await sourceResponse.text()));
+        throw new Error('Could not compile on backend:\n' + (await sourceResponse.json()));
     }
 
     const sourceResult = await sourceResponse.json();
 
     if (sourceResult.compileResult.result !== 'similar') {
-        throw new Error('The code is not similar');
+        throw new Error(sourceResult.compileResult.error);
     }
 
     let msgCell = sourceResult.msgCell;
     let acquiredSigs = 1;
 
     while (acquiredSigs < verifier.quorum) {
-        const signResponse = await fetch(removeRandom(remainingBackends) + '/sign', {
+        const curBackend   = removeRandom(remainingBackends);
+        ui.write(`Using backend:${curBackend}`);
+        const signResponse = await fetch(curBackend + '/sign', {
             method: 'POST',
             body: JSON.stringify({
                 messageCell: msgCell,
@@ -320,7 +322,7 @@ export const verify: Runner = async (args: Args, ui: UIProvider) => {
         });
 
         if (signResponse.status !== 200) {
-            throw new Error('Could not compile on backend:\n' + (await signResponse.text()));
+            throw new Error('Could not sign on backend:\n' + (await signResponse.text()));
         }
 
         const signResult = await signResponse.json();
@@ -336,4 +338,6 @@ export const verify: Runner = async (args: Args, ui: UIProvider) => {
         value: toNano('0.5'),
         body: c,
     });
+
+    ui.write(`Expect verified contract at https://verifier.ton.org/${addr}`);
 };
