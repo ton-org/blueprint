@@ -1,5 +1,6 @@
 import inquirer from 'inquirer';
 import { UIProvider } from '../ui/UIProvider';
+import { Address } from '@ton/core';
 
 class DestroyableBottomBar extends inquirer.ui.BottomBar {
     destroy() {
@@ -25,6 +26,19 @@ export class InquirerUIProvider implements UIProvider {
             message,
         });
         return prompt;
+    }
+
+    async inputAddress(message: string, fallback?: Address) {
+        let promptFallback = fallback ? message.replace(/:$/,'') + `(default:${fallback}):` : message;
+        do {
+            let testAddr = (await this.input(promptFallback)).replace(/^\s+|\s+$/g,'');
+            try{
+                return testAddr == "" && fallback ? fallback : Address.parse(testAddr);
+            }
+            catch(e) {
+                this.write(testAddr + " is not valid!\n");
+            }
+        } while(true);
     }
 
     async input(message: string): Promise<string> {
