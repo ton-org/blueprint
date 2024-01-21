@@ -229,6 +229,7 @@ export const verify: Runner = async (args: Args, ui: UIProvider) => {
             body: JSON.stringify({
                 messageCell: msgCell,
             }),
+            headers: {'Content-Type': 'application/json'}
         });
 
         if (signResponse.status !== 200) {
