@@ -116,7 +116,7 @@ export const verify: Runner = async (args: Args, ui: UIProvider) => {
         throw new Error('Cannot use custom network');
     }
 
-    const addr = await ui.input('Deployed contract address');
+    const addr = (await ui.inputAddress('Deployed contract address:')).toString();;
 
     const result = await doCompile(sel.name);
 
