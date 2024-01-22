@@ -8,6 +8,7 @@ import { run } from './run';
 import { build } from './build';
 import { test } from './test';
 import { verify } from './verify';
+import { convert } from './convert';
 import { additionalHelpMessages, help } from './help';
 import { InquirerUIProvider } from '../ui/InquirerUIProvider';
 import { argSpec, Runner } from './Runner';
@@ -21,6 +22,7 @@ const runners: Record<string, Runner> = {
     test,
     help,
     verify,
+    convert
 };
 
 async function main() {
