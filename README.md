@@ -103,25 +103,55 @@ Run in terminal: &nbsp; `npx blueprint help` &nbsp; or &nbsp; `yarn blueprint he
 2. Implement a deployment script in `scripts/deploy<CONTRACT>.ts`
 3. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to initialize the contract
 
-## Plugins
+## Config
+
+A config may be created in order to control some of blueprint's features. If a config is needed, create a `blueprint.config.ts` file in the root of your project with something like this:
+```typescript
+import { Config } from '@ton/blueprint';
+
+export const config: Config = {
+    // config contents
+};
+```
+It is important that the config is exported, is named `config`, and is not `default` exported.
+
+Config's features are explained below.
+
+### Plugins
 
 Blueprint has a plugin system to allow the community to develop their own additions for the ecosystem without the need to change blueprint's code.
 
-In order to use plugins, create a `blueprint.config.ts` file in the root of your project with something like this:
+In order to use plugins, add a `plugins` array to your config:
 ```typescript
 import { Config } from '@ton/blueprint';
 import { ScaffoldPlugin } from 'blueprint-scaffold';
 
 export const config: Config = {
-   plugins: [new ScaffoldPlugin()],
+    plugins: [new ScaffoldPlugin()],
 };
 ```
 (This example shows how to add the [scaffold](https://github.com/1IxI1/blueprint-scaffold) plugin)
 
-It is important that the config is exported, is named `config`, and is not `default` exported.
-
 Here are some of the plugins developed by the community:
 - [scaffold](https://github.com/1IxI1/blueprint-scaffold) - allows developers to quickly create a simple dapp automatically using the wrappers' code
+
+### Custom network
+
+A custom network may be specified by using the `--custom` flags, which you can read about by running `blueprint help run`, but it can be tiresome to use these at all times. Instead, to specify a custom network to always be used (unless `--custom` flags are present), add a `network` object to your config:
+```typescript
+import { Config } from '@ton/blueprint';
+
+export const config: Config = {
+    network: {
+        endpoint: 'https://toncenter.com/api/v2/',
+        type: 'mainnet',
+        version: 'v2',
+        key: 'YOUR_API_KEY',
+    },
+};
+```
+
+Properties of the `network` object have the same semantics as the `--custom` flags with respective names (see `blueprint help run`).
 
 ## Contributors
 
