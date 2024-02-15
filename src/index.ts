@@ -4,15 +4,16 @@ export { NetworkProvider } from './network/NetworkProvider';
 
 export { createNetworkProvider } from './network/createNetworkProvider';
 
-export { compile } from './compile/compile';
+export { compile, CompileOpts } from './compile/compile';
 
-export { CompilerConfig } from './compile/CompilerConfig';
+export { CompilerConfig, HookParams } from './compile/CompilerConfig';
 
 export { UIProvider } from './ui/UIProvider';
 
 export { Config } from './config/Config';
 
 // plugin support
-export { Args, Runner } from './cli/Runner';
+export { Args, Runner, RunnerContext } from './cli/Runner';
 export { PluginRunner, Plugin } from './config/Plugin';
+export { CustomNetwork } from './config/CustomNetwork';
 export { buildOne, buildAll } from './build';

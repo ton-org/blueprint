@@ -2,9 +2,13 @@ import { SourceResolver, SourcesMap, SourcesArray } from '@ton-community/func-js
 import { Cell } from '@ton/core';
 import { ConfigProject } from '@tact-lang/compiler';
 
+export type HookParams = {
+    userData?: any;
+};
+
 export type CommonCompilerConfig = {
-    preCompileHook?: () => Promise<void>;
-    postCompileHook?: (code: Cell) => Promise<void>;
+    preCompileHook?: (params: HookParams) => Promise<void>;
+    postCompileHook?: (code: Cell, params: HookParams) => Promise<void>;
 };
 
 export type TactCompilerConfig = {

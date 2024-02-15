@@ -1,7 +1,7 @@
 import { Address, Cell, Contract, ContractProvider, Dictionary, toNano } from '@ton/core';
 import { doCompile } from '../compile/compile';
 import { UIProvider } from '../ui/UIProvider';
-import { Args, Runner } from './Runner';
+import { Args, Runner, RunnerContext } from './Runner';
 import path from 'path';
 import { argSpec, createNetworkProvider } from '../network/createNetworkProvider';
 import { selectCompile } from './build';
@@ -158,12 +158,12 @@ async function lookupCodeHash(hash: Buffer, ui: UIProvider, retryCount: number =
     return foundAddr;
 }
 
-export const verify: Runner = async (args: Args, ui: UIProvider) => {
+export const verify: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {
     const localArgs = arg(argSpec);
 
     const sel = await selectCompile(ui, localArgs);
 
-    const networkProvider = await createNetworkProvider(ui, localArgs, false);
+    const networkProvider = await createNetworkProvider(ui, localArgs, context.config, false);
 
     const sender = networkProvider.sender();
 

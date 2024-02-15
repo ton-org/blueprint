@@ -27,6 +27,8 @@ import path from 'path';
 import { TEMP_DIR } from '../paths';
 import { mnemonicToPrivateKey } from '@ton/crypto';
 import { MnemonicProvider, WalletVersion } from './send/MnemonicProvider';
+import { Config } from '../config/Config';
+import { CustomNetwork } from '../config/CustomNetwork';
 
 export const argSpec = {
     '--mainnet': Boolean,
@@ -261,6 +263,7 @@ class NetworkProviderBuilder {
     constructor(
         private args: Args,
         private ui: UIProvider,
+        private config?: Config,
         private allowCustom = true,
     ) {}
 
@@ -271,19 +274,21 @@ class NetworkProviderBuilder {
             custom: this.args['--custom'] !== undefined,
         });
 
-        if (!network) {
-            network = await this.ui.choose(
-                'Which network do you want to use?',
-                ['mainnet', 'testnet', 'custom'],
-                (c) => c,
-            );
-            if (network === 'custom') {
-                const defaultCustomEndpoint = 'http://localhost:8081/';
-                this.args['--custom'] = (
-                    await this.ui.input(`Provide a custom API v2 endpoint (default is ${defaultCustomEndpoint})`)
-                ).trim();
-                if (this.args['--custom'] === '') this.args['--custom'] = defaultCustomEndpoint;
-            }
+        if (network !== undefined) {
+            return network;
+        }
+
+        if (this.config?.network !== undefined) {
+            return typeof this.config.network === 'string' ? this.config.network : 'custom';
+        }
+
+        network = await this.ui.choose('Which network do you want to use?', ['mainnet', 'testnet', 'custom'], (c) => c);
+        if (network === 'custom') {
+            const defaultCustomEndpoint = 'http://localhost:8081/';
+            this.args['--custom'] = (
+                await this.ui.input(`Provide a custom API v2 endpoint (default is ${defaultCustomEndpoint})`)
+            ).trim();
+            if (this.args['--custom'] === '') this.args['--custom'] = defaultCustomEndpoint;
         }
 
         return network;
@@ -375,25 +380,49 @@ class NetworkProviderBuilder {
 
         let tc;
         if (network === 'custom') {
-            const endpoint = this.args['--custom']!;
-            if (this.args['--custom-version'] === undefined || this.args['--custom-version'].toLowerCase() === 'v2') {
+            let configNetwork: CustomNetwork | undefined = undefined;
+            if (this.config?.network !== undefined && typeof this.config.network !== 'string') {
+                configNetwork = this.config.network;
+            }
+            if (this.args['--custom'] !== undefined) {
+                const inputVer = this.args['--custom-version'];
+                let version: 'v4' | 'v2' | undefined = undefined;
+                if (inputVer !== undefined) {
+                    version = inputVer.toLowerCase() as any; // checks come later
+                }
+                const inputType = this.args['--custom-type'];
+                let type: 'mainnet' | 'testnet' | 'custom' | undefined = undefined;
+                if (inputType !== undefined) {
+                    type = inputType as any; // checks come later
+                }
+                configNetwork = {
+                    endpoint: this.args['--custom'],
+                    version,
+                    key: this.args['--custom-key'],
+                    type,
+                };
+            }
+            if (configNetwork === undefined) {
+                throw new Error('Custom network is (somehow) undefined');
+            }
+            if (configNetwork.version === undefined || configNetwork.version === 'v2') {
                 tc = new TonClient({
-                    endpoint: endpoint + 'jsonRPC',
-                    apiKey: this.args['--custom-key'],
+                    endpoint: configNetwork.endpoint + 'jsonRPC',
+                    apiKey: configNetwork.key,
                 });
-            } else if (this.args['--custom-version'].toLowerCase() === 'v4') {
-                if (this.args['--custom-key'] !== undefined) {
+            } else if (configNetwork.version === 'v4') {
+                if (configNetwork.key !== undefined) {
                     throw new Error('Cannot use a custom API key with a v4 API');
                 }
                 tc = new TonClient4({
-                    endpoint,
+                    endpoint: configNetwork.endpoint,
                 });
             } else {
-                throw new Error('Unknown API version: ' + this.args['--custom-version']);
+                throw new Error('Unknown API version: ' + configNetwork.version);
             }
 
-            if (this.args['--custom-type'] !== undefined) {
-                const ct = this.args['--custom-type'].toLowerCase();
+            if (configNetwork.type !== undefined) {
+                const ct = configNetwork.type.toLowerCase();
                 if (!['mainnet', 'testnet', 'custom'].includes(ct)) {
                     throw new Error('Unknown network type: ' + ct);
                 }
@@ -424,6 +453,11 @@ class NetworkProviderBuilder {
     }
 }
 
-export async function createNetworkProvider(ui: UIProvider, args: Args, allowCustom = true): Promise<NetworkProvider> {
-    return await new NetworkProviderBuilder(args, ui, allowCustom).build();
+export async function createNetworkProvider(
+    ui: UIProvider,
+    args: Args,
+    config?: Config,
+    allowCustom = true,
+): Promise<NetworkProvider> {
+    return await new NetworkProviderBuilder(args, ui, config, allowCustom).build();
 }

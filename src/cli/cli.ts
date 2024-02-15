@@ -10,7 +10,7 @@ import { test } from './test';
 import { verify } from './verify';
 import { additionalHelpMessages, help } from './help';
 import { InquirerUIProvider } from '../ui/InquirerUIProvider';
-import { argSpec, Runner } from './Runner';
+import { argSpec, Runner, RunnerContext } from './Runner';
 import path from 'path';
 import { Config } from '../config/Config';
 
@@ -37,14 +37,17 @@ async function main() {
 
     let effectiveRunners: Record<string, Runner> = {};
 
+    const runnerContext: RunnerContext = {};
+
     try {
         const configModule = await import(path.join(process.cwd(), 'blueprint.config.ts'));
 
         try {
             if ('config' in configModule && typeof configModule.config === 'object') {
                 const config: Config = configModule.config;
+                runnerContext.config = config;
 
-                for (const plugin of config.plugins) {
+                for (const plugin of config.plugins ?? []) {
                     for (const runner of plugin.runners()) {
                         effectiveRunners[runner.name] = runner.runner;
                         additionalHelpMessages[runner.name] = runner.help;
@@ -75,7 +78,7 @@ async function main() {
 
     const ui = new InquirerUIProvider();
 
-    await runner(args, ui);
+    await runner(args, ui, runnerContext);
 
     ui.close();
 }

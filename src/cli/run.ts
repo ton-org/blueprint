@@ -1,10 +1,10 @@
-import { Args, Runner } from './Runner';
+import { Args, Runner, RunnerContext } from './Runner';
 import { createNetworkProvider, argSpec } from '../network/createNetworkProvider';
 import { findScripts, selectFile } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
 import arg from 'arg';
 
-export const run: Runner = async (args: Args, ui: UIProvider) => {
+export const run: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {
     const localArgs = arg(argSpec);
 
     const { module: mod } = await selectFile(await findScripts(), {
@@ -16,7 +16,7 @@ export const run: Runner = async (args: Args, ui: UIProvider) => {
         throw new Error('Function `run` is missing!');
     }
 
-    const networkProvider = await createNetworkProvider(ui, localArgs);
+    const networkProvider = await createNetworkProvider(ui, localArgs, context.config);
 
     await mod.run(networkProvider, localArgs._.slice(2));
 };
