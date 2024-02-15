@@ -98,17 +98,17 @@ class VerifierRegistry implements Contract {
     }
 }
 
-const lookupCodeHash = async(hash: Buffer, ui: UIProvider, retry_count: number = 5): Promise<string | undefined>  => {
-    type queryResp = {
+async function lookupCodeHash(hash: Buffer, ui: UIProvider, retryCount: number = 5): Promise<string | undefined> {
+    type QueryResponse = {
         data: {
-                account_states:Array<{
-                address: string,
-                workchain: number
-            }>
-        }
+            account_states: Array<{
+                address: string;
+                workchain: number;
+            }>;
+        };
     };
 
-    let qResp: queryResp;
+    let queryResponse: QueryResponse;
     let foundAddr: string | undefined;
     let done = false;
     const graphqlUrl = 'https://dton.io/graphql/';
@@ -122,46 +122,42 @@ const lookupCodeHash = async(hash: Buffer, ui: UIProvider, retry_count: number =
 
     do {
         try {
-            ui.write('Checking if such contract is already deployed...');
+            ui.write('Checking if such a contract is already deployed...');
             const resp = await fetch(graphqlUrl, {
                 method: 'POST',
-                body: JSON.stringify({query}),
-                headers: {'Content-Type': 'application/json'}
+                body: JSON.stringify({ query }),
+                headers: { 'Content-Type': 'application/json' },
             });
-            if(resp.ok) {
-                qResp = await resp.json();
-                const states = qResp.data.account_states;
-                if(states.length > 0) {
+            if (resp.ok) {
+                queryResponse = await resp.json();
+                const states = queryResponse.data.account_states;
+                if (states.length > 0) {
                     const state = states[0];
-                    foundAddr = Address.parseRaw(
-                        [state.workchain, state.address].join(':')
-                    ).toString();
+                    foundAddr = Address.parseRaw(`${state.workchain}:${state.address}`).toString();
+                } else {
+                    ui.write('No such contract was found!');
                 }
-                else {
-                    ui.write('No such contract found!');
-                }
-                done  = true;
+                done = true;
+            } else {
+                retryCount--;
             }
-            else {
-                retry_count--;
-            }
-        // Meh
-        } catch(e : any) {
-            retry_count--;
-            if(e.cause) {
-                if(e.cause.code == 'ETIMEDOUT') {
-                    ui.write("Handling api timeout");
+            // Meh
+        } catch (e: any) {
+            retryCount--;
+            if (e.cause) {
+                if (e.cause.code == 'ETIMEDOUT') {
+                    ui.write('API timed out, waiting...');
                     await sleep(5000);
                 }
-            }
-            else {
+            } else {
                 ui.write(e);
             }
         }
-    } while(!done && retry_count > 0);
+    } while (!done && retryCount > 0);
 
     return foundAddr;
 }
+
 export const verify: Runner = async (args: Args, ui: UIProvider) => {
     const localArgs = arg(argSpec);
 
@@ -181,31 +177,28 @@ export const verify: Runner = async (args: Args, ui: UIProvider) => {
         throw new Error('Cannot use custom network');
     }
 
-    const result  = await doCompile(sel.name);
+    const result = await doCompile(sel.name);
     const resHash = result.code.hash();
 
     ui.write(`Compiled code hash hex:${resHash.toString('hex')}`);
-    ui.write('We can lookup the address with such code hash in blockchain automatically');
+    ui.write('We can look up the address with such code hash in the blockchain automatically');
 
-    const passManually    = await ui.prompt("Do you want to specify address manually?");
+    const passManually = await ui.prompt('Do you want to specify the address manually?');
     let addr: string;
 
-    if(passManually) {
-        addr = (await ui.inputAddress('Deployed contract address:')).toString();;
-    }
-    else {
+    if (passManually) {
+        addr = (await ui.inputAddress('Deployed contract address')).toString();
+    } else {
         const alreadyDeployed = await lookupCodeHash(resHash, ui);
-        if(alreadyDeployed) {
+        if (alreadyDeployed) {
             ui.write(`Contract is already deployed at: ${alreadyDeployed}\nUsing that address.`);
             ui.write(`https://tonscan.org/address/${alreadyDeployed}`);
             addr = alreadyDeployed;
-        }
-        else {
-            ui.write("Fallback to manual entry");
-            addr = (await ui.inputAddress('Deployed contract address:')).toString();;
+        } else {
+            ui.write("Please enter the contract's address manually");
+            addr = (await ui.inputAddress('Deployed contract address')).toString();
         }
     }
-
 
     let src: SourcesObject;
     const fd = new FormData();
@@ -311,14 +304,14 @@ export const verify: Runner = async (args: Args, ui: UIProvider) => {
     let acquiredSigs = 1;
 
     while (acquiredSigs < verifier.quorum) {
-        const curBackend   = removeRandom(remainingBackends);
-        ui.write(`Using backend:${curBackend}`);
+        const curBackend = removeRandom(remainingBackends);
+        ui.write(`Using backend: ${curBackend}`);
         const signResponse = await fetch(curBackend + '/sign', {
             method: 'POST',
             body: JSON.stringify({
                 messageCell: msgCell,
             }),
-            headers: {'Content-Type': 'application/json'}
+            headers: { 'Content-Type': 'application/json' },
         });
 
         if (signResponse.status !== 200) {
@@ -339,5 +332,5 @@ export const verify: Runner = async (args: Args, ui: UIProvider) => {
         body: c,
     });
 
-    ui.write(`Expect verified contract at https://verifier.ton.org/${addr}`);
+    ui.write(`Contract successfully verified at https://verifier.ton.org/${addr}`);
 };

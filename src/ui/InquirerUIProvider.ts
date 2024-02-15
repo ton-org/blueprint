@@ -29,16 +29,15 @@ export class InquirerUIProvider implements UIProvider {
     }
 
     async inputAddress(message: string, fallback?: Address) {
-        let promptFallback = fallback ? message.replace(/:$/,'') + `(default:${fallback}):` : message;
-        do {
-            let testAddr = (await this.input(promptFallback)).replace(/^\s+|\s+$/g,'');
-            try{
-                return testAddr == "" && fallback ? fallback : Address.parse(testAddr);
+        const prompt = message + (fallback === undefined ? '' : ` (default: ${fallback})`);
+        while (true) {
+            const addr = (await this.input(prompt)).trim();
+            try {
+                return addr === '' && fallback !== undefined ? fallback : Address.parse(addr);
+            } catch (e) {
+                this.write(addr + ' is not valid!\n');
             }
-            catch(e) {
-                this.write(testAddr + " is not valid!\n");
-            }
-        } while(true);
+        }
     }
 
     async input(message: string): Promise<string> {
