@@ -112,24 +112,32 @@ async function doCompileInner(name: string, config: CompilerConfig): Promise<Com
     } as FuncCompilerConfig);
 }
 
-export async function doCompile(name: string): Promise<CompileResult> {
+export async function doCompile(name: string, opts?: CompileOpts): Promise<CompileResult> {
     const config = await getCompilerConfigForContract(name);
 
     if (config.preCompileHook !== undefined) {
-        await config.preCompileHook();
+        await config.preCompileHook({
+            userData: opts?.hookUserData,
+        });
     }
 
     const res = await doCompileInner(name, config);
 
     if (config.postCompileHook !== undefined) {
-        await config.postCompileHook(res.code);
+        await config.postCompileHook(res.code, {
+            userData: opts?.hookUserData,
+        });
     }
 
     return res;
 }
 
-export async function compile(name: string): Promise<Cell> {
-    const result = await doCompile(name);
+export type CompileOpts = {
+    hookUserData?: any;
+};
+
+export async function compile(name: string, opts?: CompileOpts): Promise<Cell> {
+    const result = await doCompile(name, opts);
 
     return result.code;
 }
