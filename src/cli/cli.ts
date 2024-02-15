@@ -22,7 +22,7 @@ const runners: Record<string, Runner> = {
     test,
     help,
     verify,
-    convert
+    convert,
 };
 
 async function main() {
