@@ -15,7 +15,8 @@ List of available commands:
 - build
 - help
 - test
-- verify`,
+- verify
+- convert`,
     create: `Usage: blueprint create [contract name] [flags]
 
 Creates a new contract together with supporting files according to a template.
@@ -61,6 +62,8 @@ Flags:
 --custom-version - specifies the API version to use with the custom API. Options: v2 (defualt), v4.
 --custom-key - specifies the API key to use with the custom API, can only be used with API v2.
 --custom-type - specifies the network type to be indicated to scripts. Options: mainnet, testnet.`,
+    convert: `Usage: blueprint convert [path to build script]
+Atempts to convert legacy bash build script to a blueprint compile wrapper.`,
 };
 
 export let additionalHelpMessages: Record<string, string> = {};
