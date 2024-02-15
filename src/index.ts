@@ -13,6 +13,7 @@ export { UIProvider } from './ui/UIProvider';
 export { Config } from './config/Config';
 
 // plugin support
-export { Args, Runner } from './cli/Runner';
+export { Args, Runner, RunnerContext } from './cli/Runner';
 export { PluginRunner, Plugin } from './config/Plugin';
+export { CustomNetwork } from './config/CustomNetwork';
 export { buildOne, buildAll } from './build';
