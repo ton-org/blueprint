@@ -28,17 +28,21 @@ export async function buildOne(contract: string, ui?: UIProvider) {
         }
 
         const cell = result.code;
+        const rHash = cell.hash();
+        const res  = {
+            hash: rHash.toString('hex'),
+            hashBase64: rHash.toString('base64'),
+            hex: cell.toBoc().toString('hex')
+        };
         ui?.clearActionPrompt();
-        ui?.write('\n✅ Compiled successfully! Cell BOC hex result:\n\n');
-        ui?.write(cell.toBoc().toString('hex'));
+        ui?.write('\n✅ Compiled successfully! Cell BOC result:\n\n');
+        ui?.write(JSON.stringify(res, null, 2));
 
         await fs.mkdir(BUILD_DIR, { recursive: true });
 
         await fs.writeFile(
             buildArtifactPath,
-            JSON.stringify({
-                hex: cell.toBoc().toString('hex'),
-            }),
+            JSON.stringify(res)
         );
 
         ui?.write(`\n✅ Wrote compilation artifact to ${path.relative(process.cwd(), buildArtifactPath)}`);
