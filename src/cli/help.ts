@@ -13,6 +13,7 @@ List of available commands:
 - create
 - run
 - build
+- custom
 - help
 - test
 - verify
@@ -49,6 +50,10 @@ If contract name is not specified on the command line, the buildable contracts (
 
 Flags:
 --all - builds all buildable contracts instead of just one.`,
+    custom: `Usage blueprint custom --func [func-js-bin version]
+    --func flag is optional. In case it is omitted, choice is made through dialog.
+    If ? is passed to --func, list of all available versions would be displayed.
+    `,
     test: `Usage: blueprint test
 
 Just runs \`npm test\`, which by default runs \`jest\`.`,
