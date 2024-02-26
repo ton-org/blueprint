@@ -407,7 +407,7 @@ class NetworkProviderBuilder {
             }
             if (configNetwork.version === undefined || configNetwork.version === 'v2') {
                 tc = new TonClient({
-                    endpoint: configNetwork.endpoint + 'jsonRPC',
+                    endpoint: configNetwork.endpoint,
                     apiKey: configNetwork.key,
                 });
             } else if (configNetwork.version === 'v4') {
