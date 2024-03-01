@@ -13,6 +13,7 @@ List of available commands:
 - create
 - run
 - build
+- custom
 - help
 - test
 - verify
@@ -49,6 +50,9 @@ If contract name is not specified on the command line, the buildable contracts (
 
 Flags:
 --all - builds all buildable contracts instead of just one.`,
+    set: `Usage: blueprint set <key> [value]
+Available keys:
+- func - overrides @ton-community/func-js-bin version, effectively setting the func version. The required version may be passed as the value, otherwise available versions will be displayed.`,
     test: `Usage: blueprint test
 
 Just runs \`npm test\`, which by default runs \`jest\`.`,
