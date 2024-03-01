@@ -169,10 +169,6 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 
     provider(address: Address, init?: StateInit | null): ContractProvider {
-        if (!init || (!init.code && !init.data)) {
-            init = { ...init, code: init?.code ?? new Cell(), data: init?.data ?? new Cell() };
-        }
-
         const factory = (params: { address: Address, init?: StateInit | null }) => this.#tc.provider(params.address, params.init);
         return new WrappedContractProvider(address, factory, init);
     }
