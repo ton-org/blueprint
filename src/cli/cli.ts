@@ -6,7 +6,7 @@ import chalk from 'chalk';
 import { create } from './create';
 import { run } from './run';
 import { build } from './build';
-import { custom } from './custom';
+import { set } from './set';
 import { test } from './test';
 import { verify } from './verify';
 import { convert } from './convert';
@@ -20,7 +20,7 @@ const runners: Record<string, Runner> = {
     create,
     run,
     build,
-    custom,
+    set,
     test,
     help,
     verify,
