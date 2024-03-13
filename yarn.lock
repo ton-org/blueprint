@@ -153,9 +153,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tact-lang/compiler@npm:^1.1.5":
-  version: 1.1.5
-  resolution: "@tact-lang/compiler@npm:1.1.5"
+"@tact-lang/compiler@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@tact-lang/compiler@npm:1.2.0"
   dependencies:
     "@ipld/dag-pb": 2.1.18
     "@tact-lang/opcode": ^0.0.14
@@ -171,10 +171,10 @@ __metadata:
     path-normalize: ^6.0.10
     prando: ^6.0.1
     qs: ^6.11.0
-    zod: ^3.20.2
+    zod: ^3.22.4
   bin:
     tact: bin/tact
-  checksum: 00950d5b760df59b4e437aa0987eb0e864a6d62d270ced6e34c10834577802a92fc1fe03d081e7b34482d91448dcd991d90a90f43ea962545676dd62f4e6edea
+  checksum: 8e9a55883c9550ba0bf2585c32e1da0e5f9c1f9947a31cd4d4cbf49df4980e6fbb13ed21469fba6ea6f895ab03d86dcec1ee73a8a9a303a395c2185b927e4d5f
   languageName: node
   linkType: hard
 
@@ -212,7 +212,7 @@ __metadata:
   resolution: "@ton/blueprint@workspace:."
   dependencies:
     "@orbs-network/ton-access": ^2.3.3
-    "@tact-lang/compiler": ^1.1.5
+    "@tact-lang/compiler": ^1.2.0
     "@ton-community/func-js": ^0.6.3
     "@ton/core": ^0.56.0
     "@ton/crypto": ^3.2.0
@@ -1888,9 +1888,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.20.2, zod@npm:^3.21.4":
+"zod@npm:^3.21.4":
   version: 3.21.4
   resolution: "zod@npm:3.21.4"
   checksum: f185ba87342ff16f7a06686767c2b2a7af41110c7edf7c1974095d8db7a73792696bcb4a00853de0d2edeb34a5b2ea6a55871bc864227dace682a0a28de33e1f
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.22.4":
+  version: 3.22.4
+  resolution: "zod@npm:3.22.4"
+  checksum: 80bfd7f8039b24fddeb0718a2ec7c02aa9856e4838d6aa4864335a047b6b37a3273b191ef335bf0b2002e5c514ef261ffcda5a589fb084a48c336ffc4cdbab7f
   languageName: node
   linkType: hard
