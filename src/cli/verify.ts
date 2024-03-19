@@ -49,7 +49,7 @@ const backends: Record<
     }
 > = {
     mainnet: {
-        verifierRegistry: Address.parse('EQDS0AW7NV1w3nFwx-mmryfpH4OGQ3PXnoFGOJA_8PTHuLrw'),
+        verifierRegistry: Address.parse('EQD7WBTcloW5GwYdOIk6UM6nDSaRXg_jDDA6mKIhcvyCRV6Q'),
         backends: [
             'https://ton-source-prod-1.herokuapp.com',
             'https://ton-source-prod-2.herokuapp.com',
