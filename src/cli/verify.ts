@@ -180,7 +180,7 @@ export const verify: Runner = async (args: Args, ui: UIProvider, context: Runner
     const result = await doCompile(sel.name);
     const resHash = result.code.hash();
 
-    ui.write(`Compiled code hash hex:${resHash.toString('hex')}`);
+    ui.write(`Compiled code hash hex: ${resHash.toString('hex')}`);
     ui.write('We can look up the address with such code hash in the blockchain automatically');
 
     const passManually = await ui.prompt('Do you want to specify the address manually?');
