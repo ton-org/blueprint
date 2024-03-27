@@ -188,22 +188,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton-community/func-js-bin@npm:0.4.4-newops":
-  version: 0.4.4-newops
-  resolution: "@ton-community/func-js-bin@npm:0.4.4-newops"
-  checksum: f6f3a9677e0d336e74f28e2564a17355e24840ef6061c311abbafc23d78f65cc5f2ad58b5aedb1e9cb57d19c314884fb92866907dffd4783f6d83b6d2b5d5a1c
+"@ton-community/func-js-bin@npm:0.4.4-newops.1":
+  version: 0.4.4-newops.1
+  resolution: "@ton-community/func-js-bin@npm:0.4.4-newops.1"
+  checksum: 0baa86b2b298d0f7fef1b85644ee0d70d3ab94b918bd613b846368643638a638fd9303a896a9ce326b63134f2d7d7f800d609885a2acc3e6d15984372bfbae43
   languageName: node
   linkType: hard
 
-"@ton-community/func-js@npm:^0.6.3":
-  version: 0.6.3
-  resolution: "@ton-community/func-js@npm:0.6.3"
+"@ton-community/func-js@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@ton-community/func-js@npm:0.7.0"
   dependencies:
-    "@ton-community/func-js-bin": 0.4.4-newops
+    "@ton-community/func-js-bin": 0.4.4-newops.1
     arg: ^5.0.2
   bin:
     func-js: dist/cli.js
-  checksum: fbb78ad2ba7e9aa22eb19b94ac2ac4ce2dbd5ca2a9fa0d5872f5bbabdea9e52d455445bcc559ab984078f457d0e3993d7d89cb1089cbb4e1bd599795512409b7
+  checksum: 8a9905ba7bfb3f6615a73ef5f233d1bbfd2c55c38910cbc68ad3984547901c3bff0ffd4c39b1de97675560b9f9f00ae55e40c4ff3be829319eae81faf7a54d06
   languageName: node
   linkType: hard
 
@@ -213,11 +213,11 @@ __metadata:
   dependencies:
     "@orbs-network/ton-access": ^2.3.3
     "@tact-lang/compiler": ^1.2.0
-    "@ton-community/func-js": ^0.6.3
+    "@ton-community/func-js": ^0.7.0
     "@ton/core": ^0.56.0
     "@ton/crypto": ^3.2.0
     "@ton/ton": ^13.11.0
-    "@tonconnect/sdk": ^2.1.3
+    "@tonconnect/sdk": ^2.2.0
     "@types/inquirer": ^8.2.6
     "@types/node": ^20.2.5
     "@types/qrcode-terminal": ^0.12.0
@@ -325,14 +325,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tonconnect/sdk@npm:^2.1.3":
-  version: 2.1.3
-  resolution: "@tonconnect/sdk@npm:2.1.3"
+"@tonconnect/sdk@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@tonconnect/sdk@npm:2.2.0"
   dependencies:
     "@tonconnect/isomorphic-eventsource": ^0.0.1
     "@tonconnect/isomorphic-fetch": ^0.0.2
     "@tonconnect/protocol": ^2.2.5
-  checksum: 86a5b20fb9dce0ea2705579b33c6ff7cb9e97485e260170795d29071dfdd3f48f5dd29571f7e20d781011215ff14baca805675bfaf9e7ede026d46253b42e5ee
+  checksum: 47507e6ed31570d4744adb6872a5f680dc208201df09a602050eaea845204582d827c578ad58ac14268f39d30801eea11e5f5b1df33220425949b76364d0cddb
   languageName: node
   linkType: hard
 
