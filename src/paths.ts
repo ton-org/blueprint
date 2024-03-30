@@ -13,3 +13,5 @@ export const BUILD_DIR = path.join(process.cwd(), BUILD);
 export const TEMP_DIR = path.join(process.cwd(), TEMP);
 export const CONTRACTS_DIR = path.join(process.cwd(), CONTRACTS);
 export const TESTS_DIR = path.join(process.cwd(), TESTS);
+
+export const TACT_ROOT_CONFIG = path.join(process.cwd(), 'tact.config.json');

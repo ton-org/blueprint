@@ -4,12 +4,12 @@ import {
     CompilerConfig as FuncCompilerConfig,
     SourcesArray,
 } from '@ton-community/func-js';
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import path from 'path';
 import { Cell } from '@ton/core';
-import { BUILD_DIR, WRAPPERS_DIR } from '../paths';
+import { TACT_ROOT_CONFIG, BUILD_DIR, WRAPPERS_DIR } from '../paths';
 import { CompilerConfig, TactCompilerConfig } from './CompilerConfig';
-import { build } from '@tact-lang/compiler';
+import { build, Config, ConfigProject, parseConfig } from '@tact-lang/compiler';
 import { OverwritableVirtualFileSystem } from './OverwritableVirtualFileSystem';
 
 async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
@@ -71,7 +71,28 @@ function findTactBoc(fs: Map<string, Buffer>): Cell {
     return Cell.fromBoc(buf)[0];
 }
 
+function getRootTactConfigOptionsForContract(name: string): ConfigProject['options'] | undefined {
+    if (!existsSync(TACT_ROOT_CONFIG)) { return undefined; }
+
+    // TODO: Temporary hack, see next comment.
+    const schemalessConfig = JSON.parse(readFileSync(TACT_ROOT_CONFIG).toString());
+    delete schemalessConfig.$schema;
+    const config: Config = parseConfig(JSON.stringify(schemalessConfig));
+
+    // TODO: Once Tact v1.3.0 releases, use the following line instead of the temporary hack above:
+    // const config: Config = parseConfig(readFileSync(TACT_ROOT_CONFIG)).toString();
+
+    for (const project of config.projects) {
+        if (project.name === name) {
+            return project.options;
+        }
+    }
+
+    return undefined;
+}
+
 async function doCompileTact(config: TactCompilerConfig, name: string): Promise<TactCompileResult> {
+    const rootConfigOptions = getRootTactConfigOptionsForContract(name);
     const fs = new OverwritableVirtualFileSystem(process.cwd());
 
     const res = await build({
@@ -79,7 +100,7 @@ async function doCompileTact(config: TactCompilerConfig, name: string): Promise<
             name: 'tact',
             path: config.target,
             output: path.join(BUILD_DIR, name),
-            options: config.options,
+            options: {...rootConfigOptions, ...config.options},
         },
         stdlib: '/stdlib',
         project: fs,
