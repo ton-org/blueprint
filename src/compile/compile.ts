@@ -74,13 +74,7 @@ function findTactBoc(fs: Map<string, Buffer>): Cell {
 function getRootTactConfigOptionsForContract(name: string): ConfigProject['options'] | undefined {
     if (!existsSync(TACT_ROOT_CONFIG)) { return undefined; }
 
-    // TODO: Temporary hack, see next comment.
-    const schemalessConfig = JSON.parse(readFileSync(TACT_ROOT_CONFIG).toString());
-    delete schemalessConfig.$schema;
-    const config: Config = parseConfig(JSON.stringify(schemalessConfig));
-
-    // TODO: Once Tact v1.3.0 releases, use the following line instead of the temporary hack above:
-    // const config: Config = parseConfig(readFileSync(TACT_ROOT_CONFIG)).toString();
+    const config: Config = parseConfig(readFileSync(TACT_ROOT_CONFIG).toString());
 
     for (const project of config.projects) {
         if (project.name === name) {
