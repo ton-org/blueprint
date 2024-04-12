@@ -43,13 +43,13 @@ type SourcesObject = {
 const backends: Record<
     'mainnet' | 'testnet',
     {
-        verifierRegistry: Address;
+        sourceRegistry: Address;
         backends: string[];
         id: string;
     }
 > = {
     mainnet: {
-        verifierRegistry: Address.parse('EQDS0AW7NV1w3nFwx-mmryfpH4OGQ3PXnoFGOJA_8PTHuLrw'),
+        sourceRegistry: Address.parse('EQD-BJSVUJviud_Qv7Ymfd3qzXdrmV525e3YDzWQoHIAiInL'),
         backends: [
             'https://ton-source-prod-1.herokuapp.com',
             'https://ton-source-prod-2.herokuapp.com',
@@ -58,7 +58,7 @@ const backends: Record<
         id: 'orbs.com',
     },
     testnet: {
-        verifierRegistry: Address.parse('EQB--CRXUbqYbqJKScEWeOrnk0TKJxB071M-WwvMpMEvq6Ed'),
+        sourceRegistry: Address.parse('EQCsdKYwUaXkgJkz2l0ol6qT_WxeRbE_wBCwnEybmR0u5TO8'),
         backends: ['https://ton-source-prod-testnet-1.herokuapp.com'],
         id: 'orbs-testnet',
     },
@@ -95,6 +95,13 @@ class VerifierRegistry implements Contract {
                 url: v.loadRef().beginParse().loadStringTail(),
             };
         });
+    }
+}
+class SourceRegistry implements Contract {
+    constructor(readonly address: Address) {}
+    async getVerifierRegistry(provider: ContractProvider) {
+        const { stack } = await provider.get('get_verifier_registry_address', []);
+        return stack.readAddress();
     }
 }
 
@@ -276,7 +283,8 @@ export const verify: Runner = async (args: Args, ui: UIProvider, context: Runner
 
     const backend = backends[network];
 
-    const verifierRegistry = networkProvider.open(new VerifierRegistry(backend.verifierRegistry));
+    const sourceRegistry   = networkProvider.open(new SourceRegistry(backend.sourceRegistry));
+    const verifierRegistry = networkProvider.open(new VerifierRegistry(await sourceRegistry.getVerifierRegistry()));
 
     const verifier = (await verifierRegistry.getVerifiers()).find((v) => v.name === backend.id);
     if (verifier === undefined) {
@@ -327,7 +335,7 @@ export const verify: Runner = async (args: Args, ui: UIProvider, context: Runner
     const c = Cell.fromBoc(Buffer.from(msgCell.data))[0];
 
     await networkProvider.sender().send({
-        to: backend.verifierRegistry,
+        to: verifierRegistry.address,
         value: toNano('0.5'),
         body: c,
     });
