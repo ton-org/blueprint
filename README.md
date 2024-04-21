@@ -143,7 +143,7 @@ import { Config } from '@ton/blueprint';
 
 export const config: Config = {
     network: {
-        endpoint: 'https://toncenter.com/api/v2/',
+        endpoint: 'https://toncenter.com/api/v2/jsonRPC',
         type: 'mainnet',
         version: 'v2',
         key: 'YOUR_API_KEY',
@@ -153,10 +153,16 @@ export const config: Config = {
 
 The above config parameters are equivalent to the arguments in the following command:
 ```bash
-npx blueprint run --custom https://toncenter.com/api/v2/ --custom-version v2 --custom-type mainnet --custom-key YOUR_API_KEY
+npx blueprint run --custom https://toncenter.com/api/v2/jsonRPC --custom-version v2 --custom-type mainnet --custom-key YOUR_API_KEY
 ```
 
 Properties of the `network` object have the same semantics as the `--custom` flags with respective names (see `blueprint help run`).
+
+You can also use custom network to verify contracts, like so:
+```bash
+npx blueprint verify --custom https://toncenter.com/api/v2/jsonRPC --custom-version v2 --custom-type mainnet --custom-key YOUR_API_KEY
+```
+(or similarly using the config), however custom type MUST be specified as either `mainnet` or `testnet` when verifying.
 
 ## Contributors
 

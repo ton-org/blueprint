@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Changed `@tact-lang/compiler` dependency to be `^1.3.0` instead of `^1.2.0`
 
+## [0.19.1] - 2024-04-12
+
+### Fixed
+
+- Fixed `verify` command
+
+### Changed
+
+- Updated readme to reflect the fact that blueprint no longer automatically adds `jsonRPC` to custom v2 endpoints
+
 ## [0.19.0] - 2024-03-27
 
 ### Changed
