@@ -10,10 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added auto-sourcing of root `tact.config.json` files for merging compilation options with `wrappers/*.compile.ts`
+- Added a warning for disabling `debug` in contract wrappers of Tact before doing production deployments
 
 ### Changed
 
 - Changed `@tact-lang/compiler` dependency to be `^1.3.0` instead of `^1.2.0`
+- Changed `compile.ts.template` template for Tact to have `debug` set to `true` by default
+- Changed `contract.tact.template` empty template for Tact to mention implicit empty `init()` function
 
 ## [0.19.1] - 2024-04-12
 
