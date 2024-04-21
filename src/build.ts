@@ -25,6 +25,11 @@ export async function buildOne(contract: string, ui?: UIProvider) {
                 });
                 await fs.writeFile(k, v);
             }
+
+            if (result.options !== undefined && result.options?.debug === true) {
+                ui?.clearActionPrompt();
+                ui?.write('\n⚠️ Make sure to disable debug mode in contract wrappers before doing production deployments!');
+            }
         }
 
         const cell = result.code;
