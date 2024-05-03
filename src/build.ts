@@ -28,16 +28,18 @@ export async function buildOne(contract: string, ui?: UIProvider) {
 
             if (result.options !== undefined && result.options?.debug === true) {
                 ui?.clearActionPrompt();
-                ui?.write('\n⚠️ Make sure to disable debug mode in contract wrappers before doing production deployments!');
+                ui?.write(
+                    '\n⚠️ Make sure to disable debug mode in contract wrappers before doing production deployments!',
+                );
             }
         }
 
         const cell = result.code;
         const rHash = cell.hash();
-        const res  = {
+        const res = {
             hash: rHash.toString('hex'),
             hashBase64: rHash.toString('base64'),
-            hex: cell.toBoc().toString('hex')
+            hex: cell.toBoc().toString('hex'),
         };
         ui?.clearActionPrompt();
         ui?.write('\n✅ Compiled successfully! Cell BOC result:\n\n');
@@ -45,10 +47,7 @@ export async function buildOne(contract: string, ui?: UIProvider) {
 
         await fs.mkdir(BUILD_DIR, { recursive: true });
 
-        await fs.writeFile(
-            buildArtifactPath,
-            JSON.stringify(res)
-        );
+        await fs.writeFile(buildArtifactPath, JSON.stringify(res));
 
         ui?.write(`\n✅ Wrote compilation artifact to ${path.relative(process.cwd(), buildArtifactPath)}`);
     } catch (e) {

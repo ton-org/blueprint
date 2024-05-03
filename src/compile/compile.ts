@@ -73,7 +73,9 @@ function findTactBoc(fs: Map<string, Buffer>): Cell {
 }
 
 function getRootTactConfigOptionsForContract(name: string): TactCompilerConfig['options'] | undefined {
-    if (!existsSync(TACT_ROOT_CONFIG)) { return undefined; }
+    if (!existsSync(TACT_ROOT_CONFIG)) {
+        return undefined;
+    }
 
     const config: Tact.Config = Tact.parseConfig(readFileSync(TACT_ROOT_CONFIG).toString());
 
@@ -95,8 +97,7 @@ async function doCompileTact(config: TactCompilerConfig, name: string): Promise<
             name: 'tact',
             path: config.target,
             output: path.join(BUILD_DIR, name),
-            options: {...rootConfigOptions, ...config.options},
-            mode: "full",
+            options: { ...rootConfigOptions, ...config.options },
         },
         stdlib: '/stdlib',
         project: fs,
