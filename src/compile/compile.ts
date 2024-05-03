@@ -96,6 +96,7 @@ async function doCompileTact(config: TactCompilerConfig, name: string): Promise<
             path: config.target,
             output: path.join(BUILD_DIR, name),
             options: {...rootConfigOptions, ...config.options},
+            mode: "full",
         },
         stdlib: '/stdlib',
         project: fs,
