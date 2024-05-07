@@ -4,12 +4,12 @@ import {
     CompilerConfig as FuncCompilerConfig,
     SourcesArray,
 } from '@ton-community/func-js';
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import path from 'path';
 import { Cell } from '@ton/core';
-import { BUILD_DIR, WRAPPERS_DIR } from '../paths';
+import { TACT_ROOT_CONFIG, BUILD_DIR, WRAPPERS_DIR } from '../paths';
 import { CompilerConfig, TactCompilerConfig } from './CompilerConfig';
-import { build } from '@tact-lang/compiler';
+import * as Tact from '@tact-lang/compiler';
 import { OverwritableVirtualFileSystem } from './OverwritableVirtualFileSystem';
 
 async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
@@ -55,6 +55,7 @@ export type TactCompileResult = {
     lang: 'tact';
     fs: Map<string, Buffer>;
     code: Cell;
+    options?: TactCompilerConfig['options'];
 };
 
 function findTactBoc(fs: Map<string, Buffer>): Cell {
@@ -71,19 +72,38 @@ function findTactBoc(fs: Map<string, Buffer>): Cell {
     return Cell.fromBoc(buf)[0];
 }
 
+function getRootTactConfigOptionsForContract(name: string): TactCompilerConfig['options'] | undefined {
+    if (!existsSync(TACT_ROOT_CONFIG)) {
+        return undefined;
+    }
+
+    const config: Tact.Config = Tact.parseConfig(readFileSync(TACT_ROOT_CONFIG).toString());
+
+    for (const project of config.projects) {
+        if (project.name === name) {
+            return project.options;
+        }
+    }
+
+    return undefined;
+}
+
 async function doCompileTact(config: TactCompilerConfig, name: string): Promise<TactCompileResult> {
+    const rootConfigOptions = getRootTactConfigOptionsForContract(name);
     const fs = new OverwritableVirtualFileSystem(process.cwd());
 
-    const res = await build({
+    const buildConfig = {
         config: {
             name: 'tact',
             path: config.target,
             output: path.join(BUILD_DIR, name),
-            options: config.options,
+            options: { ...rootConfigOptions, ...config.options },
         },
         stdlib: '/stdlib',
         project: fs,
-    });
+    };
+
+    const res = await Tact.build(buildConfig);
 
     if (!res) {
         throw new Error('Could not compile tact');
@@ -95,6 +115,7 @@ async function doCompileTact(config: TactCompilerConfig, name: string): Promise<
         lang: 'tact',
         fs: fs.overwrites,
         code,
+        options: buildConfig.config.options,
     };
 }
 
