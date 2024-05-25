@@ -17,6 +17,9 @@ contract {{name}} with Deployable {
 
     receive(msg: Add) {
         self.counter += msg.amount;
+
+        // Notify the caller that the receiver was executed and forward remaining value back
+        self.notify("Cashback".asComment());
     }
 
     get fun counter(): Int {
