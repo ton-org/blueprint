@@ -86,7 +86,7 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 3. Non-interactive: &nbsp; `npx/yarn blueprint build <CONTRACT>` &nbsp; OR build all contracts &nbsp; `yarn blueprint build --all`
    * Example: `yarn blueprint build counter`
 4. Build results are generated in `build/<CONTRACT>.compiled.json`
-5. Tact generated files located in `build/<CONTRACT>` directory
+5. Tact generated files are located in `build/<CONTRACT>` directory
 
 ### Running the test suites
 
@@ -125,7 +125,7 @@ Run in terminal: &nbsp; `npx blueprint help` &nbsp; or &nbsp; `yarn blueprint he
 
 ## Contract development
 
-Before development make sure your current working directory  
+Before developing, make sure that your current working directory is located in the root of the project created using `npm create ton@latest`
 
 ### Creating contracts
 
@@ -142,7 +142,7 @@ Before development make sure your current working directory
 
 #### Tact
 1. Implement tact contract in `contracts/<CONTRACT>.tact`
-2. Wrappers automatically generated in `build/<CONTRACT>/tact_<CONTRACT>.ts`
+2. Wrappers will be automatically generated in `build/<CONTRACT>/tact_<CONTRACT>.ts`
 
 ### Testing contracts
 
