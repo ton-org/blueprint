@@ -4,44 +4,74 @@
 
 A development environment for TON blockchain for writing, testing, and deploying smart contracts.
 
-### Quick start 🚀
+## Table of Contents
 
-Run the following in terminal to create a new project and follow the on-screen instructions:
+* [Quick start](#quick-start-)
+* [Overview](#overview)
+  * [Core features](#core-features)
+  * [Tech stack](#tech-stack)
+  * [Requirements](#requirements)
+* [Features overview](#features-overview)
+  * [Project creation](#project-creation)
+  * [Directory structure](#directory-structure)
+  * [Building contracts](#building-contracts)
+  * [Running the test suites](#running-the-test-suites)
+  * [Deploying contracts](#deploying-contracts)
+  * [Custom scripts](#custom-scripts)
+* [Contract development](#contract-development)
+  * [Creating contracts](#creating-contracts)
+  * [Writing contract code](#writing-contract-code)
+  * [Testing contracts](#testing-contracts)
+* [Configuration](#configuration)
+  * [Plugins](#plugins)
+  * [Custom network](#custom-network)
+* [Contributors](#contributors)
+* [License](#license)
+* [Donations](#donations)
+
+## Quick start 🚀
+
+Run the command in terminal to create a new project and follow the on-screen instructions:
 
 ```console
 npm create ton@latest
 ```
 
-&nbsp;
+## Overview
 
-### Core features 🔥
+Blueprint is an all-in-one development environment designed to enhance the process of creating, testing, and deploying smart contracts on TON blockchain using [FunC](https://docs.ton.org/develop/func/overview) and [Tact](https://docs.tact-lang.org/) languages
 
-* Create a development environment from template in one click - `npm create ton@latest`
+### Core features
+
+* Create a development environment from template - `npm create ton@latest`
 * Streamlined workflow for building, testing and deploying smart contracts
 * Dead simple deployment to mainnet/testnet using your favorite wallet (eg. Tonkeeper)
 * Blazing fast testing of multiple smart contracts in an isolated blockchain running in-process
 
 ### Tech stack
 
-1. Compiling FunC with https://github.com/ton-community/func-js (no CLI)
-2. Testing smart contracts with https://github.com/ton-org/sandbox
-3. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect), [Tonhub wallet](https://tonhub.com/) or a `ton://` deeplink
+1. Compiling FunC with https://github.com/ton-community/func-js
+2. Compiling Tact with https://github.com/tact-lang/tact
+3. Testing smart contracts with https://github.com/ton-org/sandbox
+4. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect), [Tonhub wallet](https://tonhub.com/) or a `ton://` deeplink
 
 ### Requirements
 
-* [Node.js](https://nodejs.org) with a recent version like v18, verify version with `node -v`
-* IDE with TypeScript and FunC support like [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode) or [IntelliJ IDEA](https://www.jetbrains.com/idea/) with the [TON Development plugin](https://plugins.jetbrains.com/plugin/23382-ton)
+* [Node.js](https://nodejs.org) with a recent version like v18. Version can be verified with `node -v`
+* IDE with TON support:
+  * [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode)
+  * [IntelliJ IDEA](https://www.jetbrains.com/idea/) with the [TON Development plugin](https://plugins.jetbrains.com/plugin/23382-ton)
 
-&nbsp;
+## Features overview
 
-## Create a new project
+### Project creation
 
-1. Run and follow the on-screen instructions: &nbsp;  `npm create ton@latest` &nbsp; or &nbsp; `npx create-ton@latest`
-2. (Optional) Then from the project directory: &nbsp; `npm install` &nbsp; or &nbsp; `yarn install`
+1. Run and follow the on-screen instructions: &nbsp; `npm create ton@latest` &nbsp; or &nbsp; `npx create-ton@latest`
+2. From the project directory run &nbsp; `npm/yarn install` &nbsp; to install dependencies
 
 ### Directory structure
 
-* `contracts/` - Source code in [FunC](https://ton.org/docs/develop/func/overview) for all smart contracts and their imports
+* `contracts/` - Source code in [FunC](https://docs.ton.org/develop/func/overview) or [Tact](https://tact-lang.org/) for all smart contracts and their imports
 * `wrappers/` - TypeScript interface classes for all contracts (implementing `Contract` from [@ton/core](https://www.npmjs.com/package/@ton/core))
   * include message [de]serialization primitives, getter wrappers and compilation functions
   * used by the test suite and client code to interact with the contracts from TypeScript
@@ -49,61 +79,79 @@ npm create ton@latest
 * `scripts/` - Deployment scripts to mainnet/testnet and other scripts interacting with live contracts
 * `build/` - Compilation artifacts created here after running a build command
 
-### Build contracts
+### Building contracts
 
 1. You need a compilation script in `wrappers/<CONTRACT>.compile.ts` - [example](/example/wrappers/Counter.compile.ts)
 2. Run interactive: &nbsp;&nbsp; `npx blueprint build` &nbsp; or &nbsp; `yarn blueprint build`
 3. Non-interactive: &nbsp; `npx/yarn blueprint build <CONTRACT>` &nbsp; OR build all contracts &nbsp; `yarn blueprint build --all`
    * Example: `yarn blueprint build counter`
 4. Build results are generated in `build/<CONTRACT>.compiled.json`
+5. Tact generated files are located in `build/<CONTRACT>` directory
 
-### Run the test suite
+### Running the test suites
 
 1. Run in terminal: &nbsp; `npx blueprint test` &nbsp; or &nbsp; `yarn blueprint test`
 2. Alternative method: &nbsp; `npm test` &nbsp; or &nbsp; `yarn test`
+3. You can specify test file to run:  &nbsp; `npm/yarn test <CONTRACT>`
+    * Example: `yarn test counter`
 
 > Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
 
-### Deploy one of the contracts
+### Deploying contracts
 
-1. You need a deploy script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
+1. You need a deployment script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
 2. Run interactive: &nbsp;&nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
-3. Non-interactive: &nbsp; `npx/yarn blueprint run <CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
+3. Non-interactive: &nbsp; `npx/yarn blueprint run deploy<CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
    * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
+
+### Custom scripts
+
+1. Custom scripts should be located in `scripts` folder
+2. Script file must have exported function `run`
+```ts
+export async function run(provider: NetworkProvider) {
+  // 
+}
+```
+3. Script can be run using `npx/yarn blueprint run <SCRIPT>` command
+
+### Updating FunC version
+
+FunC version can be updated using `npx/yarn blueprint set func` command
 
 ### Help and additional commands
 
 Run in terminal: &nbsp; `npx blueprint help` &nbsp; or &nbsp; `yarn blueprint help`
 
-&nbsp;
+## Contract development
 
-## Develop a new contract
+Before developing, make sure that your current working directory is located in the root of the project created using `npm create ton@latest`
 
-1. Make sure you have a project to host the contract
-2. Run interactive: &nbsp;&nbsp; `npx blueprint create` &nbsp; or &nbsp; `yarn blueprint create`
-3. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `func-empty`, `func-counter`, `tact-empty`, `tact-counter`)
+### Creating contracts
+
+1. Run interactive: &nbsp;&nbsp; `npx blueprint create` &nbsp; or &nbsp; `yarn blueprint create`
+2. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `func-empty`, `func-counter`, `tact-empty`, `tact-counter`)
    * Example: `yarn blueprint create MyNewContract --type func-empty`
 
-### Contract code
+### Writing contract code
 
+#### FunC
 1. Implement the standalone FunC root contract in `contracts/<CONTRACT>.fc`
 2. Implement shared FunC imports (if breaking code to multiple files) in `contracts/imports/*.fc`
 3. Implement wrapper TypeScript class in `wrappers/<CONTRACT>.ts` to encode messages and decode getters
 
-### Test suite
+#### Tact
+1. Implement tact contract in `contracts/<CONTRACT>.tact`
+2. Wrappers will be automatically generated in `build/<CONTRACT>/tact_<CONTRACT>.ts`
+
+### Testing contracts
 
 1. Implement TypeScript tests in `tests/<CONTRACT>.spec.ts`
 2. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to interact with the contract
 
 > Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
 
-### Compilation and deployment
-
-1. Implement a compilation script in `wrappers/<CONTRACT>.compile.ts`
-2. Implement a deployment script in `scripts/deploy<CONTRACT>.ts`
-3. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to initialize the contract
-
-## Config
+## Configuration
 
 A config may be created in order to control some of blueprint's features. If a config is needed, create a `blueprint.config.ts` file in the root of your project with something like this:
 ```typescript
