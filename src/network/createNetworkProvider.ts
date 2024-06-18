@@ -13,8 +13,10 @@ import {
     OpenedContract,
     Sender,
     SenderArguments,
-    SendMode, StateInit,
-    toNano, Transaction,
+    SendMode,
+    StateInit,
+    toNano,
+    Transaction,
     TupleItem,
 } from '@ton/core';
 import { TonClient, TonClient4 } from '@ton/ton';
@@ -55,7 +57,7 @@ type Network = 'mainnet' | 'testnet' | 'custom';
 
 type Explorer = 'tonscan' | 'tonviewer' | 'toncx' | 'dton';
 
-type ContractProviderFactory = (params: { address: Address, init?: StateInit | null }) => ContractProvider;
+type ContractProviderFactory = (params: { address: Address; init?: StateInit | null }) => ContractProvider;
 
 class SendProviderSender implements Sender {
     #provider: SendProvider;
@@ -129,7 +131,10 @@ class WrappedContractProvider implements ContractProvider {
     }
 
     open<T extends Contract>(contract: T): OpenedContract<T> {
-        return openContract(contract, (params) => new WrappedContractProvider(params.address, this.#factory, params.init));
+        return openContract(
+            contract,
+            (params) => new WrappedContractProvider(params.address, this.#factory, params.init),
+        );
     }
 
     getTransactions(address: Address, lt: bigint, hash: Buffer, limit?: number): Promise<Transaction[]> {
@@ -169,7 +174,8 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 
     provider(address: Address, init?: StateInit | null): ContractProvider {
-        const factory = (params: { address: Address, init?: StateInit | null }) => this.#tc.provider(params.address, params.init);
+        const factory = (params: { address: Address; init?: StateInit | null }) =>
+            this.#tc.provider(params.address, params.init);
         return new WrappedContractProvider(address, factory, init);
     }
 
