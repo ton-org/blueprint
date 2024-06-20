@@ -6,6 +6,7 @@ import { argSpec } from '../network/createNetworkProvider';
 import { executeTemplate, TEMPLATES_DIR } from '../template';
 import { WRAPPERS_DIR } from '../paths';
 import { Args, Runner } from './Runner';
+import { helpArgs, helpMessages } from './constants';
 
 function createWrapperName(old: string) {
     return old
@@ -90,7 +91,12 @@ function parseCompileString(str: string, src_dir: string, ui: UIProvider) {
 }
 
 export const convert: Runner = async (args: Args, ui: UIProvider) => {
-    const localArgs = arg(argSpec);
+    const localArgs = arg({ ...argSpec, ...helpArgs });
+    if (localArgs['--help']) {
+        ui.write(helpMessages['convert']);
+        return;
+    }
+
     let filePath: string;
     if (localArgs._.length < 2) {
         filePath = await ui.input('Please specify path to convert from:');
