@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Changed
+### Added
 
-- Add possibility of test file specification in `blueprint test` command, for example `blueprint test Counter` 
+- Added support for scripts in subdirectories, for example `scripts/counter/deploy.ts`
+- Added the ability to specify test files in `blueprint test` command, for example `blueprint test Counter` 
+
+### Fixed
+
+- Fixed `code overflow` error when generating QR code for ton:// link
 
 ## [0.21.0] - 2024-05-27
 

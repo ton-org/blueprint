@@ -7,6 +7,7 @@ import { argSpec, createNetworkProvider } from '../network/createNetworkProvider
 import { selectCompile } from './build';
 import { sleep } from '../utils';
 import arg from 'arg';
+import { helpArgs, helpMessages } from './constants';
 
 type FuncCompilerSettings = {
     compiler: 'func';
@@ -166,7 +167,11 @@ async function lookupCodeHash(hash: Buffer, ui: UIProvider, retryCount: number =
 }
 
 export const verify: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {
-    const localArgs = arg(argSpec);
+    const localArgs = arg({ ...argSpec, ...helpArgs });
+    if (localArgs['--help']) {
+        ui.write(helpMessages['verify']);
+        return;
+    }
 
     const sel = await selectCompile(ui, localArgs);
 

@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs/promises';
 import { UIProvider } from './ui/UIProvider';
 import { SCRIPTS_DIR, WRAPPERS_DIR } from './paths';
+import { File } from './types/file';
 
 export const tonDeepLink = (address: Address, amount: bigint, body?: Cell, stateInit?: Cell) =>
     `ton://transfer/${address.toString({
@@ -34,15 +35,22 @@ export function oneOrZeroOf<T extends { [k: string]: boolean | undefined }>(opti
 
 const compileEnd = '.compile.ts';
 
-export const findCompiles = async () =>
+export const findCompiles = async (): Promise<File[]> =>
     (await fs.readdir(WRAPPERS_DIR))
         .filter((f) => f.endsWith(compileEnd))
         .map((f) => ({ path: path.join(WRAPPERS_DIR, f), name: f.slice(0, f.length - compileEnd.length) }));
 
-export const findScripts = async () =>
-    (await fs.readdir(SCRIPTS_DIR))
-        .filter((f) => f.endsWith('.ts'))
-        .map((f) => ({ path: path.join(SCRIPTS_DIR, f), name: path.parse(f).name }));
+export const findScripts = async (): Promise<File[]> => {
+    const dirents = await fs.readdir(SCRIPTS_DIR, { recursive: true, withFileTypes: true });
+    const scripts = dirents.filter((dirent) => dirent.isFile() && dirent.name.endsWith('.ts'));
+
+    return scripts
+        .map((script) => ({
+            name: path.join(script.path.slice(SCRIPTS_DIR.length), script.name),
+            path: path.join(SCRIPTS_DIR, script.path, script.name),
+        }))
+        .sort((a, b) => (a.name >= b.name ? 1 : -1));
+};
 
 export async function selectOption(
     options: { name: string; value: string }[],
@@ -64,14 +72,14 @@ export async function selectOption(
 }
 
 export async function selectFile(
-    files: { name: string; path: string }[],
+    files: File[],
     opts: {
         ui: UIProvider;
         hint?: string;
         import?: boolean;
     },
 ) {
-    let selected: { name: string; path: string };
+    let selected: File;
 
     if (opts.hint) {
         const found = files.find((f) => f.name.toLowerCase() === opts.hint?.toLowerCase());
