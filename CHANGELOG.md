@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Added support for scripts in subdirectories, for example `scripts/counter/deploy.ts`
+
 ### Fixed
 
-- Fixed `code overflow` error
+- Fixed `code overflow` error when generating QR code for ton:// link
 
 ## [0.21.0] - 2024-05-27
 
