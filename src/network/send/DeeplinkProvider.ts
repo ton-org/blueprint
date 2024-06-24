@@ -32,8 +32,11 @@ export class DeeplinkProvider implements SendProvider {
 
             await this.#ui.prompt('Press enter when transaction was issued');
         } catch (err: unknown) {
+            this.#ui.write(deepLink);
+            this.#ui.write('\n');
+
             if (err instanceof Error && err.message.includes('code length overflow')) {
-                this.#ui.write('Message is too large to be sent via ton:// deep link. Please, use another method');
+                this.#ui.write('Message is too large to be sent via QR code. Please use the ton:// link or another method.');
                 process.exit(1);
             }
             throw err;
