@@ -6,7 +6,7 @@ import { selectOption } from '../utils';
 import arg from 'arg';
 import { UIProvider } from '../ui/UIProvider';
 import { buildOne } from '../build';
-import { enableSeparateCompilablesFeature } from '../config/utils';
+import { getConfig } from '../config/utils';
 
 function toSnakeCase(v: string): string {
     const r = v.replace(/[A-Z]/g, (sub) => '_' + sub.toLowerCase());
@@ -101,10 +101,11 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
         contractPath: 'contracts/' + snakeName + '.' + (lang === 'func' ? 'fc' : 'tact'),
     };
 
-    await enableSeparateCompilablesFeature(ui);
+    const config = await getConfig();
 
-    await createFiles(path.join(TEMPLATES_DIR, lang, 'common'), process.cwd(), replaces);
+    const commonPath = config?.separateCompilables ? 'common' : 'not-separated-common';
 
+    await createFiles(path.join(TEMPLATES_DIR, lang, commonPath), process.cwd(), replaces);
     await createFiles(path.join(TEMPLATES_DIR, lang, template), process.cwd(), replaces);
 
     if (lang === 'tact') {
