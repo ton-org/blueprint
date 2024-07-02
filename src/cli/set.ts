@@ -3,6 +3,8 @@ import { UIProvider } from '../ui/UIProvider';
 import { readFile, writeFile } from 'fs/promises';
 import { exec } from 'node:child_process';
 import path from 'path';
+import arg from 'arg';
+import { helpArgs, helpMessages } from './constants';
 
 const getVersions = (pkg: string, ui: UIProvider): Promise<string[]> => {
     return new Promise((resolve, reject) => {
@@ -54,6 +56,12 @@ const install = (cmd: string, ui: UIProvider): Promise<void> => {
 }
 
 export const set: Runner = async (args: Args, ui: UIProvider) => {
+    const localArgs = arg(helpArgs);
+    if (localArgs['--help']) {
+        ui.write(helpMessages['set']);
+        return;
+    }
+
     if (args._.length < 2) {
         throw new Error('Please pass a key');
     }

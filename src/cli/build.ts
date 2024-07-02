@@ -3,6 +3,7 @@ import { findCompiles, selectFile } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
 import arg from 'arg';
 import { buildAll, buildOne } from '../build';
+import { helpArgs, helpMessages } from './constants';
 
 export async function selectCompile(ui: UIProvider, args: Args) {
     return await selectFile(await findCompiles(), {
@@ -15,7 +16,12 @@ export async function selectCompile(ui: UIProvider, args: Args) {
 export const build: Runner = async (args: Args, ui: UIProvider) => {
     const localArgs = arg({
         '--all': Boolean,
+        ...helpArgs,
     });
+    if (localArgs['--help']) {
+        ui.write(helpMessages['build']);
+        return;
+    }
 
     if (localArgs['--all']) {
         await buildAll();

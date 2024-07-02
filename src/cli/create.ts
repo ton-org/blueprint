@@ -7,6 +7,7 @@ import arg from 'arg';
 import { UIProvider } from '../ui/UIProvider';
 import { buildOne } from '../build';
 import { getConfig } from '../config/utils';
+import { helpArgs, helpMessages } from './constants';
 
 function toSnakeCase(v: string): string {
     const r = v.replace(/[A-Z]/g, (sub) => '_' + sub.toLowerCase());
@@ -70,7 +71,12 @@ export const templateTypes: { name: string; value: string }[] = [
 export const create: Runner = async (args: Args, ui: UIProvider) => {
     const localArgs = arg({
         '--type': String,
+        ...helpArgs,
     });
+    if (localArgs['--help']) {
+        ui.write(helpMessages['create']);
+        return;
+    }
 
     const name =
         localArgs._.length > 1 && localArgs._[1].trim().length > 0

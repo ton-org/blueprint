@@ -5,11 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.22.0] - 2024-06-18
+## Unreleased
+
+### Added
+
+- Added support for scripts in subdirectories, for example `scripts/counter/deploy.ts`
+- Added the ability to specify test files in `blueprint test` command, for example `blueprint test Counter` 
 
 ### Changed
 
-- Separated compilables and wrappers 
+- Separated compilables and wrappers
+
+### Fixed
+
+- Fixed `code overflow` error when generating QR code for ton:// link
 
 ## [0.21.0] - 2024-05-27
 
