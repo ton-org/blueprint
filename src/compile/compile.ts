@@ -1,19 +1,32 @@
 import {
     compileFunc,
-    compilerVersion,
     CompilerConfig as FuncCompilerConfig,
+    compilerVersion,
     SourcesArray,
 } from '@ton-community/func-js';
 import { existsSync, readFileSync } from 'fs';
 import path from 'path';
 import { Cell } from '@ton/core';
-import { TACT_ROOT_CONFIG, BUILD_DIR, WRAPPERS_DIR } from '../paths';
+import { BUILD_DIR, COMPILABLES_DIR, TACT_ROOT_CONFIG, WRAPPERS_DIR } from '../paths';
 import { CompilerConfig, TactCompilerConfig } from './CompilerConfig';
 import * as Tact from '@tact-lang/compiler';
 import { OverwritableVirtualFileSystem } from './OverwritableVirtualFileSystem';
+import { getConfig } from '../config/utils';
+
+export async function getCompilablesDirectory(): Promise<string> {
+    const config = await getConfig();
+    if (config?.separateCompilables) {
+        return COMPILABLES_DIR;
+    }
+
+    return WRAPPERS_DIR;
+}
+
+export const COMPILE_END = '.compile.ts';
 
 async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
-    const mod = await import(path.join(WRAPPERS_DIR, name + '.compile.ts'));
+    const compilablesDirectory = await getCompilablesDirectory();
+    const mod = await import(path.join(compilablesDirectory, name + COMPILE_END));
 
     if (typeof mod.compile !== 'object') {
         throw new Error(`Object 'compile' is missing`);

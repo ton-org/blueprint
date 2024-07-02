@@ -75,13 +75,14 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 * `wrappers/` - TypeScript interface classes for all contracts (implementing `Contract` from [@ton/core](https://www.npmjs.com/package/@ton/core))
   * include message [de]serialization primitives, getter wrappers and compilation functions
   * used by the test suite and client code to interact with the contracts from TypeScript
+* `compilables/` - Compilations scripts for contracts
 * `tests/` - TypeScript test suite for all contracts (relying on [Sandbox](https://github.com/ton-org/sandbox) for in-process tests)
 * `scripts/` - Deployment scripts to mainnet/testnet and other scripts interacting with live contracts
 * `build/` - Compilation artifacts created here after running a build command
 
 ### Building contracts
 
-1. You need a compilation script in `wrappers/<CONTRACT>.compile.ts` - [example](/example/wrappers/Counter.compile.ts)
+1. You need a compilation script in `compilables/<CONTRACT>.compile.ts` - [example](/example/compilables/Counter.compile.ts)
 2. Run interactive: &nbsp;&nbsp; `npx blueprint build` &nbsp; or &nbsp; `yarn blueprint build`
 3. Non-interactive: &nbsp; `npx/yarn blueprint build <CONTRACT>` &nbsp; OR build all contracts &nbsp; `yarn blueprint build --all`
    * Example: `yarn blueprint build counter`

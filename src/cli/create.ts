@@ -1,11 +1,12 @@
 import { Args, Runner } from './Runner';
-import { open, mkdir, readdir, lstat, readFile } from 'fs/promises';
+import { lstat, mkdir, open, readdir, readFile } from 'fs/promises';
 import path from 'path';
 import { executeTemplate, TEMPLATES_DIR } from '../template';
 import { selectOption } from '../utils';
 import arg from 'arg';
 import { UIProvider } from '../ui/UIProvider';
 import { buildOne } from '../build';
+import { getConfig } from '../config/utils';
 import { helpArgs, helpMessages } from './constants';
 
 function toSnakeCase(v: string): string {
@@ -106,8 +107,11 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
         contractPath: 'contracts/' + snakeName + '.' + (lang === 'func' ? 'fc' : 'tact'),
     };
 
-    await createFiles(path.join(TEMPLATES_DIR, lang, 'common'), process.cwd(), replaces);
+    const config = await getConfig();
 
+    const commonPath = config?.separateCompilables ? 'common' : 'not-separated-common';
+
+    await createFiles(path.join(TEMPLATES_DIR, lang, commonPath), process.cwd(), replaces);
     await createFiles(path.join(TEMPLATES_DIR, lang, template), process.cwd(), replaces);
 
     if (lang === 'tact') {

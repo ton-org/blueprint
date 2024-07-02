@@ -13,8 +13,7 @@ import { convert } from './convert';
 import { additionalHelpMessages, help } from './help';
 import { InquirerUIProvider } from '../ui/InquirerUIProvider';
 import { argSpec, Runner, RunnerContext } from './Runner';
-import path from 'path';
-import { Config } from '../config/Config';
+import { getConfig } from '../config/utils';
 
 const runners: Record<string, Runner> = {
     create,
@@ -43,28 +42,21 @@ async function main() {
 
     const runnerContext: RunnerContext = {};
 
+    const config = await getConfig();
+
     try {
-        const configModule = await import(path.join(process.cwd(), 'blueprint.config.ts'));
+        runnerContext.config = config;
 
-        try {
-            if ('config' in configModule && typeof configModule.config === 'object') {
-                const config: Config = configModule.config;
-                runnerContext.config = config;
-
-                for (const plugin of config.plugins ?? []) {
-                    for (const runner of plugin.runners()) {
-                        effectiveRunners[runner.name] = runner.runner;
-                        additionalHelpMessages[runner.name] = runner.help;
-                    }
-                }
+        for (const plugin of config?.plugins ?? []) {
+            for (const runner of plugin.runners()) {
+                effectiveRunners[runner.name] = runner.runner;
+                additionalHelpMessages[runner.name] = runner.help;
             }
-        } catch (e) {
-            // if plugin.runners() throws
-            console.error('Could not load one or more plugins');
-            console.error(e);
         }
     } catch (e) {
-        // no config
+        // if plugin.runners() throws
+        console.error('Could not load one or more plugins');
+        console.error(e);
     }
 
     effectiveRunners = {
