@@ -10,7 +10,7 @@ export const findCompiles = async (directory?: string): Promise<File[]> => {
     const files = await fs.readdir(directory);
     const compilables = files.filter((file) => file.endsWith(COMPILE_END));
     return compilables.map((file) => ({
-        path: path.join(directory, file),
+        path: path.join(directory!, file),
         name: file.slice(0, file.length - COMPILE_END.length),
     }));
 };
