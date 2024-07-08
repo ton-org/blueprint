@@ -153,9 +153,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tact-lang/compiler@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@tact-lang/compiler@npm:1.3.0"
+"@tact-lang/compiler@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "@tact-lang/compiler@npm:1.4.0"
   dependencies:
     "@ipld/dag-pb": 2.1.18
     "@tact-lang/opcode": ^0.0.14
@@ -174,7 +174,7 @@ __metadata:
     zod: ^3.22.4
   bin:
     tact: bin/tact
-  checksum: d5f1b33750f852835a63f49c41ce96186e8f00b3cc8b13a0070e46441453cca984c67c3431db0d17851c1789ad8830397e4276a6965a0754193843b7e3c4d98e
+  checksum: 7f01eb44de22b52f884f45f90637660009e1882ab341bde21eaea0ab26273dc4757638a713ed7f363d5097c64fa5a680109cb753abcc17e5a47242fc91d59296
   languageName: node
   linkType: hard
 
@@ -212,7 +212,7 @@ __metadata:
   resolution: "@ton/blueprint@workspace:."
   dependencies:
     "@orbs-network/ton-access": ^2.3.3
-    "@tact-lang/compiler": ^1.3.0
+    "@tact-lang/compiler": ^1.4.0
     "@ton-community/func-js": ^0.7.0
     "@ton/core": ^0.56.0
     "@ton/crypto": ^3.2.0
