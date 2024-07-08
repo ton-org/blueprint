@@ -9,7 +9,7 @@ export const test: Runner = async (args, ui) => {
         ui.write(helpMessages['test']);
         return;
     }
-  
+
     const testArgs = args._.slice(1); // first argument is `test`, need to get rid of it
     execSync(`npm test ${testArgs.join(' ')}`, { stdio: 'inherit' });
 };

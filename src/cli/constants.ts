@@ -29,7 +29,7 @@ List of available commands:
 - create
 - run
 - build
-- custom
+- set
 - help
 - test
 - verify
@@ -69,9 +69,9 @@ Flags:
     set: `Usage: blueprint set <key> [value]
 Available keys:
 - func - overrides @ton-community/func-js-bin version, effectively setting the func version. The required version may be passed as the value, otherwise available versions will be displayed.`,
-    test: `Usage: blueprint test
+    test: `Usage: blueprint test [...args]
 
-Just runs \`npm test\`, which by default runs \`jest\`.`,
+Just runs \`npm test [...args]\`, which by default runs \`jest\`.`,
     verify: `Usage: blueprint verify [contract name] [flags]
 
 Builds a contract (similar to build command) and verifies it on https://verifier.ton.org. The contract must be already deployed on the network. If the contract's name is not specified on the command line, it will be asked interactively.

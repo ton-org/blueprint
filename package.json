@@ -1,6 +1,6 @@
 {
     "name": "@ton/blueprint",
-    "version": "0.21.0",
+    "version": "0.22.0",
     "description": "Framework for development of TON smart contracts",
     "main": "dist/index.js",
     "bin": "./dist/cli/cli.js",
@@ -35,7 +35,7 @@
     },
     "dependencies": {
         "@orbs-network/ton-access": "^2.3.3",
-        "@tact-lang/compiler": "^1.3.0",
+        "@tact-lang/compiler": "^1.4.0",
         "@ton-community/func-js": "^0.7.0",
         "@tonconnect/sdk": "^2.2.0",
         "arg": "^5.0.2",

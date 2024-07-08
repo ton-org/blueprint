@@ -6,11 +6,11 @@ import { COMPILE_END, getCompilablesDirectory } from '../compile/compile';
 import { File } from '../types/file';
 
 export const findCompiles = async (directory?: string): Promise<File[]> => {
-    directory ??= await getCompilablesDirectory();
-    const files = await fs.readdir(directory);
+    const dir = directory ?? await getCompilablesDirectory();
+    const files = await fs.readdir(dir);
     const compilables = files.filter((file) => file.endsWith(COMPILE_END));
     return compilables.map((file) => ({
-        path: path.join(directory, file),
+        path: path.join(dir, file),
         name: file.slice(0, file.length - COMPILE_END.length),
     }));
 };
@@ -21,8 +21,8 @@ export const findScripts = async (): Promise<File[]> => {
 
     return scripts
         .map((script) => ({
-            name: path.join(script.path.slice(SCRIPTS_DIR.length), script.name),
-            path: path.join(SCRIPTS_DIR, script.path, script.name),
+            name: path.join(script.path.slice(SCRIPTS_DIR.length+1), path.parse(script.name).name),
+            path: path.join(script.path, script.name),
         }))
         .sort((a, b) => (a.name >= b.name ? 1 : -1));
 };
