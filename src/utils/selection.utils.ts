@@ -6,11 +6,11 @@ import { COMPILE_END, getCompilablesDirectory } from '../compile/compile';
 import { File } from '../types/file';
 
 export const findCompiles = async (directory?: string): Promise<File[]> => {
-    directory ??= await getCompilablesDirectory();
-    const files = await fs.readdir(directory);
+    const actualDirectory = directory ?? await getCompilablesDirectory();
+    const files = await fs.readdir(actualDirectory);
     const compilables = files.filter((file) => file.endsWith(COMPILE_END));
     return compilables.map((file) => ({
-        path: path.join(directory, file),
+        path: path.join(actualDirectory, file),
         name: file.slice(0, file.length - COMPILE_END.length),
     }));
 };
