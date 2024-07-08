@@ -46,5 +46,5 @@
         "ton-x": "^2.1.0",
         "ts-node": "^10.9.1"
     },
-    "packageManager": "yarn@3.6.1"
+    "packageManager": "yarn@4.3.1"
 }
