@@ -64,15 +64,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@orbs-network/ton-access@npm:^2.3.3":
-  version: 2.3.3
-  resolution: "@orbs-network/ton-access@npm:2.3.3"
-  dependencies:
-    isomorphic-fetch: "npm:^3.0.0"
-  checksum: 10/bdd314cd8e39ed5ab2a425a076d798a731437a622e376bd46ff499fe83cac8858727db6af2e66bd23c98613dfab51384e07ee694bb43d851ca6bc8061f803d30
-  languageName: node
-  linkType: hard
-
 "@protobufjs/aspromise@npm:^1.1.1, @protobufjs/aspromise@npm:^1.1.2":
   version: 1.1.2
   resolution: "@protobufjs/aspromise@npm:1.1.2"
@@ -211,7 +202,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ton/blueprint@workspace:."
   dependencies:
-    "@orbs-network/ton-access": "npm:^2.3.3"
     "@tact-lang/compiler": "npm:^1.4.0"
     "@ton-community/func-js": "npm:^0.7.0"
     "@ton/core": "npm:^0.56.0"
@@ -1136,16 +1126,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"isomorphic-fetch@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "isomorphic-fetch@npm:3.0.0"
-  dependencies:
-    node-fetch: "npm:^2.6.1"
-    whatwg-fetch: "npm:^3.4.1"
-  checksum: 10/568fe0307528c63405c44dd3873b7b6c96c0d19ff795cb15846e728b6823bdbc68cc8c97ac23324509661316f12f551e43dac2929bc7030b8bc4d6aa1158b857
-  languageName: node
-  linkType: hard
-
 "it-all@npm:^1.0.4, it-all@npm:^1.0.5":
   version: 1.0.6
   resolution: "it-all@npm:1.0.6"
@@ -1928,13 +1908,6 @@ __metadata:
   version: 3.0.1
   resolution: "webidl-conversions@npm:3.0.1"
   checksum: 10/b65b9f8d6854572a84a5c69615152b63371395f0c5dcd6729c45789052296df54314db2bc3e977df41705eacb8bc79c247cee139a63fa695192f95816ed528ad
-  languageName: node
-  linkType: hard
-
-"whatwg-fetch@npm:^3.4.1":
-  version: 3.6.17
-  resolution: "whatwg-fetch@npm:3.6.17"
-  checksum: 10/27c9930b82c6cae976c3b3bee232d2318cd20ff63e956c80cece6e86088318869196523ece4ce5973a7569725f06987ae33e6ea23dca0154b984d0ac96923904
   languageName: node
   linkType: hard
 

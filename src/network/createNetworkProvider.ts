@@ -20,7 +20,6 @@ import {
     TupleItem,
 } from '@ton/core';
 import { TonClient, TonClient4 } from '@ton/ton';
-import { getHttpV4Endpoint } from '@orbs-network/ton-access';
 import { UIProvider } from '../ui/UIProvider';
 import { NetworkProvider } from './NetworkProvider';
 import { SendProvider } from './send/SendProvider';
@@ -31,6 +30,10 @@ import { mnemonicToPrivateKey } from '@ton/crypto';
 import { MnemonicProvider, WalletVersion } from './send/MnemonicProvider';
 import { Config } from '../config/Config';
 import { CustomNetwork } from '../config/CustomNetwork';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+
+const INITIAL_DELAY = 400;
+const MAX_ATTEMPTS = 4;
 
 export const argSpec = {
     '--mainnet': Boolean,
@@ -435,8 +438,29 @@ class NetworkProviderBuilder {
                 throw new Error('The usage of this network provider requires either mainnet or testnet');
             }
         } else {
-            tc = new TonClient4({
-                endpoint: await getHttpV4Endpoint({ network }),
+            tc = new TonClient({
+                endpoint: network === 'mainnet' ? 'https://toncenter.com/api/v2/jsonRPC' : 'https://testnet.toncenter.com/api/v2/jsonRPC',
+                httpAdapter: async (config: AxiosRequestConfig) => {
+                    let r: AxiosResponse;
+                    let delay = INITIAL_DELAY;
+                    let attempts = 0;
+                    while (true) {
+                        r = await axios({
+                            ...config,
+                            adapter: undefined,
+                            validateStatus: (status: number) => (status >= 200 && status < 300) || status === 429,
+                        });
+                        if (r.status !== 429) {
+                            return r;
+                        }
+                        await sleep(delay);
+                        delay *= 2;
+                        attempts++;
+                        if (attempts >= MAX_ATTEMPTS) {
+                            throw new Error('Max attempts reached');
+                        }
+                    }
+                }
             });
         }
 

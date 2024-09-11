@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.23.0] - 2024-09-11
+
+### Changed
+
+- Toncenter v2 is now used by default instead of orbs access. Rate limited API requests are automatically retried
+
+### Removed
+
+- Removed `@orbs-network/ton-access` dependency
+
 ## [0.22.0] - 2024-07-08
 
 ### Added
