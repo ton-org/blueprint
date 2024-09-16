@@ -2,7 +2,6 @@ import { oneOrZeroOf, sleep, getExplorerLink } from '../utils';
 import arg from 'arg';
 import { DeeplinkProvider } from './send/DeeplinkProvider';
 import { TonConnectProvider } from './send/TonConnectProvider';
-import { TonHubProvider } from './send/TonHubProvider';
 import {
     Address,
     Cell,
@@ -30,7 +29,7 @@ import { mnemonicToPrivateKey } from '@ton/crypto';
 import { MnemonicProvider, WalletVersion } from './send/MnemonicProvider';
 import { Config } from '../config/Config';
 import { CustomNetwork } from '../config/CustomNetwork';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosResponse, AxiosAdapter, InternalAxiosRequestConfig } from 'axios';
 
 const INITIAL_DELAY = 400;
 const MAX_ATTEMPTS = 4;
@@ -45,7 +44,6 @@ export const argSpec = {
 
     '--tonconnect': Boolean,
     '--deeplink': Boolean,
-    '--tonhub': Boolean,
     '--mnemonic': Boolean,
 
     '--tonscan': Boolean,
@@ -190,7 +188,7 @@ class NetworkProviderImpl implements NetworkProvider {
         }
     }
 
-    async waitForDeploy(address: Address, attempts: number = 10, sleepDuration: number = 2000) {
+    async waitForDeploy(address: Address, attempts: number = 20, sleepDuration: number = 2000) {
         if (attempts <= 0) {
             throw new Error('Attempt number must be positive');
         }
@@ -316,7 +314,6 @@ class NetworkProviderBuilder {
         let deployUsing = oneOrZeroOf({
             tonconnect: this.args['--tonconnect'],
             deeplink: this.args['--deeplink'],
-            tonhub: this.args['--tonhub'],
             mnemonic: this.args['--mnemonic'],
         });
 
@@ -332,10 +329,6 @@ class NetworkProviderBuilder {
                         {
                             name: 'Create a ton:// deep link',
                             value: 'deeplink',
-                        },
-                        {
-                            name: 'Tonhub wallet',
-                            value: 'tonhub',
                         },
                         {
                             name: 'Mnemonic',
@@ -357,10 +350,6 @@ class NetworkProviderBuilder {
             case 'tonconnect':
                 if (network === 'custom') throw new Error('Tonkeeper cannot work with custom network.');
                 provider = new TonConnectProvider(new FSStorage(storagePath), this.ui);
-                break;
-            case 'tonhub':
-                if (network === 'custom') throw new Error('TonHub cannot work with custom network.');
-                provider = new TonHubProvider(network, new FSStorage(storagePath), this.ui);
                 break;
             case 'mnemonic':
                 provider = await createMnemonicProvider(client, this.ui);
@@ -438,29 +427,31 @@ class NetworkProviderBuilder {
                 throw new Error('The usage of this network provider requires either mainnet or testnet');
             }
         } else {
-            tc = new TonClient({
-                endpoint: network === 'mainnet' ? 'https://toncenter.com/api/v2/jsonRPC' : 'https://testnet.toncenter.com/api/v2/jsonRPC',
-                httpAdapter: async (config: AxiosRequestConfig) => {
-                    let r: AxiosResponse;
-                    let delay = INITIAL_DELAY;
-                    let attempts = 0;
-                    while (true) {
-                        r = await axios({
-                            ...config,
-                            adapter: undefined,
-                            validateStatus: (status: number) => (status >= 200 && status < 300) || status === 429,
-                        });
-                        if (r.status !== 429) {
-                            return r;
-                        }
-                        await sleep(delay);
-                        delay *= 2;
-                        attempts++;
-                        if (attempts >= MAX_ATTEMPTS) {
-                            throw new Error('Max attempts reached');
-                        }
+            const httpAdapter: AxiosAdapter = async (config: InternalAxiosRequestConfig) => {
+                let r: AxiosResponse;
+                let delay = INITIAL_DELAY;
+                let attempts = 0;
+                while (true) {
+                    r = await axios({
+                        ...config,
+                        adapter: undefined,
+                        validateStatus: (status: number) => (status >= 200 && status < 300) || status === 429,
+                    });
+                    if (r.status !== 429) {
+                        return r;
+                    }
+                    await sleep(delay);
+                    delay *= 2;
+                    attempts++;
+                    if (attempts >= MAX_ATTEMPTS) {
+                        throw new Error('Max attempts reached');
                     }
                 }
+            };
+
+            tc = new TonClient({
+                endpoint: network === 'mainnet' ? 'https://toncenter.com/api/v2/jsonRPC' : 'https://testnet.toncenter.com/api/v2/jsonRPC',
+                httpAdapter,
             });
         }
 

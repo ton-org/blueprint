@@ -137,13 +137,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scarf/scarf@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@scarf/scarf@npm:1.1.1"
-  checksum: 10/b56fee49481dd561f59c1df943e6ef41196f3674947f4a81e6adc1504e41e94d5314d6d3fe9a9ff4ef54f953bfdfde317f4f8c429bdcb2cbcac605616e3867e7
-  languageName: node
-  linkType: hard
-
 "@tact-lang/compiler@npm:^1.4.0":
   version: 1.4.0
   resolution: "@tact-lang/compiler@npm:1.4.0"
@@ -204,9 +197,9 @@ __metadata:
   dependencies:
     "@tact-lang/compiler": "npm:^1.4.0"
     "@ton-community/func-js": "npm:^0.7.0"
-    "@ton/core": "npm:^0.56.0"
-    "@ton/crypto": "npm:^3.2.0"
-    "@ton/ton": "npm:^13.11.0"
+    "@ton/core": "npm:^0.58.1"
+    "@ton/crypto": "npm:^3.3.0"
+    "@ton/ton": "npm:^15.0.0"
     "@tonconnect/sdk": "npm:^2.2.0"
     "@types/inquirer": "npm:^8.2.6"
     "@types/node": "npm:^20.2.5"
@@ -217,13 +210,12 @@ __metadata:
     inquirer: "npm:^8.2.5"
     prettier: "npm:^3.0.3"
     qrcode-terminal: "npm:^0.12.0"
-    ton-x: "npm:^2.1.0"
     ts-node: "npm:^10.9.1"
     typescript: "npm:^4.9.5"
   peerDependencies:
-    "@ton/core": ">=0.56.0"
-    "@ton/crypto": ">=3.2.0"
-    "@ton/ton": ">=13.11.0"
+    "@ton/core": ">=0.58.1"
+    "@ton/crypto": ">=3.3.0"
+    "@ton/ton": ">=15.0.0"
   bin:
     blueprint: ./dist/cli/cli.js
   languageName: unknown
@@ -240,14 +232,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/core@npm:^0.56.0":
-  version: 0.56.0
-  resolution: "@ton/core@npm:0.56.0"
+"@ton/core@npm:^0.58.1":
+  version: 0.58.1
+  resolution: "@ton/core@npm:0.58.1"
   dependencies:
     symbol.inspect: "npm:1.0.1"
   peerDependencies:
     "@ton/crypto": ">=3.2.0"
-  checksum: 10/29ca0f84f4af806004453f81594d09257d32eb89374555604eb53c79123e70be30307307c75802621cb9355b8cc20f0adab27a2e82dba5a0a2c5a0c5065950e1
+  checksum: 10/9d774db62bc83f37d597ee14670e35e1b9765f3921316b1016b8b83234b28b796843a0cbda0540b04eabf5f1c0c37acba095b556ac9116226d04578ed11d0be7
   languageName: node
   linkType: hard
 
@@ -257,6 +249,15 @@ __metadata:
   dependencies:
     jssha: "npm:3.2.0"
   checksum: 10/1a686b04dc1430792341339f0ddc1e2f5effd94d31ae118baf2c510e074201495801787b2ca881a6ceb587f89212eb081ec9e3979d374d9c9004c6c4b61fc591
+  languageName: node
+  linkType: hard
+
+"@ton/crypto-primitives@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@ton/crypto-primitives@npm:2.1.0"
+  dependencies:
+    jssha: "npm:3.2.0"
+  checksum: 10/71119f74461ae17bf2cfe7e0a6fcea8d4e359665ea6878b0c935cfd83ca0d84f9c299df3467adb1b1b7ba50f7d446732f2c13b5ea5e26dc1703a6dc24063be3a
   languageName: node
   linkType: hard
 
@@ -271,11 +272,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/ton@npm:^13.11.0":
-  version: 13.11.0
-  resolution: "@ton/ton@npm:13.11.0"
+"@ton/crypto@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "@ton/crypto@npm:3.3.0"
   dependencies:
-    axios: "npm:^0.25.0"
+    "@ton/crypto-primitives": "npm:2.1.0"
+    jssha: "npm:3.2.0"
+    tweetnacl: "npm:1.0.3"
+  checksum: 10/0561f2c95df7a53c47262393590bae8c5254ea5802cbecd2fea589073d926f60466292d594171aa3f3375ccaa2b763368fa1023bd5b6ebfe4da16297731cb379
+  languageName: node
+  linkType: hard
+
+"@ton/ton@npm:^15.0.0":
+  version: 15.0.0
+  resolution: "@ton/ton@npm:15.0.0"
+  dependencies:
+    axios: "npm:^1.6.7"
     dataloader: "npm:^2.0.0"
     symbol.inspect: "npm:1.0.1"
     teslabot: "npm:^1.3.0"
@@ -283,7 +295,7 @@ __metadata:
   peerDependencies:
     "@ton/core": ">=0.56.0"
     "@ton/crypto": ">=3.2.0"
-  checksum: 10/a69c02b084edd81052ff8be5ca5a53318fae9c64cde14bbd7038dd7e12af819b4cd8107f0d6dd6ac100aebad5522806e2c84a02a95016bad1758d7f5c4b426e6
+  checksum: 10/135df6331ef76be621bffe4d92f8a932333e46a40476bdd6d1d71bb29d354e5fb640eb2ffccfe260b762be3220a02291e4db0e0afc0d33ba78efd25bab6793ee
   languageName: node
   linkType: hard
 
@@ -351,15 +363,6 @@ __metadata:
   version: 1.0.4
   resolution: "@tsconfig/node16@npm:1.0.4"
   checksum: 10/202319785901f942a6e1e476b872d421baec20cf09f4b266a1854060efbf78cde16a4d256e8bc949d31e6cd9a90f1e8ef8fb06af96a65e98338a2b6b0de0a0ff
-  languageName: node
-  linkType: hard
-
-"@types/bn.js@npm:^5.1.0":
-  version: 5.1.1
-  resolution: "@types/bn.js@npm:5.1.1"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 10/cf2c45833e67ecfc45e5336151965a47857431640b61708b6e4dc81d88ed53585c9b30be59abbbee609cdf7a63828e5b8a58c1a27eb4306e5cb7ddd9bad46650
   languageName: node
   linkType: hard
 
@@ -465,22 +468,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.25.0":
-  version: 0.25.0
-  resolution: "axios@npm:0.25.0"
+"axios@npm:^1.6.7":
+  version: 1.7.7
+  resolution: "axios@npm:1.7.7"
   dependencies:
-    follow-redirects: "npm:^1.14.7"
-  checksum: 10/7961f4386e5492c2a32756a8c9a2ca247130d4aa8d24f855d11d02f8d99288c6e9a4aabe0675587ace61779b6bd3d54a654f64431c87dc0270cfba52a4dca9c9
-  languageName: node
-  linkType: hard
-
-"axios@npm:^0.27.0":
-  version: 0.27.2
-  resolution: "axios@npm:0.27.2"
-  dependencies:
-    follow-redirects: "npm:^1.14.9"
+    follow-redirects: "npm:^1.15.6"
     form-data: "npm:^4.0.0"
-  checksum: 10/2efaf18dd0805f7bc772882bc86f004abd92d51007b54c5081f74db0d08ce3593e2c010261896d25a14318eeaa2e966fd825e34f810e8a3339dc64b9d177cf70
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 10/7f875ea13b9298cd7b40fd09985209f7a38d38321f1118c701520939de2f113c4ba137832fe8e3f811f99a38e12c8225481011023209a77b0c0641270e20cde1
   languageName: node
   linkType: hard
 
@@ -526,27 +521,6 @@ __metadata:
     it-take: "npm:^1.0.1"
     multiformats: "npm:^9.4.7"
   checksum: 10/d466d98f108c4c4878579301fe97074f508705451e4cbb090108c82982b0124bbc674064330a0f92a0528de059f3c173687d6284dcc8f1cce751cc79bd5094e6
-  languageName: node
-  linkType: hard
-
-"bn.js@npm:4.11.6":
-  version: 4.11.6
-  resolution: "bn.js@npm:4.11.6"
-  checksum: 10/22741b015c9fff60fce32fc9988331b298eb9b6db5bfb801babb23b846eaaf894e440e0d067b2b3ae4e46aab754e90972f8f333b31bf94a686bbcb054bfa7b14
-  languageName: node
-  linkType: hard
-
-"bn.js@npm:5.2.0":
-  version: 5.2.0
-  resolution: "bn.js@npm:5.2.0"
-  checksum: 10/37052dad02242b70e21f59b52642d67521d160239964a7f5653d86d856f9c4936aee229a66b69e6864e020f41e934ede9ddd0f873b23cffee42c132163558c2a
-  languageName: node
-  linkType: hard
-
-"bn.js@npm:^5.2.0":
-  version: 5.2.1
-  resolution: "bn.js@npm:5.2.1"
-  checksum: 10/7a7e8764d7a6e9708b8b9841b2b3d6019cc154d2fc23716d0efecfe1e16921b7533c6f7361fb05471eab47986c4aa310c270f88e3507172104632ac8df2cfd84
   languageName: node
   linkType: hard
 
@@ -821,16 +795,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethjs-unit@npm:0.1.6":
-  version: 0.1.6
-  resolution: "ethjs-unit@npm:0.1.6"
-  dependencies:
-    bn.js: "npm:4.11.6"
-    number-to-bn: "npm:1.7.0"
-  checksum: 10/35086cb671806992ec36d5dd43ab67e68ad7a9237e42c0e963f9081c88e40147cda86c1a258b0a3180bf2b7bc1960e607c5bcaefdb2196e0f3564acf73276189
-  languageName: node
-  linkType: hard
-
 "eventsource@npm:^2.0.2":
   version: 2.0.2
   resolution: "eventsource@npm:2.0.2"
@@ -858,13 +822,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.14.7, follow-redirects@npm:^1.14.9":
-  version: 1.15.2
-  resolution: "follow-redirects@npm:1.15.2"
+"follow-redirects@npm:^1.15.6":
+  version: 1.15.9
+  resolution: "follow-redirects@npm:1.15.9"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 10/8be0d39919770054812537d376850ccde0b4762b0501c440bd08724971a078123b55f57704f2984e0664fecc0c86adea85add63295804d9dce401cd9604c91d3
+  checksum: 10/e3ab42d1097e90d28b913903841e6779eb969b62a64706a3eb983e894a5db000fbd89296f45f08885a0e54cd558ef62e81be1165da9be25a6c44920da10f424c
   languageName: node
   linkType: hard
 
@@ -876,13 +840,6 @@ __metadata:
     combined-stream: "npm:^1.0.8"
     mime-types: "npm:^2.1.12"
   checksum: 10/7264aa760a8cf09482816d8300f1b6e2423de1b02bba612a136857413fdc96d7178298ced106817655facc6b89036c6e12ae31c9eb5bdc16aabf502ae8a5d805
-  languageName: node
-  linkType: hard
-
-"fp-ts@npm:^2.11.1, fp-ts@npm:^2.12.0":
-  version: 2.16.0
-  resolution: "fp-ts@npm:2.16.0"
-  checksum: 10/e87fe54c0eb47b6c10cdb9a7eb3c1d6bdf9fc45e19998bd141b5ab3d748351a97d9c093dbf140605d6e2e00173d6d223c83b17a04753ff3ec63642e2abe16690
   languageName: node
   linkType: hard
 
@@ -1037,27 +994,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"io-ts-reporters@npm:^2.0.0":
-  version: 2.0.1
-  resolution: "io-ts-reporters@npm:2.0.1"
-  dependencies:
-    "@scarf/scarf": "npm:^1.1.1"
-  peerDependencies:
-    fp-ts: ^2.10.5
-    io-ts: ^2.2.16
-  checksum: 10/62cd5202d838c57eae5147125dbcdee16b366d799223edb9141ea84ff49d1534fded1c5e7c69562bdb1b9188878b2328f76f9f9448bdae1c1fda261af812ba60
-  languageName: node
-  linkType: hard
-
-"io-ts@npm:^2.2.16":
-  version: 2.2.20
-  resolution: "io-ts@npm:2.2.20"
-  peerDependencies:
-    fp-ts: ^2.5.0
-  checksum: 10/c4508f666dec87ac5e343f11a1d69f4026509b0add3a88c9a39b71ca2d5117396af14ee2b6d1324a17763857d97dd3933095a6b99d885c3b38a89b548e5e32b3
-  languageName: node
-  linkType: hard
-
 "ipfs-unixfs-importer@npm:9.0.10":
   version: 9.0.10
   resolution: "ipfs-unixfs-importer@npm:9.0.10"
@@ -1095,13 +1031,6 @@ __metadata:
   version: 3.0.0
   resolution: "is-fullwidth-code-point@npm:3.0.0"
   checksum: 10/44a30c29457c7fb8f00297bce733f0a64cd22eca270f83e58c105e0d015e45c019491a4ab2faef91ab51d4738c670daff901c799f6a700e27f7314029e99e348
-  languageName: node
-  linkType: hard
-
-"is-hex-prefixed@npm:1.0.0":
-  version: 1.0.0
-  resolution: "is-hex-prefixed@npm:1.0.0"
-  checksum: 10/5ac58e6e528fb029cc43140f6eeb380fad23d0041cc23154b87f7c9a1b728bcf05909974e47248fd0b7fcc11ba33cf7e58d64804883056fabd23e2b898be41de
   languageName: node
   linkType: hard
 
@@ -1338,16 +1267,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"number-to-bn@npm:1.7.0":
-  version: 1.7.0
-  resolution: "number-to-bn@npm:1.7.0"
-  dependencies:
-    bn.js: "npm:4.11.6"
-    strip-hex-prefix: "npm:1.0.0"
-  checksum: 10/702e8f00b6b90abd23f711056005179c3bd5ce3b063c47d468250f63ab3b9b4b82e27bff3b4642a9e71e06c717d5ed359873501746df0a64c3db1fa6d704e704
-  languageName: node
-  linkType: hard
-
 "object-inspect@npm:^1.13.1":
   version: 1.13.1
   resolution: "object-inspect@npm:1.13.1"
@@ -1469,6 +1388,13 @@ __metadata:
     pbjs: bin/pbjs
     pbts: bin/pbts
   checksum: 10/ab7efcdc4d2e43ffad92272cf8c7bed7b8abfa75b00d059024abe7af446e7151bf71c265347b06dc21136187682c86cd1214e1fcf057ed3fc8142c8a6c47b613
+  languageName: node
+  linkType: hard
+
+"proxy-from-env@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "proxy-from-env@npm:1.1.0"
+  checksum: 10/f0bb4a87cfd18f77bc2fba23ae49c3b378fb35143af16cc478171c623eebe181678f09439707ad80081d340d1593cd54a33a0113f3ccb3f4bc9451488780ee23
   languageName: node
   linkType: hard
 
@@ -1647,15 +1573,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strip-hex-prefix@npm:1.0.0":
-  version: 1.0.0
-  resolution: "strip-hex-prefix@npm:1.0.0"
-  dependencies:
-    is-hex-prefixed: "npm:1.0.0"
-  checksum: 10/4cafe7caee1d281d3694d14920fd5d3c11adf09371cef7e2ccedd5b83efd9e9bd2219b5d6ce6e809df6e0f437dc9d30db1192116580875698aad164a6d6b285b
-  languageName: node
-  linkType: hard
-
 "supports-color@npm:^7.1.0":
   version: 7.2.0
   resolution: "supports-color@npm:7.2.0"
@@ -1672,7 +1589,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"teslabot@npm:^1.3.0, teslabot@npm:^1.5.0":
+"teslabot@npm:^1.3.0":
   version: 1.5.0
   resolution: "teslabot@npm:1.5.0"
   checksum: 10/714ab9a3eadf17efdbcc78c140246c6cf02b0fceff2fd3b9e37de7c86ad05af816037145a258b4b115327bc88219d782f64047812483169037d6956f46bb1450
@@ -1692,72 +1609,6 @@ __metadata:
   dependencies:
     os-tmpdir: "npm:~1.0.2"
   checksum: 10/09c0abfd165cff29b32be42bc35e80b8c64727d97dedde6550022e88fa9fd39a084660415ed8e3ebaa2aca1ee142f86df8b31d4196d4f81c774a3a20fd4b6abf
-  languageName: node
-  linkType: hard
-
-"ton-crypto-primitives@npm:2.0.0":
-  version: 2.0.0
-  resolution: "ton-crypto-primitives@npm:2.0.0"
-  dependencies:
-    jssha: "npm:3.2.0"
-  checksum: 10/a81e5e7f1e44a2f32c519d6a9c3512c047b837be2f90a4e5aa226378b330ec6f9d36c1937a21b947eb792ae819c6906cfbd5b5eeab891f9df486d570141fc749
-  languageName: node
-  linkType: hard
-
-"ton-crypto@npm:2.1.0":
-  version: 2.1.0
-  resolution: "ton-crypto@npm:2.1.0"
-  dependencies:
-    jssha: "npm:3.2.0"
-    ton-crypto-primitives: "npm:2.0.0"
-    tweetnacl: "npm:1.0.3"
-  checksum: 10/81a7a034dcc49b2c43ffbc7b98474022ba1ef6c42b2df9ddd1b788b8937801a7f82b7a9dda9d89d38da349356453f3d86d2715790f18b5f71de7ccf9ddc03b48
-  languageName: node
-  linkType: hard
-
-"ton-crypto@npm:^3.0.0":
-  version: 3.2.0
-  resolution: "ton-crypto@npm:3.2.0"
-  dependencies:
-    jssha: "npm:3.2.0"
-    ton-crypto-primitives: "npm:2.0.0"
-    tweetnacl: "npm:1.0.3"
-  checksum: 10/2679026f38ef8c2652b0caaaf4a9765d347655dec0fc7c8875efd0b6c42b1052bbf83b8b2e8a91fe6a2ffa5b84030d447707cf6cdd98634cd39ab8620e9ee24a
-  languageName: node
-  linkType: hard
-
-"ton-x@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "ton-x@npm:2.1.0"
-  dependencies:
-    "@types/bn.js": "npm:^5.1.0"
-    axios: "npm:^0.27.0"
-    bn.js: "npm:^5.2.0"
-    fp-ts: "npm:^2.12.0"
-    io-ts: "npm:^2.2.16"
-    teslabot: "npm:^1.5.0"
-    ton: "npm:9.8.0"
-    ton-crypto: "npm:^3.0.0"
-  checksum: 10/b635a1093029c9ef12fa8cf4985e206a9a74c02a734b58d3863ce66ecb909c967aa128b9f22742626d71c42f1d45d7a2c3683e05345622d380dcdc3eea058e75
-  languageName: node
-  linkType: hard
-
-"ton@npm:9.8.0":
-  version: 9.8.0
-  resolution: "ton@npm:9.8.0"
-  dependencies:
-    axios: "npm:^0.25.0"
-    bn.js: "npm:5.2.0"
-    dataloader: "npm:^2.0.0"
-    ethjs-unit: "npm:0.1.6"
-    fp-ts: "npm:^2.11.1"
-    io-ts: "npm:^2.2.16"
-    io-ts-reporters: "npm:^2.0.0"
-    symbol.inspect: "npm:1.0.1"
-    teslabot: "npm:^1.3.0"
-    ton-crypto: "npm:2.1.0"
-    tweetnacl: "npm:1.0.3"
-  checksum: 10/e02dc4c525133596ace3e5883a6e8e3e3cd8416a58bf798d41a0ed6e43794b6fdc5adddd53d771c8e7a42eaf55594e0e1bd250b6f44f9854cce1f97a11a46b66
   languageName: node
   linkType: hard
 

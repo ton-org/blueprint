@@ -1,6 +1,6 @@
 {
     "name": "@ton/blueprint",
-    "version": "0.23.0",
+    "version": "0.24.0",
     "description": "Framework for development of TON smart contracts",
     "main": "dist/index.js",
     "bin": "./dist/cli/cli.js",
@@ -19,9 +19,9 @@
         "format": "prettier --write src"
     },
     "devDependencies": {
-        "@ton/core": "^0.56.0",
-        "@ton/crypto": "^3.2.0",
-        "@ton/ton": "^13.11.0",
+        "@ton/core": "^0.58.1",
+        "@ton/crypto": "^3.3.0",
+        "@ton/ton": "^15.0.0",
         "@types/inquirer": "^8.2.6",
         "@types/node": "^20.2.5",
         "@types/qrcode-terminal": "^0.12.0",
@@ -29,9 +29,9 @@
         "typescript": "^4.9.5"
     },
     "peerDependencies": {
-        "@ton/core": ">=0.56.0",
-        "@ton/crypto": ">=3.2.0",
-        "@ton/ton": ">=13.11.0"
+        "@ton/core": ">=0.58.1",
+        "@ton/crypto": ">=3.3.0",
+        "@ton/ton": ">=15.0.0"
     },
     "dependencies": {
         "@tact-lang/compiler": "^1.4.0",
@@ -42,7 +42,6 @@
         "dotenv": "^16.1.4",
         "inquirer": "^8.2.5",
         "qrcode-terminal": "^0.12.0",
-        "ton-x": "^2.1.0",
         "ts-node": "^10.9.1"
     },
     "packageManager": "yarn@4.3.1"

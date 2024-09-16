@@ -56,7 +56,7 @@ Flags:
 --custom-version - specifies the API version to use with the custom API. Options: v2 (defualt), v4.
 --custom-key - specifies the API key to use with the custom API, can only be used with API v2.
 --custom-type - specifies the network type to be indicated to scripts. Options: custom (default), mainnet, testnet.
---tonconnect, --tonhub, --deeplink, --mnemonic - specifies the deployer to use when running the script. If not specified on the command line, it will be asked interactively.
+--tonconnect, --deeplink, --mnemonic - specifies the deployer to use when running the script. If not specified on the command line, it will be asked interactively.
 --tonscan, --tonviewer, --toncx, --dton - specifies the network explorer to use when displaying links to the deployed contracts. Default: tonscan.`,
     build: `Usage: blueprint build [contract name] [flags]
 

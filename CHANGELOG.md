@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.24.0] - 2024-09-16
+
+### Added
+
+- Added support for wallet v5 in the Mnemonic provider
+
+### Changed
+
+- Changed the default API provider to Toncenter v2 (instead of Orbs TON Access). Rate limited requests are automatically retried
+- Updated dependencies
+
+### Removed
+
+- Removed the specialized TonHub connector. Use TON Connect instead
+
 ## [0.23.0] - 2024-09-11
 
 ### Changed

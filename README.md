@@ -53,7 +53,7 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 1. Compiling FunC with https://github.com/ton-community/func-js
 2. Compiling Tact with https://github.com/tact-lang/tact
 3. Testing smart contracts with https://github.com/ton-org/sandbox
-4. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect), [Tonhub wallet](https://tonhub.com/) or a `ton://` deeplink
+4. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect) or a `ton://` deeplink
 
 ### Requirements
 
