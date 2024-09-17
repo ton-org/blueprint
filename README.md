@@ -183,6 +183,7 @@ export const config: Config = {
 
 Here are some of the plugins developed by the community:
 - [scaffold](https://github.com/1IxI1/blueprint-scaffold) - allows developers to quickly create a simple dapp automatically using the wrappers' code
+- [misti](https://github.com/nowarp/blueprint-misti) - simplifies workflow with the [Misti](https://nowarp.github.io/tools/misti/) static analyzer
 
 ### Custom network
 
