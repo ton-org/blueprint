@@ -53,7 +53,7 @@ Script name is matched (ignoring case) to a file in the scripts directory. If no
 Flags:
 --mainnet, --testnet - specifies the network to use when running the script. If not specified on the command line, it will be asked interactively.
 --custom [api-endpoint] - indicates that a custom API should be used when running the script, and the API URL optionally. (example: https://testnet.toncenter.com/api/v2/)
---custom-version - specifies the API version to use with the custom API. Options: v2 (defualt), v4.
+--custom-version - specifies the API version to use with the custom API. Options: v2 (default), v4.
 --custom-key - specifies the API key to use with the custom API, can only be used with API v2.
 --custom-type - specifies the network type to be indicated to scripts. Options: custom (default), mainnet, testnet.
 --tonconnect, --deeplink, --mnemonic - specifies the deployer to use when running the script. If not specified on the command line, it will be asked interactively.
