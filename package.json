@@ -35,6 +35,8 @@
     },
     "dependencies": {
         "@tact-lang/compiler": "^1.4.0",
+        "@ton-api/client": "^0.2.0",
+        "@ton-api/ton-adapter": "^0.2.0",
         "@ton-community/func-js": "^0.7.0",
         "@tonconnect/sdk": "^2.2.0",
         "arg": "^5.0.2",

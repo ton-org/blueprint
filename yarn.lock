@@ -172,6 +172,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ton-api/client@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@ton-api/client@npm:0.2.0"
+  dependencies:
+    core-js-pure: "npm:^3.38.0"
+  peerDependencies:
+    "@ton/core": ">=0.59.0"
+  checksum: 10/a625c8e896cecacae04390dc3e948f7050354950ec47bc303b32594716ff31071dc50b8047ff2e6d0aa27ae4c70c4369dfad8b4a17b401a40996044c4e993dbd
+  languageName: node
+  linkType: hard
+
+"@ton-api/ton-adapter@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@ton-api/ton-adapter@npm:0.2.0"
+  peerDependencies:
+    "@ton-api/client": ^0.2.0
+    "@ton/core": ">=0.59.0"
+  checksum: 10/121f07ceefd3a0e1c9ed08e8cd5f6ced8f8a2471f809eb5f4c80ca11418a3be216ab38fa7f1499aa1d4af3e2a0f01d0c829d290b9a6c66c178e7c8ab8071d24b
+  languageName: node
+  linkType: hard
+
 "@ton-community/func-js-bin@npm:0.4.4-newops.1":
   version: 0.4.4-newops.1
   resolution: "@ton-community/func-js-bin@npm:0.4.4-newops.1"
@@ -196,6 +217,8 @@ __metadata:
   resolution: "@ton/blueprint@workspace:."
   dependencies:
     "@tact-lang/compiler": "npm:^1.4.0"
+    "@ton-api/client": "npm:^0.2.0"
+    "@ton-api/ton-adapter": "npm:^0.2.0"
     "@ton-community/func-js": "npm:^0.7.0"
     "@ton/core": "npm:^0.58.1"
     "@ton/crypto": "npm:^3.3.0"
@@ -678,6 +701,13 @@ __metadata:
     tslib: "npm:^2.0.3"
     upper-case: "npm:^2.0.2"
   checksum: 10/6c3346d51afc28d9fae922e966c68eb77a19d94858dba230dd92d7b918b37d36db50f0311e9ecf6847e43e934b1c01406a0936973376ab17ec2c471fbcfb2cf3
+  languageName: node
+  linkType: hard
+
+"core-js-pure@npm:^3.38.0":
+  version: 3.38.1
+  resolution: "core-js-pure@npm:3.38.1"
+  checksum: 10/7dfd59bf3a09277056ac2ef87e49b49d77340952e99ee12b3e1e53bf7e1f34a8ee1fb6026f286b1ba29957f5728664430ccd1ff86983c7ae5fa411d4da74d3de
   languageName: node
   linkType: hard
 

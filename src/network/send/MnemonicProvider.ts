@@ -1,6 +1,4 @@
 import {
-    TonClient,
-    TonClient4,
     WalletContractV1R1,
     WalletContractV1R2,
     WalletContractV1R3,
@@ -25,6 +23,7 @@ import {
 import { SendProvider } from './SendProvider';
 import { keyPairFromSecretKey } from '@ton/crypto';
 import { UIProvider } from '../../ui/UIProvider';
+import { BlueprintTonClient } from '../NetworkProvider';
 
 interface WalletInstance extends Contract {
     getSeqno(provider: ContractProvider): Promise<number>;
@@ -62,14 +61,14 @@ const wallets: Record<WalletVersion, WalletClass> = {
 export class MnemonicProvider implements SendProvider {
     #wallet: OpenedContract<WalletInstance>;
     #secretKey: Buffer;
-    #client: TonClient4 | TonClient;
+    #client: BlueprintTonClient;
     #ui: UIProvider;
 
     constructor(params: {
         version: WalletVersion;
         workchain?: number;
         secretKey: Buffer;
-        client: TonClient4 | TonClient;
+        client: BlueprintTonClient;
         ui: UIProvider;
     }) {
         if (!(params.version in wallets)) {
@@ -83,7 +82,15 @@ export class MnemonicProvider implements SendProvider {
                 workchain: params.workchain ?? 0,
                 publicKey: kp.publicKey,
             }),
-            (params) => this.#client.provider(params.address, params.init),
+            (params) =>
+                this.#client.provider(
+                    params.address,
+                    params.init && {
+                        ...params.init,
+                        data: params.init.data ?? undefined,
+                        code: params.init.code ?? undefined,
+                    },
+                ),
         );
         this.#secretKey = kp.secretKey;
         this.#ui = params.ui;
