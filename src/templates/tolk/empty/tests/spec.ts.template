@@ -1,0 +1,40 @@
+{{name}}.spec.ts
+import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
+import { Cell, toNano } from '@ton/core';
+import { {{name}} } from '../wrappers/{{name}}';
+import '@ton/test-utils';
+import { compile } from '@ton/blueprint';
+
+describe('{{name}}', () => {
+    let code: Cell;
+
+    beforeAll(async () => {
+        code = await compile('{{name}}');
+    });
+
+    let blockchain: Blockchain;
+    let deployer: SandboxContract<TreasuryContract>;
+    let {{loweredName}}: SandboxContract<{{name}}>;
+
+    beforeEach(async () => {
+        blockchain = await Blockchain.create();
+
+        {{loweredName}} = blockchain.openContract({{name}}.createFromConfig({}, code));
+
+        deployer = await blockchain.treasury('deployer');
+
+        const deployResult = await {{loweredName}}.sendDeploy(deployer.getSender(), toNano('0.05'));
+
+        expect(deployResult.transactions).toHaveTransaction({
+            from: deployer.address,
+            to: {{loweredName}}.address,
+            deploy: true,
+            success: true,
+        });
+    });
+
+    it('should deploy', async () => {
+        // the check is done inside beforeEach
+        // blockchain and {{loweredName}} are ready to use
+    });
+});

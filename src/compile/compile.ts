@@ -12,6 +12,7 @@ import { CompilerConfig, TactCompilerConfig } from './CompilerConfig';
 import * as Tact from '@tact-lang/compiler';
 import { OverwritableVirtualFileSystem } from './OverwritableVirtualFileSystem';
 import { getConfig } from '../config/utils';
+import { TolkCompilerConfig, runTolkCompiler, getTolkCompilerVersion } from '@ton/tolk-js';
 
 export async function getCompilablesDirectory(): Promise<string> {
     const config = await getConfig();
@@ -35,11 +36,43 @@ async function getCompilerConfigForContract(name: string): Promise<CompilerConfi
     return mod.compile;
 }
 
+export type SourceSnapshot = {
+    filename: string;
+    content: string;
+};
+
+export type TolkCompileResult = {
+    lang: 'tolk';
+    stderr: string;
+    code: Cell;
+    snapshot: SourceSnapshot[];
+    version: string;
+};
+
+async function doCompileTolk(config: TolkCompilerConfig): Promise<TolkCompileResult> {
+    const res = await runTolkCompiler(config);
+
+    if (res.status === 'error') {
+        throw new Error(res.message);
+    }
+
+    return {
+        lang: 'tolk',
+        stderr: res.stderr,
+        code: Cell.fromBase64(res.codeBoc64),
+        snapshot: res.sourcesSnapshot.map((e) => ({
+            filename: e.filename,
+            content: e.contents,
+        })),
+        version: await getTolkCompilerVersion(),
+    };
+}
+
 export type FuncCompileResult = {
     lang: 'func';
     code: Cell;
     targets: string[];
-    snapshot: SourcesArray;
+    snapshot: SourceSnapshot[];
     version: string;
 };
 
@@ -132,11 +165,21 @@ async function doCompileTact(config: TactCompilerConfig, name: string): Promise<
     };
 }
 
-export type CompileResult = TactCompileResult | FuncCompileResult;
+export type CompileResult = TactCompileResult | FuncCompileResult | TolkCompileResult;
 
 async function doCompileInner(name: string, config: CompilerConfig): Promise<CompileResult> {
     if (config.lang === 'tact') {
         return await doCompileTact(config, name);
+    }
+
+    if (config.lang === 'tolk') {
+        return await doCompileTolk({
+            entrypointFileName: config.entrypoint,
+            fsReadCallback: (path) => readFileSync(path).toString(),
+            optimizationLevel: config.optimizationLevel,
+            withStackComments: config.withStackComments,
+            experimentalOptions: config.experimentalOptions,
+        });
     }
 
     return await doCompileFunc({

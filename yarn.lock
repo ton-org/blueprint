@@ -199,12 +199,14 @@ __metadata:
     "@ton-community/func-js": "npm:^0.7.0"
     "@ton/core": "npm:^0.58.1"
     "@ton/crypto": "npm:^3.3.0"
+    "@ton/tolk-js": "npm:^0.6.0"
     "@ton/ton": "npm:^15.0.0"
     "@tonconnect/sdk": "npm:^2.2.0"
     "@types/inquirer": "npm:^8.2.6"
     "@types/node": "npm:^20.2.5"
     "@types/qrcode-terminal": "npm:^0.12.0"
     arg: "npm:^5.0.2"
+    axios: "npm:^1.7.7"
     chalk: "npm:^4.1.0"
     dotenv: "npm:^16.1.4"
     inquirer: "npm:^8.2.5"
@@ -280,6 +282,17 @@ __metadata:
     jssha: "npm:3.2.0"
     tweetnacl: "npm:1.0.3"
   checksum: 10/0561f2c95df7a53c47262393590bae8c5254ea5802cbecd2fea589073d926f60466292d594171aa3f3375ccaa2b763368fa1023bd5b6ebfe4da16297731cb379
+  languageName: node
+  linkType: hard
+
+"@ton/tolk-js@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@ton/tolk-js@npm:0.6.0"
+  dependencies:
+    arg: "npm:^5.0.2"
+  bin:
+    tolk-js: dist/cli.js
+  checksum: 10/4e595849fd473cbaeaefa262529c0000ce58a68d1a1b04e8902f449f0032eba792b48cbce141194fe9e728ab2e84d52da98262d066fec1e93246b398b1176448
   languageName: node
   linkType: hard
 
@@ -468,7 +481,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.7":
+"axios@npm:^1.6.7, axios@npm:^1.7.7":
   version: 1.7.7
   resolution: "axios@npm:1.7.7"
   dependencies:

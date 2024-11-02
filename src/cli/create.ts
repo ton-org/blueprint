@@ -7,7 +7,7 @@ import arg from 'arg';
 import { UIProvider } from '../ui/UIProvider';
 import { buildOne } from '../build';
 import { getConfig } from '../config/utils';
-import { helpArgs, helpMessages } from './constants';
+import { helpArgs, helpMessages, templateTypes } from './constants';
 
 function toSnakeCase(v: string): string {
     const r = v.replace(/[A-Z]/g, (sub) => '_' + sub.toLowerCase());
@@ -49,25 +49,6 @@ async function createFiles(templatePath: string, realPath: string, replaces: { [
     }
 }
 
-export const templateTypes: { name: string; value: string }[] = [
-    {
-        name: 'An empty contract (FunC)',
-        value: 'func-empty',
-    },
-    {
-        name: 'A simple counter contract (FunC)',
-        value: 'func-counter',
-    },
-    {
-        name: 'An empty contract (TACT)',
-        value: 'tact-empty',
-    },
-    {
-        name: 'A simple counter contract (TACT)',
-        value: 'tact-counter',
-    },
-];
-
 export const create: Runner = async (args: Args, ui: UIProvider) => {
     const localArgs = arg({
         '--type': String,
@@ -104,7 +85,7 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
         name,
         loweredName: name.substring(0, 1).toLowerCase() + name.substring(1),
         snakeName,
-        contractPath: 'contracts/' + snakeName + '.' + (lang === 'func' ? 'fc' : 'tact'),
+        contractPath: 'contracts/' + snakeName + '.' + (lang === 'func' ? 'fc' : (lang === 'tolk' ? 'tolk' : 'tact')),
     };
 
     const config = await getConfig();

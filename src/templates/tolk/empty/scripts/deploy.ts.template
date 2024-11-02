@@ -1,0 +1,14 @@
+deploy{{name}}.ts
+import { toNano } from '@ton/core';
+import { {{name}} } from '../wrappers/{{name}}';
+import { compile, NetworkProvider } from '@ton/blueprint';
+
+export async function run(provider: NetworkProvider) {
+    const {{loweredName}} = provider.open({{name}}.createFromConfig({}, await compile('{{name}}')));
+
+    await {{loweredName}}.sendDeploy(provider.sender(), toNano('0.05'));
+
+    await provider.waitForDeploy({{loweredName}}.address);
+
+    // run methods on `{{loweredName}}`
+}

@@ -31,4 +31,12 @@ export type FuncCompilerConfig = {
       }
 );
 
-export type CompilerConfig = (TactCompilerConfig | FuncCompilerConfig) & CommonCompilerConfig;
+export type TolkCompilerConfig = {
+    lang: 'tolk';
+    entrypoint: string;
+    optimizationLevel?: number;
+    withStackComments?: boolean;
+    experimentalOptions?: string;
+};
+
+export type CompilerConfig = (TactCompilerConfig | FuncCompilerConfig | TolkCompilerConfig) & CommonCompilerConfig;
