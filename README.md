@@ -39,7 +39,7 @@ npm create ton@latest
 
 ## Overview
 
-Blueprint is an all-in-one development environment designed to enhance the process of creating, testing, and deploying smart contracts on TON blockchain using [FunC](https://docs.ton.org/develop/func/overview) and [Tact](https://docs.tact-lang.org/) languages
+Blueprint is an all-in-one development environment designed to enhance the process of creating, testing, and deploying smart contracts on TON blockchain using [FunC](https://docs.ton.org/develop/func/overview), [Tolk](https://docs.ton.org/develop/tolk/overview), and [Tact](https://docs.tact-lang.org/) languages.
 
 ### Core features
 
@@ -51,15 +51,16 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 ### Tech stack
 
 1. Compiling FunC with https://github.com/ton-community/func-js
-2. Compiling Tact with https://github.com/tact-lang/tact
-3. Testing smart contracts with https://github.com/ton-org/sandbox
-4. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect) or a `ton://` deeplink
+2. Compiling Tolk with https://github.com/ton-blockchain/tolk-js
+3. Compiling Tact with https://github.com/tact-lang/tact
+4. Testing smart contracts with https://github.com/ton-org/sandbox
+5. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect) or a `ton://` deeplink
 
 ### Requirements
 
 * [Node.js](https://nodejs.org) with a recent version like v18. Version can be verified with `node -v`
 * IDE with TON support:
-  * [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode)
+  * [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode) or [Tolk plugin](https://marketplace.visualstudio.com/items?itemName=ton-core.tolk-vscode)
   * [IntelliJ IDEA](https://www.jetbrains.com/idea/) with the [TON Development plugin](https://plugins.jetbrains.com/plugin/23382-ton)
 
 ## Features overview
@@ -71,7 +72,7 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 
 ### Directory structure
 
-* `contracts/` - Source code in [FunC](https://docs.ton.org/develop/func/overview) or [Tact](https://tact-lang.org/) for all smart contracts and their imports
+* `contracts/` - Source code for all smart contracts and their imports
 * `wrappers/` - TypeScript interface classes for all contracts (implementing `Contract` from [@ton/core](https://www.npmjs.com/package/@ton/core))
   * include message [de]serialization primitives, getter wrappers and compilation functions
   * used by the test suite and client code to interact with the contracts from TypeScript
@@ -131,7 +132,7 @@ Before developing, make sure that your current working directory is located in t
 ### Creating contracts
 
 1. Run interactive: &nbsp;&nbsp; `npx blueprint create` &nbsp; or &nbsp; `yarn blueprint create`
-2. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `func-empty`, `func-counter`, `tact-empty`, `tact-counter`)
+2. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `func-empty`, `tolk-empty`, `tact-empty`, `func-counter`, `tolk-counter`, `tact-counter`)
    * Example: `yarn blueprint create MyNewContract --type func-empty`
 
 ### Writing contract code
@@ -141,8 +142,12 @@ Before developing, make sure that your current working directory is located in t
 2. Implement shared FunC imports (if breaking code to multiple files) in `contracts/imports/*.fc`
 3. Implement wrapper TypeScript class in `wrappers/<CONTRACT>.ts` to encode messages and decode getters
 
+#### Tolk
+1. Implement the contract in `contracts/<CONTRACT>.tolk`; if you wish, split into multiple files
+2. Implement wrapper TypeScript class in `wrappers/<CONTRACT>.ts` to encode messages and decode getters
+
 #### Tact
-1. Implement tact contract in `contracts/<CONTRACT>.tact`
+1. Implement the contract in `contracts/<CONTRACT>.tact`
 2. Wrappers will be automatically generated in `build/<CONTRACT>/tact_<CONTRACT>.ts`
 
 ### Testing contracts

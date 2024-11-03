@@ -1,0 +1,30 @@
+{{name}}.ts
+import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode } from '@ton/core';
+
+export type {{name}}Config = {};
+
+export function {{loweredName}}ConfigToCell(config: {{name}}Config): Cell {
+    return beginCell().endCell();
+}
+
+export class {{name}} implements Contract {
+    constructor(readonly address: Address, readonly init?: { code: Cell; data: Cell }) {}
+
+    static createFromAddress(address: Address) {
+        return new {{name}}(address);
+    }
+
+    static createFromConfig(config: {{name}}Config, code: Cell, workchain = 0) {
+        const data = {{loweredName}}ConfigToCell(config);
+        const init = { code, data };
+        return new {{name}}(contractAddress(workchain, init), init);
+    }
+
+    async sendDeploy(provider: ContractProvider, via: Sender, value: bigint) {
+        await provider.internal(via, {
+            value,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            body: beginCell().endCell(),
+        });
+    }
+}
