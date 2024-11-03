@@ -19,8 +19,10 @@ import {
     TupleItem,
 } from '@ton/core';
 import { TonClient, TonClient4 } from '@ton/ton';
+import { ContractAdapter } from '@ton-api/ton-adapter';
+import { TonApiClient } from '@ton-api/client';
 import { UIProvider } from '../ui/UIProvider';
-import { NetworkProvider } from './NetworkProvider';
+import { BlueprintTonClient, NetworkProvider } from './NetworkProvider';
 import { SendProvider } from './send/SendProvider';
 import { FSStorage } from './storage/FSStorage';
 import path from 'path';
@@ -144,13 +146,13 @@ class WrappedContractProvider implements ContractProvider {
 }
 
 class NetworkProviderImpl implements NetworkProvider {
-    #tc: TonClient4 | TonClient;
+    #tc: BlueprintTonClient;
     #sender: Sender;
     #network: Network;
     #explorer: Explorer;
     #ui: UIProvider;
 
-    constructor(tc: TonClient4 | TonClient, sender: Sender, network: Network, explorer: Explorer, ui: UIProvider) {
+    constructor(tc: BlueprintTonClient, sender: Sender, network: Network, explorer: Explorer, ui: UIProvider) {
         this.#tc = tc;
         this.#sender = sender;
         this.#network = network;
@@ -170,22 +172,25 @@ class NetworkProviderImpl implements NetworkProvider {
         return this.#sender;
     }
 
-    api(): TonClient4 | TonClient {
+    api(): BlueprintTonClient {
         return this.#tc;
     }
 
     provider(address: Address, init?: StateInit | null): ContractProvider {
         const factory = (params: { address: Address; init?: StateInit | null }) =>
-            this.#tc.provider(params.address, params.init);
+            this.#tc.provider(
+                params.address,
+                params.init && {
+                    ...params.init,
+                    data: params.init.data ?? undefined,
+                    code: params.init.code ?? undefined,
+                },
+            );
         return new WrappedContractProvider(address, factory, init);
     }
 
     async isContractDeployed(address: Address): Promise<boolean> {
-        if (this.#tc instanceof TonClient4) {
-            return this.#tc.isContractDeployed((await this.#tc.getLastBlock()).last.seqno, address);
-        } else {
-            return (await this.#tc.getContractState(address)).state === 'active';
-        }
+        return (await this.#tc.provider(address).getState()).state.type === 'active';
     }
 
     async waitForDeploy(address: Address, attempts: number = 20, sleepDuration: number = 2000) {
@@ -247,7 +252,7 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 }
 
-async function createMnemonicProvider(client: TonClient4 | TonClient, ui: UIProvider) {
+async function createMnemonicProvider(client: BlueprintTonClient, ui: UIProvider) {
     const mnemonic = process.env.WALLET_MNEMONIC ?? '';
     const walletVersion = process.env.WALLET_VERSION ?? '';
     if (mnemonic.length === 0 || walletVersion.length === 0) {
@@ -310,7 +315,7 @@ class NetworkProviderBuilder {
         );
     }
 
-    async chooseSendProvider(network: Network, client: TonClient4 | TonClient): Promise<SendProvider> {
+    async chooseSendProvider(network: Network, client: BlueprintTonClient): Promise<SendProvider> {
         let deployUsing = oneOrZeroOf({
             tonconnect: this.args['--tonconnect'],
             deeplink: this.args['--deeplink'],
@@ -382,7 +387,7 @@ class NetworkProviderBuilder {
             }
             if (this.args['--custom'] !== undefined) {
                 const inputVer = this.args['--custom-version'];
-                let version: 'v4' | 'v2' | undefined = undefined;
+                let version: CustomNetwork['version'] = undefined;
                 if (inputVer !== undefined) {
                     version = inputVer.toLowerCase() as any; // checks come later
                 }
@@ -413,6 +418,13 @@ class NetworkProviderBuilder {
                 tc = new TonClient4({
                     endpoint: configNetwork.endpoint,
                 });
+            } else if (configNetwork.version === 'tonapi') {
+                tc = new ContractAdapter(
+                    new TonApiClient({
+                        baseUrl: configNetwork.endpoint,
+                        apiKey: configNetwork.key,
+                    }),
+                );
             } else {
                 throw new Error('Unknown API version: ' + configNetwork.version);
             }
@@ -450,7 +462,10 @@ class NetworkProviderBuilder {
             };
 
             tc = new TonClient({
-                endpoint: network === 'mainnet' ? 'https://toncenter.com/api/v2/jsonRPC' : 'https://testnet.toncenter.com/api/v2/jsonRPC',
+                endpoint:
+                    network === 'mainnet'
+                        ? 'https://toncenter.com/api/v2/jsonRPC'
+                        : 'https://testnet.toncenter.com/api/v2/jsonRPC',
                 httpAdapter,
             });
         }
