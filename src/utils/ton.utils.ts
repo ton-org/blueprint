@@ -25,6 +25,6 @@ export function getExplorerLink(address: string, network: string, explorer: stri
             return `https://${networkPrefix}dton.io/a/${address}`;
 
         default:
-            return `https://${networkPrefix}tonscan.org/address/${address}`;
+            return `https://${networkPrefix}tonviewer.com/${address}`;
     }
 }

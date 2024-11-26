@@ -65,7 +65,7 @@ Flags:
 --custom-key - specifies the API key to use with the custom API, can only be used with API v2.
 --custom-type - specifies the network type to be indicated to scripts. Options: custom (default), mainnet, testnet.
 --tonconnect, --deeplink, --mnemonic - specifies the deployer to use when running the script. If not specified on the command line, it will be asked interactively.
---tonscan, --tonviewer, --toncx, --dton - specifies the network explorer to use when displaying links to the deployed contracts. Default: tonscan.`,
+--tonscan, --tonviewer, --toncx, --dton - specifies the network explorer to use when displaying links to the deployed contracts. Default: tonviewer.`,
     build: `Usage: blueprint build [contract name] [flags]
 
 Builds the specified contract according to the respective .compile.ts file. If the contract is written in TACT, all TACT-generated files (wrapper class, etc) will be placed in the build/<contract name> folder.
