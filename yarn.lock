@@ -193,22 +193,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton-community/func-js-bin@npm:0.4.4-newops.1":
-  version: 0.4.4-newops.1
-  resolution: "@ton-community/func-js-bin@npm:0.4.4-newops.1"
-  checksum: 10/1bddbd618abfb68fce0777849c88827bdd29bd3bfcf41d54f83f9acf43ea3323fc03ec25873a766eb7a1d4a0ffa08199b24eff3cbeb31fe25dbe69431756b9ea
+"@ton-community/func-js-bin@npm:0.4.6":
+  version: 0.4.6
+  resolution: "@ton-community/func-js-bin@npm:0.4.6"
+  checksum: 10/38d5a9a466146db7c14f772d98c8da7a9c86b392c644f9567437f104d2639ade166f735edb36f5096490e48eef8f2f622ab5d5e6c8c1219fe16d1bb4d59cf24e
   languageName: node
   linkType: hard
 
-"@ton-community/func-js@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "@ton-community/func-js@npm:0.7.0"
+"@ton-community/func-js@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "@ton-community/func-js@npm:0.9.0"
   dependencies:
-    "@ton-community/func-js-bin": "npm:0.4.4-newops.1"
+    "@ton-community/func-js-bin": "npm:0.4.6"
     arg: "npm:^5.0.2"
   bin:
     func-js: dist/cli.js
-  checksum: 10/506192acff889a1abcdb8cd1f3a66e495b88a75579ebd390a33d8f302e0ac012e327a1e6a17d7c4fb5aab98d2399e06b621fa9374829450c54f6198769e2637c
+  checksum: 10/03f0b99fe5ebf4848462a912d9b11b9b9a3aee82ec43342b4b58a2a7ef9fccfaf32d90366daa97fc276634b14792df84f21bb5a97c084b11d57978ba368f2e95
   languageName: node
   linkType: hard
 
@@ -219,8 +219,8 @@ __metadata:
     "@tact-lang/compiler": "npm:^1.4.0"
     "@ton-api/client": "npm:^0.2.0"
     "@ton-api/ton-adapter": "npm:^0.2.0"
-    "@ton-community/func-js": "npm:^0.7.0"
-    "@ton/core": "npm:^0.58.1"
+    "@ton-community/func-js": "npm:^0.9.0"
+    "@ton/core": "npm:^0.59.0"
     "@ton/crypto": "npm:^3.3.0"
     "@ton/tolk-js": "npm:^0.6.0"
     "@ton/ton": "npm:^15.0.0"
@@ -238,7 +238,7 @@ __metadata:
     ts-node: "npm:^10.9.1"
     typescript: "npm:^4.9.5"
   peerDependencies:
-    "@ton/core": ">=0.58.1"
+    "@ton/core": ">=0.59.0"
     "@ton/crypto": ">=3.3.0"
     "@ton/ton": ">=15.0.0"
   bin:
@@ -257,14 +257,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/core@npm:^0.58.1":
-  version: 0.58.1
-  resolution: "@ton/core@npm:0.58.1"
+"@ton/core@npm:^0.59.0":
+  version: 0.59.0
+  resolution: "@ton/core@npm:0.59.0"
   dependencies:
     symbol.inspect: "npm:1.0.1"
   peerDependencies:
     "@ton/crypto": ">=3.2.0"
-  checksum: 10/9d774db62bc83f37d597ee14670e35e1b9765f3921316b1016b8b83234b28b796843a0cbda0540b04eabf5f1c0c37acba095b556ac9116226d04578ed11d0be7
+  checksum: 10/cab72b14cf03f564612980424a0515ad6a373ad6361c2b33f56f9849c342b7ded5a9b4e4696a6be47b3833d6c78dd0fe50a89cb939394b047eaebc81731d37de
   languageName: node
   linkType: hard
 
