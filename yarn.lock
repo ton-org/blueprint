@@ -137,37 +137,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tact-lang/compiler@npm:^1.5.3":
-  version: 1.5.3
-  resolution: "@tact-lang/compiler@npm:1.5.3"
+"@tact-lang/compiler@npm:^1.6.4":
+  version: 1.6.4
+  resolution: "@tact-lang/compiler@npm:1.6.4"
   dependencies:
-    "@tact-lang/opcode": "npm:^0.0.16"
-    "@ton/core": "npm:0.58.1"
+    "@tact-lang/opcode": "npm:^0.3.0"
+    "@ton/core": "npm:0.60.1"
     "@ton/crypto": "npm:^3.2.0"
+    "@tonstudio/parser-runtime": "npm:^0.0.1"
     blockstore-core: "npm:1.0.5"
     change-case: "npm:^4.1.2"
-    crc-32: "npm:1.2.2"
     ipfs-unixfs-importer: "npm:9.0.10"
     json-bigint: "npm:^1.0.0"
-    meow: "npm:^13.2.0"
-    mkdirp: "npm:^2.1.3"
-    ohm-js: "npm:^17.1.0"
     path-normalize: "npm:^6.0.13"
-    prando: "npm:^6.0.1"
     zod: "npm:^3.22.4"
   bin:
     tact: bin/tact.js
-  checksum: 10/9d6595cbb258f9f161237d740f6fe2e3393f771c5b1504c302b8477cc2e3770fd238ec389bd2acd6e695ecfe7d3e9450a55a798b3748215c5b0cdf2616755263
+    unboc: bin/unboc.js
+  checksum: 10/7ac565ba26e2e0813d4d5870138e590c0568fd6eb56474f6951f6b75c9a3b1c1871c8ae83d742fc27d4b4ffb326b02e0f05a0d38f04e33a5c09d417f32a3a8a3
   languageName: node
   linkType: hard
 
-"@tact-lang/opcode@npm:^0.0.16":
-  version: 0.0.16
-  resolution: "@tact-lang/opcode@npm:0.0.16"
-  peerDependencies:
-    "@ton/core": ">=0.49.2"
-    "@ton/crypto": ^3.2.0
-  checksum: 10/d74c9779e323eff5272d03ed488e281c8ab1cfa913827236a7abb6a10ad544e1a45a9d68a1921a97d3807c029885a91c31bcf792624cdaffebf831374171b487
+"@tact-lang/opcode@npm:^0.3.0":
+  version: 0.3.1
+  resolution: "@tact-lang/opcode@npm:0.3.1"
+  dependencies:
+    "@ton/core": "npm:^0.60.0"
+    "@ton/crypto": "npm:^3.3.0"
+  checksum: 10/5d39cdbde01fc5de64e884e79e36cc216cbde74882670d043fc214c4e12afa1729a6d73edd2ec6fed4972ac8684410372502149ac2ce723398617b62ca5f42ba
   languageName: node
   linkType: hard
 
@@ -215,7 +212,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ton/blueprint@workspace:."
   dependencies:
-    "@tact-lang/compiler": "npm:^1.5.3"
+    "@tact-lang/compiler": "npm:^1.6.4"
     "@ton-api/client": "npm:^0.2.0"
     "@ton-api/ton-adapter": "npm:^0.2.0"
     "@ton-community/func-js": "npm:^0.9.0"
@@ -237,7 +234,7 @@ __metadata:
     ts-node: "npm:^10.9.1"
     typescript: "npm:^4.9.5"
   peerDependencies:
-    "@tact-lang/compiler": ">=1.5.3"
+    "@tact-lang/compiler": ">=1.6.4"
     "@ton-community/func-js": ">=0.9.0"
     "@ton/core": ">=0.59.0"
     "@ton/crypto": ">=3.3.0"
@@ -248,14 +245,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ton/core@npm:0.58.1":
-  version: 0.58.1
-  resolution: "@ton/core@npm:0.58.1"
+"@ton/core@npm:0.60.1, @ton/core@npm:^0.60.0":
+  version: 0.60.1
+  resolution: "@ton/core@npm:0.60.1"
   dependencies:
     symbol.inspect: "npm:1.0.1"
   peerDependencies:
     "@ton/crypto": ">=3.2.0"
-  checksum: 10/9d774db62bc83f37d597ee14670e35e1b9765f3921316b1016b8b83234b28b796843a0cbda0540b04eabf5f1c0c37acba095b556ac9116226d04578ed11d0be7
+  checksum: 10/f773b7545249c24e8662cfb26e1253dd496e701a264bedae8f345c4b7680f204116df0c5d8e1274268797c696363615eba2d0dea6103d69ba09a6dd994c6d6af
   languageName: node
   linkType: hard
 
@@ -373,6 +370,13 @@ __metadata:
     "@tonconnect/isomorphic-fetch": "npm:^0.0.2"
     "@tonconnect/protocol": "npm:^2.2.5"
   checksum: 10/0a3fbfea40365746aeda8ee4a652c12a759038d8f0cd4e9b2ae1d55bcd291332e257dbb758577a62bcd23f8e7a43509124ca8aed78d607aa714828c05f4a4357
+  languageName: node
+  linkType: hard
+
+"@tonstudio/parser-runtime@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@tonstudio/parser-runtime@npm:0.0.1"
+  checksum: 10/059abe62ca68d0c0597d0afbd1f5f81554855bf6d5c1dc29a4cde322afc3c0a265ea90065fef98727c05bf63ba416c4e84a685848aed9df814d841688af082d0
   languageName: node
   linkType: hard
 
@@ -717,15 +721,6 @@ __metadata:
   version: 3.38.1
   resolution: "core-js-pure@npm:3.38.1"
   checksum: 10/7dfd59bf3a09277056ac2ef87e49b49d77340952e99ee12b3e1e53bf7e1f34a8ee1fb6026f286b1ba29957f5728664430ccd1ff86983c7ae5fa411d4da74d3de
-  languageName: node
-  linkType: hard
-
-"crc-32@npm:1.2.2":
-  version: 1.2.2
-  resolution: "crc-32@npm:1.2.2"
-  bin:
-    crc32: bin/crc32.njs
-  checksum: 10/824f696a5baaf617809aa9cd033313c8f94f12d15ebffa69f10202480396be44aef9831d900ab291638a8022ed91c360696dd5b1ba691eb3f34e60be8835b7c3
   languageName: node
   linkType: hard
 
@@ -1122,13 +1117,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"meow@npm:^13.2.0":
-  version: 13.2.0
-  resolution: "meow@npm:13.2.0"
-  checksum: 10/4eff5bc921fed0b8a471ad79069d741a0210036d717547d0c7f36fdaf84ef7a3036225f38b6a53830d84dc9cbf8b944b097fde62381b8b5b215119e735ce1063
-  languageName: node
-  linkType: hard
-
 "merge-options@npm:^3.0.4":
   version: 3.0.4
   resolution: "merge-options@npm:3.0.4"
@@ -1165,15 +1153,6 @@ __metadata:
   version: 1.2.8
   resolution: "minimist@npm:1.2.8"
   checksum: 10/908491b6cc15a6c440ba5b22780a0ba89b9810e1aea684e253e43c4e3b8d56ec1dcdd7ea96dde119c29df59c936cde16062159eae4225c691e19c70b432b6e6f
-  languageName: node
-  linkType: hard
-
-"mkdirp@npm:^2.1.3":
-  version: 2.1.6
-  resolution: "mkdirp@npm:2.1.6"
-  bin:
-    mkdirp: dist/cjs/src/bin.js
-  checksum: 10/4672fadb94dca8d2eafeb6fff53f2c5ea74e885565ef23251791709064f216105167c2387088c61ef068901bd0776648999785e341d74728164fa551b1c65996
   languageName: node
   linkType: hard
 
@@ -1226,13 +1205,6 @@ __metadata:
     encoding:
       optional: true
   checksum: 10/370ed4d906edad9709a81b54a0141d37d2973a27dc80c723d8ac14afcec6dc67bc6c70986a96992b64ec75d08159cc4b65ce6aa9063941168ea5ac73b24df9f8
-  languageName: node
-  linkType: hard
-
-"ohm-js@npm:^17.1.0":
-  version: 17.1.0
-  resolution: "ohm-js@npm:17.1.0"
-  checksum: 10/ab0c13b2d2675ea6b12cc47840b0211ad70e2c9a41df2413cc60fe91e0281395200064053afd0f9e7d92103cd5b66fe9af191b83a4cfa623e1be69cf894f4395
   languageName: node
   linkType: hard
 
@@ -1303,13 +1275,6 @@ __metadata:
   version: 6.0.13
   resolution: "path-normalize@npm:6.0.13"
   checksum: 10/384eebe86e38aae3ed5b560414937f255d4004b718141c04fe28315b5fae43ab9224169e0460daddace4e0a3176e142560d6315aba4e89cc4dd263ed2f754328
-  languageName: node
-  linkType: hard
-
-"prando@npm:^6.0.1":
-  version: 6.0.1
-  resolution: "prando@npm:6.0.1"
-  checksum: 10/a384b454207bf75de3253086725e99c9b8e78ea58914a06a796411aa0f91e38e5bed8a844506144baa2a1ba2e72e7cff92b4018513690fcaf30c0a55883f4890
   languageName: node
   linkType: hard
 
