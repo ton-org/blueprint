@@ -137,9 +137,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tact-lang/compiler@npm:^1.6.4":
-  version: 1.6.4
-  resolution: "@tact-lang/compiler@npm:1.6.4"
+"@tact-lang/compiler@npm:^1.6.5":
+  version: 1.6.5
+  resolution: "@tact-lang/compiler@npm:1.6.5"
   dependencies:
     "@tact-lang/opcode": "npm:^0.3.0"
     "@ton/core": "npm:0.60.1"
@@ -154,7 +154,7 @@ __metadata:
   bin:
     tact: bin/tact.js
     unboc: bin/unboc.js
-  checksum: 10/7ac565ba26e2e0813d4d5870138e590c0568fd6eb56474f6951f6b75c9a3b1c1871c8ae83d742fc27d4b4ffb326b02e0f05a0d38f04e33a5c09d417f32a3a8a3
+  checksum: 10/83421d893096d1bcafc2569e42cb55b068ee1be68e2019ed18db8c95519042e8fd01f5b25e7f12eba55158e091c19ae08c01045c31105088c1c178a7d4d98606
   languageName: node
   linkType: hard
 
@@ -212,7 +212,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ton/blueprint@workspace:."
   dependencies:
-    "@tact-lang/compiler": "npm:^1.6.4"
+    "@tact-lang/compiler": "npm:^1.6.5"
     "@ton-api/client": "npm:^0.2.0"
     "@ton-api/ton-adapter": "npm:^0.2.0"
     "@ton-community/func-js": "npm:^0.9.0"
@@ -234,7 +234,7 @@ __metadata:
     ts-node: "npm:^10.9.1"
     typescript: "npm:^4.9.5"
   peerDependencies:
-    "@tact-lang/compiler": ">=1.6.4"
+    "@tact-lang/compiler": ">=1.6.5"
     "@ton-community/func-js": ">=0.9.0"
     "@ton/core": ">=0.59.0"
     "@ton/crypto": ">=3.3.0"

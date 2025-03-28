@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated Tact templates and `@tact-lang/compiler` dependency to v1.6.4
+- Updated Tact templates and `@tact-lang/compiler` dependency to v1.6.5
 
 ## [0.29.0] - 2025-03-02
 
