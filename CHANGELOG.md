@@ -193,18 +193,18 @@ This release contains a breaking change.
 
 ### Fixed
 
-- Fixed TACT imports
+- Fixed Tact imports
 - Fixed missing newlines when printing error messages while building contracts
 
 ## [0.11.0] - 2023-07-03
 
 ### Added
 
-- Added an `options` field to the `tact` variant of `CompilerConfig`, which is of the same type as the `options` of the TACT compiler, and includes fields such as `debug`, `experimental`, etc
+- Added an `options` field to the `tact` variant of `CompilerConfig`, which is of the same type as the `options` of the Tact compiler, and includes fields such as `debug`, `experimental`, etc
 
 ### Changed
 
-- Updated TACT to 1.1.3
+- Updated Tact to 1.1.3
 
 ## [0.10.0] - 2023-06-06
 
@@ -220,7 +220,7 @@ This release contains a breaking change.
 
 ### Changed
 
-- Updated dependencies, of note: func-js to use func 0.4.3, TACT to 1.1.1
+- Updated dependencies, of note: func-js to use func 0.4.3, Tact to 1.1.1
 
 ## [0.8.0] - 2023-04-07
 
@@ -249,7 +249,7 @@ This release contains a breaking change.
 
 ### Added
 
-- Added support for [TACT](https://github.com/tact-lang/tact), including TACT smart contract templates
+- Added support for [Tact](https://github.com/tact-lang/tact), including Tact smart contract templates
 - Added `--all` option for `build` command
 
 ### Changed
