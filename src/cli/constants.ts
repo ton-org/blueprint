@@ -8,7 +8,7 @@ export const templateTypes: { name: string; value: string }[] = [
         value: 'tolk-empty',
     },
     {
-        name: 'An empty contract (TACT)',
+        name: 'An empty contract (Tact)',
         value: 'tact-empty',
     },
     {
@@ -20,7 +20,7 @@ export const templateTypes: { name: string; value: string }[] = [
         value: 'tolk-counter',
     },
     {
-        name: 'A simple counter contract (TACT)',
+        name: 'A simple counter contract (Tact)',
         value: 'tact-counter',
     },
 ];
@@ -68,7 +68,7 @@ Flags:
 --tonscan, --tonviewer, --toncx, --dton - specifies the network explorer to use when displaying links to the deployed contracts. Default: tonviewer.`,
     build: `Usage: blueprint build [contract name] [flags]
 
-Builds the specified contract according to the respective .compile.ts file. If the contract is written in TACT, all TACT-generated files (wrapper class, etc) will be placed in the build/<contract name> folder.
+Builds the specified contract according to the respective .compile.ts file. If the contract is written in Tact, all Tact-generated files (wrapper class, etc) will be placed in the build/<contract name> folder.
 
 If contract name is not specified on the command line, the buildable contracts (that have the respective .compile.ts files under wrappers directory) will be presented interactively, unless --all flag is specified.
 
