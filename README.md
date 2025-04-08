@@ -60,7 +60,7 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 
 * [Node.js](https://nodejs.org) with a recent version like v18. Version can be verified with `node -v`
 * IDE with TON support:
-  * [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode) or [Tolk plugin](https://marketplace.visualstudio.com/items?itemName=ton-core.tolk-vscode)
+  * [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode), [Tolk plugin](https://marketplace.visualstudio.com/items?itemName=ton-core.tolk-vscode) or [Tact plugin](https://marketplace.visualstudio.com/items?itemName=tonstudio.vscode-tact)
   * [IntelliJ IDEA](https://www.jetbrains.com/idea/) with the [TON Development plugin](https://plugins.jetbrains.com/plugin/23382-ton)
 
 ## Features overview
