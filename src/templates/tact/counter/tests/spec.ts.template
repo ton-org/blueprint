@@ -12,7 +12,7 @@ describe('{{name}}', () => {
     beforeEach(async () => {
         blockchain = await Blockchain.create();
 
-        {{loweredName}} = blockchain.openContract(await {{name}}.fromInit(0n));
+        {{loweredName}} = blockchain.openContract(await {{name}}.fromInit(0n, 0n));
 
         deployer = await blockchain.treasury('deployer');
 
@@ -21,10 +21,7 @@ describe('{{name}}', () => {
             {
                 value: toNano('0.05'),
             },
-            {
-                $$type: 'Deploy',
-                queryId: 0n,
-            }
+            null,
         );
 
         expect(deployResult.transactions).toHaveTransaction({
@@ -62,7 +59,6 @@ describe('{{name}}', () => {
                 },
                 {
                     $$type: 'Add',
-                    queryId: 0n,
                     amount: increaseBy,
                 }
             );
