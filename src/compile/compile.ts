@@ -145,7 +145,7 @@ async function doCompileTact(config: TactCompilerConfig, name: string): Promise<
             output: path.join(BUILD_DIR, name),
             options: { ...rootConfigOptions, ...config.options },
         },
-        stdlib: '/stdlib',
+        stdlib: Tact.createVirtualFileSystem("@stdlib", Tact.stdLibFiles),
         project: fs,
     };
 
