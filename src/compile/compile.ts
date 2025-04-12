@@ -151,7 +151,7 @@ async function doCompileTact(config: TactCompilerConfig, name: string): Promise<
 
     const res = await Tact.build(buildConfig);
 
-    if (!res) {
+    if (!res.ok) {
         throw new Error('Could not compile tact');
     }
 
