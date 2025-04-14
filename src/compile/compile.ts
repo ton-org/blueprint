@@ -44,6 +44,7 @@ export type SourceSnapshot = {
 export type TolkCompileResult = {
     lang: 'tolk';
     stderr: string;
+    fiftCode: string;
     code: Cell;
     snapshot: SourceSnapshot[];
     version: string;
@@ -59,6 +60,7 @@ async function doCompileTolk(config: TolkCompilerConfig): Promise<TolkCompileRes
     return {
         lang: 'tolk',
         stderr: res.stderr,
+        fiftCode: res.fiftCode,
         code: Cell.fromBase64(res.codeBoc64),
         snapshot: res.sourcesSnapshot.map((e) => ({
             filename: e.filename,
@@ -70,6 +72,7 @@ async function doCompileTolk(config: TolkCompilerConfig): Promise<TolkCompileRes
 
 export type FuncCompileResult = {
     lang: 'func';
+    fiftCode: string;
     code: Cell;
     targets: string[];
     snapshot: SourceSnapshot[];
@@ -90,6 +93,7 @@ async function doCompileFunc(config: FuncCompilerConfig): Promise<FuncCompileRes
 
     return {
         lang: 'func',
+        fiftCode: cr.fiftCode,
         code: Cell.fromBase64(cr.codeBoc),
         targets,
         snapshot: cr.snapshot,
