@@ -10,7 +10,7 @@ import { set } from './set';
 import { test } from './test';
 import { verify } from './verify';
 import { convert } from './convert';
-import { additionalHelpMessages, help } from './help';
+import {additionalHelpMessages, buildHelpMessage, help} from './help';
 import { InquirerUIProvider } from '../ui/InquirerUIProvider';
 import { argSpec, Runner, RunnerContext } from './Runner';
 import { getConfig } from '../config/utils';
@@ -64,12 +64,17 @@ async function main() {
         ...runners,
     };
 
-    const runner = effectiveRunners[args._[0]];
+    const command = args._[0];
+
+    const runner = effectiveRunners[command];
     if (!runner) {
         console.log(
-            chalk.redBright(` Error: command not found.`) + ` Run 'blueprint help' to see available commands\n`,
+            chalk.redBright(`Error: command ${command} not found.`) + `\nRunning ${chalk.cyanBright('blueprint help')}...`
         );
-        process.exit(1);
+        const helpMessage = buildHelpMessage();
+        console.log(helpMessage);
+
+        return;
     }
 
     const ui = new InquirerUIProvider();
