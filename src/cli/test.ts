@@ -10,6 +10,8 @@ export const test: Runner = async (args, ui) => {
         return;
     }
 
-    const testArgs = args._.slice(1); // first argument is `test`, need to get rid of it
+    // Use positional arguments after the 'test' command
+    const testArgs = args._.slice(1); // first argument is 'test', needs to be removed
+    
     execSync(`npm test ${testArgs.join(' ')}`, { stdio: 'inherit' });
 };

@@ -4,13 +4,21 @@ import { UIProvider } from '../ui/UIProvider';
 import arg from 'arg';
 import { buildAll, buildOne } from '../build';
 import { helpArgs, helpMessages } from './constants';
+import { getEntityName } from '../utils/cliUtils';
 
 export async function selectCompile(ui: UIProvider, args: Args) {
-    return await selectFile(await findCompiles(), {
-        ui,
-        hint: args._.length > 1 && args._[1].length > 0 ? args._[1] : undefined,
-        import: false,
-    });
+    const name = (await getEntityName(
+        args._,
+        async () => {
+            const sel = await selectFile(await findCompiles(), {
+                ui,
+                hint: undefined,
+                import: false,
+            });
+            return sel.name;
+        }
+    ))!;
+    return { name };
 }
 
 export const build: Runner = async (args: Args, ui: UIProvider) => {

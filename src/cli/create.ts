@@ -8,6 +8,7 @@ import { UIProvider } from '../ui/UIProvider';
 import { buildOne } from '../build';
 import { getConfig } from '../config/utils';
 import { helpArgs, helpMessages, templateTypes } from './constants';
+import { getEntityName } from '../utils/cliUtils';
 
 function toSnakeCase(v: string): string {
     const r = v.replace(/[A-Z]/g, (sub) => '_' + sub.toLowerCase());
@@ -52,6 +53,7 @@ async function createFiles(templatePath: string, realPath: string, replaces: { [
 export const create: Runner = async (args: Args, ui: UIProvider) => {
     const localArgs = arg({
         '--type': String,
+        '--language': String,
         ...helpArgs,
     });
     if (localArgs['--help']) {
@@ -59,23 +61,33 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
         return;
     }
 
-    const name =
-        localArgs._.length > 1 && localArgs._[1].trim().length > 0
-            ? localArgs._[1].trim()
-            : await ui.input('Contract name (PascalCase)');
+    const name = (await getEntityName(
+        localArgs._,
+        async () => await ui.input('Contract name (PascalCase)')
+    ))!;
 
     if (name.length === 0) throw new Error(`Cannot create a contract with an empty name`);
 
     if (name.toLowerCase() === 'contract' || !/^[A-Z][a-zA-Z0-9]*$/.test(name))
         throw new Error(`Cannot create a contract with the name '${name}'`);
 
-    const which = (
-        await selectOption(templateTypes, {
+    let which: string;
+    if (localArgs['--language']) {
+        const language = localArgs['--language'].toLowerCase();
+        const type = localArgs['--type'] || 'empty';
+        const templateKey = `${language}-${type}`;
+        
+        if (!templateTypes.some(t => t.value === templateKey)) {
+            throw new Error(`Invalid language-type combination: ${templateKey}. Available options: ${templateTypes.map(t => t.value).join(', ')}`);
+        }
+        which = templateKey;
+    } else {
+        which = (await selectOption(templateTypes, {
             ui,
             msg: 'What type of contract do you want to create?',
             hint: localArgs['--type'],
-        })
-    ).value;
+        })).value;
+    }
 
     const [lang, template] = which.split('-');
 

@@ -49,10 +49,11 @@ Creates a new contract together with supporting files according to a template.
 Contract name must be specified in PascalCase and may only include characters a-z, A-Z, 0-9. If not specified on the command line, it will be asked interactively.
 
 Flags:
+--language <language> - specifies the programming language (func, tact, or tolk)
 --type <type> - specifies the template type to use when creating the contract. If not specified on the command line, it will be asked interactively.
 List of available types:
 ${templateTypes.map((t) => `${t.value} - ${t.name}`).join('\n')}`,
-    run: `Usage: blueprint run [script name] [flags]
+    run: `Usage: blueprint run [script name] [flags] [args...]
 
 Runs a script from the scripts directory.
 
@@ -65,7 +66,14 @@ Flags:
 --custom-key - specifies the API key to use with the custom API, can only be used with API v2.
 --custom-type - specifies the network type to be indicated to scripts. Options: custom (default), mainnet, testnet.
 --tonconnect, --deeplink, --mnemonic - specifies the deployer to use when running the script. If not specified on the command line, it will be asked interactively.
---tonscan, --tonviewer, --toncx, --dton - specifies the network explorer to use when displaying links to the deployed contracts. Default: tonviewer.`,
+--tonscan, --tonviewer, --toncx, --dton - specifies the network explorer to use when displaying links to the deployed contracts. Default: tonviewer.
+
+Arguments:
+Any arguments after the flags will be passed directly to your script as an array of strings.
+
+Examples:
+blueprint run deployCounter --testnet --tonconnect
+blueprint run incrementCounter --testnet --tonconnect EQCDLPZ_cb-xUpCC3DqkM2s_HdfOKyxTih2_xMXiD5j5AJ7f 0.05 1`,
     build: `Usage: blueprint build [contract name] [flags]
 
 Builds the specified contract according to the respective .compile.ts file. If the contract is written in Tact, all Tact-generated files (wrapper class, etc) will be placed in the build/<contract name> folder.
@@ -79,7 +87,14 @@ Available keys:
 - func - overrides @ton-community/func-js-bin version, effectively setting the func version. The required version may be passed as the value, otherwise available versions will be displayed.`,
     test: `Usage: blueprint test [...args]
 
-Just runs \`npm test [...args]\`, which by default runs \`jest\`.`,
+Just runs \`npm test [...args]\`, which by default runs \`jest\`.
+
+Arguments:
+Any arguments after "test" will be passed directly to the npm test command.
+
+Example:
+blueprint test --watch
+blueprint test src/utils.test.ts`,
     verify: `Usage: blueprint verify [contract name] [flags]
 
 Builds a contract (similar to build command) and verifies it on https://verifier.ton.org. The contract must be already deployed on the network. If the contract's name is not specified on the command line, it will be asked interactively.
