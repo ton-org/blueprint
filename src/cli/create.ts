@@ -53,7 +53,6 @@ async function createFiles(templatePath: string, realPath: string, replaces: { [
 export const create: Runner = async (args: Args, ui: UIProvider) => {
     const localArgs = arg({
         '--type': String,
-        '--language': String,
         ...helpArgs,
     });
     if (localArgs['--help']) {
@@ -72,20 +71,18 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
         throw new Error(`Cannot create a contract with the name '${name}'`);
 
     let which: string;
-    if (localArgs['--language']) {
-        const language = localArgs['--language'].toLowerCase();
-        const type = localArgs['--type'] || 'empty';
-        const templateKey = `${language}-${type}`;
+    const defaultType = 'tact-empty';
+    if (localArgs['--type']) {
+        which = localArgs['--type'];
         
-        if (!templateTypes.some(t => t.value === templateKey)) {
-            throw new Error(`Invalid language-type combination: ${templateKey}. Available options: ${templateTypes.map(t => t.value).join(', ')}`);
+        if (!templateTypes.some(t => t.value === which)) {
+            throw new Error(`Invalid type: ${which}. Available options: ${templateTypes.map(t => t.value).join(', ')}`);
         }
-        which = templateKey;
     } else {
         which = (await selectOption(templateTypes, {
             ui,
             msg: 'What type of contract do you want to create?',
-            hint: localArgs['--type'],
+            hint: defaultType,
         })).value;
     }
 
