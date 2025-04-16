@@ -2,7 +2,7 @@ import { Address, toNano } from '@ton/core';
 import { Counter } from '../wrappers/Counter';
 import { NetworkProvider, sleep } from '@ton-ai-core/blueprint';
 
-export async function run(provider: NetworkProvider, args: string[]) {
+export async function run(provider: NetworkProvider, args: string[]) : Promise<void> {
     const ui = provider.ui();
 
     const address = Address.parse(args.length > 0 ? args[0] : await ui.input('Counter address'));
