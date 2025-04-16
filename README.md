@@ -67,7 +67,7 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 
 ### Project creation
 
-1. Run and follow the on-screen instructions: &nbsp; `npm create ton@latest` &nbsp; or &nbsp; `npx create-ton@latest`
+1. Run and follow the on-screen instructions: &nbsp; `npm create ton-ai@latest` &nbsp; or &nbsp; `npx create-ton-ai@latest`
 2. From the project directory run &nbsp; `npm/yarn install` &nbsp; to install dependencies
 
 ### Directory structure
@@ -127,7 +127,7 @@ Run in terminal: &nbsp; `npx blueprint help` &nbsp; or &nbsp; `yarn blueprint he
 
 ## Contract development
 
-Before developing, make sure that your current working directory is located in the root of the project created using `npm create ton@latest`
+Before developing, make sure that your current working directory is located in the root of the project created using `npm create ton-ai@latest`
 
 ### Creating contracts
 
