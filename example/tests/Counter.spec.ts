@@ -2,7 +2,7 @@ import { Blockchain, SandboxContract } from '@ton/sandbox';
 import { Cell, toNano } from '@ton/core';
 import { Counter } from '../wrappers/Counter';
 import '@ton/test-utils';
-import { compile } from '@ton/blueprint';
+import { compile } from '@ton-ai-core/blueprint';
 
 describe('Counter', () => {
     let code: Cell;

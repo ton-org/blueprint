@@ -3,7 +3,7 @@ import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
 import { Cell, toNano } from '@ton/core';
 import { {{name}} } from '../wrappers/{{name}}';
 import '@ton/test-utils';
-import { compile } from '@ton/blueprint';
+import { compile } from '@ton-ai-core/blueprint';
 
 describe('{{name}}', () => {
     let code: Cell;

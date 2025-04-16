@@ -7,7 +7,7 @@
     },
     "private": true,
     "devDependencies": {
-        "@ton/blueprint": "^0.21.0",
+        "@ton-ai-core/blueprint": "^0.21.0",
         "@ton/sandbox": "^0.19.0",
         "@ton/test-utils": "^0.4.2",
         "@types/jest": "^29.5.12",

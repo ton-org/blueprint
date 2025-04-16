@@ -161,7 +161,7 @@ Before developing, make sure that your current working directory is located in t
 
 A config may be created in order to control some of blueprint's features. If a config is needed, create a `blueprint.config.ts` file in the root of your project with something like this:
 ```typescript
-import { Config } from '@ton/blueprint';
+import { Config } from '@ton-ai-core/blueprint';
 
 export const config: Config = {
     // config contents
@@ -177,7 +177,7 @@ Blueprint has a plugin system to allow the community to develop their own additi
 
 In order to use plugins, add a `plugins` array to your config:
 ```typescript
-import { Config } from '@ton/blueprint';
+import { Config } from '@ton-ai-core/blueprint';
 import { ScaffoldPlugin } from 'blueprint-scaffold';
 
 export const config: Config = {
@@ -194,7 +194,7 @@ Here are some of the plugins developed by the community:
 
 A custom network may be specified by using the `--custom` flags, which you can read about by running `blueprint help run`, but it can be tiresome to use these at all times. Instead, to specify a custom network to always be used (unless `--custom` flags are present), add a `network` object to your config:
 ```typescript
-import { Config } from '@ton/blueprint';
+import { Config } from '@ton-ai-core/blueprint';
 
 export const config: Config = {
     network: {
@@ -229,4 +229,4 @@ MIT
 
 ## Donations
 
-TON - `EQAQR1d1Q4NaE5EefwUMdrr1QvXg-8mDB0XI2-fwDBD0nYxC`
+TON - `UQCcfBGSwJswi_mzx1BaCHz7WJ3NdcUZLwzfk4-Cl0fxgMyf`

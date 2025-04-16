@@ -1,6 +1,6 @@
 import { toNano } from '@ton/core';
 import { Counter } from '../wrappers/Counter';
-import { compile, NetworkProvider } from '@ton/blueprint';
+import { compile, NetworkProvider } from '@ton-ai-core/blueprint';
 
 export async function run(provider: NetworkProvider) {
     const counter = provider.open(

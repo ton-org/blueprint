@@ -208,9 +208,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/blueprint@workspace:.":
+"@ton-ai-core/blueprint@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@ton/blueprint@workspace:."
+  resolution: "@ton-ai-core/blueprint@workspace:."
   dependencies:
     "@tact-lang/compiler": "npm:^1.6.5"
     "@ton-api/client": "npm:^0.2.0"

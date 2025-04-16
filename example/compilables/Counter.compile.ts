@@ -1,4 +1,4 @@
-import { CompilerConfig } from '@ton/blueprint';
+import { CompilerConfig } from '@ton-ai-core/blueprint';
 
 export const compile: CompilerConfig = {
     lang: 'func',
