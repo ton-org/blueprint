@@ -59,6 +59,8 @@ Runs a script from the scripts directory.
 Script name is matched (ignoring case) to a file in the scripts directory. If not specified on the command line, the available scripts will be presented interactively.
 
 Flags:
+--script <script-name> - explicitly specifies the script name to run
+--script-args <arg1,arg2,...> - comma-separated arguments to pass to the script
 --mainnet, --testnet - specifies the network to use when running the script. If not specified on the command line, it will be asked interactively.
 --custom [api-endpoint] - indicates that a custom API should be used when running the script, and the API URL optionally. (example: https://testnet.toncenter.com/api/v2/)
 --custom-version - specifies the API version to use with the custom API. Options: v2 (default), v4.
@@ -79,7 +81,10 @@ Available keys:
 - func - overrides @ton-community/func-js-bin version, effectively setting the func version. The required version may be passed as the value, otherwise available versions will be displayed.`,
     test: `Usage: blueprint test [...args]
 
-Just runs \`npm test [...args]\`, which by default runs \`jest\`.`,
+Just runs \`npm test [...args]\`, which by default runs \`jest\`.
+
+Flags:
+--args <test-arguments> - specifies the arguments to pass to npm test command`,
     verify: `Usage: blueprint verify [contract name] [flags]
 
 Builds a contract (similar to build command) and verifies it on https://verifier.ton.org. The contract must be already deployed on the network. If the contract's name is not specified on the command line, it will be asked interactively.

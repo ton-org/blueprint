@@ -59,23 +59,31 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
         return;
     }
 
-    const name =
-        localArgs._.length > 1 && localArgs._[1].trim().length > 0
-            ? localArgs._[1].trim()
-            : await ui.input('Contract name (PascalCase)');
+    const name = (await getEntityName(
+        localArgs._,
+        async () => await ui.input('Contract name (PascalCase)')
+    ))!;
 
     if (name.length === 0) throw new Error(`Cannot create a contract with an empty name`);
 
     if (name.toLowerCase() === 'contract' || !/^[A-Z][a-zA-Z0-9]*$/.test(name))
         throw new Error(`Cannot create a contract with the name '${name}'`);
 
-    const which = (
-        await selectOption(templateTypes, {
+    let which: string;
+    if (localArgs['--type']) {
+        const type = localArgs['--type'];
+        
+        if (!templateTypes.some(t => t.value === type)) {
+            throw new Error(`Invalid type: ${type}. Available options: ${templateTypes.map(t => t.value).join(', ')}`);
+        }
+        which = type;
+    } else {
+        which = (await selectOption(templateTypes, {
             ui,
             msg: 'What type of contract do you want to create?',
             hint: localArgs['--type'],
-        })
-    ).value;
+        })).value;
+    }
 
     const [lang, template] = which.split('-');
 

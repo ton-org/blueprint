@@ -4,12 +4,19 @@ import arg from 'arg';
 import { helpArgs, helpMessages } from './constants';
 
 export const test: Runner = async (args, ui) => {
-    const localArgs = arg(helpArgs);
+    const localArgs = arg({
+        '--args': String,
+        ...helpArgs
+    });
     if (localArgs['--help']) {
         ui.write(helpMessages['test']);
         return;
     }
 
-    const testArgs = args._.slice(1); // first argument is `test`, need to get rid of it
+    // Use --args parameter if provided, otherwise use the original command-line arguments
+    const testArgs = localArgs['--args'] 
+        ? [localArgs['--args']] 
+        : args._.slice(1); // first argument is `test`, need to get rid of it
+    
     execSync(`npm test ${testArgs.join(' ')}`, { stdio: 'inherit' });
 };
