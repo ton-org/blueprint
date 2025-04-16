@@ -111,7 +111,7 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 1. Custom scripts should be located in `scripts` folder
 2. Script file must have exported function `run`
 ```ts
-export async function run(provider: NetworkProvider) {
+export async function run(provider: NetworkProvider) : Promise<void> {
   // 
 }
 ```

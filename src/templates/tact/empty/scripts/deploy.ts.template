@@ -3,7 +3,7 @@ import { toNano } from '@ton/core';
 import { {{name}} } from '../wrappers/{{name}}';
 import { NetworkProvider } from '@ton-ai-core/blueprint';
 
-export async function run(provider: NetworkProvider) {
+export async function run(provider: NetworkProvider) : Promise<void> {
     const {{loweredName}} = provider.open(await {{name}}.fromInit());
 
     await {{loweredName}}.send(
