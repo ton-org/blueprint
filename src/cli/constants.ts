@@ -49,8 +49,6 @@ Creates a new contract together with supporting files according to a template.
 Contract name must be specified in PascalCase and may only include characters a-z, A-Z, 0-9. If not specified on the command line, it will be asked interactively.
 
 Flags:
---name <name> - explicitly specifies the contract name in PascalCase
---language <language> - specifies the programming language (func, tact, or tolk)
 --type <type> - specifies the template type to use when creating the contract. If not specified on the command line, it will be asked interactively.
 List of available types:
 ${templateTypes.map((t) => `${t.value} - ${t.name}`).join('\n')}`,

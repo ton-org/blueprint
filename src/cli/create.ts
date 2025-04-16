@@ -52,8 +52,6 @@ async function createFiles(templatePath: string, realPath: string, replaces: { [
 export const create: Runner = async (args: Args, ui: UIProvider) => {
     const localArgs = arg({
         '--type': String,
-        '--name': String,
-        '--language': String,
         ...helpArgs,
     });
     if (localArgs['--help']) {
@@ -61,10 +59,10 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
         return;
     }
 
-    const name = localArgs['--name'] || 
-        (localArgs._.length > 1 && localArgs._[1].trim().length > 0
-            ? localArgs._[1].trim()
-            : await ui.input('Contract name (PascalCase)'));
+    const name = (await getEntityName(
+        localArgs._,
+        async () => await ui.input('Contract name (PascalCase)')
+    ))!;
 
     if (name.length === 0) throw new Error(`Cannot create a contract with an empty name`);
 
@@ -72,15 +70,13 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
         throw new Error(`Cannot create a contract with the name '${name}'`);
 
     let which: string;
-    if (localArgs['--language']) {
-        const language = localArgs['--language'].toLowerCase();
-        const type = localArgs['--type'] || 'empty';
-        const templateKey = `${language}-${type}`;
+    if (localArgs['--type']) {
+        const type = localArgs['--type'];
         
-        if (!templateTypes.some(t => t.value === templateKey)) {
-            throw new Error(`Invalid language-type combination: ${templateKey}. Available options: ${templateTypes.map(t => t.value).join(', ')}`);
+        if (!templateTypes.some(t => t.value === type)) {
+            throw new Error(`Invalid type: ${type}. Available options: ${templateTypes.map(t => t.value).join(', ')}`);
         }
-        which = templateKey;
+        which = type;
     } else {
         which = (await selectOption(templateTypes, {
             ui,
