@@ -42,6 +42,9 @@ export async function buildOne(contract: string, ui?: UIProvider) {
             hex: cell.toBoc().toString('hex'),
         };
         ui?.clearActionPrompt();
+        if (result.lang === 'tolk') {
+            ui?.write(`\n${result.stderr}`);
+        }
         ui?.write('\n✅ Compiled successfully! Cell BOC result:\n\n');
         ui?.write(JSON.stringify(res, null, 2));
 

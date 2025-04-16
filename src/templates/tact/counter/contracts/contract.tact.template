@@ -1,25 +1,30 @@
 {{snakeName}}.tact
-import "@stdlib/deploy";
-
 message Add {
-    queryId: Int as uint64;
     amount: Int as uint32;
 }
 
-contract {{name}} with Deployable {
-    id: Int as uint32;
-    counter: Int as uint32;
-
-    init(id: Int) {
-        self.id = id;
-        self.counter = 0;
+contract {{name}}(
+    // Persistent state variables declared via the
+    // contract parameters syntax, which was introduced in v1.6.0
+    //
+    // See: https://docs.tact-lang.org/book/contracts/#parameters
+    id: Int as uint32,
+    counter: Int as uint32,
+) {
+    // Empty receiver for the deployment,
+    // which expects the `null` message body
+    receive() {
+        // Forward the remaining value in the
+        // incoming message back to the sender
+        cashback(sender());
     }
 
     receive(msg: Add) {
         self.counter += msg.amount;
 
-        // Notify the caller that the receiver was executed and forward remaining value back
-        self.notify("Cashback".asComment());
+        // Forward the remaining value in the
+        // incoming message back to the sender
+        cashback(sender());
     }
 
     get fun counter(): Int {
