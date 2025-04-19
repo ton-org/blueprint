@@ -1,5 +1,5 @@
 import { Args, Runner } from './Runner';
-import { lstat, mkdir, open, readdir, readFile } from 'fs/promises';
+import { lstat, mkdir, open, readdir, readFile, access } from 'fs/promises';
 import path from 'path';
 import { executeTemplate, TEMPLATES_DIR } from '../template';
 import { selectOption } from '../utils';
@@ -9,6 +9,7 @@ import { buildOne } from '../build';
 import { getConfig } from '../config/utils';
 import { helpArgs, helpMessages, templateTypes } from './constants';
 import { getEntityName } from '../utils/cliUtils';
+import { constants as fsConstants } from 'fs';
 
 function toSnakeCase(v: string): string {
     const r = v.replace(/[A-Z]/g, (sub) => '_' + sub.toLowerCase());
@@ -51,6 +52,45 @@ async function createFiles(templatePath: string, realPath: string, replaces: { [
 }
 
 export const create: Runner = async (args: Args, ui: UIProvider) => {
+    // Проверка наличия основных файлов проекта
+    const requiredFiles = [
+        'package.json',
+        'package-lock.json',
+        'README.md',
+        'tsconfig.json',
+    ];
+    for (const file of requiredFiles) {
+        try {
+            await access(path.join(process.cwd(), file), fsConstants.F_OK);
+        } catch {
+            ui.write(
+                `\nBefore using 'npx blueprint create', you must initialize the project with 'npm create ton-ai@latest' or 'npx create-ton-ai@latest'.\n`
+            );
+            return;
+        }
+    }
+
+    // Check for @ton-ai-core/blueprint in package.json
+    try {
+        const pkgPath = path.join(process.cwd(), 'package.json');
+        const pkgRaw = await readFile(pkgPath, 'utf-8');
+        const pkg = JSON.parse(pkgRaw);
+        const hasBlueprint = (
+            (pkg.dependencies && pkg.dependencies['@ton-ai-core/blueprint']) ||
+            (pkg.devDependencies && pkg.devDependencies['@ton-ai-core/blueprint']) ||
+            (pkg.peerDependencies && pkg.peerDependencies['@ton-ai-core/blueprint'])
+        );
+        if (!hasBlueprint) {
+            ui.write(
+                `\nBefore using 'npx blueprint create', you must initialize the project with 'npm create ton-ai@latest' or 'npx create-ton-ai@latest'.\n`
+            );
+            return;
+        }
+    } catch (e) {
+        ui.write(`\nBefore using 'npx blueprint create', you must initialize the project with 'npm create ton-ai@latest' or 'npx create-ton-ai@latest'.\n`);
+        return;
+    }
+
     const localArgs = arg({
         '--type': String,
         ...helpArgs,
