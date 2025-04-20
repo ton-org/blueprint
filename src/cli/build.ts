@@ -7,17 +7,34 @@ import { helpArgs, helpMessages } from './constants';
 import { getEntityName } from '../utils/cliUtils';
 
 export async function selectCompile(ui: UIProvider, args: Args) {
-    const name = (await getEntityName(
-        args._,
-        async () => {
-            const sel = await selectFile(await findCompiles(), {
-                ui,
-                hint: undefined,
-                import: false,
-            });
-            return sel.name;
+    // Find all compilable files first
+    const allCompiles = await findCompiles();
+    const allCompileNames = allCompiles.map(f => f.name);
+
+    const nameFromArgs = args._.length > 1 ? args._[1] : undefined;
+
+    let name: string;
+
+    if (nameFromArgs) {
+        // Check if the name from args exists (case-insensitive)
+        const found = allCompileNames.find(n => n.toLowerCase() === nameFromArgs.toLowerCase());
+        if (!found) {
+            const availableNames = allCompileNames.join(', ');
+            throw new Error(`"${nameFromArgs}" not found, but available: ${availableNames}`);
         }
-    ))!;
+        // Use the correctly cased name found in the files
+        name = found;
+        ui.write(`Using contract: ${name}`);
+    } else {
+        // If no name from args, use interactive selection
+        const sel = await selectFile(allCompiles, {
+            ui,
+            hint: undefined,
+            import: false,
+        });
+        name = sel.name;
+    }
+
     return { name };
 }
 

@@ -74,7 +74,16 @@ async function main() {
 
     const ui = new InquirerUIProvider();
 
-    await runner(args, ui, runnerContext);
+    try {
+        await runner(args, ui, runnerContext);
+    } catch (e) {
+        if (e && typeof e === 'object' && 'message' in e) {
+            console.error((e as any).message);
+        } else {
+            console.error(e);
+        }
+        process.exit(1);
+    }
 
     ui.close();
 }
@@ -84,7 +93,7 @@ process.on('SIGINT', () => {
 });
 
 main()
-    .catch(console.error)
+    //.catch(console.error)
     .then(() => process.exit(0));
 
 function showHelp() {

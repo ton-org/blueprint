@@ -59,7 +59,8 @@ export async function selectFile(
     if (opts.hint) {
         const found = files.find((f) => f.name.toLowerCase() === opts.hint?.toLowerCase());
         if (found === undefined) {
-            throw new Error(`Could not find file with name '${opts.hint}'`);
+            const availableNames = files.map(f => f.name).join(', ');
+            throw new Error(`"${opts.hint}" not found, but available: ${availableNames}`);
         }
         selected = found;
         opts.ui.write(`Using file: ${selected.name}`);
