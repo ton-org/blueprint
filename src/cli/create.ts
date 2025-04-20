@@ -52,7 +52,6 @@ async function createFiles(templatePath: string, realPath: string, replaces: { [
 }
 
 export const create: Runner = async (args: Args, ui: UIProvider) => {
-    // Проверка наличия основных файлов проекта
     const requiredFiles = [
         'package.json',
         'package-lock.json',

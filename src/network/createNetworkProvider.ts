@@ -1,4 +1,4 @@
-import { oneOrZeroOf, sleep, getExplorerLink } from '../utils';
+import { oneOrZeroOf, sleep, getExplorerLink, getExplorerTxLink } from '../utils';
 import arg from 'arg';
 import { DeeplinkProvider } from './send/DeeplinkProvider';
 import { TonConnectProvider } from './send/TonConnectProvider';
@@ -32,6 +32,10 @@ import { MnemonicProvider, WalletVersion } from './send/MnemonicProvider';
 import { Config } from '../config/Config';
 import { CustomNetwork } from '../config/CustomNetwork';
 import axios, { AxiosResponse, AxiosAdapter, InternalAxiosRequestConfig } from 'axios';
+
+const TONAPI_MAINNET = "https://tonapi.io";
+const TONAPI_TESTNET = "https://testnet.tonapi.io";
+const MAX_TONAPI_ATTEMPTS = 5;
 
 const INITIAL_DELAY = 400;
 const MAX_ATTEMPTS = 4;
@@ -193,6 +197,93 @@ class NetworkProviderImpl implements NetworkProvider {
         return (await this.#tc.provider(address).getState()).state.type === 'active';
     }
 
+    async verifyTransactionStatus(address: Address): Promise<{ success: boolean; error?: string; tx?: any }> {
+        try {
+            const client = this.#tc;
+            let txs: any[] = [];
+            let attempts = 0;
+            const limit = 1;
+
+            if (client instanceof ContractAdapter) {
+                while (attempts < MAX_TONAPI_ATTEMPTS) {
+                    try {
+                        // @ts-ignore
+                        const resp = await client.client.blockchain.getAccountTransactions(address.toString(), { limit });
+                        txs = resp.transactions || [];
+                        if (txs.length > 0) break;
+                    } catch (e) {}
+                    await sleep(2000);
+                    attempts++;
+                }
+            } else if (client instanceof TonClient || client instanceof TonClient4) {
+                while (attempts < MAX_TONAPI_ATTEMPTS) {
+                    try {
+                        // @ts-ignore
+                        txs = await client.getTransactions(address, 0n, Buffer.alloc(32), limit);
+                        if (txs.length > 0) break;
+                    } catch (e) {}
+                    await sleep(2000);
+                    attempts++;
+                }
+            } else {
+                return { success: true };
+            }
+
+            if (txs.length > 0) {
+                const tx = txs[0];
+                const exitCode = tx.compute?.exit_code;
+                const exitArg = tx.compute?.exit_arg;
+                
+                let txHash = tx.hash || tx.transaction_id?.hash;
+                if (typeof txHash === 'function') {
+                    try {
+                        txHash = txHash().toString('hex');
+                    } catch (e) {
+                        txHash = null;
+                    }
+                }
+                
+                let lt = tx.lt || tx.transaction_id?.lt;
+                if (typeof lt === 'function') {
+                    try {
+                        lt = lt();
+                    } catch (e) {
+                        lt = null;
+                    }
+                }
+                
+                const timestamp = tx.utime || tx.timestamp;
+                const fees = tx.total_fees || tx.fees;
+                const status = tx.status;
+                let explorerTxLink = '';
+                if (txHash && this.#network && this.#explorer) {
+                    explorerTxLink = getExplorerTxLink(txHash, this.#network, this.#explorer);
+                }
+                if ((typeof status === 'string' && status === 'failed') || (exitCode !== undefined && exitCode !== 0 && exitCode !== 1)) {
+                    let errorMsg = `Transaction failed.\n`;
+                    errorMsg += `Exit code: ${exitCode ?? 'unknown'}\n`;
+                    if (exitArg !== undefined) errorMsg += `Exit arg: ${exitArg}\n`;
+                    if (status) errorMsg += `Status: ${status}\n`;
+                    if (txHash) errorMsg += `Tx hash: ${txHash}\n`;
+                    if (lt) errorMsg += `LT: ${lt}\n`;
+                    if (timestamp) errorMsg += `Timestamp: ${new Date(timestamp * 1000).toISOString()}\n`;
+                    if (fees) errorMsg += `Fees: ${JSON.stringify(fees)}\n`;
+                    if (explorerTxLink) errorMsg += `Explorer: ${explorerTxLink}\n`;
+                    return {
+                        success: false,
+                        error: errorMsg,
+                        tx: tx
+                    };
+                }
+                return { success: true, tx: tx };
+            }
+            return { success: true };
+        } catch (error) {
+            console.warn('Failed to verify transaction status via TonClient/TonApiClient:', error);
+            return { success: true };
+        }
+    }
+
     async waitForDeploy(address: Address, attempts: number = 20, sleepDuration: number = 2000) {
         if (attempts <= 0) {
             throw new Error('Attempt number must be positive');
@@ -201,12 +292,126 @@ class NetworkProviderImpl implements NetworkProvider {
         for (let i = 1; i <= attempts; i++) {
             this.#ui.setActionPrompt(`Awaiting contract deployment... [Attempt ${i}/${attempts}]`);
             const isDeployed = await this.isContractDeployed(address);
+            
             if (isDeployed) {
+                this.#ui.setActionPrompt(`Contract detected. Waiting for transaction confirmation...`);
+                await sleep(3000);
+                
+                const txStatus = await this.verifyTransactionStatus(address);
+                
+                if (!txStatus.success) {
+                    this.#ui.clearActionPrompt();
+                    this.#ui.write(`⚠️ Contract deployed but transaction failed:\n${txStatus.error}`);
+                    throw new Error(`Transaction failed:\n${txStatus.error}`);
+                }
+                
                 this.#ui.clearActionPrompt();
-                this.#ui.write(`Contract deployed at address ${address.toString()}`);
+                this.#ui.write(`✅ Contract deployed at address ${address.toString()}`);
                 this.#ui.write(
                     `You can view it at ${getExplorerLink(address.toString(), this.#network, this.#explorer)}`,
                 );
+                if (txStatus.tx) {
+                    const tx = txStatus.tx;
+                    
+                    let txHash = tx.hash || tx.transaction_id?.hash;
+                    if (typeof txHash === 'function') {
+                        try {
+                            txHash = txHash().toString('hex');
+                        } catch (e) {
+                            txHash = null;
+                        }
+                    }
+                    
+                    // If we have the transaction hash, check its status directly via TonAPI
+                    if (txHash) {
+                        this.#ui.setActionPrompt(`Verifying transaction status...`);
+                        const specificTxStatus = await this.verifyTransactionByHash(txHash);
+                        
+                        // If TonAPI returned an error for this transaction, report it
+                        if (!specificTxStatus.success) {
+                            this.#ui.clearActionPrompt();
+                            this.#ui.write(`⚠️ Warning: Transaction verification via TonAPI indicates problems:\n${specificTxStatus.error}`);
+                            // Do not interrupt execution, as the contract is already deployed
+                        } else if (specificTxStatus.tx) {
+                            // If we got more accurate information, use it
+                            tx.status = specificTxStatus.tx.status;
+                            tx.compute = specificTxStatus.tx.compute;
+                            tx.success = specificTxStatus.tx.success;
+                            tx.aborted = specificTxStatus.tx.aborted;
+                            // Update detailed information if available
+                            if (specificTxStatus.tx.fees) tx.fees = specificTxStatus.tx.fees;
+                            if (specificTxStatus.tx.utime) tx.utime = specificTxStatus.tx.utime; 
+                        }
+                        this.#ui.clearActionPrompt();
+                    }
+                    
+                    let lt = tx.lt || tx.transaction_id?.lt;
+                    if (typeof lt === 'function') {
+                        try {
+                            lt = lt();
+                        } catch (e) {
+                            lt = null;
+                        }
+                    }
+                    
+                    const timestamp = tx.utime || tx.timestamp;
+                    const fees = tx.total_fees || tx.fees;
+                    let explorerTxLink = '';
+                    if (txHash && this.#network && this.#explorer) {
+                        explorerTxLink = getExplorerTxLink(txHash, this.#network, this.#explorer);
+                    }
+                    
+                    // Form detailed transaction information
+                    let info = '';
+                    if (txHash) info += `Tx hash: ${txHash}\n`;
+                    if (lt) info += `LT: ${lt}\n`;
+                    if (timestamp) info += `Timestamp: ${new Date(timestamp * 1000).toISOString()}\n`;
+                    
+                    // Add transaction status
+                    if (tx.success !== undefined) {
+                        info += `Success: ${tx.success}\n`;
+                    }
+                    
+                    // Add exit code if available
+                    if (tx.compute?.exit_code !== undefined) {
+                        info += `Exit code: ${tx.compute.exit_code}\n`;
+                    }
+                    
+                    // Add status (nonexist → active and so on)
+                    if (tx.status) {
+                        info += `Status: ${tx.status}\n`;
+                    }
+                    
+                    // Add aborted flag
+                    if (tx.aborted !== undefined) {
+                        info += `Aborted: ${tx.aborted}\n`;
+                    }
+                    
+                    // Add information about gas and VM steps
+                    if (tx.compute?.gas_used) {
+                        info += `Gas used: ${tx.compute.gas_used}\n`;
+                    }
+                    
+                    if (tx.compute?.vm_steps) {
+                        info += `VM steps: ${tx.compute.vm_steps}\n`;
+                    }
+                    
+                    // Add detailed information about fees
+                    if (fees) {
+                        if (typeof fees === 'object') {
+                            // Output detailed information about different types of fees
+                            if (fees.gas_fee) info += `Gas fee: ${fees.gas_fee}\n`;
+                            if (fees.storage_fee) info += `Storage fee: ${fees.storage_fee}\n`;
+                            if (fees.forward_fee) info += `Forward fee: ${fees.forward_fee}\n`;
+                            if (fees.total_fee || fees.total_fees) info += `Total fee: ${fees.total_fee || fees.total_fees}\n`;
+                        } else {
+                            info += `Fees: ${fees}\n`;
+                        }
+                    }
+                    
+                    if (explorerTxLink) info += `Explorer: ${explorerTxLink}\n`;
+                    if (info) this.#ui.write(info);
+                }
                 return;
             }
             await sleep(sleepDuration);
@@ -249,6 +454,80 @@ class NetworkProviderImpl implements NetworkProvider {
 
     ui(): UIProvider {
         return this.#ui;
+    }
+
+    // Modifying verifyTransactionByHash method to return more information
+    async verifyTransactionByHash(txHash: string): Promise<{ success: boolean; error?: string; tx?: any }> {
+        try {
+            // Use TonAPI to check transaction status
+            const apiUrl = this.#network === 'mainnet' ? TONAPI_MAINNET : TONAPI_TESTNET;
+            if (this.#network === 'custom') {
+                return { success: true }; // Cannot check status for custom networks
+            }
+
+            let response;
+            try {
+                response = await axios.get(`${apiUrl}/v2/blockchain/transactions/${txHash}`);
+            } catch (e) {
+                // Add API error details if available
+                const errorDetails = (e instanceof Error) ? e.message : String(e);
+                return { success: false, error: `Transaction not found or API error: ${errorDetails}` };
+            }
+
+            const tx = response.data;
+            if (!tx) {
+                return { success: false, error: 'Transaction not found (empty response)' };
+            }
+
+            // Check transaction status more accurately, using snake_case from API
+            const exitCode = tx.compute_phase?.exit_code; // snake_case
+            const computeSuccess = tx.compute_phase?.success; // snake_case
+            const txSuccessOverall = tx.success === true; // Overall transaction success
+            const isFailedCompute = (exitCode !== undefined && exitCode !== 0 && exitCode !== 1) || computeSuccess === false;
+            const isFailedOverall = txSuccessOverall === false;
+            
+            // If transaction failed, create a detailed error message
+            if (isFailedCompute || isFailedOverall) {
+                let errorMsg = `Transaction FAILED.\n`;
+                
+                // Add exit code if available
+                if (exitCode !== undefined) {
+                    errorMsg += `Exit code: ${exitCode}\n`;
+                } else {
+                    errorMsg += `Exit code: unknown\n`;
+                }
+                
+                // Add compute.success if available
+                if (computeSuccess !== undefined) {
+                     errorMsg += `Compute success: ${computeSuccess}\n`;
+                }
+                
+                // Add overall transaction success
+                errorMsg += `Overall success: ${txSuccessOverall}\n`;
+                
+                const exitArg = tx.compute_phase?.exit_arg; // snake_case
+                if (exitArg !== undefined) errorMsg += `Exit arg: ${exitArg}\n`;
+                if (tx.status) errorMsg += `Status: ${tx.status}\n`; // Status from API
+                if (tx.aborted !== undefined) errorMsg += `Aborted: ${tx.aborted}\n`;
+                if (tx.compute_phase?.gas_used) errorMsg += `Gas used: ${tx.compute_phase.gas_used}\n`; // snake_case
+                if (tx.compute_phase?.vm_steps) errorMsg += `VM steps: ${tx.compute_phase.vm_steps}\n`; // snake_case
+                
+                // Add full JSON response at the end
+                errorMsg += `\n--- Full API Response: ---\n${JSON.stringify(tx, null, 2)}`;
+                
+                return {
+                    success: false,
+                    error: errorMsg,
+                    tx
+                };
+            }
+
+            return { success: true, tx };
+        } catch (error) {
+            console.warn('Failed to verify transaction by hash:', error);
+            const errorDetails = (error instanceof Error) ? error.message : String(error);
+            return { success: false, error: `Error verifying transaction: ${errorDetails}` };
+        }
     }
 }
 
