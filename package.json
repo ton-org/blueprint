@@ -1,14 +1,16 @@
 {
     "name": "@ton-ai-core/blueprint",
-    "version": "0.30.16",
+    "version": "0.30.19",
     "description": "Framework for development of TON smart contracts",
     "main": "dist/index.js",
-    "bin": "./dist/cli/cli.js",
+    "bin": {
+        "blueprint": "dist/cli/cli.js"
+    },
     "author": "TonTech",
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ton-ai-core/blueprint2"
+        "url": "git+https://github.com/ton-ai-core/blueprint2.git"
     },
     "files": [
         "dist/**/*"
