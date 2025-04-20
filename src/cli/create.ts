@@ -90,10 +90,24 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
         return;
     }
 
-    const localArgs = arg({
-        '--type': String,
-        ...helpArgs,
-    });
+    let localArgs: any;
+    try {
+        localArgs = arg({
+            '--type': String,
+            ...helpArgs,
+        });
+    } catch (e) {
+        const msg = (e && typeof e === 'object' && 'message' in e) ? (e as any).message : String(e);
+        if (msg.includes('unknown or unexpected option')) {
+            const availableFlags = ['--type', '--help'].join(', ');
+            ui.write(msg);
+            ui.write('Available options: ' + availableFlags);
+            process.exit(1);
+        } else {
+            throw e;
+        }
+    }
+
     if (localArgs['--help']) {
         ui.write(helpMessages['create']);
         return;

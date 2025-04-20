@@ -9,11 +9,24 @@ import { execSync } from 'child_process';
 import process from 'process';
 
 export const run: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {
-    const localArgs = arg({ 
-        ...argSpec, 
-        ...helpArgs 
-    });
-    if (localArgs['--help']) {
+    let localArgs: Args;
+    try {
+        localArgs = arg({ 
+            ...argSpec, 
+            ...helpArgs 
+        });
+    } catch (e) {
+        const msg = (e && typeof e === 'object' && 'message' in e) ? (e as any).message : String(e);
+        if (msg.includes('unknown or unexpected option')) {
+            const availableFlags = Object.keys(argSpec).join(', ');
+            ui.write(msg);
+            ui.write('Available options: ' + availableFlags);
+            process.exit(1);
+        } else {
+            throw e;
+        }
+    }
+    if ((localArgs as any)['--help']) {
         ui.write(helpMessages['run']);
         return;
     }
