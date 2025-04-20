@@ -28,3 +28,19 @@ export function getExplorerLink(address: string, network: string, explorer: stri
             return `https://${networkPrefix}tonviewer.com/${address}`;
     }
 }
+
+export function getExplorerTxLink(txHash: string, network: string, explorer: string) {
+    const networkPrefix = network === 'testnet' ? 'testnet.' : '';
+    switch (explorer) {
+        case 'tonscan':
+            return `https://${networkPrefix}tonscan.org/tx/${txHash}`;
+        case 'tonviewer':
+            return `https://${networkPrefix}tonviewer.com/transaction/${txHash}`;
+        case 'toncx':
+            return `https://${networkPrefix}ton.cx/tx/${txHash}`;
+        case 'dton':
+            return `https://${networkPrefix}dton.io/tx/${txHash}`;
+        default:
+            return '';
+    }
+}
