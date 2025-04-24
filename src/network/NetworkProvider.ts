@@ -31,7 +31,7 @@ export interface NetworkProvider {
     sender(): Sender;
 
     /**
-     * Returns the underlying TON client API. May be [TonClient4]{@link TonClient4}, [TonClient]{@link TonClient} or [ContractAdapter]{@link ContractAdapter}
+     * Returns the underlying TON client API. May be [TonClient4]{@link TonClient4}, [TonClient]{@link TonClient} or [ContractAdapter]{@link ContractAdapter} (TON API)
      * @returns {BlueprintTonClient} The client API used to interact with the network.
      */
     api(): BlueprintTonClient;

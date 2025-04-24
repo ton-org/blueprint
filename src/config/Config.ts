@@ -4,7 +4,7 @@ import { Plugin } from './Plugin';
 export interface Config {
     /**
      * Optional array of plugins to extend or customize the behavior.
-     * Plugins can hook into various stages of compilation or provide additional tooling.
+     * Plugins can provide additional tooling.
      *
      * @example
      * import { Config } from '@ton/blueprint';
@@ -35,7 +35,7 @@ export interface Config {
 
     /**
      * If true, keeps compilable files (`*.compile.ts`) in a separate directory `compilables`.
-     * When false or unset, compilables stored in `wrappers` directory.
+     * When false or unset, compilables are stored in `wrappers` directory.
      *
      * @default false
      */
