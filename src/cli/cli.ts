@@ -73,7 +73,7 @@ async function main() {
         );
         const helpMessage = buildHelpMessage();
         console.log(helpMessage);
-
+        process.exit(1);
         return;
     }
 
