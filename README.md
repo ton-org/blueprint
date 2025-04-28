@@ -89,6 +89,7 @@ Blueprint is an all-in-one development environment designed to enhance the proce
    * Example: `yarn blueprint build counter`
 4. Build results are generated in `build/<CONTRACT>.compiled.json`
 5. Tact generated files are located in `build/<CONTRACT>` directory
+6. Fift output is located in `build/<CONTRACT>/<CONTRACT>.fif`
 
 ### Running the test suites
 

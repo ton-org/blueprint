@@ -51,6 +51,11 @@ export async function buildOne(contract: string, ui?: UIProvider) {
         await fs.mkdir(BUILD_DIR, { recursive: true });
 
         await fs.writeFile(buildArtifactPath, JSON.stringify(res));
+        if (result.lang === 'func' || result.lang === 'tolk') {
+            const fiftFilepath = path.join(BUILD_DIR, contract, `${contract}.fif`);
+            await fs.mkdir(path.join(BUILD_DIR, contract), { recursive: true });
+            await fs.writeFile(fiftFilepath, result.fiftCode);
+        }
 
         ui?.write(`\n✅ Wrote compilation artifact to ${path.relative(process.cwd(), buildArtifactPath)}`);
     } catch (e) {

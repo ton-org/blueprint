@@ -44,6 +44,7 @@ export type SourceSnapshot = {
 export type TolkCompileResult = {
     lang: 'tolk';
     stderr: string;
+    fiftCode: string;
     code: Cell;
     snapshot: SourceSnapshot[];
     version: string;
@@ -59,6 +60,7 @@ async function doCompileTolk(config: TolkCompilerConfig): Promise<TolkCompileRes
     return {
         lang: 'tolk',
         stderr: res.stderr,
+        fiftCode: res.fiftCode,
         code: Cell.fromBase64(res.codeBoc64),
         snapshot: res.sourcesSnapshot.map((e) => ({
             filename: e.filename,
@@ -70,6 +72,7 @@ async function doCompileTolk(config: TolkCompilerConfig): Promise<TolkCompileRes
 
 export type FuncCompileResult = {
     lang: 'func';
+    fiftCode: string;
     code: Cell;
     targets: string[];
     snapshot: SourceSnapshot[];
@@ -90,6 +93,7 @@ async function doCompileFunc(config: FuncCompilerConfig): Promise<FuncCompileRes
 
     return {
         lang: 'func',
+        fiftCode: cr.fiftCode,
         code: Cell.fromBase64(cr.codeBoc),
         targets,
         snapshot: cr.snapshot,
@@ -145,7 +149,7 @@ async function doCompileTact(config: TactCompilerConfig, name: string): Promise<
             output: path.join(BUILD_DIR, name),
             options: { ...rootConfigOptions, ...config.options },
         },
-        stdlib: '/stdlib',
+        stdlib: Tact.createVirtualFileSystem("@stdlib", Tact.stdLibFiles),
         project: fs,
     };
 
@@ -209,10 +213,40 @@ export async function doCompile(name: string, opts?: CompileOpts): Promise<Compi
     return res;
 }
 
+
+/**
+ * Optional compilation settings, including user data passed to hooks
+ */
 export type CompileOpts = {
+    /**
+     * Any user-defined data that will be passed to both `preCompileHook` and `postCompileHook`.
+     */
     hookUserData?: any;
 };
 
+/**
+ * Compiles a contract using the specified configuration for `tact`, `func`, or `tolk` languages.
+ *
+ * This function resolves the appropriate compiler configuration for a given contract name,
+ * runs any defined pre-compile and post-compile hooks, and returns the resulting compiled code
+ * as a [Cell]{@link Cell}.
+ *
+ * @param {string} name - The name of the contract to compile. This should correspond to a
+ *                        file named `<name>.compile.ts` in the `compilables` or `wrappers` directory.
+ * @param {CompileOpts} [opts] - Optional compilation options, including user data passed to hooks.
+ *
+ * @returns {Promise<Cell>} A promise that resolves to the compiled contract code as a `Cell`.
+ *
+ * @example
+ * import { compile } from '@ton/blueprint';
+ *
+ * async function main() {
+ *     const codeCell = await compile('Contract');
+ *     console.log('Compiled code BOC:', codeCell.toBoc().toString('base64'));
+ * }
+ *
+ * main();
+ */
 export async function compile(name: string, opts?: CompileOpts): Promise<Cell> {
     const result = await doCompile(name, opts);
 
