@@ -17,7 +17,7 @@
     ],
     "scripts": {
         "build": "rm -rf dist && tsc && cp -r src/templates dist/",
-        "release": "yarn build && yarn publish --access public",
+        "release": "yarn build && npm publish --access public",
         "format": "prettier --write src"
     },
     "devDependencies": {
