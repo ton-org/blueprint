@@ -446,6 +446,10 @@ class NetworkProviderBuilder {
                 while (true) {
                     r = await axios({
                         ...config,
+                        headers: {
+                              ...config.headers,
+                              "Content-Type": "application/json"
+                        },
                         adapter: undefined,
                         validateStatus: (status: number) => (status >= 200 && status < 300) || status === 429,
                     });
