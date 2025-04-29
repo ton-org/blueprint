@@ -25,7 +25,7 @@ export async function getCompilablesDirectory(): Promise<string> {
 
 export const COMPILE_END = '.compile.ts';
 
-async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
+export async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
     const compilablesDirectory = await getCompilablesDirectory();
     const mod = await import(path.join(compilablesDirectory, name + COMPILE_END));
 
@@ -106,6 +106,7 @@ export type TactCompileResult = {
     fs: Map<string, Buffer>;
     code: Cell;
     options?: TactCompilerConfig['options'];
+    version: string;
 };
 
 function findTactBoc(fs: Map<string, Buffer>): Cell {
@@ -138,6 +139,13 @@ function getRootTactConfigOptionsForContract(name: string): TactCompilerConfig['
     return undefined;
 }
 
+
+export async function getTactVersion() {
+    const packageJsonPath = require.resolve('@tact-lang/compiler/package.json');
+    const { version } = await import(packageJsonPath);
+    return version;
+}
+
 async function doCompileTact(config: TactCompilerConfig, name: string): Promise<TactCompileResult> {
     const rootConfigOptions = getRootTactConfigOptionsForContract(name);
     const fs = new OverwritableVirtualFileSystem(process.cwd());
@@ -166,6 +174,7 @@ async function doCompileTact(config: TactCompilerConfig, name: string): Promise<
         fs: fs.overwrites,
         code,
         options: buildConfig.config.options,
+        version: await getTactVersion(),
     };
 }
 
@@ -191,6 +200,16 @@ async function doCompileInner(name: string, config: CompilerConfig): Promise<Com
         sources: config.sources ?? ((path: string) => readFileSync(path).toString()),
         optLevel: config.optLevel,
     } as FuncCompilerConfig);
+}
+
+export async function getCompilerVersion(config: CompilerConfig): Promise<string> {
+    if (config.lang === 'tact') {
+        return getTactVersion();
+    }
+    if (config.lang === 'tolk') {
+        return getTolkCompilerVersion();
+    }
+    return (await compilerVersion()).funcVersion;
 }
 
 export async function doCompile(name: string, opts?: CompileOpts): Promise<CompileResult> {
