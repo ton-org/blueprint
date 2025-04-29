@@ -1,10 +1,10 @@
 import { Address, Cell, Contract, ContractProvider, Dictionary, toNano } from '@ton/core';
 import { doCompile } from '../compile/compile';
 import { UIProvider } from '../ui/UIProvider';
-import { Args, Runner, RunnerContext } from './Runner';
+import { Args, extractFirstArg, Runner, RunnerContext } from './Runner';
 import path from 'path';
 import { argSpec, createNetworkProvider } from '../network/createNetworkProvider';
-import { selectCompile } from './build';
+import { selectContract } from './build';
 import { sleep } from '../utils';
 import arg from 'arg';
 import { helpArgs, helpMessages } from './constants';
@@ -173,7 +173,7 @@ export const verify: Runner = async (args: Args, ui: UIProvider, context: Runner
         return;
     }
 
-    const sel = await selectCompile(ui, localArgs);
+    const selectedContract = await selectContract(ui, extractFirstArg(localArgs));
 
     const networkProvider = await createNetworkProvider(ui, localArgs, context.config, false);
 
@@ -189,7 +189,7 @@ export const verify: Runner = async (args: Args, ui: UIProvider, context: Runner
         throw new Error('Cannot use custom network');
     }
 
-    const result = await doCompile(sel.name);
+    const result = await doCompile(selectedContract);
     const resHash = result.code.hash();
 
     ui.write(`Compiled code hash hex: ${resHash.toString('hex')}`);
