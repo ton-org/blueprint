@@ -24,7 +24,7 @@ export const build: Runner = async (args: Args, ui: UIProvider) => {
     }
 
     if (localArgs['--all']) {
-        await buildAll();
+        await buildAll(ui);
     } else {
         const sel = await selectCompile(ui, localArgs);
 
