@@ -7,6 +7,8 @@ import arg from 'arg';
 import { helpArgs, helpMessages } from './constants';
 import { execSync } from 'child_process';
 import process from 'process';
+import * as pkgManagerService from '../pkgManager/service';
+import chalk from 'chalk';
 
 export const run: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {
     let localArgs: Args;
@@ -48,26 +50,15 @@ export const run: Runner = async (args: Args, ui: UIProvider, context: RunnerCon
     if (scriptName && scriptName.toLowerCase().startsWith('deploy')) {
         ui.write('Running tests before deployment...');
         
-        // Detect package manager
-        let pkgManager = (process.env.npm_config_user_agent ?? 'npm/').split(' ')[0].split('/')[0];
-        let testCmd = 'npm test';
-        switch (pkgManager) {
-            case 'yarn':
-                testCmd = 'yarn test';
-                break;
-            case 'pnpm':
-                testCmd = 'pnpm test';
-                break;
-            case 'bun':
-                testCmd = 'bun test';
-                break;
-        }
-        
         try {
-            execSync(testCmd, { stdio: 'inherit' });
+            // Use the service to run the test command
+            const result = pkgManagerService.runCommand('test', []);
+            if (result.status !== 0) {
+                 throw new Error('Tests failed. Deployment aborted.');
+            }
         } catch (e) {
-            ui.write('\nTests failed. Deployment aborted.\n');
-            return;
+            ui.write(chalk.redBright(`\n${(e as Error).message || 'Test execution failed.'}\n`));
+            process.exit(1);
         }
     }
 

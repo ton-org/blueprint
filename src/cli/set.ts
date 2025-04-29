@@ -5,41 +5,38 @@ import { exec } from 'node:child_process';
 import path from 'path';
 import arg from 'arg';
 import { helpArgs, helpMessages } from './constants';
+import * as pkgManagerService from '../pkgManager/service';
 
-const getVersions = (pkg: string, ui: UIProvider): Promise<string[]> => {
-    return new Promise((resolve, reject) => {
-        exec(`npm view ${pkg} versions --json`, (error, stdout, stderr) => {
-            if (stderr) {
-                ui.write(stderr);
-            }
-            if (stdout) {
-                if (error === null) {
-                    try {
-                        const resJson = JSON.parse(stdout);
-                        if (Array.isArray(resJson)) {
-                            resolve(resJson);
-                        } else {
-                            reject(new TypeError("Expect json array on stdout, but got:\n" + stdout));
-                        }
-                    } catch (e) {
-                        reject(e);
-                    }
-                    return;
-                } else {
-                    ui.write(stdout);
-                }
-            }
-            if (error) {
-                ui.write("Failed to get func-js-bin package versions!");
-                reject(error);
-            }
-        });
+const getVersions = async (pkg: string, ui: UIProvider): Promise<string[]> => {
+    const result = pkgManagerService.runCommand('view', [pkg, 'versions', '--json'], {
+        stdio: 'pipe',
+        shell: false,
     });
+
+    if (result.status !== 0 || !result.stdout) {
+        const errorMsg = result.stderr?.toString() || `Failed to get versions for ${pkg}`;
+        ui.write(errorMsg);
+        throw new Error(`Failed to get versions for ${pkg}. Exit code: ${result.status}`);
+    }
+
+    const stdout = result.stdout.toString();
+
+    try {
+        const resJson = JSON.parse(stdout);
+        if (Array.isArray(resJson)) {
+            return resJson;
+        } else {
+            throw new TypeError("Expected JSON array from view command, but got:\n" + stdout);
+        }
+    } catch (e) {
+        ui.write("Failed to parse versions JSON:" + stdout);
+        throw e;
+    }
 };
 
 const install = (cmd: string, ui: UIProvider): Promise<void> => {
     return new Promise((resolve, reject) => {
-        exec(cmd, (error, stdout, stderr) => {
+        exec(cmd, { cwd: process.cwd() }, (error, stdout, stderr) => {
                 if (stderr) {
                     ui.write(stderr);
                 }
@@ -81,14 +78,9 @@ export const set: Runner = async (args: Args, ui: UIProvider) => {
             const packageContents = (await readFile(packagePath)).toString('utf-8');
             const parsedPackage = JSON.parse(packageContents);
 
-            const packageManager: 'npm' | 'yarn' | 'pnpm' | 'other' = await ui.choose('Choose your package manager', ['npm', 'yarn', 'pnpm', 'other'], (s) => s);
+            const packageManager = pkgManagerService.detectPackageManager();
 
-            if (packageManager === 'other') {
-                ui.write(`Please find out how to override @ton-community/func-js-bin version to ${version} using your package manager, do that, and then install the packages`);
-                return;
-            }
-
-            const overrideKey = packageManager === 'yarn' ? 'resolutions' : 'overrides';
+            const overrideKey = pkgManagerService.getOverrideKey();
 
             parsedPackage[overrideKey] = {
                 ...parsedPackage[overrideKey],
@@ -99,11 +91,17 @@ export const set: Runner = async (args: Args, ui: UIProvider) => {
 
             await writeFile(packagePath, JSON.stringify(parsedPackage, null, 4));
 
-            const installCmd = packageManager === 'yarn' ? 'yarn' : `${packageManager} i`;
+            let installCmdString: string;
+            switch(packageManager) {
+                case 'yarn': installCmdString = 'yarn install'; break;
+                case 'pnpm': installCmdString = 'pnpm install'; break;
+                case 'bun': installCmdString = 'bun install'; break;
+                default: installCmdString = 'npm install'; break;
+            }
 
             try {
                 ui.write('Installing dependencies...');
-                await install(installCmd, ui);
+                await install(installCmdString, ui);
             } catch (e) {
                 ui.write('Failed to install dependencies, rolling back package.json');
                 await writeFile(packagePath, packageContents);
