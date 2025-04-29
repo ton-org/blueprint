@@ -2,7 +2,7 @@ import { Args, Runner } from './Runner';
 import { lstat, mkdir, open, readdir, readFile } from 'fs/promises';
 import path from 'path';
 import { executeTemplate, TEMPLATES_DIR } from '../template';
-import { selectOption } from '../utils';
+import {isPascalCase, selectOption, toPascalCase} from '../utils';
 import arg from 'arg';
 import { UIProvider } from '../ui/UIProvider';
 import { buildOne } from '../build';
@@ -66,8 +66,13 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
 
     if (name.length === 0) throw new Error(`Cannot create a contract with an empty name`);
 
-    if (name.toLowerCase() === 'contract' || !/^[A-Z][a-zA-Z0-9]*$/.test(name))
-        throw new Error(`Cannot create a contract with the name '${name}'`);
+    if (name.toLowerCase() === 'contract') {
+        throw new Error(`Cannot create a contract with the reserved name 'contract'. Please choose a different name.`);
+    }
+
+    if (!isPascalCase(name)) {
+        throw new Error(`Contract name '${name}' is not in PascalCase. Please try ${toPascalCase(name)}.`);
+    }
 
     const which = (
         await selectOption(templateTypes, {
