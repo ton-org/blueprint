@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added 'All Contracts' option to build wizard
 - Added function to build all tact contracts, required for rebuilding before tests
 
+### Changed
+
+- Made error of non-PascalCase contract names nicer
+
 ### Fixed
 
 - `blueprint build --all` now exits with a non-zero exit code on failure
