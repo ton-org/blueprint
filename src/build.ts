@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs/promises';
-import { doCompile } from './compile/compile';
+import { doCompile, extractCompileConfig, getCompilerConfigForContract, getCompilerOptions } from './compile/compile';
 import { BUILD_DIR } from './paths';
 import { UIProvider } from './ui/UIProvider';
 import { findCompiles } from './utils';
@@ -16,6 +16,10 @@ export async function buildOne(contract: string, ui?: UIProvider) {
 
     ui?.setActionPrompt('⏳ Compiling...');
     try {
+        const config = await getCompilerConfigForContract(contract);
+        const compilerOptions = await getCompilerOptions(config);
+        ui?.write(`🔧 Using ${compilerOptions.lang} version ${compilerOptions.version}...`);
+
         const result = await doCompile(contract);
 
         if (result.lang === 'tact') {
@@ -72,5 +76,15 @@ export async function buildOne(contract: string, ui?: UIProvider) {
 export async function buildAll(ui?: UIProvider) {
     for (const file of await findCompiles()) {
         await buildOne(file.name, ui);
+    }
+}
+
+export async function buildAllTact(ui?: UIProvider) {
+    // TODO: when tact config introduced rewrite to use it
+    for (const file of await findCompiles()) {
+        const config = await extractCompileConfig(file.path);
+        if (config.lang === 'tact') {
+            await buildOne(file.name, ui);
+        }
     }
 }

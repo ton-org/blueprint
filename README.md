@@ -122,6 +122,10 @@ export async function run(provider: NetworkProvider) {
 
 FunC version can be updated using `npx/yarn blueprint set func` command
 
+### Updating Tact version
+
+Tact version can be updated to the latest using `npm update/yarn upgrade @tact-lang/compiler` command
+
 ### Help and additional commands
 
 Run in terminal: &nbsp; `npx blueprint help` &nbsp; or &nbsp; `yarn blueprint help`

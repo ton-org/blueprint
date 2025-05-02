@@ -7,9 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Updated
+### Added
 
-- Made error of non pascal case contracts nicer
+- Compiler version is now shown during contract build
+- Added 'All Contracts' option to build wizard
+- Added function to build all tact contracts, required for rebuilding before tests
+
+### Changed
+
+- Made error of non-PascalCase contract names nicer
+
+### Fixed
+
+- `blueprint build --all` now exits with a non-zero exit code on failure
 
 ## [0.31.1] - 2025-04-24
 
