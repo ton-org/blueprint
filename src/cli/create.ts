@@ -1,4 +1,4 @@
-import { Args, Runner } from './Runner';
+import { Args, extractFirstArg, Runner } from './Runner';
 import { lstat, mkdir, open, readdir, readFile } from 'fs/promises';
 import path from 'path';
 import { executeTemplate, TEMPLATES_DIR } from '../template';
@@ -60,9 +60,8 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
     }
 
     const name =
-        localArgs._.length > 1 && localArgs._[1].trim().length > 0
-            ? localArgs._[1].trim()
-            : await ui.input('Contract name (PascalCase)');
+        extractFirstArg(localArgs)
+            ?? await ui.input('Contract name (PascalCase)');
 
     if (name.length === 0) throw new Error(`Cannot create a contract with an empty name`);
 

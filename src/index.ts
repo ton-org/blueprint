@@ -16,4 +16,4 @@ export { Config } from './config/Config';
 export { Args, Runner, RunnerContext } from './cli/Runner';
 export { PluginRunner, Plugin } from './config/Plugin';
 export { CustomNetwork } from './config/CustomNetwork';
-export { buildOne, buildAll } from './build';
+export { buildOne, buildAll, buildAllTact } from './build';
