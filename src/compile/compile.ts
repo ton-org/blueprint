@@ -25,15 +25,20 @@ export async function getCompilablesDirectory(): Promise<string> {
 
 export const COMPILE_END = '.compile.ts';
 
-async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
-    const compilablesDirectory = await getCompilablesDirectory();
-    const mod = await import(path.join(compilablesDirectory, name + COMPILE_END));
+export async function extractCompileConfig(path: string): Promise<CompilerConfig> {
+    const mod = await import(path);
 
     if (typeof mod.compile !== 'object') {
         throw new Error(`Object 'compile' is missing`);
     }
 
     return mod.compile;
+}
+
+async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
+    const compilablesDirectory = await getCompilablesDirectory();
+
+    return extractCompileConfig(path.join(compilablesDirectory, name + COMPILE_END));
 }
 
 export type SourceSnapshot = {
