@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs/promises';
-import { doCompile, extractCompileConfig } from './compile/compile';
+import { doCompile, extractCompileConfig, getCompilerConfigForContract, getCompilerOptions } from './compile/compile';
 import { BUILD_DIR } from './paths';
 import { UIProvider } from './ui/UIProvider';
 import { findCompiles } from './utils';
@@ -16,6 +16,10 @@ export async function buildOne(contract: string, ui?: UIProvider) {
 
     ui?.setActionPrompt('⏳ Compiling...');
     try {
+        const config = await getCompilerConfigForContract(contract);
+        const compilerOptions = await getCompilerOptions(config);
+        ui?.write(`🔧 Using ${compilerOptions.lang} version ${compilerOptions.version}...`);
+
         const result = await doCompile(contract);
 
         if (result.lang === 'tact') {

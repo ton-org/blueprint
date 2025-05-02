@@ -111,6 +111,7 @@ export type TactCompileResult = {
     fs: Map<string, Buffer>;
     code: Cell;
     options?: TactCompilerConfig['options'];
+    version: string;
 };
 
 function findTactBoc(fs: Map<string, Buffer>): Cell {
@@ -143,6 +144,13 @@ function getRootTactConfigOptionsForContract(name: string): TactCompilerConfig['
     return undefined;
 }
 
+
+export async function getTactVersion() {
+    const packageJsonPath = require.resolve('@tact-lang/compiler/package.json');
+    const { version } = await import(packageJsonPath);
+    return version;
+}
+
 async function doCompileTact(config: TactCompilerConfig, name: string): Promise<TactCompileResult> {
     const rootConfigOptions = getRootTactConfigOptionsForContract(name);
     const fs = new OverwritableVirtualFileSystem(process.cwd());
@@ -171,6 +179,7 @@ async function doCompileTact(config: TactCompilerConfig, name: string): Promise<
         fs: fs.overwrites,
         code,
         options: buildConfig.config.options,
+        version: await getTactVersion(),
     };
 }
 
@@ -196,6 +205,27 @@ async function doCompileInner(name: string, config: CompilerConfig): Promise<Com
         sources: config.sources ?? ((path: string) => readFileSync(path).toString()),
         optLevel: config.optLevel,
     } as FuncCompilerConfig);
+}
+
+function getCompilerName(config: CompilerConfig): 'tact' | 'tolk' | 'func' {
+    return config.lang ?? 'func';
+}
+
+async function getCompilerVersion(config: CompilerConfig): Promise<string> {
+    if (config.lang === 'tact') {
+        return getTactVersion();
+    }
+    if (config.lang === 'tolk') {
+        return getTolkCompilerVersion();
+    }
+    return (await compilerVersion()).funcVersion;
+}
+
+export async function getCompilerOptions(config: CompilerConfig): Promise<{ lang: 'tact' | 'tolk' | 'func', version: string }> {
+    return {
+        lang: getCompilerName(config),
+        version: await getCompilerVersion(config),
+    }
 }
 
 export async function doCompile(name: string, opts?: CompileOpts): Promise<CompileResult> {

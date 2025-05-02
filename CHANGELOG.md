@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Compiler version is now shown during contract build
 - Added 'All Contracts' option to build wizard
 - Added function to build all tact contracts, required for rebuilding before tests
 
