@@ -202,7 +202,11 @@ async function doCompileInner(name: string, config: CompilerConfig): Promise<Com
     } as FuncCompilerConfig);
 }
 
-export async function getCompilerVersion(config: CompilerConfig): Promise<string> {
+function getCompilerName(config: CompilerConfig): 'tact' | 'tolk' | 'func' {
+    return config.lang ?? 'func';
+}
+
+async function getCompilerVersion(config: CompilerConfig): Promise<string> {
     if (config.lang === 'tact') {
         return getTactVersion();
     }
@@ -210,6 +214,13 @@ export async function getCompilerVersion(config: CompilerConfig): Promise<string
         return getTolkCompilerVersion();
     }
     return (await compilerVersion()).funcVersion;
+}
+
+export async function getCompilerOptions(config: CompilerConfig): Promise<{ lang: 'tact' | 'tolk' | 'func', version: string }> {
+    return {
+        lang: getCompilerName(config),
+        version: await getCompilerVersion(config),
+    }
 }
 
 export async function doCompile(name: string, opts?: CompileOpts): Promise<CompileResult> {
