@@ -35,7 +35,7 @@ export async function extractCompileConfig(path: string): Promise<CompilerConfig
     return mod.compile;
 }
 
-async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
+export async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
     const compilablesDirectory = await getCompilablesDirectory();
 
     return extractCompileConfig(path.join(compilablesDirectory, name + COMPILE_END));
