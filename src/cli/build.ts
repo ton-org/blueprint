@@ -50,7 +50,7 @@ export const build: Runner = async (args: Args, ui: UIProvider) => {
     }
 
     if (localArgs['--all']) {
-        await buildAll();
+        await buildAll(ui);
     } else {
         const selected = await selectContract(ui, extractBuildFile(args), true);
 
