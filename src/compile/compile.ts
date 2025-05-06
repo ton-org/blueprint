@@ -25,8 +25,8 @@ export async function getCompilablesDirectory(): Promise<string> {
 
 export const COMPILE_END = '.compile.ts';
 
-export async function extractCompileConfig(path: string): Promise<CompilerConfig> {
-    const mod = await import(path);
+export function extractCompileConfig(path: string): CompilerConfig {
+    const mod = require(path);
 
     if (typeof mod.compile !== 'object') {
         throw new Error(`Object 'compile' is missing`);

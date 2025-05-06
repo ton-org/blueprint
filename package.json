@@ -1,6 +1,6 @@
 {
     "name": "@ton/blueprint",
-    "version": "0.32.0",
+    "version": "0.32.1",
     "description": "Framework for development of TON smart contracts",
     "main": "dist/index.js",
     "bin": "./dist/cli/cli.js",
@@ -29,7 +29,7 @@
         "@types/node": "^20.2.5",
         "@types/qrcode-terminal": "^0.12.0",
         "prettier": "^3.0.3",
-        "typescript": "^4.9.5"
+        "typescript": "^5.8.3"
     },
     "peerDependencies": {
         "@tact-lang/compiler": ">=1.6.5",

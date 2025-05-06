@@ -82,7 +82,7 @@ export async function buildAll(ui?: UIProvider) {
 export async function buildAllTact(ui?: UIProvider) {
     // TODO: when tact config introduced rewrite to use it
     for (const file of await findCompiles()) {
-        const config = await extractCompileConfig(file.path);
+        const config = extractCompileConfig(file.path);
         if (config.lang === 'tact') {
             await buildOne(file.name, ui);
         }
