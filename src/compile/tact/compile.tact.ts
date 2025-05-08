@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'fs';
 import path from 'path';
 
-import * as Tact from '@tact-lang/compiler';
+import { Config, parseConfig, createVirtualFileSystem, build, stdLibFiles } from '@tact-lang/compiler';
 import { Cell } from '@ton/core';
 
 import { BUILD_DIR, TACT_ROOT_CONFIG } from '../../paths';
@@ -36,7 +36,7 @@ function getRootTactConfigOptionsForContract(name: string): TactCompilerConfig['
         return undefined;
     }
 
-    const config: Tact.Config = Tact.parseConfig(readFileSync(TACT_ROOT_CONFIG).toString());
+    const config: Config = parseConfig(readFileSync(TACT_ROOT_CONFIG).toString());
 
     for (const project of config.projects) {
         if (project.name === name) {
@@ -64,11 +64,11 @@ export async function doCompileTact(config: TactCompilerConfig, name: string): P
             output: path.join(BUILD_DIR, name),
             options: { ...rootConfigOptions, ...config.options },
         },
-        stdlib: Tact.createVirtualFileSystem('@stdlib', Tact.stdLibFiles),
+        stdlib: createVirtualFileSystem('@stdlib', stdLibFiles),
         project: fs,
     };
 
-    const res = await Tact.build(buildConfig);
+    const res = await build(buildConfig);
 
     if (!res.ok) {
         throw new Error('Could not compile tact');
