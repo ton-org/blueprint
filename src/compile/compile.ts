@@ -4,11 +4,11 @@ import path from 'path';
 import { Cell } from '@ton/core';
 
 import { COMPILABLES_DIR, WRAPPERS_DIR } from '../paths';
-import { CompilerConfig } from './CompilerConfig';
+import { CompilableConfig, CompilerConfig, isCompilableConfig } from './CompilerConfig';
 import { getConfig } from '../config/utils';
 
 import { doCompileFunc, FuncCompileResult, getFuncVersion, DoCompileFunConfig } from './func/compile.func';
-import { doCompileTact, TactCompileResult, getTactVersion } from './tact/compile.tact';
+import { doCompileTact, TactCompileResult, getTactVersion, getTactConfigForContract } from './tact/compile.tact';
 import { doCompileTolk, TolkCompileResult, getTolkVersion } from './tolk/compile.tolk';
 
 export async function getCompilablesDirectory(): Promise<string> {
@@ -20,7 +20,7 @@ export async function getCompilablesDirectory(): Promise<string> {
     return WRAPPERS_DIR;
 }
 
-export function extractCompileConfig(path: string): CompilerConfig {
+export function extractCompilableConfig(path: string): CompilableConfig {
     const mod = require(path);
 
     if (typeof mod.compile !== 'object') {
@@ -32,48 +32,67 @@ export function extractCompileConfig(path: string): CompilerConfig {
 
 export const COMPILE_END = '.compile.ts';
 
+// contracts in tact.config.json and .compile.ts may overlap. In this case configuration from tact.config.json would be taken
 export async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
+    const tactConfig = getTactConfigForContract(name);
+    if (tactConfig) {
+        return tactConfig;
+    }
+
     const compilablesDirectory = await getCompilablesDirectory();
 
-    return extractCompileConfig(path.join(compilablesDirectory, name + COMPILE_END));
+    return extractCompilableConfig(path.join(compilablesDirectory, name + COMPILE_END));
 }
 
 export type CompileResult = TactCompileResult | FuncCompileResult | TolkCompileResult;
 
 async function doCompileInner(name: string, config: CompilerConfig): Promise<CompileResult> {
-    if (config.lang === 'tact') {
-        return await doCompileTact(config, name);
+    if (isCompilableConfig(config)) {
+        if (config.lang === 'tact') {
+            return await doCompileTact(config, name);
+        }
+
+        if (config.lang === 'tolk') {
+            return await doCompileTolk({
+                entrypointFileName: config.entrypoint,
+                fsReadCallback: (path) => readFileSync(path).toString(),
+                optimizationLevel: config.optimizationLevel,
+                withStackComments: config.withStackComments,
+                experimentalOptions: config.experimentalOptions,
+            });
+        }
+
+        return await doCompileFunc({
+            targets: config.targets,
+            sources: config.sources ?? ((path: string) => readFileSync(path).toString()),
+            optLevel: config.optLevel,
+        } as DoCompileFunConfig);
     }
 
-    if (config.lang === 'tolk') {
-        return await doCompileTolk({
-            entrypointFileName: config.entrypoint,
-            fsReadCallback: (path) => readFileSync(path).toString(),
-            optimizationLevel: config.optimizationLevel,
-            withStackComments: config.withStackComments,
-            experimentalOptions: config.experimentalOptions,
-        });
-    }
-
-    return await doCompileFunc({
-        targets: config.targets,
-        sources: config.sources ?? ((path: string) => readFileSync(path).toString()),
-        optLevel: config.optLevel,
-    } as DoCompileFunConfig);
+    return await doCompileTact(config, name);
 }
 
 function getCompilerName(config: CompilerConfig): 'tact' | 'tolk' | 'func' {
-    return config.lang ?? 'func';
+    if (isCompilableConfig(config)) {
+        return config.lang ?? 'func';
+    }
+
+    return 'tact';
 }
 
 async function getCompilerVersion(config: CompilerConfig): Promise<string> {
-    if (config.lang === 'tact') {
-        return getTactVersion();
+    if (isCompilableConfig(config)) {
+        if (config.lang === 'tact') {
+            return getTactVersion();
+        }
+        if (config.lang === 'tolk') {
+            return getTolkVersion();
+        }
+
+        return getFuncVersion();
     }
-    if (config.lang === 'tolk') {
-        return getTolkVersion();
-    }
-    return getFuncVersion();
+
+    return getTactVersion();
 }
 
 export async function getCompilerOptions(config: CompilerConfig): Promise<{
@@ -89,7 +108,7 @@ export async function getCompilerOptions(config: CompilerConfig): Promise<{
 export async function doCompile(name: string, opts?: CompileOpts): Promise<CompileResult> {
     const config = await getCompilerConfigForContract(name);
 
-    if (config.preCompileHook !== undefined) {
+    if ('preCompileHook' in config && config.preCompileHook !== undefined) {
         await config.preCompileHook({
             userData: opts?.hookUserData,
         });
@@ -97,7 +116,7 @@ export async function doCompile(name: string, opts?: CompileOpts): Promise<Compi
 
     const res = await doCompileInner(name, config);
 
-    if (config.postCompileHook !== undefined) {
+    if ('postCompileHook' in config && config.postCompileHook !== undefined) {
         await config.postCompileHook(res.code, {
             userData: opts?.hookUserData,
         });

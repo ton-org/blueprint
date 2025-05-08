@@ -1,7 +1,9 @@
-import {Options} from '@tact-lang/compiler';
+import { Config, Options } from '@tact-lang/compiler';
 
-export type TactCompilerConfig = {
+export type TactLegacyCompilerConfig = {
     lang: 'tact';
     target: string;
     options?: Options;
 };
+
+export type TactCompilerConfig = Config;

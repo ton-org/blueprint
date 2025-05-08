@@ -1,5 +1,5 @@
 import { Args, Runner } from './Runner';
-import { findCompiles, selectOption } from '../utils';
+import { findContracts, selectOption } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
 import arg from 'arg';
 import { buildAll, buildOne } from '../build';
@@ -12,9 +12,8 @@ export function extractBuildFile(args: Args) {
 export async function selectContract(ui: UIProvider, hint?: string ): Promise<string>;
 export async function selectContract(ui: UIProvider, hint?: string, withAllOption?: boolean): Promise<string | string[]>;
 export async function selectContract(ui: UIProvider, hint?: string, withAllOption: boolean = false):  Promise<string | string[]> {
-    const compiles = await findCompiles();
-    const contracts = compiles.map(compile => compile.name);
-    const options = contracts.map<{ name: string; value: string }>((contract) => ({name: contract, value: contract}));
+    const contracts = await findContracts();
+    const options = contracts.map<{ name: string; value: string }>((contract) => ({ name: contract, value: contract }));
 
     const allContractsValue = 'all_contracts';
     if (withAllOption) {
@@ -59,6 +58,5 @@ export const build: Runner = async (args: Args, ui: UIProvider) => {
         } else {
             await buildAll(ui);
         }
-
     }
 };

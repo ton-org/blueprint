@@ -1,12 +1,16 @@
 import path from 'path';
 import fs from 'fs/promises';
+
 import { UIProvider } from '../ui/UIProvider';
-import { SCRIPTS_DIR } from '../paths';
+import { getRootTactConfig } from '../config/tact.config';
 import { COMPILE_END, getCompilablesDirectory } from '../compile/compile';
 import { File } from '../types/file';
 
+import { SCRIPTS_DIR } from '../paths';
+import { distinct } from './object.utils';
+
 export const findCompiles = async (directory?: string): Promise<File[]> => {
-    const dir = directory ?? await getCompilablesDirectory();
+    const dir = directory ?? (await getCompilablesDirectory());
     const files = await fs.readdir(dir);
     const compilables = files.filter((file) => file.endsWith(COMPILE_END));
     return compilables.map((file) => ({
@@ -15,13 +19,23 @@ export const findCompiles = async (directory?: string): Promise<File[]> => {
     }));
 };
 
+export const findContracts = async () => {
+    const compilables = await findCompiles();
+    const tactRootConfig = getRootTactConfig();
+
+    return distinct([
+        ...compilables.map((file) => file.name),
+        ...(tactRootConfig?.projects.map((project) => project.name) ?? []),
+    ]);
+};
+
 export const findScripts = async (): Promise<File[]> => {
     const dirents = await fs.readdir(SCRIPTS_DIR, { recursive: true, withFileTypes: true });
     const scripts = dirents.filter((dirent) => dirent.isFile() && dirent.name.endsWith('.ts'));
 
     return scripts
         .map((script) => ({
-            name: path.join(script.path.slice(SCRIPTS_DIR.length+1), path.parse(script.name).name),
+            name: path.join(script.path.slice(SCRIPTS_DIR.length + 1), path.parse(script.name).name),
             path: path.join(script.path, script.name),
         }))
         .sort((a, b) => (a.name >= b.name ? 1 : -1));

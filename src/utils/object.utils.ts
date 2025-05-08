@@ -11,3 +11,7 @@ export function oneOrZeroOf<T extends { [k: string]: boolean | undefined }>(opti
     }
     return opt;
 }
+
+export function distinct<T>(values: T[]): T[] {
+    return [...new Set(values)];
+}

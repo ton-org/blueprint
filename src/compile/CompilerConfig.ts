@@ -2,7 +2,7 @@ import { Cell } from '@ton/core';
 
 import { TolkCompilerConfig } from './tolk/config';
 import { FuncCompilerConfig } from './func/config';
-import { TactCompilerConfig } from './tact/config';
+import { TactCompilerConfig, TactLegacyCompilerConfig } from './tact/config';
 
 export type HookParams = {
     userData?: any;
@@ -39,4 +39,11 @@ export type CommonCompilerConfig = {
     postCompileHook?: (code: Cell, params: HookParams) => Promise<void>;
 };
 
-export type CompilerConfig = (TactCompilerConfig | FuncCompilerConfig | TolkCompilerConfig) & CommonCompilerConfig;
+export type CompilableConfig = (TactLegacyCompilerConfig | FuncCompilerConfig | TolkCompilerConfig) &
+    CommonCompilerConfig;
+
+export type CompilerConfig = TactCompilerConfig | CompilableConfig;
+
+export function isCompilableConfig(config: CompilerConfig): config is CompilableConfig {
+    return 'lang' in config;
+}
