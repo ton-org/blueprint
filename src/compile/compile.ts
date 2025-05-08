@@ -1,18 +1,15 @@
-import {
-    compileFunc,
-    CompilerConfig as FuncCompilerConfig,
-    compilerVersion,
-    SourcesArray,
-} from '@ton-community/func-js';
-import { existsSync, readFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import path from 'path';
+
 import { Cell } from '@ton/core';
-import { BUILD_DIR, COMPILABLES_DIR, TACT_ROOT_CONFIG, WRAPPERS_DIR } from '../paths';
-import { CompilerConfig, TactCompilerConfig } from './CompilerConfig';
-import * as Tact from '@tact-lang/compiler';
-import { OverwritableVirtualFileSystem } from './OverwritableVirtualFileSystem';
+
+import { COMPILABLES_DIR, WRAPPERS_DIR } from '../paths';
+import { CompilerConfig } from './CompilerConfig';
 import { getConfig } from '../config/utils';
-import { TolkCompilerConfig, runTolkCompiler, getTolkCompilerVersion } from '@ton/tolk-js';
+
+import { doCompileFunc, FuncCompileResult, getFuncVersion, DoCompileFunConfig } from './func/compile.func';
+import { doCompileTact, TactCompileResult, getTactVersion } from './tact/compile.tact';
+import { doCompileTolk, TolkCompileResult, getTolkVersion } from './tolk/compile.tolk';
 
 export async function getCompilablesDirectory(): Promise<string> {
     const config = await getConfig();
@@ -22,8 +19,6 @@ export async function getCompilablesDirectory(): Promise<string> {
 
     return WRAPPERS_DIR;
 }
-
-export const COMPILE_END = '.compile.ts';
 
 export function extractCompileConfig(path: string): CompilerConfig {
     const mod = require(path);
@@ -35,152 +30,12 @@ export function extractCompileConfig(path: string): CompilerConfig {
     return mod.compile;
 }
 
+export const COMPILE_END = '.compile.ts';
+
 export async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
     const compilablesDirectory = await getCompilablesDirectory();
 
     return extractCompileConfig(path.join(compilablesDirectory, name + COMPILE_END));
-}
-
-export type SourceSnapshot = {
-    filename: string;
-    content: string;
-};
-
-export type TolkCompileResult = {
-    lang: 'tolk';
-    stderr: string;
-    fiftCode: string;
-    code: Cell;
-    snapshot: SourceSnapshot[];
-    version: string;
-};
-
-async function doCompileTolk(config: TolkCompilerConfig): Promise<TolkCompileResult> {
-    const res = await runTolkCompiler(config);
-
-    if (res.status === 'error') {
-        throw new Error(res.message);
-    }
-
-    return {
-        lang: 'tolk',
-        stderr: res.stderr,
-        fiftCode: res.fiftCode,
-        code: Cell.fromBase64(res.codeBoc64),
-        snapshot: res.sourcesSnapshot.map((e) => ({
-            filename: e.filename,
-            content: e.contents,
-        })),
-        version: await getTolkCompilerVersion(),
-    };
-}
-
-export type FuncCompileResult = {
-    lang: 'func';
-    fiftCode: string;
-    code: Cell;
-    targets: string[];
-    snapshot: SourceSnapshot[];
-    version: string;
-};
-
-async function doCompileFunc(config: FuncCompilerConfig): Promise<FuncCompileResult> {
-    const cr = await compileFunc(config);
-
-    if (cr.status === 'error') throw new Error(cr.message);
-
-    let targets: string[] = [];
-    if (config.targets) {
-        targets = config.targets;
-    } else if (Array.isArray(config.sources)) {
-        targets = config.sources.map((s) => s.filename);
-    }
-
-    return {
-        lang: 'func',
-        fiftCode: cr.fiftCode,
-        code: Cell.fromBase64(cr.codeBoc),
-        targets,
-        snapshot: cr.snapshot,
-        version: (await compilerVersion()).funcVersion,
-    };
-}
-
-export type TactCompileResult = {
-    lang: 'tact';
-    fs: Map<string, Buffer>;
-    code: Cell;
-    options?: TactCompilerConfig['options'];
-    version: string;
-};
-
-function findTactBoc(fs: Map<string, Buffer>): Cell {
-    let buf: Buffer | undefined = undefined;
-    for (const [k, v] of fs) {
-        if (k.endsWith('.code.boc')) {
-            buf = v;
-            break;
-        }
-    }
-    if (buf === undefined) {
-        throw new Error('Could not find boc in tact compilation result');
-    }
-    return Cell.fromBoc(buf)[0];
-}
-
-function getRootTactConfigOptionsForContract(name: string): TactCompilerConfig['options'] | undefined {
-    if (!existsSync(TACT_ROOT_CONFIG)) {
-        return undefined;
-    }
-
-    const config: Tact.Config = Tact.parseConfig(readFileSync(TACT_ROOT_CONFIG).toString());
-
-    for (const project of config.projects) {
-        if (project.name === name) {
-            return project.options;
-        }
-    }
-
-    return undefined;
-}
-
-
-export async function getTactVersion() {
-    const packageJsonPath = require.resolve('@tact-lang/compiler/package.json');
-    const { version } = await import(packageJsonPath);
-    return version;
-}
-
-async function doCompileTact(config: TactCompilerConfig, name: string): Promise<TactCompileResult> {
-    const rootConfigOptions = getRootTactConfigOptionsForContract(name);
-    const fs = new OverwritableVirtualFileSystem(process.cwd());
-
-    const buildConfig = {
-        config: {
-            name: 'tact',
-            path: config.target,
-            output: path.join(BUILD_DIR, name),
-            options: { ...rootConfigOptions, ...config.options },
-        },
-        stdlib: Tact.createVirtualFileSystem("@stdlib", Tact.stdLibFiles),
-        project: fs,
-    };
-
-    const res = await Tact.build(buildConfig);
-
-    if (!res.ok) {
-        throw new Error('Could not compile tact');
-    }
-
-    const code = findTactBoc(fs.overwrites);
-
-    return {
-        lang: 'tact',
-        fs: fs.overwrites,
-        code,
-        options: buildConfig.config.options,
-        version: await getTactVersion(),
-    };
 }
 
 export type CompileResult = TactCompileResult | FuncCompileResult | TolkCompileResult;
@@ -204,7 +59,7 @@ async function doCompileInner(name: string, config: CompilerConfig): Promise<Com
         targets: config.targets,
         sources: config.sources ?? ((path: string) => readFileSync(path).toString()),
         optLevel: config.optLevel,
-    } as FuncCompilerConfig);
+    } as DoCompileFunConfig);
 }
 
 function getCompilerName(config: CompilerConfig): 'tact' | 'tolk' | 'func' {
@@ -216,16 +71,19 @@ async function getCompilerVersion(config: CompilerConfig): Promise<string> {
         return getTactVersion();
     }
     if (config.lang === 'tolk') {
-        return getTolkCompilerVersion();
+        return getTolkVersion();
     }
-    return (await compilerVersion()).funcVersion;
+    return getFuncVersion();
 }
 
-export async function getCompilerOptions(config: CompilerConfig): Promise<{ lang: 'tact' | 'tolk' | 'func', version: string }> {
+export async function getCompilerOptions(config: CompilerConfig): Promise<{
+    lang: 'tact' | 'tolk' | 'func';
+    version: string;
+}> {
     return {
         lang: getCompilerName(config),
         version: await getCompilerVersion(config),
-    }
+    };
 }
 
 export async function doCompile(name: string, opts?: CompileOpts): Promise<CompileResult> {
@@ -247,7 +105,6 @@ export async function doCompile(name: string, opts?: CompileOpts): Promise<Compi
 
     return res;
 }
-
 
 /**
  * Optional compilation settings, including user data passed to hooks
@@ -287,3 +144,5 @@ export async function compile(name: string, opts?: CompileOpts): Promise<Cell> {
 
     return result.code;
 }
+
+export type { TactCompileResult, TolkCompileResult, FuncCompileResult };
