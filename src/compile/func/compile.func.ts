@@ -38,4 +38,4 @@ export async function doCompileFunc(config: CompilerConfig): Promise<FuncCompile
     };
 }
 
-export { CompilerConfig as DoCompileFunConfig } from '@ton-community/func-js';
+export { CompilerConfig as DoCompileFuncConfig } from '@ton-community/func-js';
