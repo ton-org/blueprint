@@ -7,7 +7,7 @@ import { COMPILABLES_DIR, WRAPPERS_DIR } from '../paths';
 import { CompilableConfig, CompilerConfig, isCompilableConfig } from './CompilerConfig';
 import { getConfig } from '../config/utils';
 
-import { doCompileFunc, FuncCompileResult, getFuncVersion, DoCompileFunConfig } from './func/compile.func';
+import { doCompileFunc, FuncCompileResult, getFuncVersion, DoCompileFuncConfig } from './func/compile.func';
 import { doCompileTact, TactCompileResult, getTactVersion, getTactConfigForContract } from './tact/compile.tact';
 import { doCompileTolk, TolkCompileResult, getTolkVersion } from './tolk/compile.tolk';
 
@@ -66,7 +66,7 @@ async function doCompileInner(name: string, config: CompilerConfig): Promise<Com
             targets: config.targets,
             sources: config.sources ?? ((path: string) => readFileSync(path).toString()),
             optLevel: config.optLevel,
-        } as DoCompileFunConfig);
+        } as DoCompileFuncConfig);
     }
 
     return await doCompileTact(config, name);
