@@ -18,6 +18,7 @@ A development environment for TON blockchain for writing, testing, and deploying
   * [Running the test suites](#running-the-test-suites)
   * [Running scripts](#running-scripts)
     * [Deploying contracts](#deploying-contracts)
+    * [Using Mnemonic Provider](#using-mnemonic-provider)
 * [Contract development](#contract-development)
   * [Creating contracts](#creating-contracts)
   * [Writing contract code](#writing-contract-code)
@@ -118,9 +119,9 @@ export async function run(provider: NetworkProvider) {
 3. Non-interactive: &nbsp; `npx/yarn blueprint run deploy<CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
   * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
 
-#### Using Mnemonic Provider for Deployments
+#### Using Mnemonic Provider
 
-To deploy contracts using a wallet by mnemonic authentication, you need to configure your environment and use the `Mnemonic` option when running scripts.
+To run scripts using a wallet by mnemonic authentication, you need to configure your environment and use the `Mnemonic` option when running scripts.
 
 Start by adding the following environment variables to your `.env` file:
 * **`WALLET_MNEMONIC`**: Your wallet's mnemonic phrase (space-separated words).
