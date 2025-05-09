@@ -462,6 +462,7 @@ class NetworkProviderBuilder {
             };
 
             tc = new TonClient({
+                timeout: this.config?.requestTimeout,
                 endpoint:
                     network === 'mainnet'
                         ? 'https://toncenter.com/api/v2/jsonRPC'
