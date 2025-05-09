@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added `tact.config.json` support
+- Added support for wallet ids in mnemonic provider. Environment variables `WALLET_ID` or `SUBWALLET_NUMBER` should be set, or a .env file with them must be present in order for it to be usable
 
 ## [0.32.1] - 2025-05-06
 

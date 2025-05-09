@@ -16,8 +16,8 @@ A development environment for TON blockchain for writing, testing, and deploying
   * [Directory structure](#directory-structure)
   * [Building contracts](#building-contracts)
   * [Running the test suites](#running-the-test-suites)
-  * [Deploying contracts](#deploying-contracts)
-  * [Custom scripts](#custom-scripts)
+  * [Running scripts](#running-scripts)
+    * [Deploying contracts](#deploying-contracts)
 * [Contract development](#contract-development)
   * [Creating contracts](#creating-contracts)
   * [Writing contract code](#writing-contract-code)
@@ -100,14 +100,7 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 
 > Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
 
-### Deploying contracts
-
-1. You need a deployment script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
-2. Run interactive: &nbsp;&nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
-3. Non-interactive: &nbsp; `npx/yarn blueprint run deploy<CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
-   * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
-
-### Custom scripts
+### Running scripts
 
 1. Custom scripts should be located in `scripts` folder
 2. Script file must have exported function `run`
@@ -117,6 +110,27 @@ export async function run(provider: NetworkProvider) {
 }
 ```
 3. Script can be run using `npx/yarn blueprint run <SCRIPT>` command
+
+#### Deploying contracts
+
+1. You need a deployment script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
+2. Run interactive: &nbsp;&nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
+3. Non-interactive: &nbsp; `npx/yarn blueprint run deploy<CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
+  * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
+
+#### Using Mnemonic Provider for Deployments
+
+To deploy contracts using a wallet by mnemonic authentication, you need to configure your environment and use the `Mnemonic` option when running scripts.
+
+Start by adding the following environment variables to your `.env` file:
+* **`WALLET_MNEMONIC`**: Your wallet's mnemonic phrase (space-separated words).
+* **`WALLET_VERSION`**: The wallet contract version to use. Supported versions: `v1r1`, `v1r2`, `v1r3`, `v2r1`, `v2r2`, `v3r1`, `v3r2`, `v4`, `v5r1`.
+
+**Optional variables:**
+* **`WALLET_ID`**: The wallet ID (required for versions below `v5r1`).
+* **`SUBWALLET_NUMBER`**: The subwallet number used to build the wallet ID (required for `v5r1` wallets).
+
+Once your environment is set up, you can use the mnemonic wallet for deployment with the appropriate configuration.
 
 ### Updating FunC version
 
