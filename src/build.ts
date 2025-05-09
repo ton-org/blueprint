@@ -90,7 +90,6 @@ export async function buildAll(ui?: UIProvider) {
 }
 
 export async function buildAllTact(ui?: UIProvider) {
-    // TODO: when tact config fully remove legacy tact contracts
     const legacyTactContract = (await findCompiles())
         .filter((file) => extractCompilableConfig(file.path).lang === 'tact')
         .map((file) => file.name);
