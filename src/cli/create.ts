@@ -1,15 +1,18 @@
-import { Args, extractFirstArg, Runner } from './Runner';
-import { lstat, mkdir, open, readdir, readFile } from 'fs/promises';
 import path from 'path';
+import { lstat, mkdir, open, readdir, readFile } from 'fs/promises';
+import arg from 'arg';
+
+import { Project } from '@tact-lang/compiler';
+
+import { getConfig } from '../config/utils';
+import { getRootTactConfig, TactConfig, updateRootTactConfig } from '../config/tact.config';
+
+import { Args, extractFirstArg, Runner } from './Runner';
 import { executeTemplate, TEMPLATES_DIR } from '../template';
 import { isPascalCase, selectOption, toPascalCase } from '../utils';
-import arg from 'arg';
 import { UIProvider } from '../ui/UIProvider';
 import { buildOne } from '../build';
-import { getConfig } from '../config/utils';
 import { helpArgs, helpMessages, templateTypes } from './constants';
-import { getRootTactConfig, TactConfig, updateRootTactConfig } from '../config/tact.config';
-import { Project } from '@tact-lang/compiler/dist/config/config';
 
 function toSnakeCase(v: string): string {
     const r = v.replace(/[A-Z]/g, (sub) => '_' + sub.toLowerCase());
