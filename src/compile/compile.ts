@@ -27,6 +27,8 @@ export function extractCompilableConfig(path: string): CompilableConfig {
         throw new Error(`Object 'compile' is missing`);
     }
 
+    mod.compile.lang ??= 'func';
+
     return mod.compile;
 }
 
