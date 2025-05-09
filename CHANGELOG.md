@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added `tact.config.json` support
+- Add command `blueprint snapshot` for run tests with metric collected and write new bench report
+- Add option `blueprint test --gas-report` for run tests and compare with the last snapshot metric
 
 ## [0.32.1] - 2025-05-06
 

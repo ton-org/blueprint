@@ -27,9 +27,19 @@ export const templateTypes: { name: string; value: string }[] = [
     },
 ];
 
-export const helpArgs = { '--help': Boolean };
+export const helpArgs = { '--help': Boolean, '-h': Boolean };
 
-const availableCommands = ['create', 'run', 'build', 'set', 'help', 'test', 'verify', 'convert'];
+const availableCommands = [
+    'snapshot',
+    'create',
+    'run',
+    'build',
+    'set',
+    'help',
+    'test',
+    'verify',
+    'convert',
+];
 
 export const helpMessages = {
     help: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('help')} [${chalk.yellow('command')}]
@@ -81,9 +91,15 @@ ${chalk.cyan('--all')} - builds all available contracts.`,
 ${chalk.bold('Available keys:')}
 - ${chalk.cyan('func')} - overrides @ton-community/func-js-bin version.`,
 
-    test: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('test')} [...args]
+    test: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('test')} ${chalk.yellow('[--gas-report|-g ...args]')}
+Runs ${chalk.green('npm test [...args]')}, which by default executes ${chalk.green('jest')}
 
-Runs ${chalk.green('npm test [...args]')}, which by default executes ${chalk.green('jest')}.`,
+${chalk.bold('Options:')}
+  ${chalk.cyan('--gas-report')}, ${chalk.cyan('-g')} - Run tests and compare with the last snapshot metric collected on running of tests
+
+${chalk.bold('SEE ALSO')}
+  ${chalk.cyan('blueprint snapshot')}
+`,
 
     verify: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('verify')} ${chalk.yellow('[contract name]')} ${chalk.gray('[flags]')}
 
