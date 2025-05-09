@@ -1,7 +1,7 @@
 {{name}}.spec.ts
 import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
 import { toNano } from '@ton/core';
-import { {{name}} } from '../wrappers/{{name}}';
+import { {{name}} } from '../build/{{name}}/{{name}}_{{name}}';
 import '@ton/test-utils';
 
 describe('{{name}}', () => {

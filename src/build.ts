@@ -1,9 +1,15 @@
 import path from 'path';
 import fs from 'fs/promises';
-import { doCompile, extractCompileConfig, getCompilerConfigForContract, getCompilerOptions } from './compile/compile';
+import {
+    doCompile,
+    extractCompilableConfig,
+    getCompilerConfigForContract,
+    getCompilerOptions,
+} from './compile/compile';
 import { BUILD_DIR } from './paths';
 import { UIProvider } from './ui/UIProvider';
-import { findCompiles } from './utils';
+import { findCompiles, findContracts } from './utils';
+import { getRootTactConfig } from './config/tact.config';
 
 export async function buildOne(contract: string, ui?: UIProvider) {
     ui?.write(`Build script running, compiling ${contract}`);
@@ -73,18 +79,26 @@ export async function buildOne(contract: string, ui?: UIProvider) {
     }
 }
 
-export async function buildAll(ui?: UIProvider) {
-    for (const file of await findCompiles()) {
-        await buildOne(file.name, ui);
+async function buildContracts(contracts: string[], ui?: UIProvider) {
+    for (const contract of contracts) {
+        await buildOne(contract, ui);
     }
 }
 
+export async function buildAll(ui?: UIProvider) {
+    await buildContracts(await findContracts(), ui);
+}
+
 export async function buildAllTact(ui?: UIProvider) {
-    // TODO: when tact config introduced rewrite to use it
-    for (const file of await findCompiles()) {
-        const config = extractCompileConfig(file.path);
-        if (config.lang === 'tact') {
-            await buildOne(file.name, ui);
-        }
-    }
+    const legacyTactContract = (await findCompiles())
+        .filter((file) => extractCompilableConfig(file.path).lang === 'tact')
+        .map((file) => file.name);
+
+    const tactConfig = getRootTactConfig();
+    const tactContracts = [
+        ...legacyTactContract,
+        ...tactConfig.projects.map((project) => project.name),
+    ];
+
+    await buildContracts(tactContracts, ui);
 }

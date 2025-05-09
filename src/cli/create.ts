@@ -1,12 +1,17 @@
-import { Args, extractFirstArg, Runner } from './Runner';
-import { lstat, mkdir, open, readdir, readFile } from 'fs/promises';
 import path from 'path';
-import { executeTemplate, TEMPLATES_DIR } from '../template';
-import {isPascalCase, selectOption, toPascalCase} from '../utils';
+import { lstat, mkdir, open, readdir, readFile } from 'fs/promises';
 import arg from 'arg';
+
+import { Project } from '@tact-lang/compiler';
+
+import { getConfig } from '../config/utils';
+import { getRootTactConfig, TactConfig, updateRootTactConfig } from '../config/tact.config';
+
+import { Args, extractFirstArg, Runner } from './Runner';
+import { executeTemplate, TEMPLATES_DIR } from '../template';
+import { isPascalCase, selectOption, toPascalCase } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
 import { buildOne } from '../build';
-import { getConfig } from '../config/utils';
 import { helpArgs, helpMessages, templateTypes } from './constants';
 
 function toSnakeCase(v: string): string {
@@ -49,6 +54,32 @@ async function createFiles(templatePath: string, realPath: string, replaces: { [
     }
 }
 
+function getFileExtension(lang: string): string {
+    if (lang === 'func') return 'fc';
+    if (lang === 'tolk') return 'tolk';
+    return 'tact';
+}
+
+function addToTactConfig(contractName: string, contractPath: string) {
+    const tactConfig = getRootTactConfig();
+    const projectConfig = {
+        name: contractName,
+        path: contractPath,
+        output: path.join('build', contractName),
+        options: {
+            debug: false,
+            external: false,
+        },
+        mode: 'full',
+    } satisfies Project;
+
+    const newConfig: TactConfig = {
+        ...tactConfig,
+        projects: [...tactConfig.projects, projectConfig],
+    };
+    updateRootTactConfig(newConfig);
+}
+
 export const create: Runner = async (args: Args, ui: UIProvider) => {
     const localArgs = arg({
         '--type': String,
@@ -59,9 +90,7 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
         return;
     }
 
-    const name =
-        extractFirstArg(localArgs)
-            ?? await ui.input('Contract name (PascalCase)');
+    const name = extractFirstArg(localArgs) ?? (await ui.input('Contract name (PascalCase)'));
 
     if (name.length === 0) throw new Error(`Cannot create a contract with an empty name`);
 
@@ -84,22 +113,24 @@ export const create: Runner = async (args: Args, ui: UIProvider) => {
     const [lang, template] = which.split('-');
 
     const snakeName = toSnakeCase(name);
+    const contractPath = path.join('contracts', snakeName + '.' + getFileExtension(lang));
 
     const replaces = {
         name,
         loweredName: name.substring(0, 1).toLowerCase() + name.substring(1),
         snakeName,
-        contractPath: 'contracts/' + snakeName + '.' + (lang === 'func' ? 'fc' : (lang === 'tolk' ? 'tolk' : 'tact')),
+        contractPath,
     };
 
     const config = await getConfig();
 
-    const commonPath = config?.separateCompilables ? 'common' : 'not-separated-common';
-
-    await createFiles(path.join(TEMPLATES_DIR, lang, commonPath), process.cwd(), replaces);
-    await createFiles(path.join(TEMPLATES_DIR, lang, template), process.cwd(), replaces);
-
     if (lang === 'tact') {
+        await createFiles(path.join(TEMPLATES_DIR, lang, template), process.cwd(), replaces);
+        addToTactConfig(name, contractPath);
         await buildOne(name, ui);
+    } else {
+        const commonPath = config?.separateCompilables ? 'common' : 'not-separated-common';
+        await createFiles(path.join(TEMPLATES_DIR, lang, commonPath), process.cwd(), replaces);
+        await createFiles(path.join(TEMPLATES_DIR, lang, template), process.cwd(), replaces);
     }
 };

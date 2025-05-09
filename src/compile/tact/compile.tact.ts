@@ -1,19 +1,19 @@
-import { existsSync, readFileSync } from 'fs';
 import path from 'path';
 
-import { Config, parseConfig, createVirtualFileSystem, build, stdLibFiles } from '@tact-lang/compiler';
+import { createVirtualFileSystem, build, stdLibFiles, Options, Project } from '@tact-lang/compiler';
 import { Cell } from '@ton/core';
 
-import { BUILD_DIR, TACT_ROOT_CONFIG } from '../../paths';
+import { BUILD_DIR } from '../../paths';
 
 import { OverwritableVirtualFileSystem } from './OverwritableVirtualFileSystem';
-import { TactCompilerConfig } from './config';
+import { TactCompilerConfig, TactLegacyCompilerConfig } from './config';
+import { getRootTactConfig } from '../../config/tact.config';
 
 export type TactCompileResult = {
     lang: 'tact';
     fs: Map<string, Buffer>;
     code: Cell;
-    options?: TactCompilerConfig['options'];
+    options?: Options;
     version: string;
 };
 
@@ -31,20 +31,28 @@ function findTactBoc(fs: Map<string, Buffer>): Cell {
     return Cell.fromBoc(buf)[0];
 }
 
-function getRootTactConfigOptionsForContract(name: string): TactCompilerConfig['options'] | undefined {
-    if (!existsSync(TACT_ROOT_CONFIG)) {
-        return undefined;
+export function getTactConfigForContract(name: string): TactCompilerConfig | undefined {
+    const config = getRootTactConfig();
+    const projects = config.projects.filter((project) => project.name === name);
+    if (!projects.length) {
+        return;
     }
 
-    const config: Config = parseConfig(readFileSync(TACT_ROOT_CONFIG).toString());
+    return {
+        ...config,
+        projects,
+    };
+}
 
-    for (const project of config.projects) {
-        if (project.name === name) {
-            return project.options;
-        }
+function getRootTactConfigOptionsForContract(name: string): Options | undefined {
+    const filteredTactConfig = getTactConfigForContract(name);
+
+    if (!filteredTactConfig) {
+        return;
     }
+    const [project] = filteredTactConfig.projects;
 
-    return undefined;
+    return project?.options;
 }
 
 export async function getTactVersion() {
@@ -53,23 +61,42 @@ export async function getTactVersion() {
     return version;
 }
 
-export async function doCompileTact(config: TactCompilerConfig, name: string): Promise<TactCompileResult> {
-    const rootConfigOptions = getRootTactConfigOptionsForContract(name);
-    const fs = new OverwritableVirtualFileSystem(process.cwd());
+function isLegacyTactConfig(config: TactLegacyCompilerConfig | TactCompilerConfig): config is TactLegacyCompilerConfig {
+    return 'lang' in config;
+}
 
-    const buildConfig = {
-        config: {
+function getTactBuildProject(config: TactLegacyCompilerConfig | TactCompilerConfig, name: string): Project {
+    if (isLegacyTactConfig(config)) {
+        const rootConfigOptions = getRootTactConfigOptionsForContract(name);
+        return {
             name: 'tact',
             path: config.target,
             output: path.join(BUILD_DIR, name),
             options: { ...rootConfigOptions, ...config.options },
-        },
+        };
+    }
+
+    const project = config.projects.find((p) => p.name === name);
+    if (!project) {
+        throw new Error(`Config for project ${name} not found`);
+    }
+
+    return project;
+}
+
+export async function doCompileTact(
+    config: TactLegacyCompilerConfig | TactCompilerConfig,
+    name: string,
+): Promise<TactCompileResult> {
+    const fs = new OverwritableVirtualFileSystem(process.cwd());
+
+    const buildConfig = {
+        config: getTactBuildProject(config, name),
         stdlib: createVirtualFileSystem('@stdlib', stdLibFiles),
         project: fs,
     };
 
     const res = await build(buildConfig);
-
     if (!res.ok) {
         throw new Error('Could not compile tact');
     }
