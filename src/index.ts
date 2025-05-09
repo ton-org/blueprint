@@ -17,4 +17,5 @@ export { Args, Runner, RunnerContext } from './cli/Runner';
 export { PluginRunner, Plugin } from './config/Plugin';
 export { CustomNetwork } from './config/CustomNetwork';
 export { buildOne, buildAll, buildAllTact } from './build';
-export {SourceSnapshot} from "./compile/SourceSnapshot";
+export { SourceSnapshot } from "./compile/SourceSnapshot";
+export { getCompilerConfigForContract } from './compile/compile';
