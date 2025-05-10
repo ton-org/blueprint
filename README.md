@@ -226,7 +226,7 @@ npx blueprint verify --custom https://toncenter.com/api/v2/jsonRPC --custom-vers
 
 ## Contributors
 
-Special thanks to [@qdevstudio](https://t.me/qdevstudio) for their logo for blueprint.
+Special thanks to [protectronnews](https://t.me/protectronnews) for their logo for blueprint.
 
 ## License
 
