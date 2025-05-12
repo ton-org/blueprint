@@ -104,7 +104,7 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 
 1. You need a deployment script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
 2. Run interactive: &nbsp;&nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
-3. Non-interactive: &nbsp; `npx/yarn blueprint run deploy<CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
+3. Non-interactive: &nbsp; `npx/yarn blueprint run deploy<CONTRACT> --<NETWORK> --<DEPLOY_METHOD> [...deployArgs]`
    * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
 
 ### Custom scripts
@@ -112,11 +112,11 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 1. Custom scripts should be located in `scripts` folder
 2. Script file must have exported function `run`
 ```ts
-export async function run(provider: NetworkProvider) {
+export async function run(provider: NetworkProvider, args: string[]) {
   // 
 }
 ```
-3. Script can be run using `npx/yarn blueprint run <SCRIPT>` command
+3. Script can be run using `npx/yarn blueprint run <SCRIPT> [arg1, arg2, ...]` command
 
 ### Updating FunC version
 
