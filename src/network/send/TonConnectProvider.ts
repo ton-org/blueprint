@@ -4,6 +4,7 @@ import { Address, beginCell, Cell, StateInit, storeStateInit } from '@ton/core';
 import { SendProvider } from './SendProvider';
 import { Storage } from '../storage/Storage';
 import { UIProvider } from '../../ui/UIProvider';
+import { Network } from '../Network';
 
 class TonConnectStorage implements IStorage {
     #inner: Storage;
@@ -30,21 +31,24 @@ function isRemote(walletInfo: WalletInfo): walletInfo is WalletInfoRemote {
 export class TonConnectProvider implements SendProvider {
     #connector: TonConnect;
     #ui: UIProvider;
+    #network: Network;
 
-    constructor(storage: Storage, ui: UIProvider) {
+    constructor(storage: Storage, ui: UIProvider, network: Network) {
         this.#connector = new TonConnect({
             storage: new TonConnectStorage(storage),
             manifestUrl:
                 'https://raw.githubusercontent.com/ton-org/blueprint/main/tonconnect/manifest.json',
         });
         this.#ui = ui;
+        this.#network = network;
     }
 
     async connect(): Promise<void> {
         await this.connectWallet();
-        this.#ui.write(
-            `Connected to wallet at address: ${Address.parse(this.#connector.wallet!.account.address).toString()}\n`,
-        );
+        const formattedAddress = Address.parse(this.#connector.wallet!.account.address).toString({
+            testOnly: this.#network === 'testnet',
+        });
+        this.#ui.write(`Connected to wallet at address: ${formattedAddress}\n`);
     }
 
     address(): Address | undefined {

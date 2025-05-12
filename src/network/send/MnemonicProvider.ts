@@ -71,12 +71,15 @@ export class MnemonicProvider implements SendProvider {
     #secretKey: Buffer;
     #client: BlueprintTonClient;
     #ui: UIProvider;
+    #network: Network;
 
     constructor(params: MnemonicProviderParams) {
         if (!(params.version in wallets)) {
             throw new Error(`Unknown wallet version ${params.version}`);
         }
         this.#client = params.client;
+        this.#network = params.network;
+
         const kp = keyPairFromSecretKey(params.secretKey);
 
         this.#wallet = openContract<WalletInstance>(this.createWallet(params, kp), (params) =>
@@ -116,7 +119,8 @@ export class MnemonicProvider implements SendProvider {
     }
 
     async connect() {
-        this.#ui.write(`Connected to wallet at address: ${this.address()}\n`);
+        const formattedAddress = this.address().toString({ testOnly: this.#network === 'testnet' });
+        this.#ui.write(`Connected to wallet at address: ${formattedAddress}\n`);
     }
 
     async sendTransaction(
