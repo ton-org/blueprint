@@ -47,6 +47,7 @@ export class TonConnectProvider implements SendProvider {
         await this.connectWallet();
         const formattedAddress = Address.parse(this.#connector.wallet!.account.address).toString({
             testOnly: this.#network === 'testnet',
+            bounceable: false,
         });
         this.#ui.write(`Connected to wallet at address: ${formattedAddress}\n`);
     }

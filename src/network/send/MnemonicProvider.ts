@@ -119,7 +119,7 @@ export class MnemonicProvider implements SendProvider {
     }
 
     async connect() {
-        const formattedAddress = this.address().toString({ testOnly: this.#network === 'testnet' });
+        const formattedAddress = this.address().toString({ testOnly: this.#network === 'testnet', bounceable: false });
         this.#ui.write(`Connected to wallet at address: ${formattedAddress}\n`);
     }
 
