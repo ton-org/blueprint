@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added `tact.config.json` support
 
+### Changed
+
+- Updated FunC stdlib
+
 ## [0.32.1] - 2025-05-06
 
 ### Fixed
