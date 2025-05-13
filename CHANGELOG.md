@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added
+
+- Add command `blueprint snapshot` for run tests with metric collected and write new bench report
+- Add option `blueprint test --gas-report` for run tests and compare with the last snapshot metric
+
 ## [0.33.0] - 2025-05-16
 
 ### Added
