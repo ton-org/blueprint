@@ -29,7 +29,7 @@ export const templateTypes: { name: string; value: string }[] = [
 
 export const helpArgs = { '--help': Boolean };
 
-const availableCommands = ['create', 'run', 'build', 'set', 'help', 'test', 'verify', 'convert'];
+const availableCommands = ['create', 'run', 'build', 'set', 'help', 'test', 'verify', 'convert', 'rename'];
 
 export const helpMessages = {
     help: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('help')} [${chalk.yellow('command')}]
@@ -99,7 +99,7 @@ ${chalk.cyan('--custom-type')} - network type (mainnet, testnet)`,
     convert: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('convert')} ${chalk.yellow('[path to build script]')}
 
 Attempts to convert a legacy bash build script to a Blueprint compile wrapper.`,
-    rename: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('rename')} ${chalk.yellow('Old contract name (PascalCase)')} ${chalk.yellow('New contract name (PascalCase)')}
+    rename: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('rename')} ${chalk.yellow('[old contract name (PascalCase)]')} ${chalk.yellow('[new contract name (PascalCase)]')}
 
 Renames contract by exact matching in wrappers, scripts, tests and contracts folders.`,
 

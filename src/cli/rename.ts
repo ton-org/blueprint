@@ -29,29 +29,47 @@ export function renameExactIfRequired(
     return { isRenamed, newValue: renamedString };
 }
 
-async function renameContentInFile(filePath: string, replaces: Record<string, string>) {
-    const content = await fs.readFile(filePath, 'utf8');
-    const { isRenamed, newValue } = renameExactIfRequired(content, replaces);
-    if (isRenamed) {
-        await fs.writeFile(filePath, newValue, 'utf8');
-    }
-}
+// Introduced this class to prevent fails in the middle of renaming, when the part is renamed and part is not
+class RenameContext {
+    constructor(readonly replaces: Record<string, string>) {}
 
-export async function renameExactOccurrencesInDirectory(directory: string, replaces: Record<string, string>) {
-    const dir = await fs.readdir(directory, { recursive: true, withFileTypes: true });
-    await Promise.all(
-        dir.map(async (dir) => {
-            if (!dir.isFile()) {
-                return;
-            }
-            const filePath = path.join(dir.path, dir.name);
-            await renameContentInFile(filePath, replaces);
-            const pathRenameResult = renameExactIfRequired(dir.name, replaces);
-            if (pathRenameResult.isRenamed) {
-                await fs.rename(path.join(dir.path, dir.name), path.join(dir.path, pathRenameResult.newValue));
-            }
-        }),
-    );
+    private effects: (() => Promise<void>)[] = [];
+
+    async prepareRenameExactOccurrencesInDirectory(directory: string) {
+        if (!existsSync(directory)) {
+            return;
+        }
+        const dir = await fs.readdir(directory, { recursive: true, withFileTypes: true });
+        await Promise.all(
+            dir.map(async (dir) => {
+                if (!dir.isFile()) {
+                    return;
+                }
+                const filePath = path.join(dir.path, dir.name);
+                await this.prepareRenameContentInFile(filePath);
+                const pathRenameResult = renameExactIfRequired(dir.name, this.replaces);
+                if (pathRenameResult.isRenamed) {
+                    this.effects.push(() =>
+                        fs.rename(path.join(dir.path, dir.name), path.join(dir.path, pathRenameResult.newValue)),
+                    );
+                }
+            }),
+        );
+    }
+
+    async prepareRenameContentInFile(filePath: string) {
+        const content = await fs.readFile(filePath, 'utf8');
+        const { isRenamed, newValue } = renameExactIfRequired(content, this.replaces);
+        if (isRenamed) {
+            this.effects.push(() => fs.writeFile(filePath, newValue, 'utf8'));
+        }
+    }
+
+    async applyEffects() {
+        for (const effect of this.effects) {
+            await effect();
+        }
+    }
 }
 
 export const rename: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {
@@ -76,6 +94,7 @@ export const rename: Runner = async (args: Args, ui: UIProvider, context: Runner
         toSnakeCase,
         toLowerCase,
         (name) => `deploy${name}`,
+        (name) => `${name}_${name}`,
         (name) => `increment${name}`,
         (name) => `${toLowerCase(name)}ConfigToCell`,
         (name) => `${name}Config`,
@@ -83,10 +102,17 @@ export const rename: Runner = async (args: Args, ui: UIProvider, context: Runner
 
     const replaces = Object.fromEntries(modifiers.map((modifier) => [modifier(oldName), modifier(newName)]));
 
+    ui.setActionPrompt('Renaming in progress...');
+
+    const renameContext = new RenameContext(replaces);
     for (const directory of [SCRIPTS_DIR, WRAPPERS_DIR, CONTRACTS_DIR, TESTS_DIR, COMPILABLES_DIR]) {
-        if (existsSync(directory)) {
-            await renameExactOccurrencesInDirectory(directory, replaces);
-        }
+        await renameContext.prepareRenameExactOccurrencesInDirectory(directory);
     }
-    await renameContentInFile(TACT_ROOT_CONFIG, replaces);
+    if (existsSync(TACT_ROOT_CONFIG)) {
+        await renameContext.prepareRenameContentInFile(TACT_ROOT_CONFIG);
+    }
+    await renameContext.applyEffects();
+
+    ui.clearActionPrompt();
+    ui.write('Contract successfully renamed!');
 };
