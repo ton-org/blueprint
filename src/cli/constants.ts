@@ -32,6 +32,7 @@ export const helpArgs = { '--help': Boolean };
 const availableCommands = ['create', 'run', 'build', 'set', 'help', 'test', 'verify', 'convert'];
 
 export const helpMessages = {
+    rename: '', // TODO
     help: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('help')} [${chalk.yellow('command')}]
 
 Displays this message if no command is specified, or displays detailed help for the specified command.
