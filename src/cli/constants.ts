@@ -99,4 +99,5 @@ ${chalk.cyan('--custom-type')} - network type (mainnet, testnet)`,
     convert: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('convert')} ${chalk.yellow('[path to build script]')}
 
 Attempts to convert a legacy bash build script to a Blueprint compile wrapper.`,
+    pack: ``, // TODO
 };
