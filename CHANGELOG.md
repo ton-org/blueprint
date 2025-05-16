@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `tact.config.json` support
 - Added tolk v0.12 support
 
+### Fixed
+
+- Fix tact counter deploy script error
+
 ## [0.32.1] - 2025-05-06
 
 ### Fixed
