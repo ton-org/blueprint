@@ -22,6 +22,7 @@ A development environment for TON blockchain for writing, testing, and deploying
   * [Creating contracts](#creating-contracts)
   * [Writing contract code](#writing-contract-code)
   * [Testing contracts](#testing-contracts)
+  * [Benchmark contracts](#benchmark-contracts)
 * [Configuration](#configuration)
   * [Plugins](#plugins)
   * [Custom network](#custom-network)
@@ -161,6 +162,13 @@ Before developing, make sure that your current working directory is located in t
 2. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to interact with the contract
 
 > Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
+
+### Benchmark contracts
+
+1. Run `npx blueprint snapshot [--label=<comment>|-l=<comment>]` for collect metric of contracts and save snapshot
+2. Run `npx blueprint test --gas-report|-g` for make compare current metric and saved snapshot
+
+> Learn more about collect metric from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#benchmark-contracts).
 
 ## Configuration
 
