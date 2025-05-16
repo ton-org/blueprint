@@ -7,7 +7,7 @@ import { Args, Runner, RunnerContext } from './Runner';
 import { UIProvider } from '../ui/UIProvider';
 import { helpArgs, helpMessages } from './constants';
 import { buildAll } from '../build';
-import { BUILD_DIR, PACKAGE_JSON, TYPESCRIPT_CONFIG } from '../paths';
+import { BUILD_DIR, PACKAGE_ENTRY_POINT, PACKAGE_JSON, TYPESCRIPT_CONFIG } from '../paths';
 import { distinct, findContracts } from '../utils';
 import { getCompilerConfigForContract } from '../compile/compile';
 import { isCompilableConfig } from '../compile/CompilerConfig';
@@ -25,56 +25,50 @@ async function correctTsConfig() {
         compilerOptions: {
             ...tsConfig.compilerOptions,
             outDir: 'dist',
-            module: 'commonjs',
             declaration: true,
             esModuleInterop: true,
         },
-        include: distinct([...(tsConfig.include ?? []), 'wrappers/**/*', 'build/**/*']),
-        exclude: distinct([...(tsConfig.exclude ?? []), '**/*.compile.ts']),
+        include: distinct([...(tsConfig.include ?? []), 'package.ts']),
     };
 
     await fs.writeFile(TYPESCRIPT_CONFIG, JSON.stringify(newConfig, null, 2), 'utf8');
 }
 
-async function resolveContract(contract: string) {
+async function getContractWrapperPath(contract: string) {
     const config = await getCompilerConfigForContract(contract);
-
     if (isCompilableConfig(config)) {
-        const buildArtifactPath = path.join(BUILD_DIR, `${contract}.compiled.json`);
-        const buildArtifact = JSON.parse(await fs.readFile(buildArtifactPath, 'utf8'));
-        await fs.appendFile(path.join('dist', 'wrappers', `${contract}.d.ts`), `export declare const code: Cell;`);
-        await fs.appendFile(
-            path.join('dist', 'wrappers', `${contract}.js`),
-            `exports.code = Cell.fromHex("${buildArtifact.hex}");\n`,
-        );
-
-        const basePath = `./dist/wrappers/${contract}`;
-        return {
-            types: `${basePath}.d.ts`,
-            import: `${basePath}.js`,
-        };
+        return `./wrappers/${contract}`;
     } else {
         const contractConfig = extractContractConfig(config, contract);
-
-        return {
-            types: `./dist/${contractConfig.output}/${contract}_${contract}.d.ts`,
-            import: `./dist/${contractConfig.output}/${contract}_${contract}.js`,
-        };
+        return `./${contractConfig.output}/${contract}_${contract}`;
     }
 }
 
-async function correctPackageJson() {
+async function generatePackageEntryPoint() {
     const contracts = await findContracts();
-    const exports: Record<string, { import: string; types: string }> = {};
+
+    let entryPoint = 'import { Cell } from "@ton/core"\n';
+
     for (const contract of contracts) {
-        exports[`./${contract}`] = await resolveContract(contract);
+        const wrapperPath = await getContractWrapperPath(contract);
+
+        entryPoint += `import * as ${contract} from '${wrapperPath}';\n`;
+        entryPoint += `export { ${contract} };\n`;
+
+        const buildArtifactPath = path.join(BUILD_DIR, `${contract}.compiled.json`);
+        const buildArtifact = JSON.parse(await fs.readFile(buildArtifactPath, 'utf8'));
+        entryPoint += `export const ${contract}Code = Cell.fromHex("${buildArtifact.hex}");\n`;
     }
 
+    await fs.writeFile(PACKAGE_ENTRY_POINT, entryPoint, 'utf8');
+}
+
+async function correctPackageJson() {
     const packageJson = JSON.parse(await fs.readFile(PACKAGE_JSON, 'utf8'));
     const newPackageJson = {
         ...packageJson,
+        main: 'dist/package.js',
         files: ['dist/**/*'],
-        exports,
     };
 
     await fs.writeFile(PACKAGE_JSON, JSON.stringify(newPackageJson, null, 2));
@@ -87,17 +81,21 @@ export const pack: Runner = async (args: Args, ui: UIProvider, context: RunnerCo
         return;
     }
 
-    ui.write('Building contracts...');
+    ui.write('🔨 Building contracts... Please wait...');
     await buildAll(ui);
 
-    ui.write('Updating tsconfig.json...');
+    ui.write('📦 Generating package entry point...');
+    await generatePackageEntryPoint();
+
+    ui.write('🛠️ Updating tsconfig.json...');
     await correctTsConfig();
 
-    ui.write('Building package...');
+    ui.write('🏗️ Building package...');
+    await fs.rm(path.join(process.cwd(), 'dist'), { recursive: true, force: true });
     execSync(`tsc`, { stdio: 'inherit' });
 
-    ui.write('Updating package.json...');
+    ui.write('📝 Updating package.json...');
     await correctPackageJson();
 
-    ui.write('Package packed successfully and ready to publish.');
+    ui.write('🎉 Package is ready and packed successfully! You can now publish it 🚀');
 };

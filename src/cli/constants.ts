@@ -29,7 +29,7 @@ export const templateTypes: { name: string; value: string }[] = [
 
 export const helpArgs = { '--help': Boolean };
 
-const availableCommands = ['create', 'run', 'build', 'set', 'help', 'test', 'verify', 'convert'];
+const availableCommands = ['create', 'run', 'build', 'set', 'help', 'test', 'verify', 'convert', 'pack'];
 
 export const helpMessages = {
     help: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('help')} [${chalk.yellow('command')}]
@@ -99,5 +99,7 @@ ${chalk.cyan('--custom-type')} - network type (mainnet, testnet)`,
     convert: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('convert')} ${chalk.yellow('[path to build script]')}
 
 Attempts to convert a legacy bash build script to a Blueprint compile wrapper.`,
-    pack: ``, // TODO
+    pack: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('pack')}
+
+Building and preparing a publish-ready package of contract wrappers.`
 };
