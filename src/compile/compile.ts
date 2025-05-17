@@ -75,6 +75,7 @@ async function doCompileInner(name: string, config: CompilerConfig): Promise<Com
                 fsReadCallback: (path) => readFileSync(path).toString(),
                 optimizationLevel: config.optimizationLevel,
                 withStackComments: config.withStackComments,
+                withSrcLineComments: config.withSrcLineComments,
                 experimentalOptions: config.experimentalOptions,
             });
         }
