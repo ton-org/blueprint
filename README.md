@@ -224,6 +224,18 @@ npx blueprint verify --custom https://toncenter.com/api/v2/jsonRPC --custom-vers
 ```
 (or similarly using the config), however custom type MUST be specified as either `mainnet` or `testnet` when verifying.
 
+### Request timeout
+
+You can optionally configure how long HTTP requests should wait before timing out using the `requestTimout` field. This can be especially useful when working with unstable or slow networks.
+
+```typescript
+import { Config } from '@ton/blueprint';
+
+export const config: Config = {
+    requestTimeout: 10000, // 10 seconds
+};
+```
+
 ## Contributors
 
 Special thanks to [@qdevstudio](https://t.me/qdevstudio) for their logo for blueprint.
