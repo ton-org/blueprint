@@ -1,4 +1,4 @@
-import { Args, Runner, RunnerContext } from './Runner';
+import { Args, extractFirstArg, Runner, RunnerContext } from './Runner';
 import { createNetworkProvider, argSpec } from '../network/createNetworkProvider';
 import { findScripts, selectFile } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
@@ -14,7 +14,7 @@ export const run: Runner = async (args: Args, ui: UIProvider, context: RunnerCon
 
     const { module: mod } = await selectFile(await findScripts(), {
         ui,
-        hint: localArgs._.length > 1 && localArgs._[1].length > 0 ? localArgs._[1] : undefined,
+        hint: extractFirstArg(localArgs),
     });
 
     if (typeof mod.run !== 'function') {
