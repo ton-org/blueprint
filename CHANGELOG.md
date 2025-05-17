@@ -9,8 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added `tact.config.json` support
 - Added the `rename` command which renames contracts
+
+## [0.33.1] - 2025-05-16
+
+### Fixed
+
+- Fixed blueprint build command failure in Tact projects
+
+## [0.33.0] - 2025-05-16
+
+### Added
+
+- Added `tact.config.json` support
+- Added tolk v0.12 support
+
+### Fixed
+
+- Fixed tact counter deploy script error
 
 ## [0.32.1] - 2025-05-06
 

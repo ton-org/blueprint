@@ -12,17 +12,17 @@ global ctxCounter: int;
 
 // loadData populates storage variables from persistent storage
 fun loadData() {
-    var ds = getContractData().beginParse();
+    var ds = contract.getData().beginParse();
 
     ctxID = ds.loadUint(32);
     ctxCounter = ds.loadUint(32);
 
-    ds.assertEndOfSlice();
+    ds.assertEnd();
 }
 
 // saveData stores storage variables as a cell into persistent storage
 fun saveData() {
-    setContractData(
+    contract.setData(
         beginCell()
         .storeUint(ctxID, 32)
         .storeUint(ctxCounter, 32)
@@ -32,7 +32,7 @@ fun saveData() {
 
 // onInternalMessage is the main entrypoint; it's called when a contract receives an internal message from other contracts
 fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: slice) {
-    if (msgBody.isEndOfSlice()) { // ignore all empty messages
+    if (msgBody.isEnd()) { // ignore all empty messages
         return;
     }
 
