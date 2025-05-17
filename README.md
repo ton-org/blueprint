@@ -162,6 +162,30 @@ Before developing, make sure that your current working directory is located in t
 
 > Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
 
+### Publishing Wrapper Code
+
+1. **Authenticate with npm**
+Run `npm adduser` to log in to your npm account.
+> 📝 **Note:** You can learn more about advanced authentication in the official npm docs:
+> [npmrc – Auth-Related Configuration](https://docs.npmjs.com/cli/v9/configuring-npm/npmrc#auth-related-configuration)
+
+2. **Update the package version**
+Edit the `version` field in your `package.json` to reflect the new release (e.g., `1.0.1` → `1.0.2`).
+
+3. **Build the package**
+Run the following command to generate and bundle your contract wrappers:
+
+```bash
+blueprint pack
+```
+
+4. **Publish to npm**
+Push the package to the public npm registry:
+
+```bash
+npm publish --access public
+```
+
 ## Configuration
 
 A config may be created in order to control some of blueprint's features. If a config is needed, create a `blueprint.config.ts` file in the root of your project with something like this:
