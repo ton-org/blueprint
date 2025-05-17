@@ -3,11 +3,14 @@ import { SendProvider } from './SendProvider';
 import { tonDeepLink } from '../../utils';
 import qrcode from 'qrcode-terminal';
 import { UIProvider } from '../../ui/UIProvider';
+import { Network } from '../Network';
 
 export class DeeplinkProvider implements SendProvider {
+    #network: Network;
     #ui: UIProvider;
 
-    constructor(ui: UIProvider) {
+    constructor(network: Network, ui: UIProvider) {
+        this.#network = network;
         this.#ui = ui;
     }
 
@@ -21,6 +24,7 @@ export class DeeplinkProvider implements SendProvider {
             amount,
             payload,
             stateInit ? beginCell().storeWritable(storeStateInit(stateInit)).endCell() : undefined,
+            this.#network === 'testnet',
         );
 
         try {
