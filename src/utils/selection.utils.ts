@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs/promises';
+import { existsSync } from 'fs';
 
 import { UIProvider } from '../ui/UIProvider';
 import { getRootTactConfig } from '../config/tact.config';
@@ -11,6 +12,10 @@ import { distinct } from './object.utils';
 
 export const findCompiles = async (directory?: string): Promise<File[]> => {
     const dir = directory ?? (await getCompilablesDirectory());
+    if (!existsSync(dir)) {
+        return [];
+    }
+
     const files = await fs.readdir(dir);
     const compilables = files.filter((file) => file.endsWith(COMPILE_END));
     return compilables.map((file) => ({
