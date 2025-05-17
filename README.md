@@ -140,6 +140,12 @@ Before developing, make sure that your current working directory is located in t
 2. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `func-empty`, `tolk-empty`, `tact-empty`, `func-counter`, `tolk-counter`, `tact-counter`)
    * Example: `yarn blueprint create MyNewContract --type func-empty`
 
+### Renaming contracts
+
+1. Run interactive: &nbsp;&nbsp; `npx blueprint rename` &nbsp; or &nbsp; `yarn blueprint rename`
+2. Non-interactive: &nbsp; `npx/yarn blueprint rename <OLD_NAME> <NEW_NAME>`
+  * Example: `yarn blueprint rename OldContract NewContract `
+
 ### Writing contract code
 
 #### FunC
