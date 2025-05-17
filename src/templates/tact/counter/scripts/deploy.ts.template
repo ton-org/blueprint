@@ -1,6 +1,6 @@
 deploy{{name}}.ts
 import { toNano } from '@ton/core';
-import { {{name}} } from '../wrappers/{{name}}';
+import { {{name}} } from '../build/{{name}}/{{name}}_{{name}}';
 import { NetworkProvider } from '@ton/blueprint';
 
 export async function run(provider: NetworkProvider) {
