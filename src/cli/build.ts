@@ -1,13 +1,11 @@
-import { Args, Runner } from './Runner';
+import arg from 'arg';
+
 import { findContracts, selectOption } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
-import arg from 'arg';
 import { buildAll, buildOne } from '../build';
-import { helpArgs, helpMessages } from './constants';
 
-export function extractBuildFile(args: Args) {
-    return args._.length > 1 && args._[1].length > 0 ? args._[1] : undefined;
-}
+import { helpArgs, helpMessages } from './constants';
+import { Args, extractFirstArg, Runner } from './Runner';
 
 export async function selectContract(ui: UIProvider, hint?: string ): Promise<string>;
 export async function selectContract(ui: UIProvider, hint?: string, withAllOption?: boolean): Promise<string | string[]>;
@@ -51,7 +49,7 @@ export const build: Runner = async (args: Args, ui: UIProvider) => {
     if (localArgs['--all']) {
         await buildAll(ui);
     } else {
-        const selected = await selectContract(ui, extractBuildFile(args), true);
+        const selected = await selectContract(ui, extractFirstArg(args), true);
 
         if (typeof selected === 'string') {
             await buildOne(selected, ui);

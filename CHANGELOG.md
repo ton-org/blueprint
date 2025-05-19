@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added docs for script args
 - Added the `rename` command which renames contracts
 - Added the `pack` command which builds and prepares a publish-ready package of contracts' wrappers
 

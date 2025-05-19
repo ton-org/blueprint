@@ -6,8 +6,8 @@ export const argSpec = {};
 
 export type Args = arg.Result<typeof argSpec>;
 
-function extractPosArg(args: Args, position: number) {
-    return args._.length > position && args._[position].trim().length > 0 ? args._[position].trim() : undefined
+export function extractPosArg(args: Args, position: number) {
+    return args._.length > position && args._[position].trim().length > 0 ? args._[position].trim() : undefined;
 }
 
 export function extractSecondArg(args: Args) {
