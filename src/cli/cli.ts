@@ -12,6 +12,7 @@ import { test } from './test';
 import { verify } from './verify';
 import { convert } from './convert';
 import { additionalHelpMessages, buildHelpMessage, help } from './help';
+import { pack } from "./pack";
 import { InquirerUIProvider } from '../ui/InquirerUIProvider';
 import { argSpec, Runner, RunnerContext } from './Runner';
 import { getConfig } from '../config/utils';
@@ -27,6 +28,7 @@ const runners: Record<string, Runner> = {
     verify,
     convert,
     rename,
+    pack,
 };
 
 async function main() {
