@@ -201,10 +201,12 @@ class NetworkProviderImpl implements NetworkProvider {
             this.#ui.setActionPrompt(`Awaiting contract deployment... [Attempt ${i}/${attempts}]`);
             const isDeployed = await this.isContractDeployed(address);
             if (isDeployed) {
+                const formattedAddress = address.toString({ testOnly: this.#network === 'testnet' });
+
                 this.#ui.clearActionPrompt();
-                this.#ui.write(`Contract deployed at address ${address.toString()}`);
+                this.#ui.write(`Contract deployed at address ${formattedAddress}`);
                 this.#ui.write(
-                    `You can view it at ${getExplorerLink(address.toString(), this.#network, this.#explorer)}`,
+                    `You can view it at ${getExplorerLink(formattedAddress, this.#network, this.#explorer)}`,
                 );
                 return;
             }
@@ -363,14 +365,14 @@ class NetworkProviderBuilder {
         let provider: SendProvider;
         switch (deployUsing) {
             case 'deeplink':
-                provider = new DeeplinkProvider(this.ui);
+                provider = new DeeplinkProvider(network, this.ui);
                 break;
             case 'tonconnect':
                 if (network === 'custom') throw new Error('Tonkeeper cannot work with custom network.');
-                provider = new TonConnectProvider(new FSStorage(storagePath), this.ui);
+                provider = new TonConnectProvider(new FSStorage(storagePath), this.ui, network);
                 break;
             case 'mnemonic':
-                provider = await createMnemonicProvider(client, network,  this.ui);
+                provider = await createMnemonicProvider(client, network, this.ui);
                 break;
             default:
                 throw new Error('Unknown deploy option');
