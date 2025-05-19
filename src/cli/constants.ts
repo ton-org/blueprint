@@ -29,7 +29,7 @@ export const templateTypes: { name: string; value: string }[] = [
 
 export const helpArgs = { '--help': Boolean };
 
-const availableCommands = ['create', 'run', 'build', 'set', 'help', 'test', 'verify', 'convert'];
+const availableCommands = ['create', 'run', 'build', 'set', 'help', 'test', 'verify', 'convert', 'rename', 'pack'];
 
 export const helpMessages = {
     help: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('help')} [${chalk.yellow('command')}]
@@ -54,7 +54,7 @@ ${chalk.cyan('--type')} <type> - specifies the template type to use when creatin
 ${chalk.bold('List of available types:')}
 ${templateTypes.map((t) => `${chalk.cyan(t.value)} - ${t.name}`).join('\n')}`,
 
-    run: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('run')} ${chalk.yellow('[script name]')} ${chalk.gray('[flags]')}
+    run: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('run')} ${chalk.yellow('[script name]')} ${chalk.gray('[flags]')} ${chalk.gray('[...args]')}
 
 Runs a script from the scripts directory.
 
@@ -67,7 +67,12 @@ ${chalk.cyan('--custom-version')} - API version (v2, v4)
 ${chalk.cyan('--custom-key')} - API key (v2 only)
 ${chalk.cyan('--custom-type')} - network type (custom, mainnet, testnet)
 ${chalk.cyan('--tonconnect')}, ${chalk.cyan('--deeplink')}, ${chalk.cyan('--mnemonic')} - deployer options
-${chalk.cyan('--tonscan')}, ${chalk.cyan('--tonviewer')}, ${chalk.cyan('--toncx')}, ${chalk.cyan('--dton')} - explorer (default: tonviewer)`,
+${chalk.cyan('--tonscan')}, ${chalk.cyan('--tonviewer')}, ${chalk.cyan('--toncx')}, ${chalk.cyan('--dton')} - explorer (default: tonviewer)
+${chalk.gray('[...args]')} (array of strings, optional) - Arguments passed directly to the script.
+                            
+${chalk.bold('Examples:')}
+blueprint run ${chalk.yellow('deployCounter')} ${chalk.cyan('--testnet')} ${chalk.cyan('--tonconnect')}
+blueprint run ${chalk.yellow('incrementCounter')} ${chalk.cyan('--testnet')} ${chalk.cyan('--tonconnect')} ${chalk.gray('0.05 1')}`,
 
     build: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('build')} ${chalk.yellow('[contract name]')} ${chalk.gray('[flags]')}
 
@@ -99,4 +104,13 @@ ${chalk.cyan('--custom-type')} - network type (mainnet, testnet)`,
     convert: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('convert')} ${chalk.yellow('[path to build script]')}
 
 Attempts to convert a legacy bash build script to a Blueprint compile wrapper.`,
+    rename: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('rename')} ${chalk.yellow('[old contract name (PascalCase)]')} ${chalk.yellow('[new contract name (PascalCase)]')}
+
+Renames contract by exact matching in wrappers, scripts, tests and contracts folders.`,
+    pack: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('pack')}
+
+Builds and prepares a publish-ready package of contract wrappers.
+
+${chalk.bold('Flags:')}
+${chalk.cyan('--no-warn')}, ${chalk.cyan('-n')} - ignore warnings about modifying tsconfig.json, package.json, and removing the dist directory.`,
 };

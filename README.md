@@ -101,16 +101,23 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 
 > Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
 
+### Deploying contracts
+
+1. You need a deployment script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
+2. Run interactive: &nbsp;&nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
+3. Non-interactive: &nbsp; `npx/yarn blueprint run deploy<CONTRACT> --<NETWORK> --<DEPLOY_METHOD> [...deployArgs]`
+   * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
+
 ### Running scripts
 
 1. Custom scripts should be located in `scripts` folder
 2. Script file must have exported function `run`
 ```ts
-export async function run(provider: NetworkProvider) {
+export async function run(provider: NetworkProvider, args: string[]) {
   // 
 }
 ```
-3. Script can be run using `npx/yarn blueprint run <SCRIPT>` command
+3. Script can be run using `npx/yarn blueprint run <SCRIPT> [arg1, arg2, ...]` command
 
 #### Deploying contracts
 
@@ -155,6 +162,12 @@ Before developing, make sure that your current working directory is located in t
 2. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `func-empty`, `tolk-empty`, `tact-empty`, `func-counter`, `tolk-counter`, `tact-counter`)
    * Example: `yarn blueprint create MyNewContract --type func-empty`
 
+### Renaming contracts
+
+1. Run interactive: &nbsp;&nbsp; `npx blueprint rename` &nbsp; or &nbsp; `yarn blueprint rename`
+2. Non-interactive: &nbsp; `npx/yarn blueprint rename <OLD_NAME> <NEW_NAME>`
+  * Example: `yarn blueprint rename OldContract NewContract `
+
 ### Writing contract code
 
 #### FunC
@@ -176,6 +189,30 @@ Before developing, make sure that your current working directory is located in t
 2. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to interact with the contract
 
 > Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
+
+### Publishing Wrapper Code
+
+1. **Authenticate with npm**
+Run `npm adduser` to log in to your npm account.
+> 📝 **Note:** You can learn more about advanced authentication in the official npm docs:
+> [npmrc – Auth-Related Configuration](https://docs.npmjs.com/cli/v9/configuring-npm/npmrc#auth-related-configuration)
+
+2. **Update the package version**
+Edit the `version` field in your `package.json` to reflect the new release (e.g., `1.0.1` → `1.0.2`).
+
+3. **Build the package**
+Run the following command to generate and bundle your contract wrappers:
+
+```bash
+blueprint pack
+```
+
+4. **Publish to npm**
+Push the package to the public npm registry:
+
+```bash
+npm publish --access public
+```
 
 ## Configuration
 
