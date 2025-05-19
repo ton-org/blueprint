@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Exported `getCompilerConfigForContract` function for plugin support
 - Added request timout configuration
 - Added docs for script args
 - Added the `rename` command which renames contracts

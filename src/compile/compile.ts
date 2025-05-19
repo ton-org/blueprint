@@ -34,7 +34,22 @@ export function extractCompilableConfig(path: string): CompilableConfig {
 
 export const COMPILE_END = '.compile.ts';
 
-// contracts in tact.config.json and .compile.ts may overlap. In this case configuration from tact.config.json would be taken
+/**
+ * Retrieves the compiler configuration for a specific contract.
+ *
+ * This function checks if a Tact configuration exists for the given contract
+ * `tact.config.json`. If found, it returns that configuration. Otherwise, it falls back
+ * to loading and extracting the `.compile.ts` configuration file from the appropriate
+ * compilables directory (`compilables/` or `wrappers/`).
+ *
+ * @param {string} name - The name of the contract
+ *
+ * @throws Error Throws if configuration is invalid or not found.
+ *
+ * @example
+ * const config = await getCompilerConfigForContract('MyContract');
+ * console.log('Compiler config:', config);
+ */
 export async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
     const tactConfig = getTactConfigForContract(name);
     if (tactConfig) {
