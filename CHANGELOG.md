@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix address format in testnet
 
+### Changed
+
+- Updated FunC stdlib
+
 ## [0.33.1] - 2025-05-16
 
 ### Fixed
@@ -34,10 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed tact counter deploy script error
-
-### Changed
-
-- Updated FunC stdlib
 
 ## [0.32.1] - 2025-05-06
 
