@@ -231,8 +231,8 @@ npm publish --access public
 
 ### Benchmark contracts
 
-1. Run `npx blueprint snapshot [--label=<comment>|-l=<comment>]` for collect metric of contracts and save snapshot
-2. Run `npx blueprint test --gas-report|-g` for make compare current metric and saved snapshot
+1. Run `npx blueprint snapshot [--label=<comment>|-l <comment>]` to collect metrics of contracts and save snapshot
+2. Run `npx blueprint test --gas-report|-g` to compare current metrics and saved snapshot
 
 > Learn more about collect metric from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#benchmark-contracts).
 

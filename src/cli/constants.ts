@@ -102,7 +102,7 @@ ${chalk.bold('Available keys:')}
 Runs ${chalk.green('npm test [...args]')}, which by default executes ${chalk.green('jest')}
 
 ${chalk.bold('Options:')}
-  ${chalk.cyan('--gas-report')}, ${chalk.cyan('-g')} - Run tests and compare with the last snapshot metric collected on running of tests
+  ${chalk.cyan('--gas-report')}, ${chalk.cyan('-g')} - Run tests and compare with the last snapshot's metrics
 
 ${chalk.bold('SEE ALSO')}
   ${chalk.cyan('blueprint snapshot')}
@@ -135,7 +135,7 @@ ${chalk.cyan('--no-warn')}, ${chalk.cyan('-n')} - ignore warnings about modifyin
       '[--label=<comment>|-l=<comment>]',
     )}
 
-Run with gas usage and cells sizes collected and write new snapshot
+Run with gas usage and cells' sizes collected and write a new snapshot
 
 ${chalk.bold('SEE ALSO')}
   ${chalk.cyan('blueprint test --gas-report')}`,

@@ -15,8 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added the `rename` command which renames contracts
 - Added the `pack` command which builds and prepares a publish-ready package of contracts' wrappers
 - Added support for wallet IDs in mnemonic provider. Environment variables `WALLET_ID` or `SUBWALLET_NUMBER` should be set, or a .env file with them must be present in order for it to be usable
-- Add command `blueprint snapshot` for run tests with metric collected and write new bench report
-- Add option `blueprint test --gas-report` for run tests and compare with the last snapshot metric
+- Added command `blueprint snapshot` to run tests with metric collection and write new benchmark report
+- Added option `blueprint test --gas-report` to run tests and compare with the last snapshot metrics
 
 ### Fixed
 
