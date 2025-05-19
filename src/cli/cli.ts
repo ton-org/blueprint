@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import * as dotenv from 'dotenv';
+
 dotenv.config();
 import arg from 'arg';
 import chalk from 'chalk';
@@ -10,11 +11,12 @@ import { set } from './set';
 import { test } from './test';
 import { verify } from './verify';
 import { convert } from './convert';
+import { additionalHelpMessages, buildHelpMessage, help } from './help';
 import { pack } from "./pack";
-import {additionalHelpMessages, buildHelpMessage, help} from './help';
 import { InquirerUIProvider } from '../ui/InquirerUIProvider';
 import { argSpec, Runner, RunnerContext } from './Runner';
 import { getConfig } from '../config/utils';
+import { rename } from './rename';
 
 const runners: Record<string, Runner> = {
     create,
@@ -25,6 +27,7 @@ const runners: Record<string, Runner> = {
     help,
     verify,
     convert,
+    rename,
     pack,
 };
 
@@ -71,7 +74,8 @@ async function main() {
     const runner = effectiveRunners[command];
     if (!runner) {
         console.log(
-            chalk.redBright(`Error: command ${command} not found.`) + `\nRunning ${chalk.cyanBright('blueprint help')}...`
+            chalk.redBright(`Error: command ${command} not found.`) +
+                `\nRunning ${chalk.cyanBright('blueprint help')}...`,
         );
         const helpMessage = buildHelpMessage();
         console.log(helpMessage);

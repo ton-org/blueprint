@@ -6,8 +6,16 @@ export const argSpec = {};
 
 export type Args = arg.Result<typeof argSpec>;
 
+function extractPosArg(args: Args, position: number) {
+    return args._.length > position && args._[position].trim().length > 0 ? args._[position].trim() : undefined
+}
+
+export function extractSecondArg(args: Args) {
+    return extractPosArg(args, 2);
+}
+
 export function extractFirstArg(args: Args) {
-    return args._.length > 1 && args._[1].trim().length > 0 ? args._[1].trim() : undefined
+    return extractPosArg(args, 1);
 }
 
 export type RunnerContext = {
