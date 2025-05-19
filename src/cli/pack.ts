@@ -75,10 +75,26 @@ async function correctPackageJson() {
 }
 
 export const pack: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {
-    const localArgs = arg(helpArgs);
+    const localArgs = arg({
+        '--no-warn': Boolean,
+        '-n': '--no-warn',
+        ...helpArgs,
+    });
     if (localArgs['--help']) {
         ui.write(helpMessages['pack']);
         return;
+    }
+
+    if (!localArgs['--no-warn']) {
+        ui.write(
+            '🚨 WARNING: This command may modify tsconfig.json, package.json, and remove the dist directory. Make sure these files are committed to your repository. If you wish to ignore this warning, use the -n or --no-warn flag.'
+        );
+
+        const answer = await ui.input('Are you sure you want to continue? (y/N)');
+        if (answer.toLowerCase() !== 'y') {
+            ui.write('Aborting...');
+            return;
+        }
     }
 
     ui.write('🔨 Building contracts... Please wait...');

@@ -101,5 +101,8 @@ ${chalk.cyan('--custom-type')} - network type (mainnet, testnet)`,
 Attempts to convert a legacy bash build script to a Blueprint compile wrapper.`,
     pack: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('pack')}
 
-Building and preparing a publish-ready package of contract wrappers.`
+Builds and prepares a publish-ready package of contract wrappers.
+
+${chalk.bold('Flags:')}
+${chalk.cyan('--no-warn')}, ${chalk.cyan('-n')} - ignore warnings about modifying tsconfig.json, package.json, and removing the dist directory.`,
 };
