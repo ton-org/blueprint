@@ -135,8 +135,8 @@ Start by adding the following environment variables to your `.env` file:
 * **`WALLET_VERSION`**: The wallet contract version to use. Supported versions: `v1r1`, `v1r2`, `v1r3`, `v2r1`, `v2r2`, `v3r1`, `v3r2`, `v4`, `v5r1`.
 
 **Optional variables:**
-* **`WALLET_ID`**: The wallet ID (required for versions below `v5r1`).
-* **`SUBWALLET_NUMBER`**: The subwallet number used to build the wallet ID (required for `v5r1` wallets).
+* **`WALLET_ID`**: The wallet ID (can be used with versions below `v5r1`).
+* **`SUBWALLET_NUMBER`**: The subwallet number used to build the wallet ID (can be used with `v5r1` wallets).
 
 Once your environment is set up, you can use the mnemonic wallet for deployment with the appropriate configuration.
 
