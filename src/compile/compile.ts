@@ -10,6 +10,7 @@ import { getConfig } from '../config/utils';
 import { doCompileFunc, FuncCompileResult, getFuncVersion, DoCompileFuncConfig } from './func/compile.func';
 import { doCompileTact, TactCompileResult, getTactVersion, getTactConfigForContract } from './tact/compile.tact';
 import { doCompileTolk, TolkCompileResult, getTolkVersion } from './tolk/compile.tolk';
+import { findCompiles } from '../utils';
 
 export async function getCompilablesDirectory(): Promise<string> {
     const config = await getConfig();
@@ -56,9 +57,13 @@ export async function getCompilerConfigForContract(name: string): Promise<Compil
         return tactConfig;
     }
 
-    const compilablesDirectory = await getCompilablesDirectory();
+    const compilables = await findCompiles();
+    const compilable = compilables.find((c) => c.name === name);
+    if (compilable === undefined) {
+        throw new Error(`Contract '${name}' not found`);
+    }
 
-    return extractCompilableConfig(path.join(compilablesDirectory, name + COMPILE_END));
+    return extractCompilableConfig(compilable.path);
 }
 
 export type CompileResult = TactCompileResult | FuncCompileResult | TolkCompileResult;

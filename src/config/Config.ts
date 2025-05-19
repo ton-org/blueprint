@@ -50,4 +50,11 @@ export interface Config {
      * };
      */
     requestTimeout?: number;
+
+    /**
+     * If true, the `wrappers`/`compilables` directory will be searched recursively for contracts.
+     *
+     * @default false
+     */
+    recursiveWrappers?: boolean;
 }
