@@ -21,9 +21,10 @@ import {
     StateInit,
 } from '@ton/core';
 import { SendProvider } from './SendProvider';
-import { keyPairFromSecretKey } from '@ton/crypto';
+import { KeyPair, keyPairFromSecretKey } from '@ton/crypto';
 import { UIProvider } from '../../ui/UIProvider';
 import { BlueprintTonClient } from '../NetworkProvider';
+import { Network } from '../Network';
 
 interface WalletInstance extends Contract {
     getSeqno(provider: ContractProvider): Promise<number>;
@@ -40,13 +41,9 @@ interface WalletInstance extends Contract {
     ): Promise<void>;
 }
 
-interface WalletClass {
-    create(args: { workchain: number; publicKey: Buffer }): WalletInstance;
-}
-
 export type WalletVersion = 'v1r1' | 'v1r2' | 'v1r3' | 'v2r1' | 'v2r2' | 'v3r1' | 'v3r2' | 'v4' | 'v5r1';
 
-const wallets: Record<WalletVersion, WalletClass> = {
+const wallets = {
     v1r1: WalletContractV1R1,
     v1r2: WalletContractV1R2,
     v1r3: WalletContractV1R3,
@@ -58,46 +55,71 @@ const wallets: Record<WalletVersion, WalletClass> = {
     v5r1: WalletContractV5R1,
 };
 
+type MnemonicProviderParams = {
+    version: WalletVersion;
+    workchain?: number;
+    walletId?: number;
+    subwalletNumber?: number;
+    secretKey: Buffer;
+    client: BlueprintTonClient;
+    ui: UIProvider;
+    network: Network;
+};
+
 export class MnemonicProvider implements SendProvider {
     #wallet: OpenedContract<WalletInstance>;
     #secretKey: Buffer;
     #client: BlueprintTonClient;
     #ui: UIProvider;
+    #network: Network;
 
-    constructor(params: {
-        version: WalletVersion;
-        workchain?: number;
-        secretKey: Buffer;
-        client: BlueprintTonClient;
-        ui: UIProvider;
-    }) {
+    constructor(params: MnemonicProviderParams) {
         if (!(params.version in wallets)) {
             throw new Error(`Unknown wallet version ${params.version}`);
         }
-
-        const kp = keyPairFromSecretKey(params.secretKey);
         this.#client = params.client;
-        this.#wallet = openContract<WalletInstance>(
-            wallets[params.version].create({
-                workchain: params.workchain ?? 0,
-                publicKey: kp.publicKey,
-            }),
-            (params) =>
-                this.#client.provider(
-                    params.address,
-                    params.init && {
-                        ...params.init,
-                        data: params.init.data ?? undefined,
-                        code: params.init.code ?? undefined,
-                    },
-                ),
+        this.#network = params.network;
+        const kp = keyPairFromSecretKey(params.secretKey);
+
+        this.#wallet = openContract<WalletInstance>(this.createWallet(params, kp), (params) =>
+            this.#client.provider(
+                params.address,
+                params.init && {
+                    ...params.init,
+                    data: params.init.data ?? undefined,
+                    code: params.init.code ?? undefined,
+                },
+            ),
         );
         this.#secretKey = kp.secretKey;
         this.#ui = params.ui;
     }
 
+    private createWallet(params: MnemonicProviderParams, kp: KeyPair): WalletInstance {
+        if (params.version === 'v5r1') {
+            return wallets[params.version].create({
+                publicKey: kp.publicKey,
+                walletId: {
+                    networkGlobalId: params.network === 'testnet' ? -3 : -239, // networkGlobalId: -3 for Testnet, -239 for Mainnet
+                    context: {
+                        workchain: params.workchain ?? 0,
+                        subwalletNumber: params.subwalletNumber ?? 0,
+                        walletVersion: 'v5r1',
+                    },
+                },
+            });
+        }
+
+        return wallets[params.version].create({
+            workchain: params.workchain ?? 0,
+            publicKey: kp.publicKey,
+            walletId: params.walletId,
+        });
+    }
+
     async connect() {
-        this.#ui.write(`Connected to wallet at address: ${this.address()}\n`);
+        const formattedAddress = this.address().toString({ testOnly: this.#network === 'testnet', bounceable: false });
+        this.#ui.write(`Connected to wallet at address: ${formattedAddress}\n`);
     }
 
     async sendTransaction(

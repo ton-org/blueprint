@@ -1,4 +1,4 @@
-import { oneOrZeroOf, sleep, getExplorerLink } from '../utils';
+import { getExplorerLink, oneOrZeroOf, sleep } from '../utils';
 import arg from 'arg';
 import { DeeplinkProvider } from './send/DeeplinkProvider';
 import { TonConnectProvider } from './send/TonConnectProvider';
@@ -31,7 +31,8 @@ import { mnemonicToPrivateKey } from '@ton/crypto';
 import { MnemonicProvider, WalletVersion } from './send/MnemonicProvider';
 import { Config } from '../config/Config';
 import { CustomNetwork } from '../config/CustomNetwork';
-import axios, { AxiosResponse, AxiosAdapter, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import { Network } from './Network';
 
 const INITIAL_DELAY = 400;
 const MAX_ATTEMPTS = 4;
@@ -55,8 +56,6 @@ export const argSpec = {
 };
 
 export type Args = arg.Result<typeof argSpec>;
-
-type Network = 'mainnet' | 'testnet' | 'custom';
 
 type Explorer = 'tonscan' | 'tonviewer' | 'toncx' | 'dton';
 
@@ -202,10 +201,12 @@ class NetworkProviderImpl implements NetworkProvider {
             this.#ui.setActionPrompt(`Awaiting contract deployment... [Attempt ${i}/${attempts}]`);
             const isDeployed = await this.isContractDeployed(address);
             if (isDeployed) {
+                const formattedAddress = address.toString({ testOnly: this.#network === 'testnet' });
+
                 this.#ui.clearActionPrompt();
-                this.#ui.write(`Contract deployed at address ${address.toString()}`);
+                this.#ui.write(`Contract deployed at address ${formattedAddress}`);
                 this.#ui.write(
-                    `You can view it at ${getExplorerLink(address.toString(), this.#network, this.#explorer)}`,
+                    `You can view it at ${getExplorerLink(formattedAddress, this.#network, this.#explorer)}`,
                 );
                 return;
             }
@@ -252,7 +253,15 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 }
 
-async function createMnemonicProvider(client: BlueprintTonClient, ui: UIProvider) {
+function getOptionalNumberEnv(envName: string) {
+    const value = process.env[envName] ? Number(process.env[envName]) : undefined;
+    if (value !== undefined && Number.isNaN(value)) {
+        throw new Error(`Invalid ${envName} provided`);
+    }
+    return value;
+}
+
+async function createMnemonicProvider(client: BlueprintTonClient, network: Network, ui: UIProvider) {
     const mnemonic = process.env.WALLET_MNEMONIC ?? '';
     const walletVersion = process.env.WALLET_VERSION ?? '';
     if (mnemonic.length === 0 || walletVersion.length === 0) {
@@ -260,12 +269,18 @@ async function createMnemonicProvider(client: BlueprintTonClient, ui: UIProvider
             'Mnemonic deployer was chosen, but env variables WALLET_MNEMONIC and WALLET_VERSION are not set',
         );
     }
+    const walletId = getOptionalNumberEnv('WALLET_ID');
+    const subwalletNumber = getOptionalNumberEnv('SUBWALLET_NUMBER');
+
     const keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));
     return new MnemonicProvider({
         version: walletVersion.toLowerCase() as WalletVersion,
         client,
         secretKey: keyPair.secretKey,
         ui,
+        walletId,
+        subwalletNumber,
+        network,
     });
 }
 
@@ -350,14 +365,14 @@ class NetworkProviderBuilder {
         let provider: SendProvider;
         switch (deployUsing) {
             case 'deeplink':
-                provider = new DeeplinkProvider(this.ui);
+                provider = new DeeplinkProvider(network, this.ui);
                 break;
             case 'tonconnect':
                 if (network === 'custom') throw new Error('Tonkeeper cannot work with custom network.');
-                provider = new TonConnectProvider(new FSStorage(storagePath), this.ui);
+                provider = new TonConnectProvider(new FSStorage(storagePath), this.ui, network);
                 break;
             case 'mnemonic':
-                provider = await createMnemonicProvider(client, this.ui);
+                provider = await createMnemonicProvider(client, network, this.ui);
                 break;
             default:
                 throw new Error('Unknown deploy option');
@@ -462,6 +477,7 @@ class NetworkProviderBuilder {
             };
 
             tc = new TonClient({
+                timeout: this.config?.requestTimeout,
                 endpoint:
                     network === 'mainnet'
                         ? 'https://toncenter.com/api/v2/jsonRPC'

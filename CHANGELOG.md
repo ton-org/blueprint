@@ -9,7 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Export `getCompilerConfigForContract` function for plugin support
+- Exported `getCompilerConfigForContract` function for plugin support
+- Added request timout configuration
+- Added docs for script args
+- Added the `rename` command which renames contracts
+- Added the `pack` command which builds and prepares a publish-ready package of contracts' wrappers
+- Added support for wallet IDs in mnemonic provider. Environment variables `WALLET_ID` or `SUBWALLET_NUMBER` should be set, or a .env file with them must be present in order for it to be usable
+
+### Fixed
+
+- Fix address format in testnet
+
+### Changed
+
+- Updated FunC stdlib
 
 ## [0.33.1] - 2025-05-16
 

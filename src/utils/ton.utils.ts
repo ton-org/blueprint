@@ -7,14 +7,16 @@ import { Address, Cell } from '@ton/core';
  * @param {bigint} amount - The amount of nanoTON to send.
  * @param {Cell} [body] - Optional message body as a Cell.
  * @param {Cell} [stateInit] - Optional state init cell for deploying a contract.
+ * @param {boolean} testOnly - Optional flag to determine output address format
  * @returns {string} A URL deep link that can be opened in TON wallets.
  *
  * @example
  * const link = tonDeepLink(myAddress, 10_000_000n); // 0.01 TON
  * // "ton://transfer/..."
  */
-export const tonDeepLink = (address: Address, amount: bigint, body?: Cell, stateInit?: Cell): string =>
+export const tonDeepLink = (address: Address, amount: bigint, body?: Cell, stateInit?: Cell, testOnly?: boolean): string =>
     `ton://transfer/${address.toString({
+        testOnly,
         urlSafe: true,
         bounceable: true,
     })}?amount=${amount.toString()}${body ? '&bin=' + body.toBoc().toString('base64url') : ''}${
