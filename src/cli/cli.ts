@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import arg from 'arg';
 import chalk from 'chalk';
+import { snapshot } from './snapshot';
 import { create } from './create';
 import { run } from './run';
 import { build } from './build';
@@ -29,6 +30,7 @@ const runners: Record<string, Runner> = {
     convert,
     rename,
     pack,
+    snapshot,
 };
 
 async function main() {
