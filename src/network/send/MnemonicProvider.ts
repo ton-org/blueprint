@@ -79,7 +79,6 @@ export class MnemonicProvider implements SendProvider {
         }
         this.#client = params.client;
         this.#network = params.network;
-
         const kp = keyPairFromSecretKey(params.secretKey);
 
         this.#wallet = openContract<WalletInstance>(this.createWallet(params, kp), (params) =>

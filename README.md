@@ -106,11 +106,32 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 1. Custom scripts should be located in `scripts` folder
 2. Script file must have exported function `run`
 ```ts
-export async function run(provider: NetworkProvider) {
+export async function run(provider: NetworkProvider, args: string[]) {
   // 
 }
 ```
-3. Script can be run using `npx/yarn blueprint run <SCRIPT>` command
+3. Script can be run using `npx/yarn blueprint run <SCRIPT> [arg1, arg2, ...]` command
+
+#### Deploying contracts
+
+1. You need a deployment script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
+2. Run interactive: &nbsp;&nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
+3. Non-interactive: &nbsp; `npx/yarn blueprint run deploy<CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
+  * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
+
+#### Using Mnemonic Provider
+
+To run scripts using a wallet by mnemonic authentication, you need to configure your environment and use the `Mnemonic` option when running scripts.
+
+Start by adding the following environment variables to your `.env` file:
+* **`WALLET_MNEMONIC`**: Your wallet's mnemonic phrase (space-separated words).
+* **`WALLET_VERSION`**: The wallet contract version to use. Supported versions: `v1r1`, `v1r2`, `v1r3`, `v2r1`, `v2r2`, `v3r1`, `v3r2`, `v4`, `v5r1`.
+
+**Optional variables:**
+* **`WALLET_ID`**: The wallet ID (can be used with versions below `v5r1`).
+* **`SUBWALLET_NUMBER`**: The subwallet number used to build the wallet ID (can be used with `v5r1` wallets).
+
+Once your environment is set up, you can use the mnemonic wallet for deployment with the appropriate configuration.
 
 #### Deploying contracts
 
@@ -155,6 +176,12 @@ Before developing, make sure that your current working directory is located in t
 2. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `func-empty`, `tolk-empty`, `tact-empty`, `func-counter`, `tolk-counter`, `tact-counter`)
    * Example: `yarn blueprint create MyNewContract --type func-empty`
 
+### Renaming contracts
+
+1. Run interactive: &nbsp;&nbsp; `npx blueprint rename` &nbsp; or &nbsp; `yarn blueprint rename`
+2. Non-interactive: &nbsp; `npx/yarn blueprint rename <OLD_NAME> <NEW_NAME>`
+  * Example: `yarn blueprint rename OldContract NewContract `
+
 ### Writing contract code
 
 #### FunC
@@ -176,6 +203,30 @@ Before developing, make sure that your current working directory is located in t
 2. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to interact with the contract
 
 > Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
+
+### Publishing Wrapper Code
+
+1. **Authenticate with npm**
+Run `npm adduser` to log in to your npm account.
+> 📝 **Note:** You can learn more about advanced authentication in the official npm docs:
+> [npmrc – Auth-Related Configuration](https://docs.npmjs.com/cli/v9/configuring-npm/npmrc#auth-related-configuration)
+
+2. **Update the package version**
+Edit the `version` field in your `package.json` to reflect the new release (e.g., `1.0.1` → `1.0.2`).
+
+3. **Build the package**
+Run the following command to generate and bundle your contract wrappers:
+
+```bash
+blueprint pack
+```
+
+4. **Publish to npm**
+Push the package to the public npm registry:
+
+```bash
+npm publish --access public
+```
 
 ## Configuration
 
