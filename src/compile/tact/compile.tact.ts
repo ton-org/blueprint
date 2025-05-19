@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { createVirtualFileSystem, build, stdLibFiles, Options, Project } from '@tact-lang/compiler';
+import { build, createVirtualFileSystem, Options, Project, stdLibFiles } from '@tact-lang/compiler';
 import { Cell } from '@ton/core';
 
 import { BUILD_DIR } from '../../paths';
@@ -65,6 +65,16 @@ function isLegacyTactConfig(config: TactLegacyCompilerConfig | TactCompilerConfi
     return 'lang' in config;
 }
 
+export function extractContractConfig(config: TactCompilerConfig, name: string): Project {
+    const project = config.projects.find((p) => p.name === name);
+
+    if (!project) {
+        throw new Error(`Config for project ${name} not found`);
+    }
+
+    return project;
+}
+
 function getTactBuildProject(config: TactLegacyCompilerConfig | TactCompilerConfig, name: string): Project {
     if (isLegacyTactConfig(config)) {
         const rootConfigOptions = getRootTactConfigOptionsForContract(name);
@@ -76,12 +86,7 @@ function getTactBuildProject(config: TactLegacyCompilerConfig | TactCompilerConf
         };
     }
 
-    const project = config.projects.find((p) => p.name === name);
-    if (!project) {
-        throw new Error(`Config for project ${name} not found`);
-    }
-
-    return project;
+    return extractContractConfig(config, name);
 }
 
 export async function doCompileTact(
