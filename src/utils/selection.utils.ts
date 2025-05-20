@@ -9,6 +9,7 @@ import { File } from '../types/file';
 
 import { SCRIPTS_DIR } from '../paths';
 import { distinct } from './object.utils';
+import { getConfig } from '../config/utils';
 
 export const findCompiles = async (directory?: string): Promise<File[]> => {
     const dir = directory ?? (await getCompilablesDirectory());
@@ -16,11 +17,11 @@ export const findCompiles = async (directory?: string): Promise<File[]> => {
         return [];
     }
 
-    const files = await fs.readdir(dir);
-    const compilables = files.filter((file) => file.endsWith(COMPILE_END));
+    const files = await fs.readdir(dir, { recursive: (await getConfig())?.recursiveWrappers ?? false, withFileTypes: true });
+    const compilables = files.filter((file) => file.isFile() && file.name.endsWith(COMPILE_END));
     return compilables.map((file) => ({
-        path: path.join(dir, file),
-        name: file.slice(0, file.length - COMPILE_END.length),
+        path: path.join(file.path, file.name),
+        name: file.name.slice(0, file.name.length - COMPILE_END.length),
     }));
 };
 
