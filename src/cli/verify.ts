@@ -24,7 +24,14 @@ type TactCompilerSettings = {
     };
 };
 
-type CompilerSettings = FuncCompilerSettings | TactCompilerSettings;
+type TolkCompilerSettings = {
+    compiler: 'tolk';
+    compilerSettings: {
+        tolkVersion: string;
+    };
+};
+
+type CompilerSettings = FuncCompilerSettings | TolkCompilerSettings | TactCompilerSettings;
 
 type SourceObject = {
     includeInCommand: boolean;
@@ -272,6 +279,27 @@ export const verify: Runner = async (args: Args, ui: UIProvider, context: Runner
             ],
             senderAddress: senderAddress.toString(),
         };
+    } else if (result.lang === 'tolk') {
+        for (const f of result.snapshot) {
+            fd.append(f.filename, new Blob([f.content]), path.basename(f.filename));
+        }
+
+        src = {
+            compiler: 'tolk',
+            compilerSettings: {
+                tolkVersion: result.version,
+            },
+            knownContractAddress: addr,
+            knownContractHash: result.code.hash().toString('base64'),
+            sources: result.snapshot.map((s) => ({
+                includeInCommand: true,
+                isStdLib: false,
+                hasIncludeDirectives: true,
+                isEntrypoint: s === result.snapshot[0],
+                folder: path.dirname(s.filename),
+            })),
+            senderAddress: senderAddress.toString(),
+        };
     } else {
         // future proofing
 
@@ -288,7 +316,7 @@ export const verify: Runner = async (args: Args, ui: UIProvider, context: Runner
 
     const backend = backends[network];
 
-    const sourceRegistry   = networkProvider.open(new SourceRegistry(backend.sourceRegistry));
+    const sourceRegistry = networkProvider.open(new SourceRegistry(backend.sourceRegistry));
     const verifierRegistry = networkProvider.open(new VerifierRegistry(await sourceRegistry.getVerifierRegistry()));
 
     const verifier = (await verifierRegistry.getVerifiers()).find((v) => v.name === backend.id);
