@@ -31,7 +31,6 @@ type TolkCompilerSettings = {
     };
 };
 
-
 type CompilerSettings = FuncCompilerSettings | TolkCompilerSettings | TactCompilerSettings;
 
 type SourceObject = {
@@ -280,7 +279,7 @@ export const verify: Runner = async (args: Args, ui: UIProvider, context: Runner
             ],
             senderAddress: senderAddress.toString(),
         };
-    } else if(result.lang === 'tolk') {
+    } else if (result.lang === 'tolk') {
         for (const f of result.snapshot) {
             fd.append(f.filename, new Blob([f.content]), path.basename(f.filename));
         }
@@ -297,11 +296,11 @@ export const verify: Runner = async (args: Args, ui: UIProvider, context: Runner
                 isStdLib: false,
                 hasIncludeDirectives: true,
                 isEntrypoint: s === result.snapshot[0],
-                folder: path.dirname(s.filename)
+                folder: path.dirname(s.filename),
             })),
-            senderAddress: senderAddress.toString()
-        }
-    }else {
+            senderAddress: senderAddress.toString(),
+        };
+    } else {
         // future proofing
 
         throw new Error('Unsupported language ' + (result as any).lang);
@@ -317,7 +316,7 @@ export const verify: Runner = async (args: Args, ui: UIProvider, context: Runner
 
     const backend = backends[network];
 
-    const sourceRegistry   = networkProvider.open(new SourceRegistry(backend.sourceRegistry));
+    const sourceRegistry = networkProvider.open(new SourceRegistry(backend.sourceRegistry));
     const verifierRegistry = networkProvider.open(new VerifierRegistry(await sourceRegistry.getVerifierRegistry()));
 
     const verifier = (await verifierRegistry.getVerifiers()).find((v) => v.name === backend.id);
