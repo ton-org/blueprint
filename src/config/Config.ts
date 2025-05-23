@@ -57,4 +57,11 @@ export interface Config {
      * @default false
      */
     recursiveWrappers?: boolean;
+
+    /**
+     * Manifest url passed to TonConnect provider.
+     *
+     * @default https://raw.githubusercontent.com/ton-org/blueprint/main/tonconnect/manifest.json
+     */
+    manifestUrl?: string;
 }
