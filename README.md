@@ -126,7 +126,7 @@ To run scripts using a wallet by mnemonic authentication, you need to configure 
 
 Start by adding the following environment variables to your `.env` file:
 * **`WALLET_MNEMONIC`**: Your wallet's mnemonic phrase (space-separated words).
-* **`WALLET_VERSION`**: The wallet contract version to use. Supported versions: `v1r1`, `v1r2`, `v1r3`, `v2r1`, `v2r2`, `v3r1`, `v3r2`, `v4`, `v5r1`.
+* **`WALLET_VERSION`**: The wallet contract version to use. Supported versions: `v1r1`, `v1r2`, `v1r3`, `v2r1`, `v2r2`, `v3r1`, `v3r2`, `v4r1`, `v4r2` (or `v4`), `v5r1`.
 
 **Optional variables:**
 * **`WALLET_ID`**: The wallet ID (can be used with versions below `v5r1`).

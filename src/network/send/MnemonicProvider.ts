@@ -1,15 +1,4 @@
 import {
-    WalletContractV1R1,
-    WalletContractV1R2,
-    WalletContractV1R3,
-    WalletContractV2R1,
-    WalletContractV2R2,
-    WalletContractV3R1,
-    WalletContractV3R2,
-    WalletContractV4,
-    WalletContractV5R1,
-} from '@ton/ton';
-import {
     Address,
     Cell,
     Contract,
@@ -25,6 +14,8 @@ import { KeyPair, keyPairFromSecretKey } from '@ton/crypto';
 import { UIProvider } from '../../ui/UIProvider';
 import { BlueprintTonClient } from '../NetworkProvider';
 import { Network } from '../Network';
+import { Buffer } from 'buffer';
+import {wallets, WalletVersion} from './wallets';
 
 interface WalletInstance extends Contract {
     getSeqno(provider: ContractProvider): Promise<number>;
@@ -40,20 +31,6 @@ interface WalletInstance extends Contract {
         },
     ): Promise<void>;
 }
-
-export type WalletVersion = 'v1r1' | 'v1r2' | 'v1r3' | 'v2r1' | 'v2r2' | 'v3r1' | 'v3r2' | 'v4' | 'v5r1';
-
-const wallets = {
-    v1r1: WalletContractV1R1,
-    v1r2: WalletContractV1R2,
-    v1r3: WalletContractV1R3,
-    v2r1: WalletContractV2R1,
-    v2r2: WalletContractV2R2,
-    v3r1: WalletContractV3R1,
-    v3r2: WalletContractV3R2,
-    v4: WalletContractV4,
-    v5r1: WalletContractV5R1,
-};
 
 type MnemonicProviderParams = {
     version: WalletVersion;
@@ -75,7 +52,7 @@ export class MnemonicProvider implements SendProvider {
 
     constructor(params: MnemonicProviderParams) {
         if (!(params.version in wallets)) {
-            throw new Error(`Unknown wallet version ${params.version}`);
+            throw new Error(`Unknown wallet version ${params.version}, expected one of ${Object.keys(wallets).join(', ')}`);
         }
         this.#client = params.client;
         this.#network = params.network;
