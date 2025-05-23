@@ -28,11 +28,12 @@ import { FSStorage } from './storage/FSStorage';
 import path from 'path';
 import { TEMP_DIR } from '../paths';
 import { mnemonicToPrivateKey } from '@ton/crypto';
-import { MnemonicProvider, WalletVersion } from './send/MnemonicProvider';
+import { MnemonicProvider } from './send/MnemonicProvider';
 import { Config } from '../config/Config';
 import { CustomNetwork } from '../config/CustomNetwork';
 import axios, { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { Network } from './Network';
+import { WalletVersion } from "./send/wallets";
 
 const INITIAL_DELAY = 400;
 const MAX_ATTEMPTS = 4;
