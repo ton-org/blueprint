@@ -310,6 +310,85 @@ export const config: Config = {
 };
 ```
 
+Here is the updated documentation with explanations for the `recursiveWrappers` and `manifestUrl` fields included:
+
+---
+
+### Custom network
+
+A custom network may be specified by using the `--custom` flags, which you can read about by running `blueprint help run`, but it can be tiresome to use these at all times. Instead, to specify a custom network to always be used (unless `--custom` flags are present), add a `network` object to your config:
+
+```typescript
+import { Config } from '@ton/blueprint';
+
+export const config: Config = {
+    network: {
+        endpoint: 'https://toncenter.com/api/v2/jsonRPC',
+        type: 'mainnet',
+        version: 'v2',
+        key: 'YOUR_API_KEY',
+    },
+};
+```
+
+The above config parameters are equivalent to the arguments in the following command:
+
+```bash
+npx blueprint run --custom https://toncenter.com/api/v2/jsonRPC --custom-version v2 --custom-type mainnet --custom-key YOUR_API_KEY
+```
+
+Properties of the `network` object have the same semantics as the `--custom` flags with respective names (see `blueprint help run`).
+
+You can also use custom network to verify contracts, like so:
+
+```bash
+npx blueprint verify --custom https://toncenter.com/api/v2/jsonRPC --custom-version v2 --custom-type mainnet --custom-key YOUR_API_KEY
+```
+
+(or similarly using the config), however custom type MUST be specified as either `mainnet` or `testnet` when verifying.
+
+### Request timeout
+
+You can optionally configure how long HTTP requests should wait before timing out using the `requestTimeout` field. This can be especially useful when working with unstable or slow networks.
+
+```typescript
+import { Config } from '@ton/blueprint';
+
+export const config: Config = {
+    requestTimeout: 10000, // 10 seconds
+};
+```
+
+### Recursive wrappers
+
+You can configure whether the `wrappers` or `compilables` directories should be searched recursively for contracts configs by setting the `recursiveWrappers` field.
+
+```typescript
+import { Config } from '@ton/blueprint';
+
+export const config: Config = {
+    recursiveWrappers: true,
+};
+```
+
+By default, this is set to `false`.
+
+### TonConnect manifest URL
+
+If you're using a TonConnect provider, you can override the default manifest URL by specifying the `manifestUrl` field.
+```typescript
+import { Config } from '@ton/blueprint';
+
+export const config: Config = {
+    manifestUrl: 'https://yourdomain.com/custom-manifest.json',
+};
+```
+
+By default, the manifest URL is set to:
+```
+https://raw.githubusercontent.com/ton-org/blueprint/main/tonconnect/manifest.json
+```
+
 ## Contributors
 
 Special thanks to [@qdevstudio](https://t.me/qdevstudio) for their logo for blueprint.
