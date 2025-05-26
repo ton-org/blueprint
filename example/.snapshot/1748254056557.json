@@ -1,0 +1,403 @@
+{
+  "label": "v1",
+  "createdAt": "2025-05-26T10:07:36.557Z",
+  "items": [
+    {
+      "testName": "Counter should deploy",
+      "address": "EQBGhqLAZseEqRXz4ByFPTGV7SVMlI4hrbs-Sps_Xzx01x8G",
+      "codeHash": "0x61689f0431f0bead3490202a24110f59f58ac3c23f5e4ad4168923eee237287a",
+      "contractName": "Counter",
+      "methodName": "sendDeploy",
+      "receiver": "external-in",
+      "opCode": "0x0",
+      "execute": {
+        "compute": {
+          "type": "vm",
+          "success": true,
+          "gasUsed": 1937,
+          "exitCode": 0,
+          "vmSteps": 50
+        },
+        "action": {
+          "success": true,
+          "totalActions": 1,
+          "skippedActions": 0,
+          "resultCode": 0,
+          "totalActionFees": 1,
+          "totalFwdFees": 1196800,
+          "totalMessageSize": {
+            "cells": 12,
+            "bits": 1603
+          }
+        }
+      },
+      "message": {
+        "in": {
+          "cells": 14,
+          "bits": 1864
+        },
+        "out": {
+          "cells": 13,
+          "bits": 1610
+        }
+      },
+      "state": {
+        "code": {
+          "cells": 10,
+          "bits": 828
+        },
+        "data": {
+          "cells": 1,
+          "bits": 64
+        }
+      }
+    },
+    {
+      "testName": "Counter should deploy",
+      "address": "EQBgsSaKwODQBj4W0ITaf6SqrILmhKsr9MtAd_b_DdzQkfJQ",
+      "codeHash": "0x61689f0431f0bead3490202a24110f59f58ac3c23f5e4ad4168923eee237287a",
+      "contractName": "Counter",
+      "methodName": "send",
+      "receiver": "internal",
+      "opCode": "0x0",
+      "execute": {
+        "compute": {
+          "type": "vm",
+          "success": true,
+          "gasUsed": 615,
+          "exitCode": 0,
+          "vmSteps": 10
+        },
+        "action": {
+          "success": true,
+          "totalActions": 0,
+          "skippedActions": 0,
+          "resultCode": 0,
+          "totalActionFees": 0,
+          "totalMessageSize": {
+            "cells": 0,
+            "bits": 0
+          }
+        }
+      },
+      "message": {
+        "in": {
+          "cells": 12,
+          "bits": 1603
+        },
+        "out": {
+          "cells": 0,
+          "bits": 0
+        }
+      },
+      "state": {
+        "code": {
+          "cells": 10,
+          "bits": 828
+        },
+        "data": {
+          "cells": 1,
+          "bits": 64
+        }
+      }
+    },
+    {
+      "testName": "Counter should increase counter",
+      "address": "EQBGhqLAZseEqRXz4ByFPTGV7SVMlI4hrbs-Sps_Xzx01x8G",
+      "codeHash": "0x61689f0431f0bead3490202a24110f59f58ac3c23f5e4ad4168923eee237287a",
+      "contractName": "Counter",
+      "methodName": "sendDeploy",
+      "receiver": "external-in",
+      "opCode": "0x0",
+      "execute": {
+        "compute": {
+          "type": "vm",
+          "success": true,
+          "gasUsed": 1937,
+          "exitCode": 0,
+          "vmSteps": 50
+        },
+        "action": {
+          "success": true,
+          "totalActions": 1,
+          "skippedActions": 0,
+          "resultCode": 0,
+          "totalActionFees": 1,
+          "totalFwdFees": 1196800,
+          "totalMessageSize": {
+            "cells": 12,
+            "bits": 1603
+          }
+        }
+      },
+      "message": {
+        "in": {
+          "cells": 14,
+          "bits": 1864
+        },
+        "out": {
+          "cells": 13,
+          "bits": 1610
+        }
+      },
+      "state": {
+        "code": {
+          "cells": 10,
+          "bits": 828
+        },
+        "data": {
+          "cells": 1,
+          "bits": 64
+        }
+      }
+    },
+    {
+      "testName": "Counter should increase counter",
+      "address": "EQBgsSaKwODQBj4W0ITaf6SqrILmhKsr9MtAd_b_DdzQkfJQ",
+      "codeHash": "0x61689f0431f0bead3490202a24110f59f58ac3c23f5e4ad4168923eee237287a",
+      "contractName": "Counter",
+      "methodName": "send",
+      "receiver": "internal",
+      "opCode": "0x0",
+      "execute": {
+        "compute": {
+          "type": "vm",
+          "success": true,
+          "gasUsed": 615,
+          "exitCode": 0,
+          "vmSteps": 10
+        },
+        "action": {
+          "success": true,
+          "totalActions": 0,
+          "skippedActions": 0,
+          "resultCode": 0,
+          "totalActionFees": 0,
+          "totalMessageSize": {
+            "cells": 0,
+            "bits": 0
+          }
+        }
+      },
+      "message": {
+        "in": {
+          "cells": 12,
+          "bits": 1603
+        },
+        "out": {
+          "cells": 0,
+          "bits": 0
+        }
+      },
+      "state": {
+        "code": {
+          "cells": 10,
+          "bits": 828
+        },
+        "data": {
+          "cells": 1,
+          "bits": 64
+        }
+      }
+    },
+    {
+      "testName": "Counter should increase counter",
+      "address": "EQBRa72FONfWv_od_gbseysN3HHqZ5FEZ3oqY0-aqzZ2vkhF",
+      "codeHash": "0x61689f0431f0bead3490202a24110f59f58ac3c23f5e4ad4168923eee237287a",
+      "contractName": "Counter",
+      "methodName": "sendIncrease",
+      "receiver": "external-in",
+      "opCode": "0x0",
+      "execute": {
+        "compute": {
+          "type": "vm",
+          "success": true,
+          "gasUsed": 1937,
+          "exitCode": 0,
+          "vmSteps": 50
+        },
+        "action": {
+          "success": true,
+          "totalActions": 1,
+          "skippedActions": 0,
+          "resultCode": 0,
+          "totalActionFees": 1,
+          "totalFwdFees": 400000,
+          "totalMessageSize": {
+            "cells": 1,
+            "bits": 833
+          }
+        }
+      },
+      "message": {
+        "in": {
+          "cells": 3,
+          "bits": 1094
+        },
+        "out": {
+          "cells": 2,
+          "bits": 840
+        }
+      },
+      "state": {
+        "code": {
+          "cells": 10,
+          "bits": 828
+        },
+        "data": {
+          "cells": 1,
+          "bits": 64
+        }
+      }
+    },
+    {
+      "testName": "Counter should increase counter",
+      "address": "EQBgsSaKwODQBj4W0ITaf6SqrILmhKsr9MtAd_b_DdzQkfJQ",
+      "codeHash": "0x61689f0431f0bead3490202a24110f59f58ac3c23f5e4ad4168923eee237287a",
+      "contractName": "Counter",
+      "receiver": "internal",
+      "opCode": "0x7e8764ef",
+      "execute": {
+        "compute": {
+          "type": "vm",
+          "success": true,
+          "gasUsed": 2681,
+          "exitCode": 0,
+          "vmSteps": 57
+        },
+        "action": {
+          "success": true,
+          "totalActions": 0,
+          "skippedActions": 0,
+          "resultCode": 0,
+          "totalActionFees": 0,
+          "totalMessageSize": {
+            "cells": 0,
+            "bits": 0
+          }
+        }
+      },
+      "message": {
+        "in": {
+          "cells": 1,
+          "bits": 833
+        },
+        "out": {
+          "cells": 0,
+          "bits": 0
+        }
+      },
+      "state": {
+        "code": {
+          "cells": 10,
+          "bits": 828
+        },
+        "data": {
+          "cells": 1,
+          "bits": 64
+        }
+      },
+      "methodName": "increase"
+    },
+    {
+      "testName": "Counter should increase counter",
+      "address": "EQBtSVGtsm08pdZdbsXJ226QHsfMsO1HsZbkmhE7qrZ8q3Ki",
+      "codeHash": "0x61689f0431f0bead3490202a24110f59f58ac3c23f5e4ad4168923eee237287a",
+      "contractName": "Counter",
+      "methodName": "sendIncrease",
+      "receiver": "external-in",
+      "opCode": "0x0",
+      "execute": {
+        "compute": {
+          "type": "vm",
+          "success": true,
+          "gasUsed": 1937,
+          "exitCode": 0,
+          "vmSteps": 50
+        },
+        "action": {
+          "success": true,
+          "totalActions": 1,
+          "skippedActions": 0,
+          "resultCode": 0,
+          "totalActionFees": 1,
+          "totalFwdFees": 400000,
+          "totalMessageSize": {
+            "cells": 1,
+            "bits": 833
+          }
+        }
+      },
+      "message": {
+        "in": {
+          "cells": 3,
+          "bits": 1094
+        },
+        "out": {
+          "cells": 2,
+          "bits": 840
+        }
+      },
+      "state": {
+        "code": {
+          "cells": 10,
+          "bits": 828
+        },
+        "data": {
+          "cells": 1,
+          "bits": 64
+        }
+      }
+    },
+    {
+      "testName": "Counter should increase counter",
+      "address": "EQAZYCEwTbF4Cn5fy7A_XlfYgXgaNIArebxjyzWvQXbFIc5G",
+      "codeHash": "0x61689f0431f0bead3490202a24110f59f58ac3c23f5e4ad4168923eee237287a",
+      "contractName": "Counter",
+      "methodName": "sendIncrease",
+      "receiver": "external-in",
+      "opCode": "0x0",
+      "execute": {
+        "compute": {
+          "type": "vm",
+          "success": true,
+          "gasUsed": 1937,
+          "exitCode": 0,
+          "vmSteps": 50
+        },
+        "action": {
+          "success": true,
+          "totalActions": 1,
+          "skippedActions": 0,
+          "resultCode": 0,
+          "totalActionFees": 1,
+          "totalFwdFees": 400000,
+          "totalMessageSize": {
+            "cells": 1,
+            "bits": 833
+          }
+        }
+      },
+      "message": {
+        "in": {
+          "cells": 3,
+          "bits": 1094
+        },
+        "out": {
+          "cells": 2,
+          "bits": 840
+        }
+      },
+      "state": {
+        "code": {
+          "cells": 10,
+          "bits": 828
+        },
+        "data": {
+          "cells": 1,
+          "bits": 64
+        }
+      }
+    }
+  ]
+}
