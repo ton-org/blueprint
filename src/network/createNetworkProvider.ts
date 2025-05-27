@@ -33,7 +33,7 @@ import { Config } from '../config/Config';
 import { CustomNetwork } from '../config/CustomNetwork';
 import axios, { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { Network } from './Network';
-import {LiteClient, LiteEngine, LiteRoundRobinEngine, LiteSingleEngine} from "ton-lite-client";
+import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from 'ton-lite-client';
 
 const INITIAL_DELAY = 400;
 const MAX_ATTEMPTS = 4;
@@ -290,26 +290,31 @@ function intToIP(int: number): string {
     const part2 = (int >> 8) & 255;
     const part3 = (int >> 16) & 255;
     const part4 = (int >> 24) & 255;
-    return `${(part4 + 256) % 256}.${(part3 + 256) % 256}.${(part2 + 256) % 256}.${
-        (part1 + 256) % 256
-    }`;
+    return `${(part4 + 256) % 256}.${(part3 + 256) % 256}.${(part2 + 256) % 256}.${(part1 + 256) % 256}`;
 }
 
 async function buildLiteClient(configEndpoint: string) {
     const { data } = await axios.get(configEndpoint);
     if (!Array.isArray(data.liteservers)) {
-        throw new Error(`Invalid liteclient configuration on ${configEndpoint}. Use https://ton.org/testnet-global.config.json for testnet or https://ton.org/global.config.json for mainnet.`);
+        throw new Error(
+            `Invalid liteclient configuration on ${configEndpoint}. Use https://ton.org/testnet-global.config.json for testnet or https://ton.org/global.config.json for mainnet.`,
+        );
     }
 
     const engines = data.liteservers.map((server: any) => {
-        if (typeof server?.ip !== 'number' || typeof server?.port !== 'number' || typeof server?.id !== 'object' || typeof server?.id?.key !== 'string') {
+        if (
+            typeof server?.ip !== 'number' ||
+            typeof server?.port !== 'number' ||
+            typeof server?.id !== 'object' ||
+            typeof server?.id?.key !== 'string'
+        ) {
             throw new Error(`Invalid liteclient configuration on ${configEndpoint}`);
         }
         return new LiteSingleEngine({
             host: `tcp://${intToIP(server.ip)}:${server.port}`,
             publicKey: Buffer.from(server.id.key, 'base64'),
         });
-    })
+    });
 
     const engine = new LiteRoundRobinEngine(engines);
     return new LiteClient({ engine });
