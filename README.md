@@ -290,6 +290,8 @@ The above config parameters are equivalent to the arguments in the following com
 npx blueprint run --custom https://toncenter.com/api/v2/jsonRPC --custom-version v2 --custom-type mainnet --custom-key YOUR_API_KEY
 ```
 
+Properties of the `network` object have the same semantics as the `--custom` flags with respective names (see `blueprint help run`).
+
 ### Liteclient Support
 
 Lite client is supported through the following configuration:
