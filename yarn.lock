@@ -245,7 +245,7 @@ __metadata:
     inquirer: "npm:^8.2.5"
     prettier: "npm:^3.0.3"
     qrcode-terminal: "npm:^0.12.0"
-    ton-lite-client: "npm:^3.0.0"
+    ton-lite-client: "npm:^3.1.0"
     ts-node: "npm:^10.9.1"
     typescript: "npm:^5.8.3"
   peerDependencies:
@@ -1601,9 +1601,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ton-lite-client@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "ton-lite-client@npm:3.0.0"
+"ton-lite-client@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "ton-lite-client@npm:3.1.0"
   dependencies:
     adnl: "npm:^1.0.3"
     dataloader: "npm:^2.1.0"
@@ -1612,8 +1612,8 @@ __metadata:
     ton-tl: "npm:^1.0.1"
     tweetnacl: "npm:^1.0.3"
   peerDependencies:
-    "@ton/core": "*"
-  checksum: 10/11d1f4e93ca4a7dc239e6a34f6c40ed1741a8d445352266b2471bbcc7f846bdfc014821e6ccbb88e90f938a6e48978e556885cd56017d0ec6ba7847073f492a0
+    "@ton/core": ^0.56.0
+  checksum: 10/1ffa282e22b42c7adbef9e889f206c6dbb85ad15f9b9659cd131c5e44e41e03abb7962aee699b55e53036cc7ec98f2df5a6d1c025a77446f820eb2a921c8a3d9
   languageName: node
   linkType: hard
 
