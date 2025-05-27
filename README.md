@@ -290,7 +290,32 @@ The above config parameters are equivalent to the arguments in the following com
 npx blueprint run --custom https://toncenter.com/api/v2/jsonRPC --custom-version v2 --custom-type mainnet --custom-key YOUR_API_KEY
 ```
 
-Properties of the `network` object have the same semantics as the `--custom` flags with respective names (see `blueprint help run`).
+### Liteclient Support
+
+Lite client is supported through the following configuration:
+
+```ts
+import { Config } from '@ton/blueprint';
+
+export const config: Config = {
+    network: {
+        endpoint: 'https://ton.org/testnet-global.config.json', // Use https://ton.org/global.config.json for mainnet or any custom configuration
+        version: 'liteclient',
+        type: 'testnet',
+    }
+};
+```
+
+You can also provide these parameters via CLI:
+
+```bash
+npx blueprint run \
+  --custom https://ton.org/testnet-global.config.json \
+  --custom-version liteclient \
+  --custom-type testnet
+```
+
+#### Contract Verification Using Custom Network
 
 You can also use custom network to verify contracts, like so:
 ```bash
