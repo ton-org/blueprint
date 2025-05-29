@@ -347,7 +347,7 @@ class NetworkProviderBuilder {
         if (network === 'custom') {
             const defaultCustomEndpoint = 'http://localhost:8081/';
             this.args['--custom'] = (
-                await this.ui.input(`Provide a custom network endpoint (default is ${defaultCustomEndpoint})`)
+                await this.ui.input(`Provide a custom API v2 endpoint (default is ${defaultCustomEndpoint})`)
             ).trim();
             if (this.args['--custom'] === '') this.args['--custom'] = defaultCustomEndpoint;
         }
