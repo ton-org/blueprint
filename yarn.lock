@@ -64,6 +64,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/ed25519@npm:^1.6.1":
+  version: 1.7.5
+  resolution: "@noble/ed25519@npm:1.7.5"
+  checksum: 10/d763f97ae721eab307f0c873ec4d2e22b0a50c06bf64ff7bcf0423b8139e826705c18609c1c163a2ca3c7c9ea166be18f21020b934ab47960676b49355d7b69d
+  languageName: node
+  linkType: hard
+
+"@noble/hashes@npm:^1.2.0":
+  version: 1.8.0
+  resolution: "@noble/hashes@npm:1.8.0"
+  checksum: 10/474b7f56bc6fb2d5b3a42132561e221b0ea4f91e590f4655312ca13667840896b34195e2b53b7f097ec080a1fdd3b58d902c2a8d0fbdf51d2e238b53808a177e
+  languageName: node
+  linkType: hard
+
 "@protobufjs/aspromise@npm:^1.1.1, @protobufjs/aspromise@npm:^1.1.2":
   version: 1.1.2
   resolution: "@protobufjs/aspromise@npm:1.1.2"
@@ -216,10 +230,10 @@ __metadata:
     "@ton-api/client": "npm:^0.2.0"
     "@ton-api/ton-adapter": "npm:^0.2.0"
     "@ton-community/func-js": "npm:^0.9.0"
-    "@ton/core": "npm:^0.59.0"
+    "@ton/core": "npm:^0.60.1"
     "@ton/crypto": "npm:^3.3.0"
     "@ton/tolk-js": "npm:^0.12.0"
-    "@ton/ton": "npm:^15.0.0"
+    "@ton/ton": "npm:^15.2.1"
     "@tonconnect/sdk": "npm:^2.2.0"
     "@types/inquirer": "npm:^8.2.6"
     "@types/node": "npm:^20.2.5"
@@ -231,21 +245,22 @@ __metadata:
     inquirer: "npm:^8.2.5"
     prettier: "npm:^3.0.3"
     qrcode-terminal: "npm:^0.12.0"
+    ton-lite-client: "npm:^3.1.0"
     ts-node: "npm:^10.9.1"
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@tact-lang/compiler": ">=1.6.5"
     "@ton-community/func-js": ">=0.9.0"
-    "@ton/core": ">=0.59.0"
+    "@ton/core": ">=0.60.1"
     "@ton/crypto": ">=3.3.0"
     "@ton/tolk-js": ">=0.12.0"
-    "@ton/ton": ">=15.0.0"
+    "@ton/ton": ">=15.2.1"
   bin:
     blueprint: ./dist/cli/cli.js
   languageName: unknown
   linkType: soft
 
-"@ton/core@npm:0.60.1, @ton/core@npm:^0.60.0":
+"@ton/core@npm:0.60.1, @ton/core@npm:^0.60.0, @ton/core@npm:^0.60.1":
   version: 0.60.1
   resolution: "@ton/core@npm:0.60.1"
   dependencies:
@@ -253,17 +268,6 @@ __metadata:
   peerDependencies:
     "@ton/crypto": ">=3.2.0"
   checksum: 10/f773b7545249c24e8662cfb26e1253dd496e701a264bedae8f345c4b7680f204116df0c5d8e1274268797c696363615eba2d0dea6103d69ba09a6dd994c6d6af
-  languageName: node
-  linkType: hard
-
-"@ton/core@npm:^0.59.0":
-  version: 0.59.0
-  resolution: "@ton/core@npm:0.59.0"
-  dependencies:
-    symbol.inspect: "npm:1.0.1"
-  peerDependencies:
-    "@ton/crypto": ">=3.2.0"
-  checksum: 10/cab72b14cf03f564612980424a0515ad6a373ad6361c2b33f56f9849c342b7ded5a9b4e4696a6be47b3833d6c78dd0fe50a89cb939394b047eaebc81731d37de
   languageName: node
   linkType: hard
 
@@ -318,9 +322,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/ton@npm:^15.0.0":
-  version: 15.0.0
-  resolution: "@ton/ton@npm:15.0.0"
+"@ton/ton@npm:^15.2.1":
+  version: 15.2.1
+  resolution: "@ton/ton@npm:15.2.1"
   dependencies:
     axios: "npm:^1.6.7"
     dataloader: "npm:^2.0.0"
@@ -328,9 +332,9 @@ __metadata:
     teslabot: "npm:^1.3.0"
     zod: "npm:^3.21.4"
   peerDependencies:
-    "@ton/core": ">=0.56.0"
+    "@ton/core": ">=0.60.0"
     "@ton/crypto": ">=3.2.0"
-  checksum: 10/135df6331ef76be621bffe4d92f8a932333e46a40476bdd6d1d71bb29d354e5fb640eb2ffccfe260b762be3220a02291e4db0e0afc0d33ba78efd25bab6793ee
+  checksum: 10/25edc421250c7e754dcf79ed3bf05d72c29fc06ba61302380d95e58f04325585ef42bf56e493c142ac20445caef04ed6150e6e1e99c0dd15314ca16c854c7155
   languageName: node
   linkType: hard
 
@@ -408,6 +412,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/bn.js@npm:^5.1.0":
+  version: 5.1.6
+  resolution: "@types/bn.js@npm:5.1.6"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10/db565b5a2af59b09459d74441153bf23a0e80f1fb2d070330786054e7ce1a7285dc40afcd8f289426c61a83166bdd70814f70e2d439744686aac5d3ea75daf13
+  languageName: node
+  linkType: hard
+
 "@types/inquirer@npm:^8.2.6":
   version: 8.2.6
   resolution: "@types/inquirer@npm:8.2.6"
@@ -429,6 +442,13 @@ __metadata:
   version: 20.4.5
   resolution: "@types/node@npm:20.4.5"
   checksum: 10/aa31081f82a2d377f00cfd7ced73925753db1f542fca19e6b0442585a7322b8eacd957fdccaaff65d9976454d213af0980c12390c59a975cf8a368e3f872717a
+  languageName: node
+  linkType: hard
+
+"@types/pegjs@npm:^0.10.3":
+  version: 0.10.6
+  resolution: "@types/pegjs@npm:0.10.6"
+  checksum: 10/be219504714e219b37daee7ef3214b6876d98405cc56b2d084763134032fd46394c5d0e387216ee3e52bd519fe7341e25bdec855f2a911c49a593b21fd8ea4a6
   languageName: node
   linkType: hard
 
@@ -461,6 +481,28 @@ __metadata:
   bin:
     acorn: bin/acorn
   checksum: 10/522310c20fdc3c271caed3caf0f06c51d61cb42267279566edd1d58e83dbc12eebdafaab666a0f0be1b7ad04af9c6bc2a6f478690a9e6391c3c8b165ada917dd
+  languageName: node
+  linkType: hard
+
+"adnl@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "adnl@npm:1.0.3"
+  dependencies:
+    "@noble/ed25519": "npm:^1.6.1"
+    "@noble/hashes": "npm:^1.2.0"
+    aes-js: "npm:^3.1.2"
+    buffer: "npm:^6.0.3"
+    events: "npm:^3.3.0"
+    isomorphic-ws: "npm:^5.0.0"
+    ws: "npm:^8.8.1"
+  checksum: 10/bfb678580713b8786e8851b319f67d43a507e3d883b473b42410c7ebfbc17318cb789d13fadab74bb6c829d99a6300627187cd0623c97923d21d758c8a9d4335
+  languageName: node
+  linkType: hard
+
+"aes-js@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "aes-js@npm:3.1.2"
+  checksum: 10/b65916767034a51375a3ac5aad62af452d89a386c1ae7b607bb9145d0bb8b8823bf2f3eba85bdfa52d61c65d5aed90ba90f677b8c826bfa1a8b7ae2fa3b54d91
   languageName: node
   linkType: hard
 
@@ -573,6 +615,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bn.js@npm:^5.2.0":
+  version: 5.2.2
+  resolution: "bn.js@npm:5.2.2"
+  checksum: 10/51ebb2df83b33e5d8581165206e260d5e9c873752954616e5bf3758952b84d7399a9c6d00852815a0aeefb1150a7f34451b62d4287342d457fa432eee869e83e
+  languageName: node
+  linkType: hard
+
 "buffer@npm:^5.5.0":
   version: 5.7.1
   resolution: "buffer@npm:5.7.1"
@@ -611,6 +660,13 @@ __metadata:
     tslib: "npm:^2.0.3"
     upper-case-first: "npm:^2.0.2"
   checksum: 10/41fa8fa87f6d24d0835a2b4a9341a3eaecb64ac29cd7c5391f35d6175a0fa98ab044e7f2602e1ec3afc886231462ed71b5b80c590b8b41af903ec2c15e5c5931
+  languageName: node
+  linkType: hard
+
+"case-shift@npm:^2.5.3":
+  version: 2.5.3
+  resolution: "case-shift@npm:2.5.3"
+  checksum: 10/dedc9859d9a19141052f0681a6d69d467bcf0624601f54aa0aaff2a3edcc9f647c6d58657e9bc540573ad7fdf87fe00b59a2df86ed3f50374d634a317e0d978a
   languageName: node
   linkType: hard
 
@@ -724,6 +780,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"crc-32@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "crc-32@npm:1.2.2"
+  bin:
+    crc32: bin/crc32.njs
+  checksum: 10/824f696a5baaf617809aa9cd033313c8f94f12d15ebffa69f10202480396be44aef9831d900ab291638a8022ed91c360696dd5b1ba691eb3f34e60be8835b7c3
+  languageName: node
+  linkType: hard
+
 "create-require@npm:^1.1.0":
   version: 1.1.1
   resolution: "create-require@npm:1.1.1"
@@ -735,6 +800,13 @@ __metadata:
   version: 2.2.2
   resolution: "dataloader@npm:2.2.2"
   checksum: 10/9c7a1f02cfa6391ab8bc21ebd0ef60b03832bd3beafdfecf48b111fba14090f98d33965f8e268045ba3c289f801b6a9000a9e61a41188363bdee2344811f64f1
+  languageName: node
+  linkType: hard
+
+"dataloader@npm:^2.1.0":
+  version: 2.2.3
+  resolution: "dataloader@npm:2.2.3"
+  checksum: 10/83fe6259abe00ae64c5f48252ef59d8e5fcabda9fd4d26685f14a76eeca596bf6f9500d9f22a0094c50c3ea782a0977728f9367e232dfa0fdb5c9d646de279b2
   languageName: node
   linkType: hard
 
@@ -808,6 +880,13 @@ __metadata:
   version: 1.0.5
   resolution: "escape-string-regexp@npm:1.0.5"
   checksum: 10/6092fda75c63b110c706b6a9bfde8a612ad595b628f0bd2147eea1d3406723020810e591effc7db1da91d80a71a737a313567c5abb3813e8d9c71f4aa595b410
+  languageName: node
+  linkType: hard
+
+"events@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "events@npm:3.3.0"
+  checksum: 10/a3d47e285e28d324d7180f1e493961a2bbb4cad6412090e4dec114f4db1f5b560c7696ee8e758f55e23913ede856e3689cd3aa9ae13c56b5d8314cd3b3ddd1be
   languageName: node
   linkType: hard
 
@@ -1010,6 +1089,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"isomorphic-ws@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "isomorphic-ws@npm:5.0.0"
+  peerDependencies:
+    ws: "*"
+  checksum: 10/e20eb2aee09ba96247465fda40c6d22c1153394c0144fa34fe6609f341af4c8c564f60ea3ba762335a7a9c306809349f9b863c8beedf2beea09b299834ad5398
+  languageName: node
+  linkType: hard
+
 "it-all@npm:^1.0.4, it-all@npm:^1.0.5":
   version: 1.0.6
   resolution: "it-all@npm:1.0.6"
@@ -1107,6 +1195,13 @@ __metadata:
   dependencies:
     tslib: "npm:^2.0.3"
   checksum: 10/83a0a5f159ad7614bee8bf976b96275f3954335a84fad2696927f609ddae902802c4f3312d86668722e668bef41400254807e1d3a7f2e8c3eede79691aa1f010
+  languageName: node
+  linkType: hard
+
+"lru_map@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "lru_map@npm:0.4.1"
+  checksum: 10/c399afdb959c1820ace33b253c307c00e39a8a63705037f9dd58bf489950265de347b1614642fcfde26e0ff613fba633ddfd7eb5814ffb0a360a7037cc8a4008
   languageName: node
   linkType: hard
 
@@ -1275,6 +1370,15 @@ __metadata:
   version: 6.0.13
   resolution: "path-normalize@npm:6.0.13"
   checksum: 10/384eebe86e38aae3ed5b560414937f255d4004b718141c04fe28315b5fae43ab9224169e0460daddace4e0a3176e142560d6315aba4e89cc4dd263ed2f754328
+  languageName: node
+  linkType: hard
+
+"pegjs@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "pegjs@npm:0.10.0"
+  bin:
+    pegjs: bin/pegjs
+  checksum: 10/edc12c9da9afa68ea1274350c3843026355ef3678de0e24213ba0598ee660d40f6752548ba5ddfbcdefee1904545c8a23bb59f331a5e8b3543bee29c21051f67
   languageName: node
   linkType: hard
 
@@ -1474,7 +1578,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"teslabot@npm:^1.3.0":
+"teslabot@npm:^1.3.0, teslabot@npm:^1.5.0":
   version: 1.5.0
   resolution: "teslabot@npm:1.5.0"
   checksum: 10/714ab9a3eadf17efdbcc78c140246c6cf02b0fceff2fd3b9e37de7c86ad05af816037145a258b4b115327bc88219d782f64047812483169037d6956f46bb1450
@@ -1494,6 +1598,36 @@ __metadata:
   dependencies:
     os-tmpdir: "npm:~1.0.2"
   checksum: 10/09c0abfd165cff29b32be42bc35e80b8c64727d97dedde6550022e88fa9fd39a084660415ed8e3ebaa2aca1ee142f86df8b31d4196d4f81c774a3a20fd4b6abf
+  languageName: node
+  linkType: hard
+
+"ton-lite-client@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "ton-lite-client@npm:3.1.0"
+  dependencies:
+    adnl: "npm:^1.0.3"
+    dataloader: "npm:^2.1.0"
+    lru_map: "npm:^0.4.1"
+    teslabot: "npm:^1.5.0"
+    ton-tl: "npm:^1.0.1"
+    tweetnacl: "npm:^1.0.3"
+  peerDependencies:
+    "@ton/core": ^0.56.0
+  checksum: 10/1ffa282e22b42c7adbef9e889f206c6dbb85ad15f9b9659cd131c5e44e41e03abb7962aee699b55e53036cc7ec98f2df5a6d1c025a77446f820eb2a921c8a3d9
+  languageName: node
+  linkType: hard
+
+"ton-tl@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "ton-tl@npm:1.0.1"
+  dependencies:
+    "@types/bn.js": "npm:^5.1.0"
+    "@types/pegjs": "npm:^0.10.3"
+    bn.js: "npm:^5.2.0"
+    case-shift: "npm:^2.5.3"
+    crc-32: "npm:^1.2.2"
+    pegjs: "npm:^0.10.0"
+  checksum: 10/e3dd1ff0dd1e10c6d56186945918d14153f08cc6896541ead3b72e7af55b85dd84d32692dee6e831fee83ff4389d88ca65ef33e5a8a969d48378e04a71e6bf65
   languageName: node
   linkType: hard
 
@@ -1665,6 +1799,21 @@ __metadata:
     string-width: "npm:^4.1.0"
     strip-ansi: "npm:^6.0.0"
   checksum: 10/cebdaeca3a6880da410f75209e68cd05428580de5ad24535f22696d7d9cab134d1f8498599f344c3cf0fb37c1715807a183778d8c648d6cc0cb5ff2bb4236540
+  languageName: node
+  linkType: hard
+
+"ws@npm:^8.8.1":
+  version: 8.18.2
+  resolution: "ws@npm:8.18.2"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10/018e04ec95561d88248d53a2eaf094b4ae131e9b062f2679e6e8a62f04649bc543448f1e038125225ac6bbb25f54c1e65d7a2cc9dbc1e28b43e5e6b7162ad88e
   languageName: node
   linkType: hard
 
