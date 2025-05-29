@@ -337,6 +337,36 @@ export const config: Config = {
 };
 ```
 
+### Recursive wrappers
+
+You can configure whether the `wrappers` or `compilables` directories should be searched recursively for contracts configs by setting the `recursiveWrappers` field.
+
+```typescript
+import { Config } from '@ton/blueprint';
+
+export const config: Config = {
+    recursiveWrappers: true,
+};
+```
+
+By default, this is set to `false`.
+
+### TonConnect manifest URL
+
+If you're using a TonConnect provider, you can override the default manifest URL by specifying the `manifestUrl` field.
+```typescript
+import { Config } from '@ton/blueprint';
+
+export const config: Config = {
+    manifestUrl: 'https://yourdomain.com/custom-manifest.json',
+};
+```
+
+By default, the manifest URL is set to:
+```
+https://raw.githubusercontent.com/ton-org/blueprint/main/tonconnect/manifest.json
+```
+
 ## Contributors
 
 Special thanks to [@qdevstudio](https://t.me/qdevstudio) for their logo for blueprint.

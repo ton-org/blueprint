@@ -406,7 +406,7 @@ class NetworkProviderBuilder {
                 break;
             case 'tonconnect':
                 if (network === 'custom') throw new Error('Tonkeeper cannot work with custom network.');
-                provider = new TonConnectProvider(new FSStorage(storagePath), this.ui, network);
+                provider = new TonConnectProvider(new FSStorage(storagePath), this.ui, network, this.config?.manifestUrl);
                 break;
             case 'mnemonic':
                 provider = await createMnemonicProvider(client, network, this.ui);
