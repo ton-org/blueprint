@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added ton lite client network provider
+- Added tolk verifier
 
 ## [0.34.0] - 2025-05-20
 
