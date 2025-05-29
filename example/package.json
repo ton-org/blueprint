@@ -9,7 +9,8 @@
     },
     "private": true,
     "devDependencies": {
-        "@ton-community/func-js": ">=0.9.1",
+        "@tact-lang/compiler": ">=1.6.12 <2.0.0",
+        "@ton-community/func-js": "^0.9.1",
         "@ton/blueprint": ">=0.34.0",
         "@ton/crypto": "^3.3.0",
         "@ton/sandbox": ">=0.31.0",
