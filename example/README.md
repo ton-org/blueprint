@@ -66,8 +66,8 @@ Starter template for a new TON project - FunC contracts, unit tests, compilation
   * In the root repo dir, run in terminal `yarn test`
   * Don't forget to build (or rebuild) before running tests
   * Tests are running inside Node.js by running TVM in web-assembly using [sandbox](https://github.com/ton-org/sandbox)
-  * For getting gas metric report `yarn gas-report`, see [Benchmark contracts](https://github.com/ton-org/blueprint/blob/main/README.md#benchmark-contracts)
-  * For save new gas metric snapshot `yarn gas-snapshot '<label name>'`
+  * To get gas metric report, run `yarn gas-report`; see [Benchmark contracts](https://github.com/ton-org/blueprint/blob/main/README.md#benchmark-contracts)
+  * To save new gas metric snapshot, run `yarn gas-snapshot '<label name>'`
 
 * Deploy
   * Run `yarn blueprint run <deployscript>`
