@@ -126,7 +126,7 @@ To run scripts using a wallet by mnemonic authentication, you need to configure 
 
 Start by adding the following environment variables to your `.env` file:
 * **`WALLET_MNEMONIC`**: Your wallet's mnemonic phrase (space-separated words).
-* **`WALLET_VERSION`**: The wallet contract version to use. Supported versions: `v1r1`, `v1r2`, `v1r3`, `v2r1`, `v2r2`, `v3r1`, `v3r2`, `v4`, `v5r1`.
+* **`WALLET_VERSION`**: The wallet contract version to use. Supported versions: `v1r1`, `v1r2`, `v1r3`, `v2r1`, `v2r2`, `v3r1`, `v3r2`, `v4r1`, `v4r2` (or `v4`), `v5r1`.
 
 **Optional variables:**
 * **`WALLET_ID`**: The wallet ID (can be used with versions below `v5r1`).
@@ -291,6 +291,33 @@ npx blueprint run --custom https://toncenter.com/api/v2/jsonRPC --custom-version
 ```
 
 Properties of the `network` object have the same semantics as the `--custom` flags with respective names (see `blueprint help run`).
+
+### Liteclient Support
+
+Lite client is supported through the following configuration:
+
+```ts
+import { Config } from '@ton/blueprint';
+
+export const config: Config = {
+    network: {
+        endpoint: 'https://ton.org/testnet-global.config.json', // Use https://ton.org/global.config.json for mainnet or any custom configuration
+        version: 'liteclient',
+        type: 'testnet',
+    }
+};
+```
+
+You can also provide these parameters via CLI:
+
+```bash
+npx blueprint run \
+  --custom https://ton.org/testnet-global.config.json \
+  --custom-version liteclient \
+  --custom-type testnet
+```
+
+#### Contract Verification Using Custom Network
 
 You can also use custom network to verify contracts, like so:
 ```bash
