@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added ton lite client network provider
 - Added tolk verifier
+- Wallet v4 extended support: added v4r1, v4 is treated as v4r2
 
 ## [0.34.0] - 2025-05-20
 
