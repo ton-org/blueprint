@@ -1,10 +1,10 @@
 deploy{{name}}.ts
 import { toNano } from '@ton/core';
-import { {{name}} } from '../wrappers/{{name}}';
+import { {{name}} } from '../build/{{name}}/{{name}}_{{name}}';
 import { NetworkProvider } from '@ton/blueprint';
 
 export async function run(provider: NetworkProvider) {
-    const {{loweredName}} = provider.open(await {{name}}.fromInit(BigInt(Math.floor(Math.random() * 10000))), 0n);
+    const {{loweredName}} = provider.open(await {{name}}.fromInit(BigInt(Math.floor(Math.random() * 10000)), 0n));
 
     await {{loweredName}}.send(
         provider.sender(),

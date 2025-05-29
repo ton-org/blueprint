@@ -40,4 +40,21 @@ export interface Config {
      * @default false
      */
     separateCompilables?: boolean;
+
+    /**
+     * HTTP request timeout in milliseconds.
+     *
+     * @example
+     * export const config: Config = {
+     *     requestTimeout: 10000 // 10 seconds
+     * };
+     */
+    requestTimeout?: number;
+
+    /**
+     * If true, the `wrappers`/`compilables` directory will be searched recursively for contracts.
+     *
+     * @default false
+     */
+    recursiveWrappers?: boolean;
 }

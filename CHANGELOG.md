@@ -9,7 +9,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added ton lite client network provider
+
+## [0.34.0] - 2025-05-20
+
+### Added
+
+- Added config option to look for wrappers recursively
+- Exported `getCompilerConfigForContract` function for plugin support
+- Added request timout configuration
+- Added docs for script args
+- Added the `rename` command which renames contracts
+- Added the `pack` command which builds and prepares a publish-ready package of contracts' wrappers
+- Added support for wallet IDs in mnemonic provider. Environment variables `WALLET_ID` or `SUBWALLET_NUMBER` should be set, or a .env file with them must be present in order for it to be usable
+- Added command `blueprint snapshot` to run tests with metric collection and write new benchmark report
+- Added option `blueprint test --gas-report` to run tests and compare with the last snapshot metrics
+
+### Fixed
+
+- Fix address format in testnet
+
+### Changed
+
+- Updated FunC stdlib
+
+## [0.33.1] - 2025-05-16
+
+### Fixed
+
+- Fixed blueprint build command failure in Tact projects
+
+## [0.33.0] - 2025-05-16
+
+### Added
+
 - Added `tact.config.json` support
+- Added tolk v0.12 support
+
+### Fixed
+
+- Fixed tact counter deploy script error
 
 ## [0.32.1] - 2025-05-06
 

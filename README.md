@@ -16,12 +16,14 @@ A development environment for TON blockchain for writing, testing, and deploying
   * [Directory structure](#directory-structure)
   * [Building contracts](#building-contracts)
   * [Running the test suites](#running-the-test-suites)
-  * [Deploying contracts](#deploying-contracts)
-  * [Custom scripts](#custom-scripts)
+  * [Running scripts](#running-scripts)
+    * [Deploying contracts](#deploying-contracts)
+    * [Using Mnemonic Provider](#using-mnemonic-provider)
 * [Contract development](#contract-development)
   * [Creating contracts](#creating-contracts)
   * [Writing contract code](#writing-contract-code)
   * [Testing contracts](#testing-contracts)
+  * [Benchmark contracts](#benchmark-contracts)
 * [Configuration](#configuration)
   * [Plugins](#plugins)
   * [Custom network](#custom-network)
@@ -100,23 +102,58 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 
 > Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
 
-### Deploying contracts
-
-1. You need a deployment script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
-2. Run interactive: &nbsp;&nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
-3. Non-interactive: &nbsp; `npx/yarn blueprint run deploy<CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
-   * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
-
-### Custom scripts
+### Running scripts
 
 1. Custom scripts should be located in `scripts` folder
 2. Script file must have exported function `run`
 ```ts
-export async function run(provider: NetworkProvider) {
+export async function run(provider: NetworkProvider, args: string[]) {
   // 
 }
 ```
-3. Script can be run using `npx/yarn blueprint run <SCRIPT>` command
+3. Script can be run using `npx/yarn blueprint run <SCRIPT> [arg1, arg2, ...]` command
+
+#### Deploying contracts
+
+1. You need a deployment script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
+2. Run interactive: &nbsp;&nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
+3. Non-interactive: &nbsp; `npx/yarn blueprint run deploy<CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
+  * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
+
+#### Using Mnemonic Provider
+
+To run scripts using a wallet by mnemonic authentication, you need to configure your environment and use the `Mnemonic` option when running scripts.
+
+Start by adding the following environment variables to your `.env` file:
+* **`WALLET_MNEMONIC`**: Your wallet's mnemonic phrase (space-separated words).
+* **`WALLET_VERSION`**: The wallet contract version to use. Supported versions: `v1r1`, `v1r2`, `v1r3`, `v2r1`, `v2r2`, `v3r1`, `v3r2`, `v4`, `v5r1`.
+
+**Optional variables:**
+* **`WALLET_ID`**: The wallet ID (can be used with versions below `v5r1`).
+* **`SUBWALLET_NUMBER`**: The subwallet number used to build the wallet ID (can be used with `v5r1` wallets).
+
+Once your environment is set up, you can use the mnemonic wallet for deployment with the appropriate configuration.
+
+#### Deploying contracts
+
+1. You need a deployment script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
+2. Run interactive: &nbsp;&nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
+3. Non-interactive: &nbsp; `npx/yarn blueprint run deploy<CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
+  * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
+
+#### Using Mnemonic Provider
+
+To run scripts using a wallet by mnemonic authentication, you need to configure your environment and use the `Mnemonic` option when running scripts.
+
+Start by adding the following environment variables to your `.env` file:
+* **`WALLET_MNEMONIC`**: Your wallet's mnemonic phrase (space-separated words).
+* **`WALLET_VERSION`**: The wallet contract version to use. Supported versions: `v1r1`, `v1r2`, `v1r3`, `v2r1`, `v2r2`, `v3r1`, `v3r2`, `v4`, `v5r1`.
+
+**Optional variables:**
+* **`WALLET_ID`**: The wallet ID (required for versions below `v5r1`).
+* **`SUBWALLET_NUMBER`**: The subwallet number used to build the wallet ID (required for `v5r1` wallets).
+
+Once your environment is set up, you can use the mnemonic wallet for deployment with the appropriate configuration.
 
 ### Updating FunC version
 
@@ -140,6 +177,12 @@ Before developing, make sure that your current working directory is located in t
 2. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `func-empty`, `tolk-empty`, `tact-empty`, `func-counter`, `tolk-counter`, `tact-counter`)
    * Example: `yarn blueprint create MyNewContract --type func-empty`
 
+### Renaming contracts
+
+1. Run interactive: &nbsp;&nbsp; `npx blueprint rename` &nbsp; or &nbsp; `yarn blueprint rename`
+2. Non-interactive: &nbsp; `npx/yarn blueprint rename <OLD_NAME> <NEW_NAME>`
+  * Example: `yarn blueprint rename OldContract NewContract `
+
 ### Writing contract code
 
 #### FunC
@@ -161,6 +204,37 @@ Before developing, make sure that your current working directory is located in t
 2. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to interact with the contract
 
 > Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
+
+### Publishing Wrapper Code
+
+1. **Authenticate with npm**
+Run `npm adduser` to log in to your npm account.
+> 📝 **Note:** You can learn more about advanced authentication in the official npm docs:
+> [npmrc – Auth-Related Configuration](https://docs.npmjs.com/cli/v9/configuring-npm/npmrc#auth-related-configuration)
+
+2. **Update the package version**
+Edit the `version` field in your `package.json` to reflect the new release (e.g., `1.0.1` → `1.0.2`).
+
+3. **Build the package**
+Run the following command to generate and bundle your contract wrappers:
+
+```bash
+blueprint pack
+```
+
+4. **Publish to npm**
+Push the package to the public npm registry:
+
+```bash
+npm publish --access public
+```
+
+### Benchmark contracts
+
+1. Run `npx blueprint snapshot [--label=<comment>|-l <comment>]` to collect metrics of contracts and save snapshot
+2. Run `npx blueprint test --gas-report|-g` to compare current metrics and saved snapshot
+
+> Learn more about collect metric from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#benchmark-contracts).
 
 ## Configuration
 
@@ -218,11 +292,50 @@ npx blueprint run --custom https://toncenter.com/api/v2/jsonRPC --custom-version
 
 Properties of the `network` object have the same semantics as the `--custom` flags with respective names (see `blueprint help run`).
 
+### Liteclient Support
+
+Lite client is supported through the following configuration:
+
+```ts
+import { Config } from '@ton/blueprint';
+
+export const config: Config = {
+    network: {
+        endpoint: 'https://ton.org/testnet-global.config.json', // Use https://ton.org/global.config.json for mainnet or any custom configuration
+        version: 'liteclient',
+        type: 'testnet',
+    }
+};
+```
+
+You can also provide these parameters via CLI:
+
+```bash
+npx blueprint run \
+  --custom https://ton.org/testnet-global.config.json \
+  --custom-version liteclient \
+  --custom-type testnet
+```
+
+#### Contract Verification Using Custom Network
+
 You can also use custom network to verify contracts, like so:
 ```bash
 npx blueprint verify --custom https://toncenter.com/api/v2/jsonRPC --custom-version v2 --custom-type mainnet --custom-key YOUR_API_KEY
 ```
 (or similarly using the config), however custom type MUST be specified as either `mainnet` or `testnet` when verifying.
+
+### Request timeout
+
+You can optionally configure how long HTTP requests should wait before timing out using the `requestTimout` field. This can be especially useful when working with unstable or slow networks.
+
+```typescript
+import { Config } from '@ton/blueprint';
+
+export const config: Config = {
+    requestTimeout: 10000, // 10 seconds
+};
+```
 
 ## Contributors
 

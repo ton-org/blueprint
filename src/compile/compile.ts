@@ -10,6 +10,7 @@ import { getConfig } from '../config/utils';
 import { doCompileFunc, FuncCompileResult, getFuncVersion, DoCompileFuncConfig } from './func/compile.func';
 import { doCompileTact, TactCompileResult, getTactVersion, getTactConfigForContract } from './tact/compile.tact';
 import { doCompileTolk, TolkCompileResult, getTolkVersion } from './tolk/compile.tolk';
+import { findCompiles } from '../utils';
 
 export async function getCompilablesDirectory(): Promise<string> {
     const config = await getConfig();
@@ -34,16 +35,35 @@ export function extractCompilableConfig(path: string): CompilableConfig {
 
 export const COMPILE_END = '.compile.ts';
 
-// contracts in tact.config.json and .compile.ts may overlap. In this case configuration from tact.config.json would be taken
+/**
+ * Retrieves the compiler configuration for a specific contract.
+ *
+ * This function checks if a Tact configuration exists for the given contract
+ * `tact.config.json`. If found, it returns that configuration. Otherwise, it falls back
+ * to loading and extracting the `.compile.ts` configuration file from the appropriate
+ * compilables directory (`compilables/` or `wrappers/`).
+ *
+ * @param {string} name - The name of the contract
+ *
+ * @throws Error Throws if configuration is invalid or not found.
+ *
+ * @example
+ * const config = await getCompilerConfigForContract('MyContract');
+ * console.log('Compiler config:', config);
+ */
 export async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
     const tactConfig = getTactConfigForContract(name);
     if (tactConfig) {
         return tactConfig;
     }
 
-    const compilablesDirectory = await getCompilablesDirectory();
+    const compilables = await findCompiles();
+    const compilable = compilables.find((c) => c.name === name);
+    if (compilable === undefined) {
+        throw new Error(`Contract '${name}' not found`);
+    }
 
-    return extractCompilableConfig(path.join(compilablesDirectory, name + COMPILE_END));
+    return extractCompilableConfig(compilable.path);
 }
 
 export type CompileResult = TactCompileResult | FuncCompileResult | TolkCompileResult;
@@ -60,6 +80,7 @@ async function doCompileInner(name: string, config: CompilerConfig): Promise<Com
                 fsReadCallback: (path) => readFileSync(path).toString(),
                 optimizationLevel: config.optimizationLevel,
                 withStackComments: config.withStackComments,
+                withSrcLineComments: config.withSrcLineComments,
                 experimentalOptions: config.experimentalOptions,
             });
         }

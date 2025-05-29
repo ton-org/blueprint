@@ -1,4 +1,4 @@
-import { oneOrZeroOf, sleep, getExplorerLink } from '../utils';
+import { getExplorerLink, oneOrZeroOf, sleep } from '../utils';
 import arg from 'arg';
 import { DeeplinkProvider } from './send/DeeplinkProvider';
 import { TonConnectProvider } from './send/TonConnectProvider';
@@ -31,7 +31,9 @@ import { mnemonicToPrivateKey } from '@ton/crypto';
 import { MnemonicProvider, WalletVersion } from './send/MnemonicProvider';
 import { Config } from '../config/Config';
 import { CustomNetwork } from '../config/CustomNetwork';
-import axios, { AxiosResponse, AxiosAdapter, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import { Network } from './Network';
+import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from 'ton-lite-client';
 
 const INITIAL_DELAY = 400;
 const MAX_ATTEMPTS = 4;
@@ -55,8 +57,6 @@ export const argSpec = {
 };
 
 export type Args = arg.Result<typeof argSpec>;
-
-type Network = 'mainnet' | 'testnet' | 'custom';
 
 type Explorer = 'tonscan' | 'tonviewer' | 'toncx' | 'dton';
 
@@ -202,10 +202,12 @@ class NetworkProviderImpl implements NetworkProvider {
             this.#ui.setActionPrompt(`Awaiting contract deployment... [Attempt ${i}/${attempts}]`);
             const isDeployed = await this.isContractDeployed(address);
             if (isDeployed) {
+                const formattedAddress = address.toString({ testOnly: this.#network === 'testnet' });
+
                 this.#ui.clearActionPrompt();
-                this.#ui.write(`Contract deployed at address ${address.toString()}`);
+                this.#ui.write(`Contract deployed at address ${formattedAddress}`);
                 this.#ui.write(
-                    `You can view it at ${getExplorerLink(address.toString(), this.#network, this.#explorer)}`,
+                    `You can view it at ${getExplorerLink(formattedAddress, this.#network, this.#explorer)}`,
                 );
                 return;
             }
@@ -252,7 +254,15 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 }
 
-async function createMnemonicProvider(client: BlueprintTonClient, ui: UIProvider) {
+function getOptionalNumberEnv(envName: string) {
+    const value = process.env[envName] ? Number(process.env[envName]) : undefined;
+    if (value !== undefined && Number.isNaN(value)) {
+        throw new Error(`Invalid ${envName} provided`);
+    }
+    return value;
+}
+
+async function createMnemonicProvider(client: BlueprintTonClient, network: Network, ui: UIProvider) {
     const mnemonic = process.env.WALLET_MNEMONIC ?? '';
     const walletVersion = process.env.WALLET_VERSION ?? '';
     if (mnemonic.length === 0 || walletVersion.length === 0) {
@@ -260,13 +270,54 @@ async function createMnemonicProvider(client: BlueprintTonClient, ui: UIProvider
             'Mnemonic deployer was chosen, but env variables WALLET_MNEMONIC and WALLET_VERSION are not set',
         );
     }
+    const walletId = getOptionalNumberEnv('WALLET_ID');
+    const subwalletNumber = getOptionalNumberEnv('SUBWALLET_NUMBER');
+
     const keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));
     return new MnemonicProvider({
         version: walletVersion.toLowerCase() as WalletVersion,
         client,
         secretKey: keyPair.secretKey,
         ui,
+        walletId,
+        subwalletNumber,
+        network,
     });
+}
+
+function intToIP(int: number): string {
+    const part1 = int & 255;
+    const part2 = (int >> 8) & 255;
+    const part3 = (int >> 16) & 255;
+    const part4 = (int >> 24) & 255;
+    return `${(part4 + 256) % 256}.${(part3 + 256) % 256}.${(part2 + 256) % 256}.${(part1 + 256) % 256}`;
+}
+
+async function buildLiteClient(configEndpoint: string) {
+    const { data } = await axios.get(configEndpoint);
+    if (!Array.isArray(data.liteservers)) {
+        throw new Error(
+            `Invalid liteclient configuration on ${configEndpoint}. Use https://ton.org/testnet-global.config.json for testnet or https://ton.org/global.config.json for mainnet.`,
+        );
+    }
+
+    const engines = data.liteservers.map((server: any) => {
+        if (
+            typeof server?.ip !== 'number' ||
+            typeof server?.port !== 'number' ||
+            typeof server?.id !== 'object' ||
+            typeof server?.id?.key !== 'string'
+        ) {
+            throw new Error(`Invalid liteclient configuration on ${configEndpoint}`);
+        }
+        return new LiteSingleEngine({
+            host: `tcp://${intToIP(server.ip)}:${server.port}`,
+            publicKey: Buffer.from(server.id.key, 'base64'),
+        });
+    });
+
+    const engine = new LiteRoundRobinEngine(engines);
+    return new LiteClient({ engine });
 }
 
 class NetworkProviderBuilder {
@@ -350,14 +401,14 @@ class NetworkProviderBuilder {
         let provider: SendProvider;
         switch (deployUsing) {
             case 'deeplink':
-                provider = new DeeplinkProvider(this.ui);
+                provider = new DeeplinkProvider(network, this.ui);
                 break;
             case 'tonconnect':
                 if (network === 'custom') throw new Error('Tonkeeper cannot work with custom network.');
-                provider = new TonConnectProvider(new FSStorage(storagePath), this.ui);
+                provider = new TonConnectProvider(new FSStorage(storagePath), this.ui, network);
                 break;
             case 'mnemonic':
-                provider = await createMnemonicProvider(client, this.ui);
+                provider = await createMnemonicProvider(client, network, this.ui);
                 break;
             default:
                 throw new Error('Unknown deploy option');
@@ -392,7 +443,7 @@ class NetworkProviderBuilder {
                     version = inputVer.toLowerCase() as any; // checks come later
                 }
                 const inputType = this.args['--custom-type'];
-                let type: 'mainnet' | 'testnet' | 'custom' | undefined = undefined;
+                let type: CustomNetwork['type'] = undefined;
                 if (inputType !== undefined) {
                     type = inputType as any; // checks come later
                 }
@@ -425,6 +476,8 @@ class NetworkProviderBuilder {
                         apiKey: configNetwork.key,
                     }),
                 );
+            } else if (configNetwork.version === 'liteclient') {
+                tc = await buildLiteClient(configNetwork.endpoint);
             } else {
                 throw new Error('Unknown API version: ' + configNetwork.version);
             }
@@ -462,6 +515,7 @@ class NetworkProviderBuilder {
             };
 
             tc = new TonClient({
+                timeout: this.config?.requestTimeout,
                 endpoint:
                     network === 'mainnet'
                         ? 'https://toncenter.com/api/v2/jsonRPC'
