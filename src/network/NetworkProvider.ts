@@ -1,11 +1,12 @@
-import { TonClient, TonClient4 } from '@ton/ton';
-import { Address, Cell, Contract, ContractProvider, OpenedContract, Sender, StateInit } from '@ton/core';
+import { parseFullConfig, TonClient, TonClient4 } from '@ton/ton';
+import { Address, Cell, Contract, ContractProvider, ContractState, OpenedContract, Sender, StateInit } from '@ton/core';
 import { ContractAdapter } from '@ton-api/ton-adapter';
 import { UIProvider } from '../ui/UIProvider';
 import { LiteClient } from "ton-lite-client";
 
 export type BlueprintTonClient = TonClient4 | TonClient | ContractAdapter | LiteClient;
 
+type BlockchainConfig = ReturnType<typeof parseFullConfig>;
 
 /**
  * Interface representing a network provider for interacting with TON blockchain.
@@ -75,6 +76,37 @@ export interface NetworkProvider {
      * @returns {Promise<void>} A promise that resolves when the contract is deployed or the attempts are exhausted.
      */
     waitForDeploy(address: Address, attempts?: number, sleepDuration?: number): Promise<void>;
+
+    /**
+     * Retrieves the state of a contract at the specified address.
+     *
+     * @param {Address} address - The address of the contract.
+     *
+     * @example
+     * const address = Address.parse('YOUR_CONTRACT_ADDRESS');
+     * const state = await provider.getContractState(address);
+     * console.log(`Contract balance: ${fromNano(state.balance)} TON`);
+     *
+     * @returns {Promise<ContractState>} A promise that resolves to the contract's state.
+     */
+    getContractState(address: Address): Promise<ContractState>;
+
+    /**
+     * Fetches the current blockchain configuration.
+     *
+     * This method retrieves the configuration from the masterchain. If no address is provided,
+     * it defaults to the standard config address:
+     * `-1:5555555555555555555555555555555555555555555555555555555555555555`.
+     *
+     * @param {Address} [configAddress] - Optional configuration address.
+     *
+     * @example
+     * const config = await provider.getConfig();
+     * console.log('Global config version:', config.globalVersion.version);
+     *
+     @returns {Promise<BlockchainConfig>} A promise that resolves to the blockchain configuration.
+     */
+    getConfig(configAddress?: Address): Promise<BlockchainConfig>;
 
     /**
      * @deprecated

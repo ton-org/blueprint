@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Wallet v4 extended support: added v4r1, v4 is treated as v4r2
 - Added possibility to specify custom `manifestUrl` in blueprint configuration
 - Added documentation about the [Tact plugin by TON Studio](https://plugins.jetbrains.com/plugin/27290-tact)
+- Added `getConfig` and `getContractState` methods to network provider
 
 ## [0.34.0] - 2025-05-20
 
