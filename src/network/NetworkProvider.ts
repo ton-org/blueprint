@@ -2,8 +2,9 @@ import { TonClient, TonClient4 } from '@ton/ton';
 import { Address, Cell, Contract, ContractProvider, OpenedContract, Sender, StateInit } from '@ton/core';
 import { ContractAdapter } from '@ton-api/ton-adapter';
 import { UIProvider } from '../ui/UIProvider';
+import { LiteClient } from "ton-lite-client";
 
-export type BlueprintTonClient = TonClient4 | TonClient | ContractAdapter;
+export type BlueprintTonClient = TonClient4 | TonClient | ContractAdapter | LiteClient;
 
 
 /**
