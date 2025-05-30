@@ -15,6 +15,7 @@
         "@ton/crypto": "^3.3.0",
         "@ton/sandbox": ">=0.31.0",
         "@ton/test-utils": ">=0.6.0",
+        "@ton/tolk-js": "^0.13.0",
         "@ton/ton": ">=15.2.1 <16.0.0",
         "@types/jest": "^29.5.14",
         "@types/node": "^22.14.1",
@@ -23,8 +24,5 @@
         "ts-jest": "^29.3.2",
         "ts-node": "^10.9.2",
         "typescript": "^5.8.3"
-    },
-    "dependencies": {
-        "@ton/tolk-js": "^0.13.0"
     }
 }
