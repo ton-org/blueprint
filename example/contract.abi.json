@@ -1,0 +1,21 @@
+{
+  "0x61689f0431f0bead3490202a24110f59f58ac3c23f5e4ad4168923eee237287a": "Counter",
+  "Counter": {
+    "receivers": [
+      {
+        "receiver": "internal",
+        "message": {
+          "kind": "typed",
+          "type": "increase"
+        }
+      }
+    ],
+    "types": [
+      {
+        "name": "increase",
+        "header": 2122802415
+      }
+    ],
+    "name": "Counter"
+  }
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "label": "v1",
+    "createdAt": "2025-05-26T10:07:36.557Z",
+    "result": {
+      "Counter": {
+        "sendDeploy": {
+          "gasUsed": {
+            "kind": "init",
+            "value": "1937"
+          },
+          "cells": {
+            "kind": "init",
+            "value": "11"
+          },
+          "bits": {
+            "kind": "init",
+            "value": "892"
+          }
+        },
+        "send": {
+          "gasUsed": {
+            "kind": "init",
+            "value": "615"
+          },
+          "cells": {
+            "kind": "init",
+            "value": "11"
+          },
+          "bits": {
+            "kind": "init",
+            "value": "892"
+          }
+        },
+        "sendIncrease": {
+          "gasUsed": {
+            "kind": "init",
+            "value": "1937"
+          },
+          "cells": {
+            "kind": "init",
+            "value": "11"
+          },
+          "bits": {
+            "kind": "init",
+            "value": "892"
+          }
+        },
+        "increase": {
+          "gasUsed": {
+            "kind": "init",
+            "value": "2681"
+          },
+          "cells": {
+            "kind": "init",
+            "value": "11"
+          },
+          "bits": {
+            "kind": "init",
+            "value": "892"
+          }
+        }
+      }
+    }
+  },
+  {
+    "label": "current",
+    "createdAt": "2025-05-26T10:19:13.247Z",
+    "result": {
+      "Counter": {
+        "sendDeploy": {
+          "gasUsed": {
+            "kind": "same",
+            "value": "1937 same"
+          },
+          "cells": {
+            "kind": "same",
+            "value": "11 same"
+          },
+          "bits": {
+            "kind": "same",
+            "value": "892 same"
+          }
+        },
+        "send": {
+          "gasUsed": {
+            "kind": "same",
+            "value": "615 same"
+          },
+          "cells": {
+            "kind": "same",
+            "value": "11 same"
+          },
+          "bits": {
+            "kind": "same",
+            "value": "892 same"
+          }
+        },
+        "sendIncrease": {
+          "gasUsed": {
+            "kind": "same",
+            "value": "1937 same"
+          },
+          "cells": {
+            "kind": "same",
+            "value": "11 same"
+          },
+          "bits": {
+            "kind": "same",
+            "value": "892 same"
+          }
+        },
+        "increase": {
+          "gasUsed": {
+            "kind": "same",
+            "value": "2681 same"
+          },
+          "cells": {
+            "kind": "same",
+            "value": "11 same"
+          },
+          "bits": {
+            "kind": "same",
+            "value": "892 same"
+          }
+        }
+      }
+    }
+  }
+]
