@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated documentation about Tact wrappers generations
+- Updated documentation about Tact wrappers
 
 ## [0.34.0] - 2025-05-20
 
