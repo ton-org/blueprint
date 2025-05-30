@@ -55,6 +55,7 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 1. Compiling FunC with https://github.com/ton-community/func-js
 2. Compiling Tolk with https://github.com/ton-blockchain/tolk-js
 3. Compiling Tact with https://github.com/tact-lang/tact
+   * Uses [`tact.config.json`](https://docs.tact-lang.org/book/config/) as the build configuration file
 4. Testing smart contracts with https://github.com/ton-org/sandbox
 5. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect) or a `ton://` deeplink
 
@@ -77,9 +78,11 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 ### Directory structure
 
 * `contracts/` - Source code for all smart contracts and their imports
-* `wrappers/` - TypeScript interface classes for all contracts (implementing `Contract` from [@ton/core](https://www.npmjs.com/package/@ton/core))
-  * include message [de]serialization primitives, getter wrappers and compilation functions
-  * used by the test suite and client code to interact with the contracts from TypeScript
+* `wrappers/` - TypeScript interface classes for all contracts **except Tact**. 
+  * Tact-generated wrappers are located according to the build path defined in [`tact.config.json`](https://docs.tact-lang.org/book/config/) 
+  * Each wrapper implements `Contract` interface from [@ton/core](https://www.npmjs.com/package/@ton/core)
+  * Includes message [de]serialization primitives, getter wrappers and compilation functions
+  * Used by the test suite and client code to interact with the contracts from TypeScript
 * `compilables/` - Compilations scripts for contracts
 * `tests/` - TypeScript test suite for all contracts (relying on [Sandbox](https://github.com/ton-org/sandbox) for in-process tests)
 * `scripts/` - Deployment scripts to mainnet/testnet and other scripts interacting with live contracts
