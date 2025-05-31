@@ -1,0 +1,21 @@
+name: Reward
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  reward:
+    name: Reward
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: the-ton-tech/toolchain/reward@v1.3.0
+        with:
+          activity_id: blueprint
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          society_api_key: ${{ secrets.X_API_KEY }}
+          society_partner_id: ${{ secrets.X_PARTNER_ID }}
