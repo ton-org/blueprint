@@ -42,9 +42,7 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
         return;
     }
 
-    val msg = IncomingMessage.fromSlice(msgBody, {
-        throwIfOpcodeDoesNotMatch: 0xffff,  // throw if message opcode is unknown
-    });
+    val msg = IncomingMessage.fromSlice(msgBody);  // 63 error code is thrown if the message opcode is unknown
 
     match (msg) {
         IncreaseMessage => {
