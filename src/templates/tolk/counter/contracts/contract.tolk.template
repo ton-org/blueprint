@@ -1,33 +1,33 @@
 {{snakeName}}.tolk
 // simple counter contract in Tolk language
 
-const OP_INCREASE = 0x7e8764ef;  // arbitrary 32-bit number, equal to OP_INCREASE in wrappers/CounterContract.ts
+// using unions to represent contract messages
 
-// storage variables
-
-// id is required to be able to create different instances of counters
-// since addresses in TON depend on the initial state of the contract
-global ctxID: int;
-global ctxCounter: int;
-
-// loadData populates storage variables from persistent storage
-fun loadData() {
-    var ds = contract.getData().beginParse();
-
-    ctxID = ds.loadUint(32);
-    ctxCounter = ds.loadUint(32);
-
-    ds.assertEnd();
+// the struct uses a 32-bit opcode prefix for message identification
+struct (0x7e8764ef) IncreaseMessage {
+    queryID: uint64;  // query id, typically included in messages
+    increaseBy: uint32;
 }
 
-// saveData stores storage variables as a cell into persistent storage
-fun saveData() {
-    contract.setData(
-        beginCell()
-        .storeUint(ctxID, 32)
-        .storeUint(ctxCounter, 32)
-        .endCell()
-    );
+// incoming message definition using a union for extensibility
+// this union could be extended like below to support more message types
+// type IncomingMessage = IncreaseMessage | DecreaseMessage | ...;
+type IncomingMessage = IncreaseMessage;
+
+// contract storage, auto-serialized to/from cells.
+struct Storage {
+    id: uint32; // required to allow multiple independent counter instances, since contract address depends on initial state
+    counter: uint32;
+}
+
+// load contract data using auto-deserialization
+fun loadData() {
+    return Storage.fromCell(contract.getData());
+}
+
+// save contract data into persistent storage using auto-serialization
+fun saveData(data: Storage) {
+    contract.setData(data.toCell());
 }
 
 // onInternalMessage is the main entrypoint; it's called when a contract receives an internal message from other contracts
@@ -36,36 +36,41 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
         return;
     }
 
-    var cs: slice = msgFull.beginParse();
+    var cs = msgFull.beginParse();
     val flags = cs.loadMessageFlags();
     if (isMessageBounced(flags)) { // ignore all bounced messages
         return;
     }
 
-    loadData(); // here we populate the storage variables
+    val msg = IncomingMessage.fromSlice(msgBody, {
+        throwIfOpcodeDoesNotMatch: 0xffff,  // throw if message opcode is unknown
+    });
 
-    val op = msgBody.loadMessageOp(); // by convention, the first 32 bits of incoming message is the op
-    val queryID = msgBody.loadMessageQueryId(); // also by convention, the next 64 bits contain the "query id", although this is not always the case
-
-    if (op == OP_INCREASE) {
-        val increaseBy = msgBody.loadUint(32);
-        ctxCounter += increaseBy;
-        saveData();
-        return;
+    match (msg) {
+        IncreaseMessage => {
+            var storage = loadData(); // here we load contract data
+            storage.counter += msg.increaseBy;
+            saveData(storage); // here we updating contract data
+        }
+        /* another messages could be supported via extending this match block
+        DecreaseMessage => {
+            var storage = loadData();
+            storage.counter -= msg.decreaseBy;
+            saveData(storage);
+        }
+        */
     }
-
-    throw 0xffff; // if the message contains an op that is not known to this contract, we throw
 }
 
 // get methods are a means to conveniently read contract data using, for example, HTTP APIs
 // note that unlike in many other smart contract VMs, get methods cannot be called by other contracts
 
 get currentCounter(): int {
-    loadData();
-    return ctxCounter;
+    val storage = loadData();
+    return storage.counter;
 }
 
 get initialId(): int {
-    loadData();
-    return ctxID;
+    val storage = loadData();
+    return storage.id;
 }
