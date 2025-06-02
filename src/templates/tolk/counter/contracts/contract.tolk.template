@@ -50,7 +50,7 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
             storage.counter += msg.increaseBy;
             saveData(storage); // here we updating contract data
         }
-        /* another messages could be supported via extending this match block
+        /* other messages could be supported via extending this match block
         DecreaseMessage => {
             var storage = loadData();
             storage.counter -= msg.decreaseBy;
