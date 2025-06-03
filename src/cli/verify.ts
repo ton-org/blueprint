@@ -66,6 +66,10 @@ async function getBackends(): Promise<Backends> {
             'https://raw.githubusercontent.com/ton-community/contract-verifier-config/main/config.json',
         );
 
+        if (response.status !== 200) {
+            throw new Error(response.status + ' ' + response.statusText);
+        }
+
         const config: { backends: string[]; backendsTestnet: [] } = await response.json();
 
         backendsProd = config.backends;
