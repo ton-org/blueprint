@@ -52,7 +52,7 @@ Blueprint is generally invoked as follows:
   ${chalk.cyan('blueprint')} ${chalk.yellow('[command]')} ${chalk.gray('[command-args]')} ${chalk.gray('[flags]')}
 
 ${chalk.bold('List of available commands:')}
-${availableCommands.map(c => `- ${chalk.green(c)}`).join('\n')}`,
+${availableCommands.map((c) => `- ${chalk.green(c)}`).join('\n')}`,
 
     create: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('create')} ${chalk.yellow('[contract name]')} ${chalk.gray('[flags]')}
 
@@ -132,7 +132,7 @@ Builds and prepares a publish-ready package of contract wrappers.
 ${chalk.bold('Flags:')}
 ${chalk.cyan('--no-warn')}, ${chalk.cyan('-n')} - ignore warnings about modifying tsconfig.json, package.json, and removing the dist directory.`,
     snapshot: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('snapshot')} ${chalk.yellow(
-      '[--label=<comment>|-l=<comment>]',
+        '[--label=<comment>|-l=<comment>]',
     )}
 
 Run with gas usage and cells' sizes collected and write a new snapshot

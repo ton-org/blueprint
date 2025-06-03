@@ -1,7 +1,6 @@
-import { getExplorerLink, oneOrZeroOf, sleep } from '../utils';
+import path from 'path';
+
 import arg from 'arg';
-import { DeeplinkProvider } from './send/DeeplinkProvider';
-import { TonConnectProvider } from './send/TonConnectProvider';
 import {
     Address,
     Cell,
@@ -24,20 +23,23 @@ import {
 import { parseFullConfig, TonClient, TonClient4 } from '@ton/ton';
 import { ContractAdapter } from '@ton-api/ton-adapter';
 import { TonApiClient } from '@ton-api/client';
+import { mnemonicToPrivateKey } from '@ton/crypto';
+import axios, { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from 'ton-lite-client';
+
+import { getExplorerLink, oneOrZeroOf, sleep } from '../utils';
+import { DeeplinkProvider } from './send/DeeplinkProvider';
+import { TonConnectProvider } from './send/TonConnectProvider';
 import { UIProvider } from '../ui/UIProvider';
 import { BlueprintTonClient, NetworkProvider } from './NetworkProvider';
 import { SendProvider } from './send/SendProvider';
 import { FSStorage } from './storage/FSStorage';
-import path from 'path';
 import { TEMP_DIR } from '../paths';
-import { mnemonicToPrivateKey } from '@ton/crypto';
 import { MnemonicProvider } from './send/MnemonicProvider';
 import { Config } from '../config/Config';
 import { CustomNetwork } from '../config/CustomNetwork';
-import axios, { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { Network } from './Network';
 import { WalletVersion } from './send/wallets';
-import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from 'ton-lite-client';
 
 const INITIAL_DELAY = 400;
 const MAX_ATTEMPTS = 4;
@@ -434,7 +436,12 @@ class NetworkProviderBuilder {
                 break;
             case 'tonconnect':
                 if (network === 'custom') throw new Error('Tonkeeper cannot work with custom network.');
-                provider = new TonConnectProvider(new FSStorage(storagePath), this.ui, network, this.config?.manifestUrl);
+                provider = new TonConnectProvider(
+                    new FSStorage(storagePath),
+                    this.ui,
+                    network,
+                    this.config?.manifestUrl,
+                );
                 break;
             case 'mnemonic':
                 provider = await createMnemonicProvider(client, network, this.ui);

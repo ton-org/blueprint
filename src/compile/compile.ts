@@ -6,7 +6,6 @@ import { Cell } from '@ton/core';
 import { COMPILABLES_DIR, WRAPPERS_DIR } from '../paths';
 import { CompilableConfig, CompilerConfig, isCompilableConfig } from './CompilerConfig';
 import { getConfig } from '../config/utils';
-
 import { doCompileFunc, FuncCompileResult, getFuncVersion, DoCompileFuncConfig } from './func/compile.func';
 import { doCompileTact, TactCompileResult, getTactVersion, getTactConfigForContract } from './tact/compile.tact';
 import { doCompileTolk, TolkCompileResult, getTolkVersion } from './tolk/compile.tolk';

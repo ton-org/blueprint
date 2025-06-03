@@ -1,8 +1,9 @@
+import arg from 'arg';
+
 import { Args, extractFirstArg, Runner, RunnerContext } from './Runner';
 import { createNetworkProvider, argSpec } from '../network/createNetworkProvider';
 import { findScripts, selectFile } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
-import arg from 'arg';
 import { helpArgs, helpMessages } from './constants';
 
 export const run: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {

@@ -14,7 +14,13 @@ import { Address, Cell } from '@ton/core';
  * const link = tonDeepLink(myAddress, 10_000_000n); // 0.01 TON
  * // "ton://transfer/..."
  */
-export const tonDeepLink = (address: Address, amount: bigint, body?: Cell, stateInit?: Cell, testOnly?: boolean): string =>
+export const tonDeepLink = (
+    address: Address,
+    amount: bigint,
+    body?: Cell,
+    stateInit?: Cell,
+    testOnly?: boolean,
+): string =>
     `ton://transfer/${address.toString({
         testOnly,
         urlSafe: true,
