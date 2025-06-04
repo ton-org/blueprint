@@ -17,8 +17,8 @@
         "build": "rm -rf dist && tsc && cp -r src/templates dist/",
         "test": "echo \"Error: no test specified\" && exit 0",
         "release": "yarn build && yarn publish --access public",
-        "lint": "eslint .",
-        "lint:fix": "eslint . --fix"
+        "lint": "eslint . --max-warnings 0",
+        "lint:fix": "eslint . --max-warnings 0 --fix"
     },
     "prettier": "@ton/toolchain/prettier",
     "devDependencies": {
@@ -33,7 +33,6 @@
         "@types/node": "^20.2.5",
         "@types/qrcode-terminal": "^0.12.0",
         "eslint": "^9.28.0",
-        "prettier": "^3.0.3",
         "typescript": "^5.8.3"
     },
     "peerDependencies": {
@@ -57,5 +56,5 @@
         "ton-lite-client": "^3.1.0",
         "ts-node": "^10.9.1"
     },
-    "packageManager": "yarn@4.3.1"
+    "packageManager": "yarn@4.9.2"
 }
