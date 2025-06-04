@@ -409,6 +409,7 @@ __metadata:
     axios: "npm:^1.7.7"
     chalk: "npm:^4.1.0"
     dotenv: "npm:^16.1.4"
+    eslint: "npm:^9.28.0"
     inquirer: "npm:^8.2.5"
     prettier: "npm:^3.0.3"
     qrcode-terminal: "npm:^0.12.0"
@@ -1686,7 +1687,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9.27.0":
+"eslint@npm:^9.27.0, eslint@npm:^9.28.0":
   version: 9.28.0
   resolution: "eslint@npm:9.28.0"
   dependencies:
