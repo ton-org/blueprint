@@ -4,7 +4,6 @@ import { build, createVirtualFileSystem, Options, Project, stdLibFiles } from '@
 import { Cell } from '@ton/core';
 
 import { BUILD_DIR } from '../../paths';
-
 import { OverwritableVirtualFileSystem } from './OverwritableVirtualFileSystem';
 import { TactCompilerConfig, TactLegacyCompilerConfig } from './config';
 import { getRootTactConfig } from '../../config/tact.config';

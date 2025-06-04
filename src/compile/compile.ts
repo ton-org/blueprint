@@ -1,12 +1,10 @@
 import { readFileSync } from 'fs';
-import path from 'path';
 
 import { Cell } from '@ton/core';
 
 import { COMPILABLES_DIR, WRAPPERS_DIR } from '../paths';
 import { CompilableConfig, CompilerConfig, isCompilableConfig } from './CompilerConfig';
 import { getConfig } from '../config/utils';
-
 import { doCompileFunc, FuncCompileResult, getFuncVersion, DoCompileFuncConfig } from './func/compile.func';
 import { doCompileTact, TactCompileResult, getTactVersion, getTactConfigForContract } from './tact/compile.tact';
 import { doCompileTolk, TolkCompileResult, getTolkVersion } from './tolk/compile.tolk';
@@ -22,6 +20,7 @@ export async function getCompilablesDirectory(): Promise<string> {
 }
 
 export function extractCompilableConfig(path: string): CompilableConfig {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const mod = require(path);
 
     if (typeof mod.compile !== 'object') {

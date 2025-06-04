@@ -1,7 +1,8 @@
 import { execSync } from 'child_process';
 import path from 'path';
-import arg from 'arg';
 import { promises as fs, existsSync } from 'fs';
+
+import arg from 'arg';
 
 import { Args, Runner, RunnerContext } from './Runner';
 import { UIProvider } from '../ui/UIProvider';
@@ -74,7 +75,7 @@ async function correctPackageJson() {
     await fs.writeFile(PACKAGE_JSON, JSON.stringify(newPackageJson, null, 2));
 }
 
-export const pack: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {
+export const pack: Runner = async (_args: Args, ui: UIProvider, _context: RunnerContext) => {
     const localArgs = arg({
         '--no-warn': Boolean,
         '-n': '--no-warn',
@@ -87,7 +88,7 @@ export const pack: Runner = async (args: Args, ui: UIProvider, context: RunnerCo
 
     if (!localArgs['--no-warn']) {
         ui.write(
-            '🚨 WARNING: This command may modify tsconfig.json, package.json, and remove the dist directory. Make sure these files are committed to your repository. If you wish to ignore this warning, use the -n or --no-warn flag.'
+            '🚨 WARNING: This command may modify tsconfig.json, package.json, and remove the dist directory. Make sure these files are committed to your repository. If you wish to ignore this warning, use the -n or --no-warn flag.',
         );
 
         const answer = await ui.input('Are you sure you want to continue? (y/N)');
@@ -107,7 +108,10 @@ export const pack: Runner = async (args: Args, ui: UIProvider, context: RunnerCo
     await correctTsConfig();
 
     ui.write('🏗️ Building package...');
-    await fs.rm(path.join(process.cwd(), 'dist'), { recursive: true, force: true });
+    await fs.rm(path.join(process.cwd(), 'dist'), {
+        recursive: true,
+        force: true,
+    });
     execSync(`tsc`, { stdio: 'inherit' });
 
     ui.write('📝 Updating package.json...');

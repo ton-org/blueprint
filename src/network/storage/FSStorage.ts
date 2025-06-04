@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs/promises';
+
 import { Storage } from './Storage';
 
 type StorageObject = {
@@ -16,7 +17,7 @@ export class FSStorage implements Storage {
     async #readObject(): Promise<StorageObject> {
         try {
             return JSON.parse((await fs.readFile(this.#path)).toString('utf-8'));
-        } catch (e) {
+        } catch (_) {
             return {};
         }
     }

@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer';
+
 import { WalletContractV4 as WalletContractV4R2 } from '@ton/ton/dist/wallets/WalletContractV4';
 import { Cell, contractAddress } from '@ton/core';
 import {
@@ -12,7 +13,18 @@ import {
     WalletContractV5R1,
 } from '@ton/ton';
 
-export type WalletVersion = 'v1r1' | 'v1r2' | 'v1r3' | 'v2r1' | 'v2r2' | 'v3r1' | 'v3r2' | 'v4' | 'v4r1' | 'v4r2' | 'v5r1';
+export type WalletVersion =
+    | 'v1r1'
+    | 'v1r2'
+    | 'v1r3'
+    | 'v2r1'
+    | 'v2r2'
+    | 'v3r1'
+    | 'v3r2'
+    | 'v4'
+    | 'v4r1'
+    | 'v4r2'
+    | 'v5r1';
 
 class WalletContractV4R1 {
     static create(args: { workchain: number; publicKey: Buffer; walletId?: number | null }) {

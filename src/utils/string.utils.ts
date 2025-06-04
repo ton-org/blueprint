@@ -2,14 +2,13 @@ export function isPascalCase(str: string): boolean {
     return /^[A-Z][a-zA-Z0-9]*$/.test(str);
 }
 
-
 export function toSnakeCase(v: string): string {
     const r = v.replace(/[A-Z]/g, (sub) => '_' + sub.toLowerCase());
     return r[0] === '_' ? r.substring(1) : r;
 }
 
 export function toLowerCase(str: string): string {
-    return str.substring(0, 1).toLowerCase() + str.substring(1)
+    return str.substring(0, 1).toLowerCase() + str.substring(1);
 }
 
 export function toPascalCase(str: string): string {

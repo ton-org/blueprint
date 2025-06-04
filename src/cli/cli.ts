@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import * as dotenv from 'dotenv';
-
 dotenv.config();
 import arg from 'arg';
 import chalk from 'chalk';
+
 import { snapshot } from './snapshot';
 import { create } from './create';
 import { run } from './run';
@@ -13,7 +13,7 @@ import { test } from './test';
 import { verify } from './verify';
 import { convert } from './convert';
 import { additionalHelpMessages, buildHelpMessage, help } from './help';
-import { pack } from "./pack";
+import { pack } from './pack';
 import { InquirerUIProvider } from '../ui/InquirerUIProvider';
 import { argSpec, Runner, RunnerContext } from './Runner';
 import { getConfig } from '../config/utils';
@@ -34,6 +34,7 @@ const runners: Record<string, Runner> = {
 };
 
 async function main() {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('ts-node/register');
 
     const args = arg(argSpec, {

@@ -1,6 +1,7 @@
-import { VirtualFileSystem } from '@tact-lang/compiler';
 import { resolve, normalize, sep } from 'path';
 import { existsSync, readFileSync } from 'fs';
+
+import { VirtualFileSystem } from '@tact-lang/compiler';
 
 export class OverwritableVirtualFileSystem implements VirtualFileSystem {
     root: string;

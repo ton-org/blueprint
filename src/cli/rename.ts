@@ -1,6 +1,7 @@
-import arg from 'arg';
 import { promises as fs, existsSync } from 'fs';
 import path from 'path';
+
+import arg from 'arg';
 
 import { COMPILABLES_DIR, CONTRACTS_DIR, SCRIPTS_DIR, TACT_ROOT_CONFIG, TESTS_DIR, WRAPPERS_DIR } from '../paths';
 import { Args, extractFirstArg, extractSecondArg, Runner, RunnerContext } from './Runner';
@@ -39,7 +40,10 @@ class RenameContext {
         if (!existsSync(directory)) {
             return;
         }
-        const dir = await fs.readdir(directory, { recursive: true, withFileTypes: true });
+        const dir = await fs.readdir(directory, {
+            recursive: true,
+            withFileTypes: true,
+        });
         await Promise.all(
             dir.map(async (dir) => {
                 if (!dir.isFile()) {
@@ -72,7 +76,7 @@ class RenameContext {
     }
 }
 
-export const rename: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {
+export const rename: Runner = async (_args: Args, ui: UIProvider, _context: RunnerContext) => {
     const localArgs = arg(helpArgs);
     if (localArgs['--help']) {
         ui.write(helpMessages['rename']);

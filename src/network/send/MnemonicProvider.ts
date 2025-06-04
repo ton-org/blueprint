@@ -1,3 +1,5 @@
+import { Buffer } from 'buffer';
+
 import {
     Address,
     Cell,
@@ -9,13 +11,13 @@ import {
     SendMode,
     StateInit,
 } from '@ton/core';
-import { SendProvider } from './SendProvider';
 import { KeyPair, keyPairFromSecretKey } from '@ton/crypto';
+
+import { SendProvider } from './SendProvider';
 import { UIProvider } from '../../ui/UIProvider';
 import { BlueprintTonClient } from '../NetworkProvider';
 import { Network } from '../Network';
-import { Buffer } from 'buffer';
-import {wallets, WalletVersion} from './wallets';
+import { wallets, WalletVersion } from './wallets';
 
 interface WalletInstance extends Contract {
     getSeqno(provider: ContractProvider): Promise<number>;
@@ -52,7 +54,9 @@ export class MnemonicProvider implements SendProvider {
 
     constructor(params: MnemonicProviderParams) {
         if (!(params.version in wallets)) {
-            throw new Error(`Unknown wallet version ${params.version}, expected one of ${Object.keys(wallets).join(', ')}`);
+            throw new Error(
+                `Unknown wallet version ${params.version}, expected one of ${Object.keys(wallets).join(', ')}`,
+            );
         }
         this.#client = params.client;
         this.#network = params.network;
@@ -95,7 +99,10 @@ export class MnemonicProvider implements SendProvider {
     }
 
     async connect() {
-        const formattedAddress = this.address().toString({ testOnly: this.#network === 'testnet', bounceable: false });
+        const formattedAddress = this.address().toString({
+            testOnly: this.#network === 'testnet',
+            bounceable: false,
+        });
         this.#ui.write(`Connected to wallet at address: ${formattedAddress}\n`);
     }
 

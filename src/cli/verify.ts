@@ -1,12 +1,14 @@
+import path from 'path';
+
 import { Address, Cell, Contract, ContractProvider, Dictionary, toNano } from '@ton/core';
+import arg from 'arg';
+
 import { doCompile } from '../compile/compile';
 import { UIProvider } from '../ui/UIProvider';
 import { Args, extractFirstArg, Runner, RunnerContext } from './Runner';
-import path from 'path';
 import { argSpec, createNetworkProvider } from '../network/createNetworkProvider';
 import { selectContract } from './build';
 import { sleep } from '../utils';
-import arg from 'arg';
 import { helpArgs, helpMessages } from './constants';
 
 type FuncCompilerSettings = {
@@ -173,7 +175,7 @@ async function lookupCodeHash(hash: Buffer, ui: UIProvider, retryCount: number =
     return foundAddr;
 }
 
-export const verify: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {
+export const verify: Runner = async (_args: Args, ui: UIProvider, context: RunnerContext) => {
     const localArgs = arg({ ...argSpec, ...helpArgs });
     if (localArgs['--help']) {
         ui.write(helpMessages['verify']);

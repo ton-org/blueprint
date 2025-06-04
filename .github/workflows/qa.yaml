@@ -1,0 +1,24 @@
+name: QA
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: the-ton-tech/toolchain/lint@v1.4.0
+  build:
+    name: Test & Build
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: the-ton-tech/toolchain/build@v1.4.0

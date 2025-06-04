@@ -1,12 +1,11 @@
 import path from 'path';
 import { lstat, mkdir, open, readdir, readFile } from 'fs/promises';
-import arg from 'arg';
 
+import arg from 'arg';
 import { Project } from '@tact-lang/compiler';
 
 import { getConfig } from '../config/utils';
 import { getRootTactConfig, TactConfig, updateRootTactConfig } from '../config/tact.config';
-
 import { Args, extractFirstArg, Runner } from './Runner';
 import { executeTemplate, TEMPLATES_DIR } from '../template';
 import { assertValidContractName, selectOption, toSnakeCase } from '../utils';
@@ -75,7 +74,7 @@ function addToTactConfig(contractName: string, contractPath: string) {
     updateRootTactConfig(newConfig);
 }
 
-export const create: Runner = async (args: Args, ui: UIProvider) => {
+export const create: Runner = async (_args: Args, ui: UIProvider) => {
     const localArgs = arg({
         '--type': String,
         ...helpArgs,

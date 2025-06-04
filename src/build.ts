@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs/promises';
+
 import {
     doCompile,
     extractCompilableConfig,
@@ -18,7 +19,8 @@ export async function buildOne(contract: string, ui?: UIProvider) {
 
     try {
         await fs.unlink(buildArtifactPath);
-    } catch (e) {}
+        // eslint-disable-next-line no-empty
+    } catch (_) {}
 
     ui?.setActionPrompt('⏳ Compiling...');
     try {
@@ -71,7 +73,7 @@ export async function buildOne(contract: string, ui?: UIProvider) {
     } catch (e) {
         if (ui) {
             ui?.clearActionPrompt();
-            ui?.write((e as any).toString());
+            ui?.write((e as Error).toString());
             process.exit(1);
         } else {
             throw e;
@@ -95,10 +97,7 @@ export async function buildAllTact(ui?: UIProvider) {
         .map((file) => file.name);
 
     const tactConfig = getRootTactConfig();
-    const tactContracts = [
-        ...legacyTactContract,
-        ...tactConfig.projects.map((project) => project.name),
-    ];
+    const tactContracts = [...legacyTactContract, ...tactConfig.projects.map((project) => project.name)];
 
     await buildContracts(tactContracts, ui);
 }
