@@ -74,7 +74,7 @@ function addToTactConfig(contractName: string, contractPath: string) {
     updateRootTactConfig(newConfig);
 }
 
-export const create: Runner = async (args: Args, ui: UIProvider) => {
+export const create: Runner = async (_args: Args, ui: UIProvider) => {
     const localArgs = arg({
         '--type': String,
         ...helpArgs,

@@ -175,7 +175,7 @@ async function lookupCodeHash(hash: Buffer, ui: UIProvider, retryCount: number =
     return foundAddr;
 }
 
-export const verify: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {
+export const verify: Runner = async (_args: Args, ui: UIProvider, context: RunnerContext) => {
     const localArgs = arg({ ...argSpec, ...helpArgs });
     if (localArgs['--help']) {
         ui.write(helpMessages['verify']);

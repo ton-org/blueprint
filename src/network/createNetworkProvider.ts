@@ -564,7 +564,7 @@ class NetworkProviderBuilder {
 
         try {
             await sendProvider.connect();
-        } catch (e) {
+        } catch (_) {
             console.error('Unable to connect to wallet.');
             process.exit(1);
         } finally {

@@ -1,5 +1,4 @@
 import { readFileSync } from 'fs';
-import path from 'path';
 
 import { Cell } from '@ton/core';
 
@@ -21,6 +20,7 @@ export async function getCompilablesDirectory(): Promise<string> {
 }
 
 export function extractCompilableConfig(path: string): CompilableConfig {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const mod = require(path);
 
     if (typeof mod.compile !== 'object') {

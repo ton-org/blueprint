@@ -76,7 +76,7 @@ class RenameContext {
     }
 }
 
-export const rename: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {
+export const rename: Runner = async (_args: Args, ui: UIProvider, _context: RunnerContext) => {
     const localArgs = arg(helpArgs);
     if (localArgs['--help']) {
         ui.write(helpMessages['rename']);

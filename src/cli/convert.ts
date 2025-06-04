@@ -48,7 +48,7 @@ function findFile(dir: string, filename: string): string {
     return foundPath;
 }
 
-function parseCompileString(str: string, src_dir: string, ui: UIProvider) {
+function parseCompileString(str: string, src_dir: string, _ui: UIProvider) {
     // Naive but does the job
     const tokens = str.split(/\\?\s+/).filter((t) => t != '\\');
 
@@ -59,7 +59,7 @@ function parseCompileString(str: string, src_dir: string, ui: UIProvider) {
     }
 
     const outFile = tokens[outputIdx + 1];
-    const outputName = outFile.match(/([A-Za-z0-9\-_\\\/]*)/);
+    const outputName = outFile.match(/([A-Za-z0-9\-_\\/]*)/);
 
     if (outputName === null) {
         throw new Error(`Something went wrong when parsing output from ${outFile}`);
@@ -92,7 +92,7 @@ function parseCompileString(str: string, src_dir: string, ui: UIProvider) {
     };
 }
 
-export const convert: Runner = async (args: Args, ui: UIProvider) => {
+export const convert: Runner = async (_args: Args, ui: UIProvider) => {
     const localArgs = arg({ ...argSpec, ...helpArgs });
     if (localArgs['--help']) {
         ui.write(helpMessages['convert']);

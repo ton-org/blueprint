@@ -75,7 +75,7 @@ async function correctPackageJson() {
     await fs.writeFile(PACKAGE_JSON, JSON.stringify(newPackageJson, null, 2));
 }
 
-export const pack: Runner = async (args: Args, ui: UIProvider, context: RunnerContext) => {
+export const pack: Runner = async (_args: Args, ui: UIProvider, _context: RunnerContext) => {
     const localArgs = arg({
         '--no-warn': Boolean,
         '-n': '--no-warn',

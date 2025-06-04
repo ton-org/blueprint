@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import * as dotenv from 'dotenv';
-
 dotenv.config();
 import arg from 'arg';
 import chalk from 'chalk';
@@ -35,6 +34,7 @@ const runners: Record<string, Runner> = {
 };
 
 async function main() {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('ts-node/register');
 
     const args = arg(argSpec, {

@@ -19,6 +19,7 @@ export async function buildOne(contract: string, ui?: UIProvider) {
 
     try {
         await fs.unlink(buildArtifactPath);
+        // eslint-disable-next-line no-empty
     } catch (_) {}
 
     ui?.setActionPrompt('⏳ Compiling...');
@@ -72,7 +73,7 @@ export async function buildOne(contract: string, ui?: UIProvider) {
     } catch (e) {
         if (ui) {
             ui?.clearActionPrompt();
-            ui?.write((e as any).toString());
+            ui?.write((e as Error).toString());
             process.exit(1);
         } else {
             throw e;

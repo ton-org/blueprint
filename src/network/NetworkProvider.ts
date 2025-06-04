@@ -1,5 +1,5 @@
 import { parseFullConfig, TonClient, TonClient4 } from '@ton/ton';
-import { Address, Cell, Contract, ContractProvider, ContractState, OpenedContract, Sender, StateInit } from '@ton/core';
+import { Address, Cell, Contract, ContractProvider, ContractState, OpenedContract, Sender } from '@ton/core';
 import { ContractAdapter } from '@ton-api/ton-adapter';
 import { LiteClient } from 'ton-lite-client';
 
