@@ -1,6 +1,3 @@
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
-
 import { renameExactIfRequired } from './rename';
 
 describe('Rename', function () {
@@ -9,8 +6,8 @@ describe('Rename', function () {
             a: 'b',
         };
         const result = renameExactIfRequired('a a', replaces);
-        assert.strictEqual(result.isRenamed, true);
-        assert.strictEqual(result.newValue, 'b b');
+        expect(result.isRenamed).toStrictEqual(true);
+        expect(result.newValue).toStrictEqual('b b');
     });
 
     it('It should not rename not exact match', function () {
@@ -18,8 +15,8 @@ describe('Rename', function () {
             a: 'b',
         };
         const result = renameExactIfRequired('and', replaces);
-        assert.strictEqual(result.isRenamed, false);
-        assert.strictEqual(result.newValue, 'and');
+        expect(result.isRenamed).toStrictEqual(false);
+        expect(result.newValue).toStrictEqual('and');
     });
 
     it('It should not rename another case', function () {
@@ -27,8 +24,8 @@ describe('Rename', function () {
             a: 'b',
         };
         const result = renameExactIfRequired('A', replaces);
-        assert.strictEqual(result.isRenamed, false);
-        assert.strictEqual(result.newValue, 'A');
+        expect(result.isRenamed).toStrictEqual(false);
+        expect(result.newValue).toStrictEqual('A');
     });
 
     it('It should rename contract name in brackets', function () {
@@ -36,8 +33,8 @@ describe('Rename', function () {
             ['MyContract']: 'NotMyContract',
         };
         const result = renameExactIfRequired(`compile('MyContract')`, replaces);
-        assert.strictEqual(result.isRenamed, true);
-        assert.strictEqual(result.newValue, `compile('NotMyContract')`);
+        expect(result.isRenamed).toStrictEqual(true);
+        expect(result.newValue).toStrictEqual(`compile('NotMyContract')`);
     });
 
     it('It should not rename contract name if not exact match', function () {
@@ -45,8 +42,8 @@ describe('Rename', function () {
             ['MyContract']: 'NotMyContract',
         };
         const result = renameExactIfRequired(`compile('MyContract2')`, replaces);
-        assert.strictEqual(result.isRenamed, false);
-        assert.strictEqual(result.newValue, `compile('MyContract2')`);
+        expect(result.isRenamed).toStrictEqual(false);
+        expect(result.newValue).toStrictEqual(`compile('MyContract2')`);
     });
 
     it('It should do multiple replaces', function () {
@@ -55,7 +52,7 @@ describe('Rename', function () {
             ['MyContract']: 'NotMyContract',
         };
         const result = renameExactIfRequired(`let myContract: MyContract;`, replaces);
-        assert.strictEqual(result.isRenamed, true);
-        assert.strictEqual(result.newValue, `let notMyContract: NotMyContract;`);
+        expect(result.isRenamed).toStrictEqual(true);
+        expect(result.newValue).toStrictEqual(`let notMyContract: NotMyContract;`);
     });
 });
