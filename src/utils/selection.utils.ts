@@ -22,7 +22,7 @@ export const findCompiles = async (directory?: string): Promise<File[]> => {
     });
     const compilables = files.filter((file) => file.isFile() && file.name.endsWith(COMPILE_END));
     return compilables.map((file) => ({
-        path: path.join(file.path, file.name),
+        path: path.join(file.parentPath, file.name),
         name: file.name.slice(0, file.name.length - COMPILE_END.length),
     }));
 };
