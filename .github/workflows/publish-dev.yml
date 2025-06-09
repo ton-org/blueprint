@@ -26,10 +26,9 @@ jobs:
 
           BASE_VERSION=$(echo $CURRENT_VERSION | cut -d '-' -f 1)
 
-          NEW_BASE=$(echo $BASE_VERSION | awk -F. '{
-            $2 = $2 + 1; 
-            $3 = 0; 
-            OFS="."; 
+          NEW_BASE=$(echo $BASE_VERSION | awk -v OFS='.' -F. '{
+            $2 = $2 + 1;
+            $3 = 0;
             print $0
           }')
 
