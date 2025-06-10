@@ -1,0 +1,10 @@
+name: Generic Issue
+description: Open a general issue or question
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Provide a detailed description of the issue or question
+    validations:
+      required: true
