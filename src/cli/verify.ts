@@ -70,7 +70,10 @@ async function getBackends(): Promise<Backends> {
             throw new Error(response.status + ' ' + response.statusText);
         }
 
-        const config: { backends: string[]; backendsTestnet: [] } = await response.json();
+        const config: {
+            backends: string[];
+            backendsTestnet: string[];
+        } = await response.json();
 
         backendsProd = config.backends;
         backendsTestnet = config.backendsTestnet;
