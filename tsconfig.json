@@ -9,5 +9,9 @@
         "strict": true,
         "skipLibCheck": true
     },
+    "exclude": [
+        "**/*.fixture.ts",
+        "**/*.spec.ts"
+    ],
     "include": ["src/**/*"]
 }
