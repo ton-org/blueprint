@@ -5,7 +5,7 @@ import arg from 'arg';
 
 import { COMPILABLES_DIR, CONTRACTS_DIR, SCRIPTS_DIR, TACT_ROOT_CONFIG, TESTS_DIR, WRAPPERS_DIR } from '../paths';
 import { Args, extractFirstArg, extractSecondArg, Runner, RunnerContext } from './Runner';
-import { assertValidContractName, findContracts, toLowerCase, toSnakeCase } from '../utils';
+import { assertValidContractName, findContracts, toLowerCase, toSnakeCase, extractFile } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
 import { helpArgs, helpMessages } from './constants';
 import { selectContract } from './build';
@@ -45,19 +45,19 @@ class RenameContext {
             withFileTypes: true,
         });
         await Promise.all(
-            dir.map(async (dir) => {
-                if (!dir.isFile()) {
-                    return;
-                }
-                const filePath = path.join(dir.path, dir.name);
-                await this.prepareRenameContentInFile(filePath);
-                const pathRenameResult = renameExactIfRequired(dir.name, this.replaces);
-                if (pathRenameResult.isRenamed) {
-                    this.effects.push(() =>
-                        fs.rename(path.join(dir.path, dir.name), path.join(dir.path, pathRenameResult.newValue)),
-                    );
-                }
-            }),
+            dir
+                .filter((dir) => dir.isFile())
+                .map(extractFile)
+                .map(async (dir) => {
+                    const filePath = path.join(dir.path, dir.name);
+                    await this.prepareRenameContentInFile(filePath);
+                    const pathRenameResult = renameExactIfRequired(dir.name, this.replaces);
+                    if (pathRenameResult.isRenamed) {
+                        this.effects.push(() =>
+                            fs.rename(path.join(dir.path, dir.name), path.join(dir.path, pathRenameResult.newValue)),
+                        );
+                    }
+                }),
         );
     }
 

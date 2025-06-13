@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added `getConfig` and `getContractState` methods to network provider
 
+### Fixed
+
+- Use `Dirent.parentPath` instead of `.path` which is deprecated
+
 ## [0.35.0] - 2025-06-02
 
 ### Added
