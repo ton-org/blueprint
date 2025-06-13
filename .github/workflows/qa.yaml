@@ -17,8 +17,14 @@ jobs:
     steps:
       - uses: the-ton-tech/toolchain/lint@v1.4.0
   build:
-    name: Test & Build
     needs: lint
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-24.04
+          - windows-2025
+          - macos-15
+    name: Test & Build on ${{ matrix.os }}
     steps:
       - uses: the-ton-tech/toolchain/build@v1.4.0
