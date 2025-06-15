@@ -1,6 +1,6 @@
-export { tonDeepLink, sleep } from './utils';
+export { tonDeepLink, sleep, getNormalizedExtMessageHash } from './utils';
 
-export { NetworkProvider } from './network/NetworkProvider';
+export { NetworkProvider, SenderWithSendResult } from './network/NetworkProvider';
 
 export { createNetworkProvider } from './network/createNetworkProvider';
 
