@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Use `Dirent.parentPath` instead of `.path` which is deprecated
 
+## [0.35.1] - 2025-06-13
+
+### Fixed
+
+- Fixed Tolk counter template 
+
 ## [0.35.0] - 2025-06-02
 
 ### Added
