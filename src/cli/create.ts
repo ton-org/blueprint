@@ -1,4 +1,5 @@
 import path from 'path';
+import unixPath from 'path/posix';
 import { lstat, mkdir, open, readdir, readFile } from 'fs/promises';
 
 import arg from 'arg';
@@ -98,7 +99,7 @@ export const create: Runner = async (_args: Args, ui: UIProvider) => {
     const [lang, template] = which.split('-');
 
     const snakeName = toSnakeCase(name);
-    const contractPath = path.join('contracts', snakeName + '.' + getFileExtension(lang));
+    const contractPath = unixPath.join('contracts', snakeName + '.' + getFileExtension(lang));
 
     const replaces = {
         name,
