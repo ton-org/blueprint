@@ -139,27 +139,6 @@ Start by adding the following environment variables to your `.env` file:
 
 Once your environment is set up, you can use the mnemonic wallet for deployment with the appropriate configuration.
 
-#### Deploying contracts
-
-1. You need a deployment script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
-2. Run interactive: &nbsp;&nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
-3. Non-interactive: &nbsp; `npx/yarn blueprint run deploy<CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
-  * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
-
-#### Using Mnemonic Provider
-
-To run scripts using a wallet by mnemonic authentication, you need to configure your environment and use the `Mnemonic` option when running scripts.
-
-Start by adding the following environment variables to your `.env` file:
-* **`WALLET_MNEMONIC`**: Your wallet's mnemonic phrase (space-separated words).
-* **`WALLET_VERSION`**: The wallet contract version to use. Supported versions: `v1r1`, `v1r2`, `v1r3`, `v2r1`, `v2r2`, `v3r1`, `v3r2`, `v4`, `v5r1`.
-
-**Optional variables:**
-* **`WALLET_ID`**: The wallet ID (required for versions below `v5r1`).
-* **`SUBWALLET_NUMBER`**: The subwallet number used to build the wallet ID (required for `v5r1` wallets).
-
-Once your environment is set up, you can use the mnemonic wallet for deployment with the appropriate configuration.
-
 ### Updating FunC version
 
 FunC version can be updated using `npx/yarn blueprint set func` command
