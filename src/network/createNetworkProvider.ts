@@ -9,6 +9,7 @@ import {
     ContractProvider,
     ContractState,
     Dictionary,
+    loadMessage,
     openContract,
     OpenedContract,
     Sender,
@@ -27,11 +28,11 @@ import { mnemonicToPrivateKey } from '@ton/crypto';
 import axios, { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from 'ton-lite-client';
 
-import { getExplorerLink, oneOrZeroOf, sleep } from '../utils';
+import { getExplorerLink, getTransactionLink, getNormalizedExtMessageHash, oneOrZeroOf, sleep } from '../utils';
 import { DeeplinkProvider } from './send/DeeplinkProvider';
 import { TonConnectProvider } from './send/TonConnectProvider';
 import { UIProvider } from '../ui/UIProvider';
-import { BlueprintTonClient, NetworkProvider } from './NetworkProvider';
+import { BlueprintTonClient, NetworkProvider, SenderWithSendResult } from './NetworkProvider';
 import { SendProvider } from './send/SendProvider';
 import { FSStorage } from './storage/FSStorage';
 import { TEMP_DIR } from '../paths';
@@ -69,9 +70,14 @@ type Explorer = 'tonscan' | 'tonviewer' | 'toncx' | 'dton';
 
 type ContractProviderFactory = (params: { address: Address; init?: StateInit | null }) => ContractProvider;
 
-class SendProviderSender implements Sender {
+class SendProviderSender implements SenderWithSendResult {
     #provider: SendProvider;
     readonly address?: Address;
+
+    #lastSendResult?: unknown;
+    get lastSendResult() {
+        return this.#lastSendResult;
+    }
 
     constructor(provider: SendProvider) {
         this.#provider = provider;
@@ -90,7 +96,12 @@ class SendProviderSender implements Sender {
             throw new Error('Deployer sender does not support `sendMode` other than `PAY_GAS_SEPARATELY`');
         }
 
-        await this.#provider.sendTransaction(args.to, args.value, args.body ?? undefined, args.init ?? undefined);
+        this.#lastSendResult = await this.#provider.sendTransaction(
+            args.to,
+            args.value,
+            args.body ?? undefined,
+            args.init ?? undefined,
+        );
     }
 }
 
@@ -154,12 +165,18 @@ class WrappedContractProvider implements ContractProvider {
 
 class NetworkProviderImpl implements NetworkProvider {
     #tc: BlueprintTonClient;
-    #sender: Sender;
+    #sender: SenderWithSendResult;
     #network: Network;
     #explorer: Explorer;
     #ui: UIProvider;
 
-    constructor(tc: BlueprintTonClient, sender: Sender, network: Network, explorer: Explorer, ui: UIProvider) {
+    constructor(
+        tc: BlueprintTonClient,
+        sender: SenderWithSendResult,
+        network: Network,
+        explorer: Explorer,
+        ui: UIProvider,
+    ) {
         this.#tc = tc;
         this.#sender = sender;
         this.#network = network;
@@ -175,7 +192,7 @@ class NetworkProviderImpl implements NetworkProvider {
         return this.#explorer;
     }
 
-    sender(): Sender {
+    sender(): SenderWithSendResult {
         return this.#sender;
     }
 
@@ -247,6 +264,105 @@ class NetworkProviderImpl implements NetworkProvider {
 
         this.#ui.clearActionPrompt();
         throw new Error("Contract was not deployed. Check your wallet's transactions");
+    }
+
+    private obtainInMessageHash() {
+        const { lastSendResult } = this.#sender;
+        if (
+            typeof lastSendResult === 'object' &&
+            lastSendResult !== null &&
+            'boc' in lastSendResult &&
+            typeof lastSendResult.boc === 'string'
+        ) {
+            const cell = Cell.fromBase64(lastSendResult.boc);
+            const extMessage = loadMessage(cell.beginParse());
+            return getNormalizedExtMessageHash(extMessage);
+        }
+
+        throw new Error('Not implemented');
+    }
+
+    private async getLastTransactions(address: Address): Promise<Transaction[]> {
+        if (this.#tc instanceof TonClient) {
+            return this.#tc.getTransactions(address, { limit: 100, archival: true }); // without archival not working with tonclient
+        }
+
+        const provider = this.#tc.provider(address);
+        const { last } = await provider.getState();
+        if (!last) {
+            return [];
+        }
+
+        return provider.getTransactions(address, last.lt, last.hash);
+    }
+
+    private async isTransactionApplied(
+        address: Address,
+        targetInMessageHash: Buffer,
+    ): Promise<{ isApplied: false } | { isApplied: true; transaction: Transaction }> {
+        const provider = this.#tc.provider(address);
+        const { last } = await provider.getState();
+        if (!last) {
+            return { isApplied: false };
+        }
+
+        let lastTxs: Transaction[];
+        try {
+            lastTxs = await this.getLastTransactions(address);
+        } catch (_) {
+            return { isApplied: false };
+        }
+
+        for (const transaction of lastTxs) {
+            if (transaction.inMessage?.info.type !== 'external-in') {
+                continue;
+            }
+            const inMessageHash = getNormalizedExtMessageHash(transaction.inMessage);
+            if (inMessageHash.equals(targetInMessageHash)) {
+                return { isApplied: true, transaction };
+            }
+        }
+
+        return { isApplied: false };
+    }
+
+    async waitForLastTransaction(waitAttempts: number = 20, sleepDuration: number = 2000): Promise<void> {
+        let attempts = waitAttempts;
+
+        if (attempts <= 0) {
+            throw new Error('Attempt number must be positive');
+        }
+        if (!this.#sender.address) {
+            throw new Error('Sender must have an address');
+        }
+
+        const inMessageHash = this.obtainInMessageHash();
+
+        for (let i = 1; i <= attempts; i++) {
+            this.#ui.setActionPrompt(`Awaiting transaction... [Attempt ${i}/${attempts}]`);
+            const result = await this.isTransactionApplied(this.#sender.address, inMessageHash);
+            if (result.isApplied) {
+                const { transaction } = result;
+                this.#ui.clearActionPrompt();
+                this.#ui.write(`Transaction ${inMessageHash.toString('hex')} successfully applied!`);
+                this.#ui.write(
+                    `You can view it at ${getTransactionLink(
+                        {
+                            ...transaction,
+                            hash: transaction.hash(),
+                            address: this.#sender.address,
+                        },
+                        this.#network,
+                        this.#explorer,
+                    )}`,
+                );
+                return;
+            }
+
+            await sleep(sleepDuration);
+        }
+
+        throw new Error("Transaction was not applied. Check your wallet's transactions");
     }
 
     /**

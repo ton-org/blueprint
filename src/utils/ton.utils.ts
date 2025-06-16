@@ -1,4 +1,4 @@
-import { Address, Cell } from '@ton/core';
+import { Address, beginCell, Cell, Message, storeMessage } from '@ton/core';
 
 /**
  * Generates a TON deep link for transfer.
@@ -51,16 +51,64 @@ export function getExplorerLink(address: string, network: string, explorer: stri
         case 'tonscan':
             return `https://${networkPrefix}tonscan.org/address/${address}`;
 
-        case 'tonviewer':
-            return `https://${networkPrefix}tonviewer.com/${address}`;
-
         case 'toncx':
             return `https://${networkPrefix}ton.cx/address/${address}`;
 
         case 'dton':
             return `https://${networkPrefix}dton.io/a/${address}`;
 
+        case 'tonviewer':
         default:
             return `https://${networkPrefix}tonviewer.com/${address}`;
     }
+}
+
+export function getTransactionLink(
+    tx: { lt: string | bigint; hash: Buffer; address: Address; now: number },
+    network: string,
+    explorer: string,
+) {
+    const networkPrefix = network === 'testnet' ? 'testnet.' : '';
+
+    switch (explorer) {
+        case 'tonscan':
+            return `https://${networkPrefix}tonscan.org/tx/${tx.hash.toString('hex')}`;
+        case 'toncx':
+            return `https://${networkPrefix}ton.cx/tx/${tx.lt}:${tx.hash.toString('hex')}:${tx.address}`;
+
+        case 'dton':
+            return `https://${networkPrefix}dton.io/tx/${tx.hash.toString('hex')}?time=${tx.now}`;
+
+        case 'tonviewer':
+        default:
+            return `https://${networkPrefix}tonviewer.com/transaction/${tx.hash.toString('hex')}`;
+    }
+}
+
+/**
+ * Generates a normalized hash of an "external-in" message for comparison.
+ *
+ * This function ensures consistent hashing of external-in messages by following [TEP-467](https://github.com/ton-blockchain/TEPs/blob/8b3beda2d8611c90ec02a18bec946f5e33a80091/text/0467-normalized-message-hash.md):
+ *
+ * @param {Message} message - The message to be normalized and hashed. Must be of type `"external-in"`.
+ * @returns {Buffer} The hash of the normalized message.
+ * @throws {Error} if the message type is not `"external-in"`.
+ */
+export function getNormalizedExtMessageHash(message: Message) {
+    if (message.info.type !== 'external-in') {
+        throw new Error(`Message must be "external-in", got ${message.info.type}`);
+    }
+
+    const info = { ...message.info, src: undefined, importFee: 0n };
+
+    const normalizedMessage = {
+        ...message,
+        init: null,
+        info: info,
+    };
+
+    return beginCell()
+        .store(storeMessage(normalizedMessage, { forceRef: true }))
+        .endCell()
+        .hash();
 }
