@@ -1217,22 +1217,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton-community/func-js-bin@npm:0.4.6-wasmfix.0":
-  version: 0.4.6-wasmfix.0
-  resolution: "@ton-community/func-js-bin@npm:0.4.6-wasmfix.0"
-  checksum: 10/ab51c4a1e82e98a1680600e6886a16e89696864b38bb87692ee39cf19880a5a653a89c804a8f1c75f415792abe7c343d7fb1cc2398ab4dc30f473073fadf955d
+"@ton-community/func-js-bin@npm:0.4.6-wasmfix.debugger.0":
+  version: 0.4.6-wasmfix.debugger.0
+  resolution: "@ton-community/func-js-bin@npm:0.4.6-wasmfix.debugger.0"
+  checksum: 10/8c9216aa16954cbd67ac09e37c4e96ceaa6150fa63c14766933746a258d8f018f2b1b3c508fb4bb78127d859984ed5068599fcb9a66897302cc4e50b24daaa5a
   languageName: node
   linkType: hard
 
-"@ton-community/func-js@npm:^0.9.0":
-  version: 0.9.1
-  resolution: "@ton-community/func-js@npm:0.9.1"
+"@ton-community/func-js@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@ton-community/func-js@npm:0.10.0"
   dependencies:
-    "@ton-community/func-js-bin": "npm:0.4.6-wasmfix.0"
+    "@ton-community/func-js-bin": "npm:0.4.6-wasmfix.debugger.0"
     arg: "npm:^5.0.2"
+    fflate: "npm:^0.8.2"
   bin:
     func-js: dist/cli.js
-  checksum: 10/cecf1739e1b48d2a3028e523b6cfcf845d02a2ee6dc06c7907b135d1eefa40b2e3cf4ec7e20e8565d645ad2d1e32679aecb1d581c1b0413727c50295daf081a0
+  checksum: 10/08170102e39b10d6b86720450bde6abd2fc6ef72248fa629faaf1a993809708f7f2df78f295ee6dee3bb22698a9bdbc98854bb6ae386e16abe43a4992a3592f3
   languageName: node
   linkType: hard
 
@@ -1243,10 +1244,10 @@ __metadata:
     "@tact-lang/compiler": "npm:^1.6.5"
     "@ton-api/client": "npm:^0.2.0"
     "@ton-api/ton-adapter": "npm:^0.2.0"
-    "@ton-community/func-js": "npm:^0.9.0"
+    "@ton-community/func-js": "npm:^0.10.0"
     "@ton/core": "npm:^0.60.1"
     "@ton/crypto": "npm:^3.3.0"
-    "@ton/sandbox": "npm:^0.33.0"
+    "@ton/sandbox": "npm:^0.34.0"
     "@ton/tolk-js": "npm:^0.12.0"
     "@ton/ton": "npm:^15.2.1"
     "@ton/toolchain": "the-ton-tech/toolchain#v1.4.0"
@@ -1269,7 +1270,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@tact-lang/compiler": ">=1.6.5"
-    "@ton-community/func-js": ">=0.9.0"
+    "@ton-community/func-js": ">=0.10.0"
     "@ton/core": ">=0.60.1"
     "@ton/crypto": ">=3.3.0"
     "@ton/sandbox": ">=0.34.0"
@@ -1314,11 +1315,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/sandbox@npm:^0.33.0":
-  version: 0.33.0
-  resolution: "@ton/sandbox@npm:0.33.0"
+"@ton/sandbox@npm:^0.34.0":
+  version: 0.34.0
+  resolution: "@ton/sandbox@npm:0.34.0"
   dependencies:
+    "@vscode/debugadapter": "npm:^1.68.0"
     chalk: "npm:^4.1.2"
+    fflate: "npm:^0.8.2"
     table: "npm:^6.9.0"
   peerDependencies:
     "@ton/core": ">=0.61.0"
@@ -1330,7 +1333,7 @@ __metadata:
       optional: true
     jest:
       optional: true
-  checksum: 10/d4c4126cbc36908f6b24fd425652bd5a5b9fd356603f99d20e943e4ecb16ccb1a4bcad7acb5f78202186271ec70f3403dc24c802520ee9ff83d1b617e6f9eecc
+  checksum: 10/118b57098a5fa08551f5696ed2c8959b27e769d9a9ec0b7a915dc5d4d61483357926d34f0e23235bd46b3660ce1504fc8900c5d80e96066b0efa229b7acb7596
   languageName: node
   linkType: hard
 
@@ -1909,6 +1912,22 @@ __metadata:
   version: 1.7.13
   resolution: "@unrs/resolver-binding-win32-x64-msvc@npm:1.7.13"
   conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@vscode/debugadapter@npm:^1.68.0":
+  version: 1.68.0
+  resolution: "@vscode/debugadapter@npm:1.68.0"
+  dependencies:
+    "@vscode/debugprotocol": "npm:1.68.0"
+  checksum: 10/8945b85883fa13b09d23ecd8aa2d014616e06a22797d4432013e8ca5cb867ec853c6f0d05bf6cb23fbc80ebfcb4fe994d4afb132bf04d367e5f6a121f5c39b99
+  languageName: node
+  linkType: hard
+
+"@vscode/debugprotocol@npm:1.68.0":
+  version: 1.68.0
+  resolution: "@vscode/debugprotocol@npm:1.68.0"
+  checksum: 10/3e3a8d795d9d2a58c14da969c5ea0696065c1989780e7c3c221b9a65105143869a2da0a38b237fc017d39e9595c07b9b4872e7d75ebc4817a97f7654dffe4a57
   languageName: node
   linkType: hard
 
@@ -3482,6 +3501,13 @@ __metadata:
     picomatch:
       optional: true
   checksum: 10/c186ba387e7b75ccf874a098d9bc5fe0af0e9c52fc56f8eac8e80aa4edb65532684bf2bf769894ff90f53bf221d6136692052d31f07a9952807acae6cbe7ee50
+  languageName: node
+  linkType: hard
+
+"fflate@npm:^0.8.2":
+  version: 0.8.2
+  resolution: "fflate@npm:0.8.2"
+  checksum: 10/2bd26ba6d235d428de793c6a0cd1aaa96a06269ebd4e21b46c8fd1bd136abc631acf27e188d47c3936db090bf3e1ede11d15ce9eae9bffdc4bfe1b9dc66ca9cb
   languageName: node
   linkType: hard
 

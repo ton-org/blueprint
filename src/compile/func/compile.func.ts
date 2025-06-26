@@ -21,7 +21,9 @@ export async function getFuncVersion(): Promise<string> {
 export async function doCompileFunc(config: CompilerConfig): Promise<FuncCompileResult> {
     const cr = await compileFunc(config);
 
-    if (cr.status === 'error') throw new Error(cr.message);
+    if (cr.status === 'error') {
+        throw new Error(cr.message);
+    }
 
     let targets: string[] = [];
     if (config.targets) {
@@ -42,8 +44,31 @@ export async function doCompileFunc(config: CompilerConfig): Promise<FuncCompile
     };
 
     if (config.debugInfo) {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const sandbox = require('@ton/sandbox');
+        const crRegular = await compileFunc({
+            ...config,
+            debugInfo: false,
+        });
+
+        if (crRegular.status === 'error') {
+            throw new Error(
+                'Debug info compilation succeeded, but regular compilation failed, please report this bug: ' +
+                    crRegular.message,
+            );
+        }
+
+        if (!Cell.fromBase64(crRegular.codeBoc).hash().equals(result.code.hash())) {
+            console.error(
+                'Debug info compilation yielded different code than regular compilation, please report this bug.',
+            );
+        }
+
+        let sandbox: any;
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            sandbox = require('@ton/sandbox');
+        } catch (_) {
+            console.error('Could not register debug info in sandbox because it is not installed.');
+        }
         if (sandbox?.registerCompiledContract) {
             sandbox.registerCompiledContract(result.code, result.debugInfo, result.marks);
         }
