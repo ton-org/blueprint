@@ -88,6 +88,7 @@ async function doCompileInner(name: string, config: CompilerConfig): Promise<Com
             targets: config.targets,
             sources: config.sources ?? ((path: string) => readFileSync(path).toString()),
             optLevel: config.optLevel,
+            debugInfo: config.debugInfo,
         } as DoCompileFuncConfig);
     }
 
@@ -130,6 +131,10 @@ export async function getCompilerOptions(config: CompilerConfig): Promise<{
 export async function doCompile(name: string, opts?: CompileOpts): Promise<CompileResult> {
     const config = await getCompilerConfigForContract(name);
 
+    if (opts?.debugInfo && isCompilableConfig(config) && (config.lang === undefined || config.lang === 'func')) {
+        config.debugInfo = true;
+    }
+
     if ('preCompileHook' in config && config.preCompileHook !== undefined) {
         await config.preCompileHook({
             userData: opts?.hookUserData,
@@ -155,6 +160,7 @@ export type CompileOpts = {
      * Any user-defined data that will be passed to both `preCompileHook` and `postCompileHook`.
      */
     hookUserData?: any;
+    debugInfo?: boolean;
 };
 
 /**

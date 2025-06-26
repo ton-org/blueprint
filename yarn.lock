@@ -1217,22 +1217,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton-community/func-js-bin@npm:0.4.6-wasmfix.0":
-  version: 0.4.6-wasmfix.0
-  resolution: "@ton-community/func-js-bin@npm:0.4.6-wasmfix.0"
-  checksum: 10/ab51c4a1e82e98a1680600e6886a16e89696864b38bb87692ee39cf19880a5a653a89c804a8f1c75f415792abe7c343d7fb1cc2398ab4dc30f473073fadf955d
+"@ton-community/func-js-bin@npm:0.4.6-wasmfix.debugger.0":
+  version: 0.4.6-wasmfix.debugger.0
+  resolution: "@ton-community/func-js-bin@npm:0.4.6-wasmfix.debugger.0"
+  checksum: 10/8c9216aa16954cbd67ac09e37c4e96ceaa6150fa63c14766933746a258d8f018f2b1b3c508fb4bb78127d859984ed5068599fcb9a66897302cc4e50b24daaa5a
   languageName: node
   linkType: hard
 
-"@ton-community/func-js@npm:^0.9.0":
-  version: 0.9.1
-  resolution: "@ton-community/func-js@npm:0.9.1"
+"@ton-community/func-js@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@ton-community/func-js@npm:0.10.0"
   dependencies:
-    "@ton-community/func-js-bin": "npm:0.4.6-wasmfix.0"
+    "@ton-community/func-js-bin": "npm:0.4.6-wasmfix.debugger.0"
     arg: "npm:^5.0.2"
+    fflate: "npm:^0.8.2"
   bin:
     func-js: dist/cli.js
-  checksum: 10/cecf1739e1b48d2a3028e523b6cfcf845d02a2ee6dc06c7907b135d1eefa40b2e3cf4ec7e20e8565d645ad2d1e32679aecb1d581c1b0413727c50295daf081a0
+  checksum: 10/08170102e39b10d6b86720450bde6abd2fc6ef72248fa629faaf1a993809708f7f2df78f295ee6dee3bb22698a9bdbc98854bb6ae386e16abe43a4992a3592f3
   languageName: node
   linkType: hard
 
@@ -1243,9 +1244,10 @@ __metadata:
     "@tact-lang/compiler": "npm:^1.6.5"
     "@ton-api/client": "npm:^0.2.0"
     "@ton-api/ton-adapter": "npm:^0.2.0"
-    "@ton-community/func-js": "npm:^0.9.0"
+    "@ton-community/func-js": "npm:^0.10.0"
     "@ton/core": "npm:^0.60.1"
     "@ton/crypto": "npm:^3.3.0"
+    "@ton/sandbox": "npm:^0.34.0"
     "@ton/tolk-js": "npm:^0.12.0"
     "@ton/ton": "npm:^15.2.1"
     "@ton/toolchain": "the-ton-tech/toolchain#v1.4.0"
@@ -1268,11 +1270,15 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@tact-lang/compiler": ">=1.6.5"
-    "@ton-community/func-js": ">=0.9.0"
+    "@ton-community/func-js": ">=0.10.0"
     "@ton/core": ">=0.60.1"
     "@ton/crypto": ">=3.3.0"
+    "@ton/sandbox": ">=0.34.0"
     "@ton/tolk-js": ">=0.13.0"
     "@ton/ton": ">=15.2.1"
+  peerDependenciesMeta:
+    "@ton/sandbox":
+      optional: true
   bin:
     blueprint: ./dist/cli/cli.js
   languageName: unknown
@@ -1306,6 +1312,28 @@ __metadata:
     jssha: "npm:3.2.0"
     tweetnacl: "npm:1.0.3"
   checksum: 10/0561f2c95df7a53c47262393590bae8c5254ea5802cbecd2fea589073d926f60466292d594171aa3f3375ccaa2b763368fa1023bd5b6ebfe4da16297731cb379
+  languageName: node
+  linkType: hard
+
+"@ton/sandbox@npm:^0.34.0":
+  version: 0.34.0
+  resolution: "@ton/sandbox@npm:0.34.0"
+  dependencies:
+    "@vscode/debugadapter": "npm:^1.68.0"
+    chalk: "npm:^4.1.2"
+    fflate: "npm:^0.8.2"
+    table: "npm:^6.9.0"
+  peerDependencies:
+    "@ton/core": ">=0.61.0"
+    "@ton/crypto": ">=3.3.0"
+    "@ton/test-utils": ">=0.7.0"
+    jest: ^29.5.0
+  peerDependenciesMeta:
+    "@ton/test-utils":
+      optional: true
+    jest:
+      optional: true
+  checksum: 10/118b57098a5fa08551f5696ed2c8959b27e769d9a9ec0b7a915dc5d4d61483357926d34f0e23235bd46b3660ce1504fc8900c5d80e96066b0efa229b7acb7596
   languageName: node
   linkType: hard
 
@@ -1887,6 +1915,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vscode/debugadapter@npm:^1.68.0":
+  version: 1.68.0
+  resolution: "@vscode/debugadapter@npm:1.68.0"
+  dependencies:
+    "@vscode/debugprotocol": "npm:1.68.0"
+  checksum: 10/8945b85883fa13b09d23ecd8aa2d014616e06a22797d4432013e8ca5cb867ec853c6f0d05bf6cb23fbc80ebfcb4fe994d4afb132bf04d367e5f6a121f5c39b99
+  languageName: node
+  linkType: hard
+
+"@vscode/debugprotocol@npm:1.68.0":
+  version: 1.68.0
+  resolution: "@vscode/debugprotocol@npm:1.68.0"
+  checksum: 10/3e3a8d795d9d2a58c14da969c5ea0696065c1989780e7c3c221b9a65105143869a2da0a38b237fc017d39e9595c07b9b4872e7d75ebc4817a97f7654dffe4a57
+  languageName: node
+  linkType: hard
+
 "abbrev@npm:^3.0.0":
   version: 3.0.1
   resolution: "abbrev@npm:3.0.1"
@@ -1959,6 +2003,18 @@ __metadata:
     json-schema-traverse: "npm:^0.4.1"
     uri-js: "npm:^4.2.2"
   checksum: 10/48d6ad21138d12eb4d16d878d630079a2bda25a04e745c07846a4ad768319533031e28872a9b3c5790fa1ec41aabdf2abed30a56e5a03ebc2cf92184b8ee306c
+  languageName: node
+  linkType: hard
+
+"ajv@npm:^8.0.1":
+  version: 8.17.1
+  resolution: "ajv@npm:8.17.1"
+  dependencies:
+    fast-deep-equal: "npm:^3.1.3"
+    fast-uri: "npm:^3.0.1"
+    json-schema-traverse: "npm:^1.0.0"
+    require-from-string: "npm:^2.0.2"
+  checksum: 10/ee3c62162c953e91986c838f004132b6a253d700f1e51253b99791e2dbfdb39161bc950ebdc2f156f8568035bb5ed8be7bd78289cd9ecbf3381fe8f5b82e3f33
   languageName: node
   linkType: hard
 
@@ -2125,6 +2181,13 @@ __metadata:
     get-intrinsic: "npm:^1.2.6"
     is-array-buffer: "npm:^3.0.4"
   checksum: 10/4821ebdfe7d699f910c7f09bc9fa996f09b96b80bccb4f5dd4b59deae582f6ad6e505ecef6376f8beac1eda06df2dbc89b70e82835d104d6fcabd33c1aed1ae9
+  languageName: node
+  linkType: hard
+
+"astral-regex@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "astral-regex@npm:2.0.0"
+  checksum: 10/876231688c66400473ba505731df37ea436e574dd524520294cc3bbc54ea40334865e01fa0d074d74d036ee874ee7e62f486ea38bc421ee8e6a871c06f011766
   languageName: node
   linkType: hard
 
@@ -3404,6 +3467,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-uri@npm:^3.0.1":
+  version: 3.0.6
+  resolution: "fast-uri@npm:3.0.6"
+  checksum: 10/43c87cd03926b072a241590e49eca0e2dfe1d347ddffd4b15307613b42b8eacce00a315cf3c7374736b5f343f27e27ec88726260eb03a758336d507d6fbaba0a
+  languageName: node
+  linkType: hard
+
 "fastq@npm:^1.6.0":
   version: 1.19.1
   resolution: "fastq@npm:1.19.1"
@@ -3431,6 +3501,13 @@ __metadata:
     picomatch:
       optional: true
   checksum: 10/c186ba387e7b75ccf874a098d9bc5fe0af0e9c52fc56f8eac8e80aa4edb65532684bf2bf769894ff90f53bf221d6136692052d31f07a9952807acae6cbe7ee50
+  languageName: node
+  linkType: hard
+
+"fflate@npm:^0.8.2":
+  version: 0.8.2
+  resolution: "fflate@npm:0.8.2"
+  checksum: 10/2bd26ba6d235d428de793c6a0cd1aaa96a06269ebd4e21b46c8fd1bd136abc631acf27e188d47c3936db090bf3e1ede11d15ce9eae9bffdc4bfe1b9dc66ca9cb
   languageName: node
   linkType: hard
 
@@ -5086,6 +5163,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"json-schema-traverse@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "json-schema-traverse@npm:1.0.0"
+  checksum: 10/02f2f466cdb0362558b2f1fd5e15cce82ef55d60cd7f8fa828cf35ba74330f8d767fcae5c5c2adb7851fa811766c694b9405810879bc4e1ddd78a7c0e03658ad
+  languageName: node
+  linkType: hard
+
 "json-stable-stringify-without-jsonify@npm:^1.0.1":
   version: 1.0.1
   resolution: "json-stable-stringify-without-jsonify@npm:1.0.1"
@@ -5182,6 +5266,13 @@ __metadata:
   version: 4.6.2
   resolution: "lodash.merge@npm:4.6.2"
   checksum: 10/d0ea2dd0097e6201be083865d50c3fb54fbfbdb247d9cc5950e086c991f448b7ab0cdab0d57eacccb43473d3f2acd21e134db39f22dac2d6c9ba6bf26978e3d6
+  languageName: node
+  linkType: hard
+
+"lodash.truncate@npm:^4.4.2":
+  version: 4.4.2
+  resolution: "lodash.truncate@npm:4.4.2"
+  checksum: 10/7a495616121449e5d2288c606b1025d42ab9979e8c93ba885e5c5802ffd4f1ebad4428c793ccc12f73e73237e85a9f5b67dd6415757546fbd5a4653ba83e25ac
   languageName: node
   linkType: hard
 
@@ -6086,6 +6177,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"require-from-string@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "require-from-string@npm:2.0.2"
+  checksum: 10/839a3a890102a658f4cb3e7b2aa13a1f80a3a976b512020c3d1efc418491c48a886b6e481ea56afc6c4cb5eef678f23b2a4e70575e7534eccadf5e30ed2e56eb
+  languageName: node
+  linkType: hard
+
 "resolve-cwd@npm:^3.0.0":
   version: 3.0.0
   resolution: "resolve-cwd@npm:3.0.0"
@@ -6372,6 +6470,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"slice-ansi@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "slice-ansi@npm:4.0.0"
+  dependencies:
+    ansi-styles: "npm:^4.0.0"
+    astral-regex: "npm:^2.0.0"
+    is-fullwidth-code-point: "npm:^3.0.0"
+  checksum: 10/4a82d7f085b0e1b070e004941ada3c40d3818563ac44766cca4ceadd2080427d337554f9f99a13aaeb3b4a94d9964d9466c807b3d7b7541d1ec37ee32d308756
+  languageName: node
+  linkType: hard
+
 "smart-buffer@npm:^4.2.0":
   version: 4.2.0
   resolution: "smart-buffer@npm:4.2.0"
@@ -6629,6 +6738,19 @@ __metadata:
   dependencies:
     "@pkgr/core": "npm:^0.2.4"
   checksum: 10/9bb2cf11edaf31ba781f1c719dd58087323201bda6392254538aef4dea216aa02a32e25f06643bcfa1c1a2c95e0d84186d82cfb66f9a0ab3a2be4816c696a8a3
+  languageName: node
+  linkType: hard
+
+"table@npm:^6.9.0":
+  version: 6.9.0
+  resolution: "table@npm:6.9.0"
+  dependencies:
+    ajv: "npm:^8.0.1"
+    lodash.truncate: "npm:^4.4.2"
+    slice-ansi: "npm:^4.0.0"
+    string-width: "npm:^4.2.3"
+    strip-ansi: "npm:^6.0.1"
+  checksum: 10/976da6d89841566e39628d1ba107ffab126964c9390a0a877a7c54ebb08820bf388d28fe9f8dcf354b538f19634a572a506c38a3762081640013a149cc862af9
   languageName: node
   linkType: hard
 
