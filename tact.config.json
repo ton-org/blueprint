@@ -1,0 +1,10 @@
+{
+    "projects": [{
+        "name": "SampleJetton",
+        "path": "./sources/contract.tact",
+        "output": "./sources/output",
+        "options":{
+            
+        }
+    }]
+}
