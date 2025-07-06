@@ -12,6 +12,7 @@ export function {{loweredName}}ConfigToCell(config: {{name}}Config): Cell {
 
 export const Opcodes = {
     OP_INCREASE: 0x7e8764ef,
+    OP_RESET: 0x3a752f06,
 };
 
 export class {{name}} implements Contract {
@@ -51,6 +52,24 @@ export class {{name}} implements Contract {
                 .storeUint(Opcodes.OP_INCREASE, 32)
                 .storeUint(opts.queryID ?? 0, 64)
                 .storeUint(opts.increaseBy, 32)
+                .endCell(),
+        });
+    }
+
+    async sendReset(
+        provider: ContractProvider,
+        via: Sender,
+        opts: {
+            value: bigint;
+            queryID?: number;
+        }
+    ) {
+        await provider.internal(via, {
+            value: opts.value,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            body: beginCell()
+                .storeUint(Opcodes.OP_RESET, 32)
+                .storeUint(opts.queryID ?? 0, 64)
                 .endCell(),
         });
     }
