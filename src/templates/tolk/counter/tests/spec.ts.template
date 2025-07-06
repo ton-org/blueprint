@@ -79,4 +79,24 @@ describe('{{name}}', () => {
             expect(counterAfter).toBe(counterBefore + increaseBy);
         }
     });
+
+    it('should reset counter', async () => {
+        const increaser = await blockchain.treasury('increaser');
+
+        expect(await {{loweredName}}.getCounter()).toBe(0);
+
+        const increaseBy = 5;
+        await {{loweredName}}.sendIncrease(increaser.getSender(), {
+            increaseBy,
+            value: toNano('0.05'),
+        });
+
+        expect(await {{loweredName}}.getCounter()).toBe(increaseBy);
+
+        await {{loweredName}}.sendReset(increaser.getSender(), {
+            value: toNano('0.05'),
+        });
+
+        expect(await {{loweredName}}.getCounter()).toBe(0);
+    });
 });
