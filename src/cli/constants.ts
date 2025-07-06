@@ -2,24 +2,24 @@ import chalk from 'chalk';
 
 export const templateTypes: { name: string; value: string }[] = [
     {
-        name: 'An empty contract (FunC)',
-        value: 'func-empty',
-    },
-    {
         name: 'An empty contract (Tolk)',
         value: 'tolk-empty',
+    },
+    {
+        name: 'An empty contract (FunC)',
+        value: 'func-empty',
     },
     {
         name: 'An empty contract (Tact)',
         value: 'tact-empty',
     },
     {
-        name: 'A simple counter contract (FunC)',
-        value: 'func-counter',
-    },
-    {
         name: 'A simple counter contract (Tolk)',
         value: 'tolk-counter',
+    },
+    {
+        name: 'A simple counter contract (FunC)',
+        value: 'func-counter',
     },
     {
         name: 'A simple counter contract (Tact)',
