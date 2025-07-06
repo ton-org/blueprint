@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Changed contracts templates positions in `create` command
+- Changed counter template to match Tolk v1.0
 
 ## [0.37.0] - 2025-06-26
 
