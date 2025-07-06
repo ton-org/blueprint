@@ -1,3 +1,4 @@
+reset{{name}}.ts
 import { Address, toNano } from '@ton/core';
 import { {{name}} } from '../wrappers/{{name}}';
 import { NetworkProvider, sleep } from '@ton/blueprint';
