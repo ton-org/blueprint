@@ -1,75 +1,76 @@
 {{snakeName}}.tolk
-// simple counter contract in Tolk language
+tolk 1.0
 
-// using unions to represent contract messages
+// this struct defines storage layout of the contract
+struct Storage {
+    id: uint32  // required to allow multiple independent counter instances, since the contract address depends on its initial state
+    counter: uint32 // the current counter value
+}
+
+// load contract data from the persistent storage
+fun Storage.load() {
+    return Storage.fromCell(contract.getData())
+}
+
+// save contract data into the persistent storage
+fun Storage.save(self) {
+    contract.setData(self.toCell())
+}
 
 // the struct uses a 32-bit opcode prefix for message identification
-struct (0x7e8764ef) IncreaseMessage {
-    queryID: uint64;  // query id, typically included in messages
-    increaseBy: uint32;
+struct (0x7e8764ef) IncreaseCounter {
+    queryId: uint64  // query id, typically included in messages
+    increaseBy: uint32
 }
 
-// incoming message definition using a union for extensibility
-// this union could be extended like below to support more message types
-// type IncomingMessage = IncreaseMessage | DecreaseMessage | ...;
-type IncomingMessage = IncreaseMessage;
-
-// contract storage, auto-serialized to/from cells.
-struct Storage {
-    id: uint32; // required to allow multiple independent counter instances, since contract address depends on initial state
-    counter: uint32;
+struct (0x3a752f06) ResetCounter {
+    queryId: uint64
 }
 
-// load contract data using auto-deserialization
-fun loadData() {
-    return Storage.fromCell(contract.getData());
-}
+// using unions to represent available messages
+// this allows processing them with pattern matching
+type AllowedMessage = IncreaseCounter | ResetCounter
 
-// save contract data into persistent storage using auto-serialization
-fun saveData(data: Storage) {
-    contract.setData(data.toCell());
-}
-
-// onInternalMessage is the main entrypoint; it's called when a contract receives an internal message from other contracts
-fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: slice) {
-    // manual message handling will be obsolete in Tolk v1.0
-    if (msgBody.isEnd()) { // ignore all empty messages
-        return;
-    }
-
-    var cs = msgFull.beginParse();
-    val flags = cs.loadMessageFlags();
-    if (flags & 1) { // ignore all bounced messages
-        return;
-    }
-
-    val msg = IncomingMessage.fromSlice(msgBody);  // 63 error code is thrown if the message opcode is unknown
+// the main entrypoint: called when a contract receives an message from other contracts
+fun onInternalMessage(in: InMessage) {
+    // use `lazy` to defer loading fields until they are accessed
+    val msg = lazy AllowedMessage.fromSlice(in.body);
 
     match (msg) {
-        IncreaseMessage => {
-            var storage = loadData(); // here we load contract data
+        IncreaseCounter => {
+            // load contract storage lazily (efficient for large or partial reads/updates)
+            var storage = lazy Storage.load();
+
             storage.counter += msg.increaseBy;
-            saveData(storage); // here we updating contract data
+            storage.save();
         }
-        /* other messages could be supported via extending this match block
-        DecreaseMessage => {
-            var storage = loadData();
-            storage.counter -= msg.decreaseBy;
-            saveData(storage);
+
+        ResetCounter => {
+            var storage = lazy Storage.load();
+
+            storage.counter = 0;
+            storage.save();
         }
-        */
+
+        else => {
+            // ignore empty messages, "wrong opcode" for others
+            assert (in.body.isEmpty()) throw 0xFFFF
+        }
     }
+}
+
+// a handler for bounced messages (not used here, may be ommited)
+fun onBouncedMessage(in: InMessageBounced) {
 }
 
 // get methods are a means to conveniently read contract data using, for example, HTTP APIs
 // note that unlike in many other smart contract VMs, get methods cannot be called by other contracts
-
-get currentCounter(): int {
-    val storage = loadData();
+get fun currentCounter(): int {
+    val storage = lazy Storage.load();
     return storage.counter;
 }
 
-get initialId(): int {
-    val storage = loadData();
+get fun initialId(): int {
+    val storage = lazy Storage.load();
     return storage.id;
 }
