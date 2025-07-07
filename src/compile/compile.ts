@@ -1,4 +1,5 @@
 import { readFileSync } from 'fs';
+import path from 'path';
 
 import { Cell } from '@ton/core';
 
@@ -56,13 +57,14 @@ export async function getCompilerConfigForContract(name: string): Promise<Compil
         return tactConfig;
     }
 
-    const compilables = await findCompiles();
+    const compilablesDirectory = await getCompilablesDirectory();
+    const compilables = await findCompiles(compilablesDirectory);
     const compilable = compilables.find((c) => c.name === name);
-    if (compilable === undefined) {
-        throw new Error(`Contract '${name}' not found`);
-    }
 
-    return extractCompilableConfig(compilable.path);
+    // Ensure compatibility with legacy usage like compile('subdirectory/ContractName')
+    const pathToExtract = compilable?.path ?? path.join(compilablesDirectory, name + COMPILE_END);
+
+    return extractCompilableConfig(pathToExtract);
 }
 
 export type CompileResult = TactCompileResult | FuncCompileResult | TolkCompileResult;
