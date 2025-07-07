@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed contracts not compiling in recursive subfolders
+- Fixed contracts not compiling in subfolders
+
+### Changed
+
+- Changed contracts templates positions in `create` command
+- Changed counter template to match Tolk v1.0
 
 ## [0.37.0] - 2025-06-26
 
