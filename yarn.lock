@@ -1245,7 +1245,7 @@ __metadata:
     "@ton-api/client": "npm:^0.2.0"
     "@ton-api/ton-adapter": "npm:^0.2.0"
     "@ton-community/func-js": "npm:^0.10.0"
-    "@ton/core": "npm:^0.60.1"
+    "@ton/core": "npm:^0.61.0"
     "@ton/crypto": "npm:^3.3.0"
     "@ton/sandbox": "npm:^0.34.0"
     "@ton/tolk-js": "npm:^0.12.0"
@@ -1264,14 +1264,14 @@ __metadata:
     inquirer: "npm:^8.2.5"
     jest: "npm:^30.0.0"
     qrcode-terminal: "npm:^0.12.0"
-    ton-lite-client: "npm:^3.1.0"
+    ton-lite-client: "npm:^3.1.1"
     ts-jest: "npm:^29.3.4"
     ts-node: "npm:^10.9.1"
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@tact-lang/compiler": ">=1.6.5"
     "@ton-community/func-js": ">=0.10.0"
-    "@ton/core": ">=0.60.1"
+    "@ton/core": ">=0.61.0"
     "@ton/crypto": ">=3.3.0"
     "@ton/sandbox": ">=0.34.0"
     "@ton/tolk-js": ">=0.13.0"
@@ -1284,7 +1284,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ton/core@npm:0.60.1, @ton/core@npm:^0.60.0, @ton/core@npm:^0.60.1":
+"@ton/core@npm:0.60.1, @ton/core@npm:^0.60.0":
   version: 0.60.1
   resolution: "@ton/core@npm:0.60.1"
   dependencies:
@@ -1292,6 +1292,17 @@ __metadata:
   peerDependencies:
     "@ton/crypto": ">=3.2.0"
   checksum: 10/f773b7545249c24e8662cfb26e1253dd496e701a264bedae8f345c4b7680f204116df0c5d8e1274268797c696363615eba2d0dea6103d69ba09a6dd994c6d6af
+  languageName: node
+  linkType: hard
+
+"@ton/core@npm:^0.61.0":
+  version: 0.61.0
+  resolution: "@ton/core@npm:0.61.0"
+  dependencies:
+    symbol.inspect: "npm:1.0.1"
+  peerDependencies:
+    "@ton/crypto": ">=3.2.0"
+  checksum: 10/7b0545d118d0214f3b97f24287639d12798ff9b8f99915ff218a618d46e41603814f9d2bc99f555f135da9fcc7170a37d578d383e49b1f081f062471368d5ddd
   languageName: node
   linkType: hard
 
@@ -6828,9 +6839,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ton-lite-client@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "ton-lite-client@npm:3.1.0"
+"ton-lite-client@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "ton-lite-client@npm:3.1.1"
   dependencies:
     adnl: "npm:^1.0.3"
     dataloader: "npm:^2.1.0"
@@ -6839,8 +6850,8 @@ __metadata:
     ton-tl: "npm:^1.0.1"
     tweetnacl: "npm:^1.0.3"
   peerDependencies:
-    "@ton/core": ^0.56.0
-  checksum: 10/1ffa282e22b42c7adbef9e889f206c6dbb85ad15f9b9659cd131c5e44e41e03abb7962aee699b55e53036cc7ec98f2df5a6d1c025a77446f820eb2a921c8a3d9
+    "@ton/core": ">=0.56.0"
+  checksum: 10/f751e61a0721a66f0169492068850349666e6c87dbf34a5bac6fb94c996b74184f4824725b6f25dfab13671f9e1359ada16c3af94421cd6ef1e4304127396ed7
   languageName: node
   linkType: hard
 
