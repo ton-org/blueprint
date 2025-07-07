@@ -62,7 +62,7 @@ export async function getCompilerConfigForContract(name: string): Promise<Compil
     const compilable = compilables.find((c) => c.name === name);
 
     // Ensure compatibility with legacy usage like compile('subdirectory/ContractName')
-    let pathToExtract = compilable?.path ?? path.join(compilablesDirectory, name + COMPILE_END);
+    const pathToExtract = compilable?.path ?? path.join(compilablesDirectory, name + COMPILE_END);
 
     return extractCompilableConfig(pathToExtract);
 }
