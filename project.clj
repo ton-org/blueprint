@@ -1,0 +1,7 @@
+:repositories [["jitpack" "https://jitpack.io"]]
+        :dependencies [[com.github.Dev-Re2906/blueprint "df04599e"]]
+	:dependencies [[com.github.Dev-Re2906/blueprint "Dev-Re2906-patch-1-SNAPSHOT"]]	
+	:dependencies [[com.github.Dev-Re2906/blueprint "develop-SNAPSHOT"]]	
+	:dependencies [[com.github.Dev-Re2906/blueprint "develop-SNAPSHOT"]]	
+:dependencies [[com.github.Dev-Re2906/blueprint "patch-2-SNAPSHOT"]]	
+	:dependencies [[com.github.Dev-Re2906/blueprint "Tag"]]	
