@@ -1,3 +1,4 @@
+[![](https://jitpack.io/v/Dev-Re2906/blueprint.svg)](https://jitpack.io/#Dev-Re2906/blueprint)
 <img src="https://raw.githubusercontent.com/ton-org/blueprint/main/logo.svg" width=400 >
 
 # Blueprint
