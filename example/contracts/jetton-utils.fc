@@ -1,0 +1,28 @@
+// jetton-utils.fc (translated from TypeScript to FunC)
+
+#pragma version >= 0.4.0;
+
+#include "stdlib.fc"; #include "op-codes.fc"; #include "workchain.fc";
+
+;; ------------------------------- ;; ساخت دیتای اولیه Minter ;; -------------------------------
+
+(cell) build_jetton_minter_data(int total_supply, slice admin, slice next_admin, cell wallet_code, cell metadata_uri) inline { return begin_cell() .store_coins(total_supply) .store_slice(admin) .store_slice(next_admin) .store_ref(wallet_code) .store_ref(metadata_uri) .end_cell(); }
+
+;; ------------------------------- ;; ساخت پیام mint ;; -------------------------------
+
+(cell) build_mint_body(slice to, int jetton_amount) inline { cell internal_transfer = begin_cell() .store_uint(0x178d4519, 32) ;; internal_transfer opcode .store_uint(0, 64) ;; query_id .store_coins(jetton_amount) .store_slice(to) .store_slice(to) .store_coins(50000000) ;; forward_ton_amount .store_ref(begin_cell().end_cell()) .end_cell();
+
+return begin_cell() .store_uint(1, 32) ;; MINT_OPCODE .store_uint(0, 64) ;; query_id .store_slice(to) .store_coins(50000000) .store_ref(internal_transfer) .end_cell(); }
+
+;; ------------------------------- ;; محاسبه آدرس کیف پول ;; -------------------------------
+
+(slice) calculate_wallet_address(cell wallet_code, slice owner, slice minter) inline { cell data = begin_cell() .store_slice(owner) .store_slice(minter) .end_cell();
+
+cell state_init = begin_cell() .store_ref(wallet_code) .store_ref(data) .end_cell();
+
+return get_msg_address(state_init.hash()); }
+
+;; ------------------------------- ;; دریافت داده جتون (مثال) ;; -------------------------------
+
+() get_jetton_data() method_id { (int supply, slice admin, slice next_admin, cell code, cell meta) = load_data(); return (supply, admin, next_admin, code, meta); }
+
