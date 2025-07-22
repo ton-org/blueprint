@@ -37,6 +37,13 @@ export type CommonCompilerConfig = {
      * };
      */
     postCompileHook?: (code: Cell, params: HookParams) => Promise<void>;
+
+    /**
+     * Allows to build artifact into library cell instead of regular
+     * code cell
+     * https://docs.ton.org/v3/documentation/data-formats/tlb/library-cells#introduction
+     */
+    buildLibrary?: boolean;
 };
 
 export type CompilableConfig = (TactLegacyCompilerConfig | FuncCompilerConfig | TolkCompilerConfig) &

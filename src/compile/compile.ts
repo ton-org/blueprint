@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 
-import { Cell } from '@ton/core';
+import { beginCell, Cell } from '@ton/core';
 
 import { COMPILABLES_DIR, WRAPPERS_DIR } from '../paths';
 import { CompilableConfig, CompilerConfig, isCompilableConfig } from './CompilerConfig';
@@ -149,6 +149,12 @@ export async function doCompile(name: string, opts?: CompileOpts): Promise<Compi
         await config.postCompileHook(res.code, {
             userData: opts?.hookUserData,
         });
+    }
+
+    if ('buildLibrary' in config && config.buildLibrary === true) {
+        // Pack resulting code hash into library cell
+        const lib_prep = beginCell().storeUint(2, 8).storeBuffer(res.code.hash()).endCell();
+        res.code = new Cell({ exotic: true, bits: lib_prep.bits, refs: lib_prep.refs });
     }
 
     return res;
