@@ -151,7 +151,9 @@ export async function doCompile(name: string, opts?: CompileOpts): Promise<Compi
         });
     }
 
-    if ('buildLibrary' in config && config.buildLibrary === true) {
+    const buildLibrary = opts?.buildLibrary ?? ('buildLibrary' in config && config.buildLibrary === true);
+
+    if (buildLibrary) {
         // Pack resulting code hash into library cell
         const lib_prep = beginCell().storeUint(2, 8).storeBuffer(res.code.hash()).endCell();
         res.code = new Cell({ exotic: true, bits: lib_prep.bits, refs: lib_prep.refs });
@@ -169,6 +171,7 @@ export type CompileOpts = {
      */
     hookUserData?: any;
     debugInfo?: boolean;
+    buildLibrary?: boolean;
 };
 
 /**
