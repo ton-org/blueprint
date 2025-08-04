@@ -205,6 +205,8 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
         return;
     }
 
+    const preciseVersion = localArgs['--compiler-version'];
+
     const selectedContract = await selectContract(ui, extractFirstArg(localArgs));
 
     const networkProvider = await createNetworkProvider(ui, localArgs, context.config, false);
@@ -255,7 +257,7 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
         src = {
             compiler: 'func',
             compilerSettings: {
-                funcVersion: result.version,
+                funcVersion: preciseVersion ?? result.version,
                 commandLine: '-SPA ' + result.targets.join(' '),
             },
             knownContractAddress: addr,
@@ -312,7 +314,7 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
         src = {
             compiler: 'tolk',
             compilerSettings: {
-                tolkVersion: result.version,
+                tolkVersion: preciseVersion ?? result.version,
             },
             knownContractAddress: addr,
             knownContractHash: result.code.hash().toString('base64'),

@@ -54,6 +54,8 @@ export const argSpec = {
     '--custom-version': String,
     '--custom-key': String,
 
+    '--compiler-version': String,
+
     '--tonconnect': Boolean,
     '--deeplink': Boolean,
     '--mnemonic': Boolean,
