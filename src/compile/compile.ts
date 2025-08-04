@@ -155,8 +155,8 @@ export async function doCompile(name: string, opts?: CompileOpts): Promise<Compi
 
     if (buildLibrary) {
         // Pack resulting code hash into library cell
-        const lib_prep = beginCell().storeUint(2, 8).storeBuffer(res.code.hash()).endCell();
-        res.code = new Cell({ exotic: true, bits: lib_prep.bits, refs: lib_prep.refs });
+        const libPrep = beginCell().storeUint(2, 8).storeBuffer(res.code.hash()).endCell();
+        res.code = new Cell({ exotic: true, bits: libPrep.bits, refs: libPrep.refs });
     }
 
     return res;
