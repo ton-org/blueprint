@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 
-import { Cell } from '@ton/core';
+import { beginCell, Cell } from '@ton/core';
 
 import { COMPILABLES_DIR, WRAPPERS_DIR } from '../paths';
 import { CompilableConfig, CompilerConfig, isCompilableConfig } from './CompilerConfig';
@@ -151,6 +151,14 @@ export async function doCompile(name: string, opts?: CompileOpts): Promise<Compi
         });
     }
 
+    const buildLibrary = opts?.buildLibrary ?? ('buildLibrary' in config && config.buildLibrary === true);
+
+    if (buildLibrary) {
+        // Pack resulting code hash into library cell
+        const libPrep = beginCell().storeUint(2, 8).storeBuffer(res.code.hash()).endCell();
+        res.code = new Cell({ exotic: true, bits: libPrep.bits, refs: libPrep.refs });
+    }
+
     return res;
 }
 
@@ -163,6 +171,7 @@ export type CompileOpts = {
      */
     hookUserData?: any;
     debugInfo?: boolean;
+    buildLibrary?: boolean;
 };
 
 /**
