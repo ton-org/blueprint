@@ -305,7 +305,7 @@ npx blueprint run \
 
 You can also use custom network to verify contracts, like so:
 ```bash
-npx blueprint verify --custom https://toncenter.com/api/v2/jsonRPC --custom-version v2 --custom-type mainnet --custom-key YOUR_API_KEY
+npx blueprint verify --custom https://toncenter.com/api/v2/jsonRPC --custom-version v2 --custom-type mainnet --custom-key YOUR_API_KEY --compiler-version 0.4.4-newops.1
 ```
 (or similarly using the config), however custom type MUST be specified as either `mainnet` or `testnet` when verifying.
 
