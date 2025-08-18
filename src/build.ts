@@ -6,6 +6,7 @@ import {
     extractCompilableConfig,
     getCompilerConfigForContract,
     getCompilerOptions,
+    libraryCellFromCode,
 } from './compile/compile';
 import { BUILD_DIR } from './paths';
 import { UIProvider } from './ui/UIProvider';
@@ -28,7 +29,8 @@ export async function buildOne(contract: string, ui?: UIProvider) {
         const compilerOptions = await getCompilerOptions(config);
         ui?.write(`🔧 Using ${compilerOptions.lang} version ${compilerOptions.version}...`);
 
-        const result = await doCompile(contract);
+        // Build raw code cell by default
+        const result = await doCompile(contract, { buildLibrary: false });
 
         if (result.lang === 'tact') {
             for (const [k, v] of result.fs) {
@@ -46,12 +48,30 @@ export async function buildOne(contract: string, ui?: UIProvider) {
             }
         }
 
+        let libAttributes:
+            | {
+                  libraryHash: string;
+                  libraryBoc: string;
+              }
+            | undefined;
+
         const cell = result.code;
+
+        // If build was configured as library, add attributes
+        if ('buildLibrary' in config && config.buildLibrary === true) {
+            const libCell = libraryCellFromCode(cell);
+            libAttributes = {
+                libraryHash: libCell.hash().toString('hex'),
+                libraryBoc: libCell.toBoc().toString('hex'),
+            };
+        }
+
         const rHash = cell.hash();
         const res = {
             hash: rHash.toString('hex'),
             hashBase64: rHash.toString('base64'),
             hex: cell.toBoc().toString('hex'),
+            ...libAttributes,
         };
         ui?.clearActionPrompt();
         if (result.lang === 'tolk') {
