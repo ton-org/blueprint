@@ -15,4 +15,11 @@ module.exports = [
             '@typescript-eslint/no-explicit-any': 'off',
         },
     },
+    {
+        files: ['src/jest/**/*.ts', 'src/jest/**/*.tsx'],
+        env: {
+            jest: true,
+            node: true,
+        },
+    },
 ];

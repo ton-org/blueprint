@@ -1164,7 +1164,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tact-lang/compiler@npm:^1.6.5":
+"@tact-lang/compiler@npm:^1.6.13":
   version: 1.6.13
   resolution: "@tact-lang/compiler@npm:1.6.13"
   dependencies:
@@ -1241,15 +1241,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ton/blueprint@workspace:."
   dependencies:
-    "@tact-lang/compiler": "npm:^1.6.5"
+    "@tact-lang/compiler": "npm:^1.6.13"
     "@ton-api/client": "npm:^0.2.0"
     "@ton-api/ton-adapter": "npm:^0.2.0"
     "@ton-community/func-js": "npm:^0.10.0"
     "@ton/core": "npm:^0.61.0"
     "@ton/crypto": "npm:^3.3.0"
-    "@ton/sandbox": "npm:^0.34.0"
-    "@ton/tolk-js": "npm:^0.12.0"
-    "@ton/ton": "npm:^15.2.1"
+    "@ton/sandbox": "npm:^0.36.0"
+    "@ton/tolk-js": "npm:^1.0.0"
+    "@ton/ton": "npm:^15.3.1"
     "@ton/toolchain": "the-ton-tech/toolchain#v1.4.0"
     "@tonconnect/sdk": "npm:^2.2.0"
     "@types/inquirer": "npm:^8.2.6"
@@ -1284,7 +1284,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ton/core@npm:0.60.1, @ton/core@npm:^0.60.0":
+"@ton/core@npm:0.60.1, @ton/core@npm:^0.60.0, @ton/core@npm:^0.60.1":
   version: 0.60.1
   resolution: "@ton/core@npm:0.60.1"
   dependencies:
@@ -1326,15 +1326,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/sandbox@npm:^0.34.0":
-  version: 0.34.0
-  resolution: "@ton/sandbox@npm:0.34.0"
+"@ton/sandbox@npm:^0.36.0":
+  version: 0.36.0
+  resolution: "@ton/sandbox@npm:0.36.0"
   dependencies:
     "@vscode/debugadapter": "npm:^1.68.0"
     chalk: "npm:^4.1.2"
     fflate: "npm:^0.8.2"
     table: "npm:^6.9.0"
+    ton-assembly: "npm:0.1.0"
   peerDependencies:
+    "@ton-community/func-js": ">=0.10.0"
     "@ton/core": ">=0.61.0"
     "@ton/crypto": ">=3.3.0"
     "@ton/test-utils": ">=0.7.0"
@@ -1344,24 +1346,24 @@ __metadata:
       optional: true
     jest:
       optional: true
-  checksum: 10/118b57098a5fa08551f5696ed2c8959b27e769d9a9ec0b7a915dc5d4d61483357926d34f0e23235bd46b3660ce1504fc8900c5d80e96066b0efa229b7acb7596
+  checksum: 10/6662824a39241946e16cdc85d23fffc9b5a58e9d1118fefb66385a4d9f622d930489adec11d1824c4ce5800f92af39e81f5d9fcbd70df9ee44b615940aeebcef
   languageName: node
   linkType: hard
 
-"@ton/tolk-js@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "@ton/tolk-js@npm:0.12.0"
+"@ton/tolk-js@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@ton/tolk-js@npm:1.0.0"
   dependencies:
     arg: "npm:^5.0.2"
   bin:
     tolk-js: dist/cli.js
-  checksum: 10/229cf9f17c211a3128bfe5b8990a840f5f504d7a55ae0755736cccc79c99d1e3b659ac76fd44274bf62f51eddfa80abcf1f8fc9794cacffc5eae4174522bcc32
+  checksum: 10/93e9bed42b9781f9f10399068f9edc43494173d9c2de413ea78d0e048763775a591f799b6d74c8b0ab4569badbd5c20314d0ae008d646d3cce0c2faba5d2f420
   languageName: node
   linkType: hard
 
-"@ton/ton@npm:^15.2.1":
-  version: 15.2.1
-  resolution: "@ton/ton@npm:15.2.1"
+"@ton/ton@npm:^15.3.1":
+  version: 15.3.1
+  resolution: "@ton/ton@npm:15.3.1"
   dependencies:
     axios: "npm:^1.6.7"
     dataloader: "npm:^2.0.0"
@@ -1371,7 +1373,7 @@ __metadata:
   peerDependencies:
     "@ton/core": ">=0.60.0"
     "@ton/crypto": ">=3.2.0"
-  checksum: 10/25edc421250c7e754dcf79ed3bf05d72c29fc06ba61302380d95e58f04325585ef42bf56e493c142ac20445caef04ed6150e6e1e99c0dd15314ca16c854c7155
+  checksum: 10/72338d8d0d3a9e7c75ce53f363fcdcb3b5cb3ae80cf08c4ccd894885a5bdb2607b6f00a17fc9f75ea53e9a93c48aaf2210a55fdcd9fbcf37bd5e45122ea9974e
   languageName: node
   linkType: hard
 
@@ -1431,7 +1433,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tonstudio/parser-runtime@npm:0.0.1":
+"@tonstudio/parser-runtime@npm:0.0.1, @tonstudio/parser-runtime@npm:^0.0.1":
   version: 0.0.1
   resolution: "@tonstudio/parser-runtime@npm:0.0.1"
   checksum: 10/059abe62ca68d0c0597d0afbd1f5f81554855bf6d5c1dc29a4cde322afc3c0a265ea90065fef98727c05bf63ba416c4e84a685848aed9df814d841688af082d0
@@ -2464,6 +2466,13 @@ __metadata:
     base64-js: "npm:^1.3.1"
     ieee754: "npm:^1.2.1"
   checksum: 10/b6bc68237ebf29bdacae48ce60e5e28fc53ae886301f2ad9496618efac49427ed79096750033e7eab1897a4f26ae374ace49106a5758f38fb70c78c9fda2c3b1
+  languageName: node
+  linkType: hard
+
+"cac@npm:^6.7.14":
+  version: 6.7.14
+  resolution: "cac@npm:6.7.14"
+  checksum: 10/002769a0fbfc51c062acd2a59df465a2a947916b02ac50b56c69ec6c018ee99ac3e7f4dd7366334ea847f1ecacf4defaa61bcd2ac283db50156ce1f1d8c8ad42
   languageName: node
   linkType: hard
 
@@ -6836,6 +6845,22 @@ __metadata:
   dependencies:
     is-number: "npm:^7.0.0"
   checksum: 10/10dda13571e1f5ad37546827e9b6d4252d2e0bc176c24a101252153ef435d83696e2557fe128c4678e4e78f5f01e83711c703eef9814eb12dab028580d45980a
+  languageName: node
+  linkType: hard
+
+"ton-assembly@npm:0.1.0":
+  version: 0.1.0
+  resolution: "ton-assembly@npm:0.1.0"
+  dependencies:
+    "@ton/core": "npm:^0.60.1"
+    "@tonstudio/parser-runtime": "npm:^0.0.1"
+    cac: "npm:^6.7.14"
+  peerDependencies:
+    "@ton/core": ">=0.60.1"
+  bin:
+    tasm: dist/cli/assembler.js
+    tdisasm: dist/cli/disassembler.js
+  checksum: 10/dadd76a2b817706eed61c604496fb75690c30f8b63b6f81c4061375705cd4a84578dcc34ac42af75b03df090c6bdbf20148bac85ffdd4b384a5828d86591027a
   languageName: node
   linkType: hard
 

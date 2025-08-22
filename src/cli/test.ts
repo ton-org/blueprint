@@ -8,7 +8,17 @@ import { helpArgs, helpMessages } from './constants';
 export const argSpec = {
     '--gas-report': Boolean,
     '-g': '--gas-report',
+    '--coverage': Boolean,
 };
+
+export async function coverage(): Promise<void> {
+    execSync(
+        `npm test -- --reporters @ton/blueprint/dist/jest/CoverageReporter --setupFilesAfterEnv @ton/blueprint/dist/jest/coverageSetup`,
+        {
+            stdio: 'inherit',
+        },
+    );
+}
 
 export const test: Runner = async (args, ui) => {
     const localArgs = arg({
@@ -19,6 +29,11 @@ export const test: Runner = async (args, ui) => {
         ui.write(helpMessages['test']);
         return;
     }
+    if (localArgs['--coverage']) {
+        await coverage();
+        return;
+    }
+
     let testArgs = args._.slice(1); // first argument is `test`, need to get rid of it
     if (localArgs['--gas-report']) {
         testArgs = testArgs.slice(1);
