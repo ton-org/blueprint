@@ -28,7 +28,7 @@ import { mnemonicToPrivateKey } from '@ton/crypto';
 import axios, { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from 'ton-lite-client';
 
-import { getExplorerLink, getTransactionLink, getNormalizedExtMessageHash, oneOrZeroOf, sleep } from '../utils';
+import { getExplorerLink, getNormalizedExtMessageHash, getTransactionLink, oneOrZeroOf, sleep } from '../utils';
 import { DeeplinkProvider } from './send/DeeplinkProvider';
 import { TonConnectProvider } from './send/TonConnectProvider';
 import { UIProvider } from '../ui/UIProvider';
@@ -41,6 +41,7 @@ import { Config } from '../config/Config';
 import { CustomNetwork } from '../config/CustomNetwork';
 import { Network } from './Network';
 import { WalletVersion } from './send/wallets';
+import { Explorer } from './Explorer';
 
 const INITIAL_DELAY = 400;
 const MAX_ATTEMPTS = 4;
@@ -67,8 +68,6 @@ export const argSpec = {
 };
 
 export type Args = arg.Result<typeof argSpec>;
-
-type Explorer = 'tonscan' | 'tonviewer' | 'toncx' | 'dton';
 
 type ContractProviderFactory = (params: { address: Address; init?: StateInit | null }) => ContractProvider;
 
@@ -190,7 +189,7 @@ class NetworkProviderImpl implements NetworkProvider {
         return this.#network;
     }
 
-    explorer(): 'tonscan' | 'tonviewer' | 'toncx' | 'dton' {
+    explorer(): Explorer {
         return this.#explorer;
     }
 
