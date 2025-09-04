@@ -7,13 +7,10 @@ import { UIProvider } from '../../ui/UIProvider';
 import { Network } from '../Network';
 
 export class DeeplinkProvider implements SendProvider {
-    #network: Network;
-    #ui: UIProvider;
-
-    constructor(network: Network, ui: UIProvider) {
-        this.#network = network;
-        this.#ui = ui;
-    }
+    constructor(
+        private readonly network: Network,
+        private readonly ui: UIProvider,
+    ) {}
 
     async connect(): Promise<void> {
         return;
@@ -25,23 +22,23 @@ export class DeeplinkProvider implements SendProvider {
             amount,
             payload,
             stateInit ? beginCell().storeWritable(storeStateInit(stateInit)).endCell() : undefined,
-            this.#network === 'testnet',
+            this.network === 'testnet',
         );
 
         try {
-            this.#ui.write('\n');
-            qrcode.generate(deepLink, { small: true }, (qr) => this.#ui.write(qr));
-            this.#ui.write('\n');
-            this.#ui.write(deepLink);
-            this.#ui.write('\nScan the QR code above, or open the ton:// link to send this transaction');
+            this.ui.write('\n');
+            qrcode.generate(deepLink, { small: true }, (qr) => this.ui.write(qr));
+            this.ui.write('\n');
+            this.ui.write(deepLink);
+            this.ui.write('\nScan the QR code above, or open the ton:// link to send this transaction');
 
-            await this.#ui.prompt('Press enter when transaction was issued');
+            await this.ui.prompt('Press enter when transaction was issued');
         } catch (err: unknown) {
-            this.#ui.write(deepLink);
-            this.#ui.write('\n');
+            this.ui.write(deepLink);
+            this.ui.write('\n');
 
             if (err instanceof Error && err.message.includes('code length overflow')) {
-                this.#ui.write(
+                this.ui.write(
                     'Message is too large to be sent via QR code. Please use the ton:// link or another method.',
                 );
                 process.exit(1);

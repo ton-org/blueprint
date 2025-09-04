@@ -10,14 +10,14 @@ class DestroyableBottomBar extends inquirer.ui.BottomBar {
 }
 
 export class InquirerUIProvider implements UIProvider {
-    #bottomBar: DestroyableBottomBar;
+    private readonly bottomBar: DestroyableBottomBar;
 
     constructor() {
-        this.#bottomBar = new DestroyableBottomBar();
+        this.bottomBar = new DestroyableBottomBar();
     }
 
     write(message: string): void {
-        this.#bottomBar.log.write(message);
+        this.bottomBar.log.write(message);
     }
 
     async prompt(message: string): Promise<boolean> {
@@ -62,14 +62,14 @@ export class InquirerUIProvider implements UIProvider {
     }
 
     setActionPrompt(message: string): void {
-        this.#bottomBar.updateBottomBar(message);
+        this.bottomBar.updateBottomBar(message);
     }
 
     clearActionPrompt(): void {
-        this.#bottomBar.updateBottomBar('');
+        this.bottomBar.updateBottomBar('');
     }
 
     close() {
-        this.#bottomBar.destroy();
+        this.bottomBar.destroy();
     }
 }

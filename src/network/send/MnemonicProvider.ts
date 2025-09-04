@@ -46,11 +46,11 @@ type MnemonicProviderParams = {
 };
 
 export class MnemonicProvider implements SendProvider {
-    #wallet: OpenedContract<WalletInstance>;
-    #secretKey: Buffer;
-    #client: BlueprintTonClient;
-    #ui: UIProvider;
-    #network: Network;
+    private readonly wallet: OpenedContract<WalletInstance>;
+    private readonly secretKey: Buffer;
+    private readonly client: BlueprintTonClient;
+    private readonly ui: UIProvider;
+    private readonly network: Network;
 
     constructor(params: MnemonicProviderParams) {
         if (!(params.version in wallets)) {
@@ -58,12 +58,12 @@ export class MnemonicProvider implements SendProvider {
                 `Unknown wallet version ${params.version}, expected one of ${Object.keys(wallets).join(', ')}`,
             );
         }
-        this.#client = params.client;
-        this.#network = params.network;
+        this.client = params.client;
+        this.network = params.network;
         const kp = keyPairFromSecretKey(params.secretKey);
 
-        this.#wallet = openContract<WalletInstance>(this.createWallet(params, kp), (params) =>
-            this.#client.provider(
+        this.wallet = openContract<WalletInstance>(this.createWallet(params, kp), (params) =>
+            this.client.provider(
                 params.address,
                 params.init && {
                     ...params.init,
@@ -72,8 +72,8 @@ export class MnemonicProvider implements SendProvider {
                 },
             ),
         );
-        this.#secretKey = kp.secretKey;
-        this.#ui = params.ui;
+        this.secretKey = kp.secretKey;
+        this.ui = params.ui;
     }
 
     private createWallet(params: MnemonicProviderParams, kp: KeyPair): WalletInstance {
@@ -100,10 +100,10 @@ export class MnemonicProvider implements SendProvider {
 
     async connect() {
         const formattedAddress = this.address().toString({
-            testOnly: this.#network === 'testnet',
+            testOnly: this.network === 'testnet',
             bounceable: false,
         });
-        this.#ui.write(`Connected to wallet at address: ${formattedAddress}\n`);
+        this.ui.write(`Connected to wallet at address: ${formattedAddress}\n`);
     }
 
     async sendTransaction(
@@ -112,9 +112,9 @@ export class MnemonicProvider implements SendProvider {
         payload?: Cell | undefined,
         stateInit?: StateInit | undefined,
     ) {
-        await this.#wallet.sendTransfer({
-            seqno: await this.#wallet.getSeqno(),
-            secretKey: this.#secretKey,
+        await this.wallet.sendTransfer({
+            seqno: await this.wallet.getSeqno(),
+            secretKey: this.secretKey,
             messages: [
                 {
                     init: stateInit,
@@ -136,10 +136,10 @@ export class MnemonicProvider implements SendProvider {
             sendMode: SendMode.PAY_GAS_SEPARATELY,
         });
 
-        this.#ui.write('Sent transaction');
+        this.ui.write('Sent transaction');
     }
 
     address() {
-        return this.#wallet.address;
+        return this.wallet.address;
     }
 }

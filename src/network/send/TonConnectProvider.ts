@@ -8,20 +8,16 @@ import { UIProvider } from '../../ui/UIProvider';
 import { Network } from '../Network';
 
 class TonConnectStorage implements IStorage {
-    #inner: Storage;
-
-    constructor(inner: Storage) {
-        this.#inner = inner;
-    }
+    constructor(private readonly inner: Storage) {}
 
     async setItem(key: string, value: string): Promise<void> {
-        return await this.#inner.setItem(key, value);
+        return await this.inner.setItem(key, value);
     }
     async getItem(key: string): Promise<string | null> {
-        return await this.#inner.getItem(key);
+        return await this.inner.getItem(key);
     }
     async removeItem(key: string): Promise<void> {
-        return await this.#inner.removeItem(key);
+        return await this.inner.removeItem(key);
     }
 }
 
@@ -30,9 +26,9 @@ function isRemote(walletInfo: WalletInfo): walletInfo is WalletInfoRemote {
 }
 
 export class TonConnectProvider implements SendProvider {
-    #connector: TonConnect;
-    #ui: UIProvider;
-    #network: Network;
+    private readonly connector: TonConnect;
+    private readonly ui: UIProvider;
+    private readonly network: Network;
 
     constructor(
         storage: Storage,
@@ -40,57 +36,57 @@ export class TonConnectProvider implements SendProvider {
         network: Network,
         manifestUrl: string = 'https://raw.githubusercontent.com/ton-org/blueprint/main/tonconnect/manifest.json',
     ) {
-        this.#connector = new TonConnect({
+        this.connector = new TonConnect({
             storage: new TonConnectStorage(storage),
             manifestUrl,
         });
-        this.#ui = ui;
-        this.#network = network;
+        this.ui = ui;
+        this.network = network;
     }
 
     async connect(): Promise<void> {
         await this.connectWallet();
-        const formattedAddress = Address.parse(this.#connector.wallet!.account.address).toString({
-            testOnly: this.#network === 'testnet',
+        const formattedAddress = Address.parse(this.connector.wallet!.account.address).toString({
+            testOnly: this.network === 'testnet',
             bounceable: false,
         });
-        this.#ui.write(`Connected to wallet at address: ${formattedAddress}\n`);
+        this.ui.write(`Connected to wallet at address: ${formattedAddress}\n`);
     }
 
     address(): Address | undefined {
-        if (!this.#connector.wallet) return undefined;
+        if (!this.connector.wallet) return undefined;
 
-        return Address.parse(this.#connector.wallet.account.address);
+        return Address.parse(this.connector.wallet.account.address);
     }
 
     private async connectWallet(): Promise<void> {
-        const wallets = (await this.#connector.getWallets()).filter(isRemote);
+        const wallets = (await this.connector.getWallets()).filter(isRemote);
 
-        await this.#connector.restoreConnection();
+        await this.connector.restoreConnection();
 
-        if (this.#connector.wallet) {
+        if (this.connector.wallet) {
             return;
         }
 
-        const wallet = await this.#ui.choose('Choose your wallet', wallets, (w) => w.name);
+        const wallet = await this.ui.choose('Choose your wallet', wallets, (w) => w.name);
 
-        this.#ui.setActionPrompt('Connecting to wallet...');
+        this.ui.setActionPrompt('Connecting to wallet...');
 
-        const url = this.#connector.connect({
+        const url = this.connector.connect({
             universalLink: wallet.universalLink,
             bridgeUrl: wallet.bridgeUrl,
         }) as string;
 
-        this.#ui.write('\n');
+        this.ui.write('\n');
 
-        qrcode.generate(url, { small: true }, (qr) => this.#ui.write(qr));
+        qrcode.generate(url, { small: true }, (qr) => this.ui.write(qr));
 
-        this.#ui.write('\n' + url + '\n\n');
+        this.ui.write('\n' + url + '\n\n');
 
-        this.#ui.setActionPrompt('Scan the QR code in your wallet or open the link...');
+        this.ui.setActionPrompt('Scan the QR code in your wallet or open the link...');
 
         return new Promise((resolve, reject) => {
-            this.#connector.onStatusChange((w) => {
+            this.connector.onStatusChange((w) => {
                 if (w) {
                     resolve();
                 } else {
@@ -101,9 +97,9 @@ export class TonConnectProvider implements SendProvider {
     }
 
     async sendTransaction(address: Address, amount: bigint, payload?: Cell, stateInit?: StateInit) {
-        this.#ui.setActionPrompt('Sending transaction. Approve in your wallet...');
+        this.ui.setActionPrompt('Sending transaction. Approve in your wallet...');
 
-        const result = await this.#connector.sendTransaction({
+        const result = await this.connector.sendTransaction({
             validUntil: Date.now() + 5 * 60 * 1000,
             messages: [
                 {
@@ -117,8 +113,8 @@ export class TonConnectProvider implements SendProvider {
             ],
         });
 
-        this.#ui.clearActionPrompt();
-        this.#ui.write('Sent transaction');
+        this.ui.clearActionPrompt();
+        this.ui.write('Sent transaction');
 
         return result;
     }
