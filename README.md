@@ -141,7 +141,7 @@ Once your environment is set up, you can use the mnemonic wallet for deployment 
 
 ### Updating Tolk version
 
-Tact version can be updated to the latest using `npm update/yarn upgrade @ton/tolk-js` command
+Tolk version can be updated to the latest using `npm update/yarn upgrade @ton/tolk-js` command
 
 ### Updating FunC version
 
