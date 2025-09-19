@@ -31,7 +31,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: the-ton-tech/toolchain/lint@v1.4.0
+      - uses: the-ton-tech/toolchain/lint@v1.6.0
   build:
     needs: lint
     runs-on: ${{ matrix.os }}
@@ -43,4 +43,6 @@ jobs:
           - macos-15
     name: Test & Build on ${{ matrix.os }}
     steps:
-      - uses: the-ton-tech/toolchain/build@v1.4.0
+      - uses: the-ton-tech/toolchain/build@v1.6.0
+        with:
+          os: ${{ matrix.os }}

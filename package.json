@@ -29,7 +29,7 @@
         "@ton/sandbox": "^0.37.1",
         "@ton/tolk-js": "^1.0.0",
         "@ton/ton": "^15.3.1",
-        "@ton/toolchain": "the-ton-tech/toolchain#v1.4.0",
+        "@ton/toolchain": "the-ton-tech/toolchain#v1.6.0",
         "@types/inquirer": "^8.2.6",
         "@types/jest": "^30.0.0",
         "@types/node": "^20.2.5",

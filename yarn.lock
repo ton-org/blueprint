@@ -1211,7 +1211,7 @@ __metadata:
     "@ton/sandbox": "npm:^0.37.1"
     "@ton/tolk-js": "npm:^1.0.0"
     "@ton/ton": "npm:^15.3.1"
-    "@ton/toolchain": "the-ton-tech/toolchain#v1.4.0"
+    "@ton/toolchain": "the-ton-tech/toolchain#v1.6.0"
     "@tonconnect/sdk": "npm:^2.2.0"
     "@types/inquirer": "npm:^8.2.6"
     "@types/jest": "npm:^30.0.0"
@@ -1339,9 +1339,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/toolchain@the-ton-tech/toolchain#v1.4.0":
-  version: 1.4.0
-  resolution: "@ton/toolchain@https://github.com/the-ton-tech/toolchain.git#commit=92e94ac22143ab46ed811e43e31c0987eb604f3d"
+"@ton/toolchain@the-ton-tech/toolchain#v1.6.0":
+  version: 1.6.0
+  resolution: "@ton/toolchain@https://github.com/the-ton-tech/toolchain.git#commit=31fce5f6deb3eecaad505598f218e219351eb208"
   dependencies:
     "@eslint/js": "npm:^9.27.0"
     "@typescript-eslint/eslint-plugin": "npm:^8.32.1"
@@ -1352,7 +1352,7 @@ __metadata:
     eslint-plugin-prettier: "npm:^5.4.0"
     globals: "npm:^16.2.0"
     prettier: "npm:^3.5.3"
-  checksum: 10c0/cf85054fca1006779b3e69bd5e90b10747c33f5fa0d0e306feb59678629b12a37e3186058093829455f68e2a49e52a29769b831212be229d99f1690d4e9a5973
+  checksum: 10c0/2699eba886ec9d9b5acbe3dd205bff2e7fd6f0dbb28241557e909a44e64d2eb3659f24f49d3bd87bb239fa4f19437d56f02fc99fb7a4f7ed7bb2eb0b110ce1ea
   languageName: node
   linkType: hard
 

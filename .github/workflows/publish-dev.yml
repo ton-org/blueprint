@@ -12,13 +12,16 @@ jobs:
     environment: dev
     steps:
       - uses: actions/checkout@v3
+
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js 18
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
           always-auth: true
-      - name: Install Yarn
-        run: npm install -g yarn
+
       - name: Bump version
         id: version
         run: |
@@ -38,19 +41,24 @@ jobs:
 
           NEW_VERSION="${NEW_BASE}-dev.${TIMESTAMP}.${COMMIT_SHA}"
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
       - name: Update package.json version
         run: |
           jq ".version = \"${{ steps.version.outputs.new_version }}\"" package.json > package.tmp
           mv package.tmp package.json
+
       - name: Install dependencies
-        run: yarn
+        run: yarn install
+
       - name: Build
-        run: yarn build
+        run: yarn run build
+
       - name: Setup .yarnrc.yml
         run: |
           yarn config set npmAuthToken $NPM_AUTH_TOKEN
           yarn config set npmAlwaysAuth true
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
       - name: Publish
         run: yarn npm publish --access public --tag dev
