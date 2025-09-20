@@ -18,6 +18,7 @@ import { InquirerUIProvider } from '../ui/InquirerUIProvider';
 import { argSpec, Runner, RunnerContext } from './Runner';
 import { getConfig } from '../config/utils';
 import { rename } from './rename';
+import { availableCommands, KnownCommandName } from './constants';
 
 const runners: Record<string, Runner> = {
     create,
@@ -104,50 +105,32 @@ main()
 function showHelp() {
     console.log(
         chalk.blueBright(`
-     ____  _    _   _ _____ ____  ____  ___ _   _ _____ 
+     ____  _    _   _ _____ ____  ____  ___ _   _ _____
     | __ )| |  | | | | ____|  _ \\|  _ \\|_ _| \\ | |_   _|
-    |  _ \\| |  | | | |  _| | |_) | |_) || ||  \\| | | |  
-    | |_) | |__| |_| | |___|  __/|  _ < | || |\\  | | |  
+    |  _ \\| |  | | | |  _| | |_) | |_) || ||  \\| | | |
+    | |_) | |__| |_| | |___|  __/|  _ < | || |\\  | | |
     |____/|_____\\___/|_____|_|   |_| \\_\\___|_| \\_| |_|  `),
     );
     console.log(chalk.blue(`                     TON development for professionals`));
     console.log(``);
     console.log(` Usage: blueprint [OPTIONS] COMMAND [ARGS]`);
     console.log(``);
-    console.log(
-        chalk.cyanBright(`  blueprint create`) +
-            `\t` +
-            chalk.whiteBright(`create a new contract with .fc source, .ts wrapper, .spec.ts test`),
-    );
-    console.log(`\t\t\t` + chalk.gray(`blueprint create ContractName`));
 
-    console.log(
-        chalk.cyanBright(`  blueprint build`) +
-            `\t` +
-            chalk.whiteBright(`builds a contract that has a .compile.ts file`),
-    );
-    console.log(`\t\t\t` + chalk.gray(`blueprint build ContractName`));
+    const mainPageCommands: Set<KnownCommandName> = new Set(['create', 'build', 'test', 'run', 'help']);
 
-    console.log(
-        chalk.cyanBright(`  blueprint test`) +
-            `\t` +
-            chalk.whiteBright(`run the full project test suite with all .spec.ts files`),
-    );
-    console.log(`\t\t\t` + chalk.gray(`blueprint test`));
+    for (const cmd of availableCommands) {
+        if (!mainPageCommands.has(cmd.name)) {
+            continue;
+        }
 
-    console.log(
-        chalk.cyanBright(`  blueprint run `) +
-            `\t` +
-            chalk.whiteBright(`runs a script from 'scripts' directory (eg. a deploy script)`),
-    );
-    console.log(`\t\t\t` + chalk.gray(`blueprint run deployContractName`));
+        const commandName = `  blueprint ${cmd.name}`;
+        const description = cmd.description;
 
-    console.log(
-        chalk.cyanBright(`  blueprint help`) +
-            `\t` +
-            chalk.whiteBright(`shows more detailed help, also see https://github.com/ton-org/blueprint`),
-    );
-    console.log(`\t\t\t` + chalk.gray(`blueprint help`));
+        const cmdPadding = ' '.repeat(Math.max(0, 23 - commandName.length));
+        const examplePadding = ' '.repeat(cmdPadding.length + commandName.length);
+        console.log(chalk.cyanBright(commandName) + cmdPadding + chalk.whiteBright(description));
+        console.log(examplePadding + chalk.gray(cmd.example));
+    }
 
     console.log(``);
 }

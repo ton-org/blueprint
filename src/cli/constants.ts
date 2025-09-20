@@ -29,18 +29,65 @@ export const templateTypes: { name: string; value: string }[] = [
 
 export const helpArgs = { '--help': Boolean, '-h': '--help' };
 
-const availableCommands = [
-    'create',
-    'run',
-    'build',
-    'set',
-    'help',
-    'test',
-    'verify',
-    'convert',
-    'rename',
-    'pack',
-    'snapshot',
+export type KnownCommandName =
+    | 'create'
+    | 'run'
+    | 'build'
+    | 'set'
+    | 'help'
+    | 'test'
+    | 'verify'
+    | 'convert'
+    | 'rename'
+    | 'pack'
+    | 'snapshot';
+
+export interface CommandInfo {
+    readonly name: KnownCommandName;
+    readonly description: string;
+    readonly example: string;
+}
+
+export const availableCommands: CommandInfo[] = [
+    {
+        name: 'create',
+        description: 'create a new contract with .fc source, .ts wrapper, .spec.ts test',
+        example: 'blueprint create ContractName',
+    },
+    {
+        name: 'build',
+        description: 'builds a contract that has a .compile.ts file',
+        example: 'blueprint build ContractName',
+    },
+    { name: 'test', description: 'run the full project test suite with all .spec.ts files', example: 'blueprint test' },
+    {
+        name: 'run',
+        description: "runs a script from 'scripts' directory (eg. a deploy script)",
+        example: 'blueprint run deployContractName',
+    },
+    {
+        name: 'help',
+        description: 'shows more detailed help, also see https://github.com/ton-org/blueprint',
+        example: 'blueprint help',
+    },
+    { name: 'set', description: 'sets configuration values', example: 'blueprint set' },
+    { name: 'verify', description: 'verifies a deployed contract on verifier.ton.org', example: 'blueprint verify' },
+    {
+        name: 'convert',
+        description: 'converts legacy bash build scripts to Blueprint wrappers',
+        example: 'blueprint convert',
+    },
+    {
+        name: 'rename',
+        description: 'renames contract by matching in wrappers, scripts and tests',
+        example: 'blueprint rename',
+    },
+    { name: 'pack', description: 'builds and prepares a publish-ready package of wrappers', example: 'blueprint pack' },
+    {
+        name: 'snapshot',
+        description: 'creates snapshots with gas usage and cells sizes',
+        example: 'blueprint snapshot',
+    },
 ];
 
 export const helpMessages = {
@@ -52,7 +99,9 @@ Blueprint is generally invoked as follows:
   ${chalk.cyan('blueprint')} ${chalk.yellow('[command]')} ${chalk.gray('[command-args]')} ${chalk.gray('[flags]')}
 
 ${chalk.bold('List of available commands:')}
-${availableCommands.map((c) => `- ${chalk.green(c)}`).join('\n')}`,
+${availableCommands.map((c) => `  ${chalk.cyanBright(c.name)}${' '.repeat(Math.max(0, 20 - c.name.length))}${c.description}`).join('\n')}
+
+To get more information about a command, run ${chalk.cyan('blueprint help <command>')}`,
 
     create: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('create')} ${chalk.yellow('[contract name]')} ${chalk.gray('[flags]')}
 
