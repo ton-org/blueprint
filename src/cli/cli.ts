@@ -20,7 +20,7 @@ import { getConfig } from '../config/utils';
 import { rename } from './rename';
 import { availableCommands, KnownCommandName } from './constants';
 
-const runners: Record<string, Runner> = {
+const runners: Record<KnownCommandName, Runner> = {
     create,
     run,
     build,
