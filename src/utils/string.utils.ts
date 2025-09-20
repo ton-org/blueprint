@@ -20,14 +20,16 @@ export function toPascalCase(str: string): string {
         .replace(/\s+/g, ''); // Removes all spaces
 }
 
-export function assertValidContractName(name: string) {
-    if (name.length === 0) throw new Error(`Contract name cannot be empty.`);
+export function validateContractName(name: string): string | undefined {
+    if (name.length === 0) return `Contract name cannot be empty.`;
 
     if (name.toLowerCase() === 'contract') {
-        throw new Error(`Contract name 'contract' is reserved. Please choose a different name.`);
+        return `Contract name 'contract' is reserved. Please choose a different name.`;
     }
 
     if (!isPascalCase(name)) {
-        throw new Error(`Contract name '${name}' is not in PascalCase. Please try ${toPascalCase(name)}.`);
+        return `Contract name '${name}' is not in PascalCase. Please try ${toPascalCase(name)}.`;
     }
+
+    return undefined;
 }
