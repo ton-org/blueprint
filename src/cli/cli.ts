@@ -126,7 +126,7 @@ function showHelp() {
         const commandName = `  blueprint ${cmd.name}`;
         const description = cmd.description;
 
-        const cmdPadding = ' '.repeat(Math.max(0, 23 - commandName.length));
+        const cmdPadding = ' '.repeat(Math.max(0, 24 - commandName.length));
         const examplePadding = ' '.repeat(cmdPadding.length + commandName.length);
         console.log(chalk.cyanBright(commandName) + cmdPadding + chalk.whiteBright(description));
         console.log(examplePadding + chalk.gray(cmd.example));
