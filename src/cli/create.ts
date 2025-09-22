@@ -4,12 +4,13 @@ import { lstat, mkdir, open, readdir, readFile } from 'fs/promises';
 
 import arg from 'arg';
 import { Project } from '@tact-lang/compiler';
+import chalk from 'chalk';
 
 import { getConfig } from '../config/utils';
 import { getRootTactConfig, TactConfig, updateRootTactConfig } from '../config/tact.config';
 import { Args, extractFirstArg, Runner } from './Runner';
 import { executeTemplate, TEMPLATES_DIR } from '../template';
-import { assertValidContractName, selectOption, toSnakeCase } from '../utils';
+import { validateContractName, selectOption, toSnakeCase } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
 import { buildOne } from '../build';
 import { helpArgs, helpMessages, templateTypes } from './constants';
@@ -85,8 +86,15 @@ export const create: Runner = async (_args: Args, ui: UIProvider) => {
         return;
     }
 
-    const name = extractFirstArg(localArgs) ?? (await ui.input('Contract name (PascalCase)'));
-    assertValidContractName(name);
+    const argName = extractFirstArg(localArgs);
+    if (argName !== undefined) {
+        const error = validateContractName(argName);
+        if (error) {
+            throw new Error(error);
+        }
+    }
+
+    const name = argName ?? (await requestContractName('Contract name (PascalCase)', ui));
 
     const which = (
         await selectOption(templateTypes, {
@@ -120,3 +128,16 @@ export const create: Runner = async (_args: Args, ui: UIProvider) => {
         await createFiles(path.join(TEMPLATES_DIR, lang, template), process.cwd(), replaces);
     }
 };
+
+export async function requestContractName(message: string, ui: UIProvider): Promise<string> {
+    while (true) {
+        const name = await ui.input(message);
+        const error = validateContractName(name);
+        if (error !== undefined) {
+            ui.write(chalk.redBright(`Error: `) + error);
+            // ask user again
+            continue;
+        }
+        return name;
+    }
+}

@@ -5,10 +5,11 @@ import arg from 'arg';
 
 import { COMPILABLES_DIR, CONTRACTS_DIR, SCRIPTS_DIR, TACT_ROOT_CONFIG, TESTS_DIR, WRAPPERS_DIR } from '../paths';
 import { Args, extractFirstArg, extractSecondArg, Runner, RunnerContext } from './Runner';
-import { assertValidContractName, findContracts, toLowerCase, toSnakeCase, extractFile } from '../utils';
+import { validateContractName, findContracts, toLowerCase, toSnakeCase, extractFile } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
 import { helpArgs, helpMessages } from './constants';
 import { selectContract } from './build';
+import { requestContractName } from './create';
 
 export function renameExactIfRequired(
     str: string,
@@ -85,8 +86,16 @@ export const rename: Runner = async (_args: Args, ui: UIProvider, _context: Runn
 
     const oldName = await selectContract(ui, extractFirstArg(localArgs));
 
-    const newName = extractSecondArg(localArgs) ?? (await ui.input('New contract name (PascalCase)'));
-    assertValidContractName(newName);
+    const argName = extractSecondArg(localArgs);
+    if (argName !== undefined) {
+        const error = validateContractName(argName);
+        if (error) {
+            throw new Error(error);
+        }
+    }
+
+    const newName = argName ?? (await requestContractName('New contract name (PascalCase)', ui));
+
     const contracts = await findContracts();
     if (contracts.includes(newName)) {
         ui.write(`Contract with name ${newName} already exists.`);
