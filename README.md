@@ -191,6 +191,10 @@ Before developing, make sure that your current working directory is located in t
 1. Implement TypeScript tests in `tests/<CONTRACT>.spec.ts`
 2. Rely on the wrapper TypeScript class from `wrappers/<CONTRACT>.ts` to interact with the contract
 
+#### Collecting coverage
+
+To collect coverage run `blueprint test --coverage`. Coverage will appear in coverage directory.
+
 > Learn more about writing tests from the Sandbox's documentation - [here](https://github.com/ton-org/sandbox#writing-tests).
 
 ### Publishing Wrapper Code

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Added `blueprint test --coverage` command 
+
 ### Changed
 
 - If the input contract name is invalid, blueprint does not exit, but asks for the name again
