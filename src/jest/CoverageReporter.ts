@@ -2,11 +2,12 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import { existsSync } from 'fs';
 
-import type { Reporter, ReporterContext } from '@jest/reporters';
+import type { Reporter } from '@jest/reporters';
 import { Cell } from '@ton/core';
 // @ts-expect-error blueprint imported inside package
 import { buildAll } from '@ton/blueprint';
-import { collectAsmCoverage, Coverage, mergeCoverages } from '@ton/sandbox';
+import { collectAsmCoverage, Coverage, CoverageSummary, mergeCoverages } from '@ton/sandbox';
+import chalk from 'chalk';
 
 type ContractMeta = {
     name: string;
@@ -58,19 +59,35 @@ class CoverageReporter implements Reporter {
         const logs = await this.collectLogs();
 
         console.log(`\n📝 Generating coverage reports...`);
-        await Promise.all(
-            this.contracts.map(async ({ name, hex }) => {
-                const codeCell = Cell.fromHex(hex);
-                const merged = mergeCoverages(...logs.map((l) => collectAsmCoverage(codeCell, l)));
-                const report = new Coverage(merged).report('html');
-                if (report) {
-                    const reportPath = path.join(this.coverageDir, `${name}-report.html`);
-                    await fs.writeFile(reportPath, report);
-                    console.log(`   • ${name} → ${reportPath}`);
-                }
-            }),
-        );
+        for (const { name, hex } of this.contracts) {
+            const codeCell = Cell.fromHex(hex);
+            const merged = mergeCoverages(...logs.map((l) => collectAsmCoverage(codeCell, l)));
+            const coverage = new Coverage(merged);
+
+            // Write HTML report
+            const report = coverage.report("html");
+            const reportPath = path.join(this.coverageDir, `${name}-report.html`);
+            await fs.writeFile(reportPath, report);
+
+            // Print summary in a Jest-like way
+            const summary = coverage.summary();
+            this.printSummary(name, summary, reportPath);
+        }
         console.log(`\n✅ Coverage reports generated in ${this.coverageDir}\n`);
+    }
+
+    private printSummary(name: string, summary: CoverageSummary, reportPath: string) {
+        const pct = summary.coveragePercentage.toFixed(2) + "%";
+
+        const line =
+            chalk.bold(name.padEnd(20)) +
+            chalk.white(`${summary.coveredLines}/${summary.totalLines} lines`.padEnd(20)) +
+            (summary.coveragePercentage >= 80
+                ? chalk.green(pct.padEnd(10))
+                : chalk.red(pct.padEnd(10))) +
+            chalk.gray(reportPath);
+
+        console.log("   • " + line);
     }
 
     private async collectLogs(): Promise<string[]> {
