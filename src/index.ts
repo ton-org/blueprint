@@ -11,6 +11,7 @@ export {
     FuncCompileResult,
     TactCompileResult,
     CompileResult,
+    libraryCellFromCode,
 } from './compile/compile';
 
 export { CompilerConfig, HookParams } from './compile/CompilerConfig';

@@ -1,6 +1,6 @@
 {
     "name": "@ton/blueprint",
-    "version": "0.39.1",
+    "version": "0.40.0",
     "description": "Framework for development of TON smart contracts",
     "main": "dist/index.js",
     "bin": "./dist/cli/cli.js",
@@ -31,12 +31,12 @@
         "@ton/ton": "^15.3.1",
         "@ton/toolchain": "the-ton-tech/toolchain#v1.4.0",
         "@types/inquirer": "^8.2.6",
-        "@types/jest": "^29.5.14",
+        "@types/jest": "^30.0.0",
         "@types/node": "^20.2.5",
         "@types/qrcode-terminal": "^0.12.0",
         "eslint": "^9.28.0",
-        "jest": "^30.0.0",
-        "ts-jest": "^29.3.4",
+        "jest": "^30.0.5",
+        "ts-jest": "^29.4.1",
         "typescript": "^5.8.3"
     },
     "peerDependencies": {
