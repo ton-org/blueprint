@@ -1,5 +1,7 @@
 import { Address, beginCell, Cell, Message, storeMessage } from '@ton/core';
 
+import { Explorer } from '../network/Explorer';
+
 /**
  * Generates a TON deep link for transfer.
  *
@@ -44,7 +46,7 @@ export const tonDeepLink = (
  * const link = getExplorerLink("EQC...", "testnet", "tonscan");
  * // "https://testnet.tonscan.org/address/EQC..."
  */
-export function getExplorerLink(address: string, network: string, explorer: string) {
+export function getExplorerLink(address: string, network: string, explorer: Explorer) {
     const networkPrefix = network === 'testnet' ? 'testnet.' : '';
 
     switch (explorer) {
@@ -66,7 +68,7 @@ export function getExplorerLink(address: string, network: string, explorer: stri
 export function getTransactionLink(
     tx: { lt: string | bigint; hash: Buffer; address: Address; now: number },
     network: string,
-    explorer: string,
+    explorer: Explorer,
 ) {
     const networkPrefix = network === 'testnet' ? 'testnet.' : '';
 
