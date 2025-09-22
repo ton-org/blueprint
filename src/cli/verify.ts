@@ -223,7 +223,7 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
         throw new Error('Cannot use custom network');
     }
 
-    const result = await doCompile(selectedContract);
+    const result = await doCompile(selectedContract, { buildLibrary: false });
     const resHash = result.code.hash();
 
     ui.write(`Compiled code hash hex: ${resHash.toString('hex')}`);

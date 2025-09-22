@@ -63,7 +63,7 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 
 * [Node.js](https://nodejs.org) with a recent version like v18. Version can be verified with `node -v`
 * IDE with TON support:
-  * [Visual Studio Code](https://code.visualstudio.com/) with the [TON plugin](https://marketplace.visualstudio.com/items?itemName=ton-core.vscode-ton), [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode), or [Tact plugin](https://marketplace.visualstudio.com/items?itemName=tonstudio.vscode-tact)
+  * [Visual Studio Code](https://code.visualstudio.com/) with the [TON plugin](https://marketplace.visualstudio.com/items?itemName=ton-core.vscode-ton) or [Tact plugin](https://marketplace.visualstudio.com/items?itemName=tonstudio.vscode-tact)
   * [IntelliJ IDEA](https://www.jetbrains.com/idea/)
     * [TON Development plugin](https://plugins.jetbrains.com/plugin/23382-ton) for Tolk, FunC and Fift
     * [Tact plugin by TON Studio](https://plugins.jetbrains.com/plugin/27290-tact) for Tact
@@ -141,7 +141,7 @@ Once your environment is set up, you can use the mnemonic wallet for deployment 
 
 ### Updating Tolk version
 
-Tact version can be updated to the latest using `npm update/yarn upgrade @ton/tolk-js` command
+Tolk version can be updated to the latest using `npm update/yarn upgrade @ton/tolk-js` command
 
 ### Updating FunC version
 

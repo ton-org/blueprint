@@ -4,6 +4,7 @@ import { ContractAdapter } from '@ton-api/ton-adapter';
 import { LiteClient } from 'ton-lite-client';
 
 import { UIProvider } from '../ui/UIProvider';
+import { Explorer } from './Explorer';
 
 export type BlueprintTonClient = TonClient4 | TonClient | ContractAdapter | LiteClient;
 
@@ -22,6 +23,12 @@ export interface NetworkProvider {
      * @returns {'mainnet' | 'testnet' | 'custom'} The type of network.
      */
     network(): 'mainnet' | 'testnet' | 'custom';
+
+    /**
+     * Returns the current explorer type.
+     * @returns {Explorer} The type of explorer.
+     */
+    explorer(): Explorer;
 
     /**
      * Returns the sender used for transactions.
