@@ -64,36 +64,37 @@ class CoverageReporter implements Reporter {
             const merged = mergeCoverages(...logs.map((l) => collectAsmCoverage(codeCell, l)));
             const coverage = new Coverage(merged);
 
-            // Write HTML report
-            const report = coverage.report("html");
+            const report = coverage.report('html');
             const reportPath = path.join(this.coverageDir, `${name}-report.html`);
             await fs.writeFile(reportPath, report);
 
-            // Print summary in a Jest-like way
             const summary = coverage.summary();
             this.printSummary(name, summary, reportPath);
         }
+
         console.log(`\n✅ Coverage reports generated in ${this.coverageDir}\n`);
     }
 
     private printSummary(name: string, summary: CoverageSummary, reportPath: string) {
-        const pct = summary.coveragePercentage.toFixed(2) + "%";
+        const pct = summary.coveragePercentage.toFixed(2) + '%';
 
         const line =
             chalk.bold(name.padEnd(20)) +
             chalk.white(`${summary.coveredLines}/${summary.totalLines} lines`.padEnd(20)) +
-            (summary.coveragePercentage >= 80
-                ? chalk.green(pct.padEnd(10))
-                : chalk.red(pct.padEnd(10))) +
+            (summary.coveragePercentage >= 80 ? chalk.green(pct.padEnd(10)) : chalk.red(pct.padEnd(10))) +
             chalk.gray(reportPath);
 
-        console.log("   • " + line);
+        console.log('   • ' + line);
     }
 
     private async collectLogs(): Promise<string[]> {
-        const files = (await fs.readdir(this.blueprintCoverageDir, { recursive: true })).filter((f) => f.endsWith('.json'));
+        const files = (await fs.readdir(this.blueprintCoverageDir, { recursive: true })).filter((f) =>
+            f.endsWith('.json'),
+        );
 
-        const contents = await Promise.all(files.map((f) => fs.readFile(path.join(this.blueprintCoverageDir, f), 'utf-8')));
+        const contents = await Promise.all(
+            files.map((f) => fs.readFile(path.join(this.blueprintCoverageDir, f), 'utf-8')),
+        );
 
         return contents.flatMap((content) => {
             const { txLogs, getLogs } = JSON.parse(content);

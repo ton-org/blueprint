@@ -1,5 +1,6 @@
 const base = require('@ton/toolchain');
 const tsEslint = require('@ton/toolchain').tsEslint;
+const globals = require('globals');
 
 module.exports = [
     ...base,
@@ -17,9 +18,11 @@ module.exports = [
     },
     {
         files: ['src/jest/**/*.ts', 'src/jest/**/*.tsx'],
-        env: {
-            jest: true,
-            node: true,
+        languageOptions: {
+            globals: {
+                ...globals.jest,
+                ...globals.node,
+            },
         },
     },
 ];
