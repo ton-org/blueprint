@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.41.0] - 2025-09-23
 
 ### Added
 
@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- If the input contract name is invalid, blueprint does not exit, but asks for the name again
+- When creating a contract, if the input contract name is invalid, blueprint does not exit, but asks for the name again
 
 ## [0.40.0] - 2025-08-18
 
