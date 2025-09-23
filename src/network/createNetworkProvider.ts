@@ -72,16 +72,14 @@ export type Args = arg.Result<typeof argSpec>;
 type ContractProviderFactory = (params: { address: Address; init?: StateInit | null }) => ContractProvider;
 
 class SendProviderSender implements SenderWithSendResult {
-    #provider: SendProvider;
     readonly address?: Address;
 
-    #lastSendResult?: unknown;
+    private _lastSendResult?: unknown;
     get lastSendResult() {
-        return this.#lastSendResult;
+        return this._lastSendResult;
     }
 
-    constructor(provider: SendProvider) {
-        this.#provider = provider;
+    constructor(private readonly provider: SendProvider) {
         this.address = provider.address();
     }
 
@@ -97,7 +95,7 @@ class SendProviderSender implements SenderWithSendResult {
             throw new Error('Deployer sender does not support `sendMode` other than `PAY_GAS_SEPARATELY`');
         }
 
-        this.#lastSendResult = await this.#provider.sendTransaction(
+        this._lastSendResult = await this.provider.sendTransaction(
             args.to,
             args.value,
             args.body ?? undefined,
@@ -107,28 +105,29 @@ class SendProviderSender implements SenderWithSendResult {
 }
 
 class WrappedContractProvider implements ContractProvider {
-    #address: Address;
-    #provider: ContractProvider;
-    #init?: StateInit | null;
-    #factory: ContractProviderFactory;
+    private readonly provider: ContractProvider;
 
-    constructor(address: Address, factory: ContractProviderFactory, init?: StateInit | null) {
-        this.#address = address;
-        this.#provider = factory({ address, init });
-        this.#init = init;
-        this.#factory = factory;
+    constructor(
+        private readonly address: Address,
+        private readonly factory: ContractProviderFactory,
+        private readonly init: StateInit | null = null,
+    ) {
+        this.address = address;
+        this.provider = factory({ address, init });
+        this.init = init;
+        this.factory = factory;
     }
 
     async getState() {
-        return await this.#provider.getState();
+        return await this.provider.getState();
     }
 
     async get(name: string, args: TupleItem[]) {
-        return await this.#provider.get(name, args);
+        return await this.provider.get(name, args);
     }
 
     async external(message: Cell) {
-        return await this.#provider.external(message);
+        return await this.provider.external(message);
     }
 
     async internal(
@@ -140,10 +139,10 @@ class WrappedContractProvider implements ContractProvider {
             body: string | Cell | undefined | null;
         },
     ) {
-        const init = this.#init && (await this.getState()).state.type !== 'active' ? this.#init : undefined;
+        const init = this.init && (await this.getState()).state.type !== 'active' ? this.init : undefined;
 
         return await via.send({
-            to: this.#address,
+            to: this.address,
             value: typeof args.value === 'string' ? toNano(args.value) : args.value,
             sendMode: args.sendMode,
             bounce: args.bounce,
@@ -155,55 +154,43 @@ class WrappedContractProvider implements ContractProvider {
     open<T extends Contract>(contract: T): OpenedContract<T> {
         return openContract(
             contract,
-            (params) => new WrappedContractProvider(params.address, this.#factory, params.init),
+            (params) => new WrappedContractProvider(params.address, this.factory, params.init),
         );
     }
 
     getTransactions(address: Address, lt: bigint, hash: Buffer, limit?: number): Promise<Transaction[]> {
-        return this.#provider.getTransactions(address, lt, hash, limit);
+        return this.provider.getTransactions(address, lt, hash, limit);
     }
 }
 
 class NetworkProviderImpl implements NetworkProvider {
-    #tc: BlueprintTonClient;
-    #sender: SenderWithSendResult;
-    #network: Network;
-    #explorer: Explorer;
-    #ui: UIProvider;
-
     constructor(
-        tc: BlueprintTonClient,
-        sender: SenderWithSendResult,
-        network: Network,
-        explorer: Explorer,
-        ui: UIProvider,
-    ) {
-        this.#tc = tc;
-        this.#sender = sender;
-        this.#network = network;
-        this.#explorer = explorer;
-        this.#ui = ui;
-    }
+        private readonly _tc: BlueprintTonClient,
+        private readonly _sender: SenderWithSendResult,
+        private readonly _network: Network,
+        private readonly _explorer: Explorer,
+        private readonly _ui: UIProvider,
+    ) {}
 
     network(): 'mainnet' | 'testnet' | 'custom' {
-        return this.#network;
+        return this._network;
     }
 
-    explorer(): Explorer {
-        return this.#explorer;
+    explorer(): 'tonscan' | 'tonviewer' | 'toncx' | 'dton' {
+        return this._explorer;
     }
 
     sender(): SenderWithSendResult {
-        return this.#sender;
+        return this._sender;
     }
 
     api(): BlueprintTonClient {
-        return this.#tc;
+        return this._tc;
     }
 
     provider(address: Address, init?: StateInit | null): ContractProvider {
         const factory = (params: { address: Address; init?: StateInit | null }) =>
-            this.#tc.provider(
+            this._tc.provider(
                 params.address,
                 params.init && {
                     ...params.init,
@@ -215,7 +202,7 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 
     async isContractDeployed(address: Address): Promise<boolean> {
-        return (await this.#tc.provider(address).getState()).state.type === 'active';
+        return (await this._tc.provider(address).getState()).state.type === 'active';
     }
 
     async getConfig(address: Address = CONFIG_ADDRESS) {
@@ -239,7 +226,7 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 
     async getContractState(address: Address): Promise<ContractState> {
-        return await this.#tc.provider(address).getState();
+        return await this._tc.provider(address).getState();
     }
 
     async waitForDeploy(address: Address, attempts: number = 20, sleepDuration: number = 2000) {
@@ -248,27 +235,27 @@ class NetworkProviderImpl implements NetworkProvider {
         }
 
         for (let i = 1; i <= attempts; i++) {
-            this.#ui.setActionPrompt(`Awaiting contract deployment... [Attempt ${i}/${attempts}]`);
+            this._ui.setActionPrompt(`Awaiting contract deployment... [Attempt ${i}/${attempts}]`);
             const isDeployed = await this.isContractDeployed(address);
             if (isDeployed) {
-                const formattedAddress = address.toString({ testOnly: this.#network === 'testnet' });
+                const formattedAddress = address.toString({ testOnly: this._network === 'testnet' });
 
-                this.#ui.clearActionPrompt();
-                this.#ui.write(`Contract deployed at address ${formattedAddress}`);
-                this.#ui.write(
-                    `You can view it at ${getExplorerLink(formattedAddress, this.#network, this.#explorer)}`,
+                this._ui.clearActionPrompt();
+                this._ui.write(`Contract deployed at address ${formattedAddress}`);
+                this._ui.write(
+                    `You can view it at ${getExplorerLink(formattedAddress, this._network, this._explorer)}`,
                 );
                 return;
             }
             await sleep(sleepDuration);
         }
 
-        this.#ui.clearActionPrompt();
+        this._ui.clearActionPrompt();
         throw new Error("Contract was not deployed. Check your wallet's transactions");
     }
 
     private obtainInMessageHash() {
-        const { lastSendResult } = this.#sender;
+        const { lastSendResult } = this._sender;
         if (
             typeof lastSendResult === 'object' &&
             lastSendResult !== null &&
@@ -284,11 +271,11 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 
     private async getLastTransactions(address: Address): Promise<Transaction[]> {
-        if (this.#tc instanceof TonClient) {
-            return this.#tc.getTransactions(address, { limit: 100, archival: true }); // without archival not working with tonclient
+        if (this._tc instanceof TonClient) {
+            return this._tc.getTransactions(address, { limit: 100, archival: true }); // without archival not working with tonclient
         }
 
-        const provider = this.#tc.provider(address);
+        const provider = this._tc.provider(address);
         const { last } = await provider.getState();
         if (!last) {
             return [];
@@ -301,7 +288,7 @@ class NetworkProviderImpl implements NetworkProvider {
         address: Address,
         targetInMessageHash: Buffer,
     ): Promise<{ isApplied: false } | { isApplied: true; transaction: Transaction }> {
-        const provider = this.#tc.provider(address);
+        const provider = this._tc.provider(address);
         const { last } = await provider.getState();
         if (!last) {
             return { isApplied: false };
@@ -333,28 +320,28 @@ class NetworkProviderImpl implements NetworkProvider {
         if (attempts <= 0) {
             throw new Error('Attempt number must be positive');
         }
-        if (!this.#sender.address) {
+        if (!this._sender.address) {
             throw new Error('Sender must have an address');
         }
 
         const inMessageHash = this.obtainInMessageHash();
 
         for (let i = 1; i <= attempts; i++) {
-            this.#ui.setActionPrompt(`Awaiting transaction... [Attempt ${i}/${attempts}]`);
-            const result = await this.isTransactionApplied(this.#sender.address, inMessageHash);
+            this._ui.setActionPrompt(`Awaiting transaction... [Attempt ${i}/${attempts}]`);
+            const result = await this.isTransactionApplied(this._sender.address, inMessageHash);
             if (result.isApplied) {
                 const { transaction } = result;
-                this.#ui.clearActionPrompt();
-                this.#ui.write(`Transaction ${inMessageHash.toString('hex')} successfully applied!`);
-                this.#ui.write(
+                this._ui.clearActionPrompt();
+                this._ui.write(`Transaction ${inMessageHash.toString('hex')} successfully applied!`);
+                this._ui.write(
                     `You can view it at ${getTransactionLink(
                         {
                             ...transaction,
                             hash: transaction.hash(),
-                            address: this.#sender.address,
+                            address: this._sender.address,
                         },
-                        this.#network,
-                        this.#explorer,
+                        this._network,
+                        this._explorer,
                     )}`,
                 );
                 return;
@@ -381,7 +368,7 @@ class NetworkProviderImpl implements NetworkProvider {
             throw new Error('Contract has no init!');
         }
 
-        await this.#sender.send({
+        await this._sender.send({
             to: contract.address,
             value,
             body,
@@ -398,7 +385,7 @@ class NetworkProviderImpl implements NetworkProvider {
     }
 
     ui(): UIProvider {
-        return this.#ui;
+        return this._ui;
     }
 }
 
