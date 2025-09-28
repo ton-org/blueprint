@@ -10,6 +10,7 @@ import { doCompileFunc, FuncCompileResult, getFuncVersion, DoCompileFuncConfig }
 import { doCompileTact, TactCompileResult, getTactVersion, getTactConfigForContract } from './tact/compile.tact';
 import { doCompileTolk, TolkCompileResult, getTolkVersion } from './tolk/compile.tolk';
 import { findCompiles } from '../utils';
+import { SupportedLang } from './SupportedLang';
 
 export async function getCompilablesDirectory(): Promise<string> {
     const config = await getConfig();
@@ -97,7 +98,7 @@ async function doCompileInner(name: string, config: CompilerConfig): Promise<Com
     return await doCompileTact(config, name);
 }
 
-function getCompilerName(config: CompilerConfig): 'tact' | 'tolk' | 'func' {
+function getCompilerName(config: CompilerConfig): SupportedLang {
     if (isCompilableConfig(config)) {
         return config.lang ?? 'func';
     }
@@ -121,7 +122,7 @@ async function getCompilerVersion(config: CompilerConfig): Promise<string> {
 }
 
 export async function getCompilerOptions(config: CompilerConfig): Promise<{
-    lang: 'tact' | 'tolk' | 'func';
+    lang: SupportedLang;
     version: string;
 }> {
     return {
