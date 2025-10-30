@@ -2,14 +2,17 @@ import { Buffer } from 'buffer';
 
 import {
     Address,
+    beginCell,
     Cell,
     Contract,
     ContractProvider,
+    external,
     MessageRelaxed,
     openContract,
     OpenedContract,
     SendMode,
     StateInit,
+    storeMessage,
 } from '@ton/core';
 import { KeyPair, keyPairFromSecretKey } from '@ton/crypto';
 
@@ -52,6 +55,8 @@ export class MnemonicProvider implements SendProvider {
     private readonly ui: UIProvider;
     private readonly network: Network;
 
+    private lastExternalMessage: string | undefined;
+
     constructor(params: MnemonicProviderParams) {
         if (!(params.version in wallets)) {
             throw new Error(
@@ -62,16 +67,49 @@ export class MnemonicProvider implements SendProvider {
         this.network = params.network;
         const kp = keyPairFromSecretKey(params.secretKey);
 
-        this.wallet = openContract<WalletInstance>(this.createWallet(params, kp), (params) =>
-            this.client.provider(
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const mnemonicProvider = this;
+
+        this.wallet = openContract<WalletInstance>(this.createWallet(params, kp), (params) => {
+            const provider = this.client.provider(
                 params.address,
                 params.init && {
                     ...params.init,
                     data: params.init.data ?? undefined,
                     code: params.init.code ?? undefined,
                 },
-            ),
-        );
+            );
+
+            return {
+                ...provider,
+                async external(message: Cell): Promise<void> {
+                    let neededInit: StateInit | null = null;
+                    if (params.init) {
+                        const state = await this.getState();
+                        neededInit =
+                            state?.state?.type === 'active'
+                                ? {
+                                      ...params.init,
+                                      data: params.init.data ?? undefined,
+                                      code: params.init.code ?? undefined,
+                                  }
+                                : null;
+                    }
+                    const ext = external({
+                        to: params.address,
+                        init: neededInit,
+                        body: message,
+                    });
+                    mnemonicProvider.lastExternalMessage = beginCell()
+                        .store(storeMessage(ext))
+                        .endCell()
+                        .toBoc()
+                        .toString('base64');
+
+                    return provider.external(message);
+                },
+            };
+        });
         this.secretKey = kp.secretKey;
         this.ui = params.ui;
     }
@@ -137,6 +175,7 @@ export class MnemonicProvider implements SendProvider {
         });
 
         this.ui.write('Sent transaction');
+        return this.lastExternalMessage;
     }
 
     address() {
