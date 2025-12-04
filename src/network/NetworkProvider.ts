@@ -5,6 +5,7 @@ import { LiteClient } from 'ton-lite-client';
 
 import { UIProvider } from '../ui/UIProvider';
 import { Explorer } from './Explorer';
+import { Network } from './Network';
 
 export type BlueprintTonClient = TonClient4 | TonClient | ContractAdapter | LiteClient;
 
@@ -20,9 +21,9 @@ export interface SenderWithSendResult extends Sender {
 export interface NetworkProvider {
     /**
      * Returns the current network type.
-     * @returns {'mainnet' | 'testnet' | 'custom'} The type of network.
+     * @returns {Network} The type of network.
      */
-    network(): 'mainnet' | 'testnet' | 'custom';
+    network(): Network;
 
     /**
      * Returns the current explorer type.

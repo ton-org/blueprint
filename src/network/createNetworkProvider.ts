@@ -172,11 +172,11 @@ class NetworkProviderImpl implements NetworkProvider {
         private readonly _ui: UIProvider,
     ) {}
 
-    network(): 'mainnet' | 'testnet' | 'custom' {
+    network(): Network {
         return this._network;
     }
 
-    explorer(): 'tonscan' | 'tonviewer' | 'toncx' | 'dton' {
+    explorer(): Explorer {
         return this._explorer;
     }
 
