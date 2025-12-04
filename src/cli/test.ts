@@ -9,9 +9,10 @@ export const argSpec = {
     '--gas-report': Boolean,
     '-g': '--gas-report',
     '--coverage': Boolean,
+    '--ui': Boolean,
 };
 
-export async function coverage(): Promise<void> {
+async function coverage(): Promise<void> {
     execSync(
         `npm test -- --reporters @ton/blueprint/dist/jest/CoverageReporter --setupFilesAfterEnv @ton/blueprint/dist/jest/coverageSetup`,
         {
@@ -38,6 +39,10 @@ export const test: Runner = async (args, ui) => {
     if (localArgs['--gas-report']) {
         testArgs = testArgs.slice(1);
     }
+    if (localArgs['--ui']) {
+        testArgs = [...testArgs.slice(1), '--setupFilesAfterEnv', '@ton/sandbox/dist/jest/uiSetup'];
+    }
+
     execSync(`npm test -- ${testArgs.join(' ')}`, {
         stdio: 'inherit',
         env: {

@@ -1,5 +1,15 @@
 {{name}}.ts
-import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode } from '@ton/core';
+import {
+    Address,
+    beginCell,
+    Cell,
+    Contract,
+    ContractABI,
+    contractAddress,
+    ContractProvider,
+    Sender,
+    SendMode
+} from '@ton/core';
 
 export type {{name}}Config = {
     id: number;
@@ -15,6 +25,8 @@ export const Opcodes = {
 };
 
 export class {{name}} implements Contract {
+    abi: ContractABI = { name: '{{name}}' }
+
     constructor(readonly address: Address, readonly init?: { code: Cell; data: Cell }) {}
 
     static createFromAddress(address: Address) {

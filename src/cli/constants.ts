@@ -152,6 +152,8 @@ Runs ${chalk.green('npm test [...args]')}, which by default executes ${chalk.gre
 
 ${chalk.bold('Options:')}
   ${chalk.cyan('--gas-report')}, ${chalk.cyan('-g')} - Run tests and compare with the last snapshot's metrics
+  ${chalk.cyan('--ui')} - Connects to sandbox UI server
+  ${chalk.cyan('--coverage')} - Collects tests coverage
 
 ${chalk.bold('SEE ALSO')}
   ${chalk.cyan('blueprint snapshot')}
