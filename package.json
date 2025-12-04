@@ -45,7 +45,7 @@
         "@ton-community/func-js": ">=0.10.0",
         "@ton/core": ">=0.61.0",
         "@ton/crypto": ">=3.3.0",
-        "@ton/sandbox": "^0.37.1",
+        "@ton/sandbox": ">=0.40.0",
         "@ton/tolk-js": ">=0.13.0",
         "@ton/ton": ">=15.2.1"
     },
