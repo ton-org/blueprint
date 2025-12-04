@@ -1208,7 +1208,7 @@ __metadata:
     "@ton-community/func-js": "npm:^0.10.0"
     "@ton/core": "npm:^0.61.0"
     "@ton/crypto": "npm:^3.3.0"
-    "@ton/sandbox": "npm:^0.37.1"
+    "@ton/sandbox": "npm:^0.40.0"
     "@ton/tolk-js": "npm:^1.0.0"
     "@ton/ton": "npm:^15.3.1"
     "@ton/toolchain": "the-ton-tech/toolchain#v1.6.0"
@@ -1235,7 +1235,7 @@ __metadata:
     "@ton-community/func-js": ">=0.10.0"
     "@ton/core": ">=0.61.0"
     "@ton/crypto": ">=3.3.0"
-    "@ton/sandbox": ^0.37.1
+    "@ton/sandbox": ">=0.40.0"
     "@ton/tolk-js": ">=0.13.0"
     "@ton/ton": ">=15.2.1"
   peerDependenciesMeta:
@@ -1246,7 +1246,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ton/core@npm:0.60.1, @ton/core@npm:^0.60.0, @ton/core@npm:^0.60.1":
+"@ton/core@npm:0.60.1, @ton/core@npm:^0.60.0":
   version: 0.60.1
   resolution: "@ton/core@npm:0.60.1"
   dependencies:
@@ -1288,15 +1288,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/sandbox@npm:^0.37.1":
-  version: 0.37.1
-  resolution: "@ton/sandbox@npm:0.37.1"
+"@ton/sandbox@npm:^0.40.0":
+  version: 0.40.0
+  resolution: "@ton/sandbox@npm:0.40.0"
   dependencies:
     "@vscode/debugadapter": "npm:^1.68.0"
     chalk: "npm:^4.1.2"
     fflate: "npm:^0.8.2"
     table: "npm:^6.9.0"
-    ton-assembly: "npm:0.1.0"
+    ton-assembly: "npm:0.6.1"
   peerDependencies:
     "@ton-community/func-js": ">=0.10.0"
     "@ton/core": ">=0.61.0"
@@ -1308,7 +1308,7 @@ __metadata:
       optional: true
     jest:
       optional: true
-  checksum: 10c0/d73ec070af03464b4ba8022cb1e18652bba6a48bc27c09424ddae9df8f98333d6bc18a5374cb15385df5efb3b38dc785e1eaafea4dd3f5536d35430f03aeacf1
+  checksum: 10c0/99b62cf2ad997ff909f91fdf2de156106910efdb0c29ec6822e34b456a2c05c43418a211de3a600bc48eb8a465563f65740195014a09c0e71813a8d2810ad468
   languageName: node
   linkType: hard
 
@@ -6701,19 +6701,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ton-assembly@npm:0.1.0":
-  version: 0.1.0
-  resolution: "ton-assembly@npm:0.1.0"
+"ton-assembly@npm:0.6.1":
+  version: 0.6.1
+  resolution: "ton-assembly@npm:0.6.1"
   dependencies:
-    "@ton/core": "npm:^0.60.1"
     "@tonstudio/parser-runtime": "npm:^0.0.1"
     cac: "npm:^6.7.14"
+    ton-source-map: "npm:^0.2.2"
   peerDependencies:
-    "@ton/core": ">=0.60.1"
+    "@ton/core": ">=0.61.0"
+  peerDependenciesMeta:
+    "@ton/core":
+      optional: false
   bin:
     tasm: dist/cli/assembler.js
     tdisasm: dist/cli/disassembler.js
-  checksum: 10c0/5880376d14f45394e959446f7f50352f1796b80a390b4c6ecd502251a2495ce2565fcc0a7522764eb626821f1ba568065a27cf5179629cf52b485319df3acad1
+    tfift: dist/cli/fift-compiler.js
+  checksum: 10c0/0248810f2b3e7a31d3617996d0f0b0ea973e0b288af0985fdc8e1c9784638dbc4d9876dd82f381ed838753f2d8c0c5273fcae93d422c4f9da6c09f88f0f37b38
   languageName: node
   linkType: hard
 
@@ -6730,6 +6734,13 @@ __metadata:
   peerDependencies:
     "@ton/core": ">=0.56.0"
   checksum: 10c0/cf3458ce072aac08c8ef2e08a4d950fd93adcd8b0fa367d121db3d66b70b9a7900f9e4ecf7c7745e7d5cac645a1db620c3d36c5bf5181154596d78fabd019aa8
+  languageName: node
+  linkType: hard
+
+"ton-source-map@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "ton-source-map@npm:0.2.2"
+  checksum: 10c0/c1e0413983f589a1dfcbb53aa35d04f42244e88d75899eb4c04a3733ac37d2a915063dc91a726409b0239e4a039059d860e1069efb9c8faa6580d06c8b88f3a0
   languageName: node
   linkType: hard
 
