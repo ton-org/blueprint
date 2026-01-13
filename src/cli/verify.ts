@@ -11,6 +11,7 @@ import { selectContract } from './build';
 import { sleep } from '../utils';
 import { helpArgs, helpMessages } from './constants';
 
+
 type FuncCompilerSettings = {
     compiler: 'func';
     compilerSettings: {
@@ -50,51 +51,37 @@ type SourcesObject = {
     sources: SourceObject[];
 } & CompilerSettings;
 
-type Backends = Record<
-    'mainnet' | 'testnet',
-    {
-        sourceRegistry: Address;
-        backends: string[];
+type VerifierConfig = {
+    verifiers: Array<{
         id: string;
-    }
->;
+        network: string;
+        backends: string[];
+    }>;
+    // also compiler's versions are there, but we are not interested in them right now
+};
 
-async function getBackends(): Promise<Backends> {
-    let backendsProd: string[];
-    let backendsTestnet: string[];
-
+async function getBackends(verifier: string, network: 'mainnet' | 'testnet'): Promise<string[]> {
+    const configUrl = 'https://raw.githubusercontent.com/ton-community/contract-verifier-config/main/config.json';
     try {
-        const response = await fetch(
-            'https://raw.githubusercontent.com/ton-community/contract-verifier-config/main/config.json',
-        );
-
+        const response = await fetch(configUrl);
         if (response.status !== 200) {
             throw new Error(response.status + ' ' + response.statusText);
         }
+        const config: VerifierConfig = await response.json();
 
-        const config: {
-            backends: string[];
-            backendsTestnet: string[];
-        } = await response.json();
+        const verifierConfig = config.verifiers.find((v) => v.id === verifier && v.network === network);
 
-        backendsProd = config.backends;
-        backendsTestnet = config.backendsTestnet;
+        if (!verifierConfig) {
+            const availableForNetwork = config.verifiers.filter((v) => v.network === network).map((v) => v.id);
+            throw new Error(
+                `Backends list has not been found in ${configUrl} for verifier '${verifier}' on ${network}. Available verifiers for ${network}: ${availableForNetwork.join(', ')}`,
+            );
+        }
+
+        return verifierConfig.backends;
     } catch (e) {
-        throw new Error('Unable to fetch contract verifer backends: ' + e);
+        throw new Error('Unable to fetch contract verifier backends: ' + e);
     }
-
-    return {
-        mainnet: {
-            sourceRegistry: Address.parse('EQD-BJSVUJviud_Qv7Ymfd3qzXdrmV525e3YDzWQoHIAiInL'),
-            backends: backendsProd,
-            id: 'orbs.com',
-        },
-        testnet: {
-            sourceRegistry: Address.parse('EQCsdKYwUaXkgJkz2l0ol6qT_WxeRbE_wBCwnEybmR0u5TO8'),
-            backends: backendsTestnet,
-            id: 'orbs-testnet',
-        },
-    };
 }
 
 function removeRandom<T>(els: T[]): T {
@@ -341,18 +328,26 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
         'blob',
     );
 
-    const backends = await getBackends();
-    const backend = backends[network];
+    const verifierId = localArgs['--verifier'] ?? 'verifier.ton.org';
 
-    const sourceRegistry = networkProvider.open(new SourceRegistry(backend.sourceRegistry));
+    const sourceRegistryAddress =
+        network === 'mainnet'
+            ? Address.parse('EQD-BJSVUJviud_Qv7Ymfd3qzXdrmV525e3YDzWQoHIAiInL')
+            : Address.parse('EQCsdKYwUaXkgJkz2l0ol6qT_WxeRbE_wBCwnEybmR0u5TO8');
+
+    const sourceRegistry = networkProvider.open(new SourceRegistry(sourceRegistryAddress));
     const verifierRegistry = networkProvider.open(new VerifierRegistry(await sourceRegistry.getVerifierRegistry()));
 
-    const verifier = (await verifierRegistry.getVerifiers()).find((v) => v.name === backend.id);
+    const verifiers = await verifierRegistry.getVerifiers();
+    const verifier = verifiers.find((v) => v.name === verifierId);
     if (verifier === undefined) {
-        throw new Error('Could not find verifier');
+        const availableVerifiers = verifiers.map((v) => v.name).join(', ');
+        throw new Error(
+            `This verifier id '${verifierId}' has not been registered in verifier registry. Available: ${availableVerifiers}`,
+        );
     }
 
-    const remainingBackends = [...backend.backends];
+    const remainingBackends = await getBackends(verifierId, network);
 
     const sourceResponse = await fetch(removeRandom(remainingBackends) + '/source', {
         method: 'POST',
