@@ -165,7 +165,8 @@ Verifies a deployed contract on ${chalk.underline('https://verifier.ton.org')}.
 
 ${chalk.bold('Flags:')}
 ${chalk.cyan('--mainnet')}, ${chalk.cyan('--testnet')} - selects network
-${chalk.cyan('--verifier')} - specifies the verifier ID to use. Defaults to ${chalk.cyan('verifier.ton.org')}. Put some random non-sense to see what verifiers are available.
+${chalk.cyan('--verifier')} - specifies the verifier ID to use (default: ${chalk.cyan('verifier.ton.org')})
+${chalk.cyan('--list-verifiers')} - lists all available verifiers for the selected network (or both networks if none selected)
 ${chalk.cyan('--compiler-version')} - specifies the exact compiler version to use (e.g. ${chalk.cyan('0.4.4-newops.1')}). Note: this does not change the underlying compiler itself.
 ${chalk.cyan('--custom')} [api-endpoint] - use custom API (requires --custom-type)
 ${chalk.cyan('--custom-version')} - API version (v2 default)

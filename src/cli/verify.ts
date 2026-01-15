@@ -11,7 +11,6 @@ import { selectContract } from './build';
 import { sleep } from '../utils';
 import { helpArgs, helpMessages } from './constants';
 
-
 type FuncCompilerSettings = {
     compiler: 'func';
     compilerSettings: {
@@ -57,30 +56,78 @@ type VerifierConfig = {
         network: string;
         backends: string[];
     }>;
-    // also compiler's versions are there, but we are not interested in them right now
+    // other fields are also present, but intentionally omitted
 };
 
-async function getBackends(verifier: string, network: 'mainnet' | 'testnet'): Promise<string[]> {
-    const configUrl = 'https://raw.githubusercontent.com/ton-community/contract-verifier-config/main/config.json';
-    try {
-        const response = await fetch(configUrl);
-        if (response.status !== 200) {
-            throw new Error(response.status + ' ' + response.statusText);
-        }
-        const config: VerifierConfig = await response.json();
+const DEFAULT_VERIFIER_ID = 'verifier.ton.org';
+const VERIFIER_CONFIG_URL = 'https://raw.githubusercontent.com/ton-community/contract-verifier-config/main/config.json';
+const MAINNET_VERIFIER_REGISTRY = Address.parse('EQD-BJSVUJviud_Qv7Ymfd3qzXdrmV525e3YDzWQoHIAiInL');
+const TESTNET_VERIFIER_REGISTRY = Address.parse('EQCsdKYwUaXkgJkz2l0ol6qT_WxeRbE_wBCwnEybmR0u5TO8');
 
-        const verifierConfig = config.verifiers.find((v) => v.id === verifier && v.network === network);
+async function getVerifierConfig(): Promise<VerifierConfig> {
+    try {
+        const response = await fetch(VERIFIER_CONFIG_URL);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch verifier config: ${response.status} ${response.statusText}`);
+        }
+        return await response.json();
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        throw new Error(`Unable to fetch contract verifier config: ${errorMessage}`);
+    }
+}
+
+async function listVerifiers(ui: UIProvider): Promise<void> {
+    try {
+        const config = await getVerifierConfig();
+
+        ui.write('\nAvailable verifiers:');
+        const mainnetVerifiers = config.verifiers.filter((v) => v.network === 'mainnet');
+        const testnetVerifiers = config.verifiers.filter((v) => v.network === 'testnet');
+
+        if (mainnetVerifiers.length > 0) {
+            ui.write('\n  Mainnet:');
+            mainnetVerifiers.forEach((v) => {
+                ui.write(`    - ${v.id}`);
+            });
+        }
+
+        if (testnetVerifiers.length > 0) {
+            ui.write('\n  Testnet:');
+            testnetVerifiers.forEach((v) => {
+                ui.write(`    - ${v.id}`);
+            });
+        }
+
+        if (mainnetVerifiers.length === 0 && testnetVerifiers.length === 0) {
+            ui.write('  (none)');
+        }
+        ui.write('');
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        throw new Error(`Unable to list verifiers: ${errorMessage}`);
+    }
+}
+
+async function getBackends(verifierId: string, network: 'mainnet' | 'testnet'): Promise<string[]> {
+    try {
+        const config = await getVerifierConfig();
+        const verifierConfig = config.verifiers.find((v) => v.id === verifierId && v.network === network);
 
         if (!verifierConfig) {
-            const availableForNetwork = config.verifiers.filter((v) => v.network === network).map((v) => v.id);
+            const availableVerifiers = config.verifiers
+                .filter((v) => v.network === network)
+                .map((v) => v.id)
+                .join(', ');
             throw new Error(
-                `Backends list has not been found in ${configUrl} for verifier '${verifier}' on ${network}. Available verifiers for ${network}: ${availableForNetwork.join(', ')}`,
+                `Verifier '${verifierId}' not found for ${network} network. Available verifiers: ${availableVerifiers || 'none'}`,
             );
         }
 
         return verifierConfig.backends;
-    } catch (e) {
-        throw new Error('Unable to fetch contract verifier backends: ' + e);
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        throw new Error(`Unable to fetch contract verifier backends: ${errorMessage}`);
     }
 }
 
@@ -189,6 +236,11 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
     const localArgs = arg({ ...argSpec, ...helpArgs });
     if (localArgs['--help']) {
         ui.write(helpMessages['verify']);
+        return;
+    }
+
+    if (localArgs['--list-verifiers']) {
+        await listVerifiers(ui);
         return;
     }
 
@@ -328,28 +380,26 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
         'blob',
     );
 
-    const verifierId = localArgs['--verifier'] ?? 'verifier.ton.org';
-
-    const sourceRegistryAddress =
-        network === 'mainnet'
-            ? Address.parse('EQD-BJSVUJviud_Qv7Ymfd3qzXdrmV525e3YDzWQoHIAiInL')
-            : Address.parse('EQCsdKYwUaXkgJkz2l0ol6qT_WxeRbE_wBCwnEybmR0u5TO8');
+    const verifierId = localArgs['--verifier'] ?? DEFAULT_VERIFIER_ID;
+    const sourceRegistryAddress = network === 'mainnet' ? MAINNET_VERIFIER_REGISTRY : TESTNET_VERIFIER_REGISTRY;
 
     const sourceRegistry = networkProvider.open(new SourceRegistry(sourceRegistryAddress));
+
     const verifierRegistry = networkProvider.open(new VerifierRegistry(await sourceRegistry.getVerifierRegistry()));
 
     const verifiers = await verifierRegistry.getVerifiers();
     const verifier = verifiers.find((v) => v.name === verifierId);
-    if (verifier === undefined) {
+    if (!verifier) {
         const availableVerifiers = verifiers.map((v) => v.name).join(', ');
         throw new Error(
-            `This verifier id '${verifierId}' has not been registered in verifier registry. Available: ${availableVerifiers}`,
+            `Verifier '${verifierId}' is not registered in the verifier registry. Available verifiers: ${availableVerifiers || 'none'}`,
         );
     }
 
-    const remainingBackends = await getBackends(verifierId, network);
+    const backends = await getBackends(verifierId, network);
+    const backendUrl = removeRandom(backends);
 
-    const sourceResponse = await fetch(removeRandom(remainingBackends) + '/source', {
+    const sourceResponse = await fetch(`${backendUrl}/source`, {
         method: 'POST',
         body: fd,
     });
@@ -368,9 +418,9 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
     let acquiredSigs = 1;
 
     while (acquiredSigs < verifier.quorum) {
-        const curBackend = removeRandom(remainingBackends);
-        ui.write(`Using backend: ${curBackend}`);
-        const signResponse = await fetch(curBackend + '/sign', {
+        const backendUrl = removeRandom(backends);
+        ui.write(`Using backend: ${backendUrl}`);
+        const signResponse = await fetch(`${backendUrl}/sign`, {
             method: 'POST',
             body: JSON.stringify({
                 messageCell: msgCell,
@@ -396,5 +446,6 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
         body: c,
     });
 
-    ui.write(`Contract successfully verified at https://verifier.ton.org/${addr}`);
+    const testnetFlag = network === 'testnet' ? '?testnet=true' : '';
+    ui.write(`Contract successfully verified at https://verifier.ton.org/${addr}${testnetFlag}`);
 };

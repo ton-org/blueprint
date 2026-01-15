@@ -5,15 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.43.0] - 2026-01-15
 
 ### Added
 
 - Added `--verifier` flag to `blueprint verify` command to specify verifier ID
+- Added `--list-verifiers` flag to `blueprint verify` command to list all available verifiers
 
 ### Changed
 
 - `blueprint verify` uses a new config structure that supports multiple verifiers
+
+### Fixed
+
+- Verification success message now includes testnet flag in URL when verifying on testnet
 
 ## [0.42.0] - 2025-12-04
 

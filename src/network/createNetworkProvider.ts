@@ -67,6 +67,7 @@ export const argSpec = {
     '--dton': Boolean,
 
     '--verifier': String,
+    '--list-verifiers': Boolean,
 };
 
 export type Args = arg.Result<typeof argSpec>;
