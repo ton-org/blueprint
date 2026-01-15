@@ -65,6 +65,9 @@ export const argSpec = {
     '--tonviewer': Boolean,
     '--toncx': Boolean,
     '--dton': Boolean,
+
+    '--verifier': String,
+    '--list-verifiers': Boolean,
 };
 
 export type Args = arg.Result<typeof argSpec>;
