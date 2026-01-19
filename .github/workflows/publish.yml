@@ -2,38 +2,60 @@ on:
   push:
     branches:
       - main
+      - develop
+
 name: Publish to NPM
 jobs:
   publish:
     name: Publish
     runs-on: ubuntu-latest
-    environment: prod
+
+    permissions:
+      contents: read
+      id-token: write
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Enable Corepack
         run: corepack enable
 
       - name: Use Node.js 18
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
           node-version: '18.x'
-          always-auth: true
 
       - name: Install dependencies
         run: yarn install
 
+      - name: Bump version (dev)
+        if: github.ref_name == 'develop'
+        id: version
+        run: |
+          CURRENT_VERSION=$(jq -r '.version' package.json)
+          BASE_VERSION=$(echo $CURRENT_VERSION | cut -d '-' -f 1)
+          
+          NEW_BASE=$(echo $BASE_VERSION | awk -v OFS='.' -F. '{
+            $2 = $2 + 1;
+            $3 = 0;
+            print $0
+          }')
+          
+          TIMESTAMP=$(date -u +"%Y%m%d%H%M%S")
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          NEW_VERSION="${NEW_BASE}-dev.${TIMESTAMP}.${COMMIT_SHA}"
+          
+          jq ".version = \"$NEW_VERSION\"" package.json > package.tmp
+          mv package.tmp package.json
+
       - name: Build
         run: yarn run build
 
-      - name: Setup .yarnrc.yml
-        run: |
-          yarn config set npmAuthToken $NPM_AUTH_TOKEN
-          yarn config set npmAlwaysAuth true
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-
       - name: Publish
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-        run: yarn npm publish --access public
+        run: |
+          npm config delete //registry.npmjs.org/:_authToken || true
+          if [ "${{ github.ref_name }}" = "develop" ]; then
+            npm publish --provenance --access public --tag dev
+          else
+            npm publish --provenance --access public
+          fi
