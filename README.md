@@ -34,7 +34,7 @@ A development environment for TON blockchain for writing, testing, and deploying
 ## Quick start 🚀
 
 Run the command in terminal to create a new project and follow the on-screen instructions:
-
+ 
 ```console
 npm create ton@latest
 ```
