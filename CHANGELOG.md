@@ -120,7 +120,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added config option to look for wrappers recursively
 - Exported `getCompilerConfigForContract` function for plugin support
-- Added request timout configuration
+- Added request timeout configuration
 - Added docs for script args
 - Added the `rename` command which renames contracts
 - Added the `pack` command which builds and prepares a publish-ready package of contracts' wrappers
@@ -157,7 +157,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix unexpected code duplication on parralel compile
+- Fix unexpected code duplication on parallel compile
 
 ## [0.32.0] - 2025-05-02
 
