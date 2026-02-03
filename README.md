@@ -319,7 +319,7 @@ npx blueprint verify --custom https://toncenter.com/api/v2/jsonRPC --custom-vers
 
 ### Request timeout
 
-You can optionally configure how long HTTP requests should wait before timing out using the `requestTimout` field. This can be especially useful when working with unstable or slow networks.
+You can optionally configure how long HTTP requests should wait before timing out using the `requestTimeout` field. This can be especially useful when working with unstable or slow networks.
 
 ```typescript
 import { Config } from '@ton/blueprint';
