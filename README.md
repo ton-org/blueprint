@@ -83,7 +83,7 @@ Blueprint is an all-in-one development environment designed to enhance the proce
   * Each wrapper implements `Contract` interface from [@ton/core](https://www.npmjs.com/package/@ton/core)
   * Includes message [de]serialization primitives, getter wrappers and compilation functions
   * Used by the test suite and client code to interact with the contracts from TypeScript
-* `compilables/` - Compilations scripts for contracts
+* `compilables/` - Compilation scripts for contracts
 * `tests/` - TypeScript test suite for all contracts (relying on [Sandbox](https://github.com/ton-org/sandbox) for in-process tests)
 * `scripts/` - Deployment scripts to mainnet/testnet and other scripts interacting with live contracts
 * `build/` - Compilation artifacts created here after running a build command
