@@ -18,6 +18,7 @@ import { UIProvider } from '../../ui/UIProvider';
 import { BlueprintTonClient } from '../NetworkProvider';
 import { Network } from '../Network';
 import { wallets, WalletVersion } from './wallets';
+import { getW5NetworkGlobalId, TETRA_DOMAIN } from '../../utils/network.utils';
 
 interface WalletInstance extends Contract {
     getSeqno(provider: ContractProvider): Promise<number>;
@@ -43,6 +44,8 @@ type MnemonicProviderParams = {
     client: BlueprintTonClient;
     ui: UIProvider;
     network: Network;
+    domain?: number;
+    networkId?: number;
 };
 
 export class MnemonicProvider implements SendProvider {
@@ -77,17 +80,22 @@ export class MnemonicProvider implements SendProvider {
     }
 
     private createWallet(params: MnemonicProviderParams, kp: KeyPair): WalletInstance {
+        const networkDomain = params.network === 'tetra' ? TETRA_DOMAIN : undefined;
+        const domain = params.domain ? { type: 'l2' as const, globalId: params.domain } : networkDomain;
+        const networkGlobalId = params.networkId ?? getW5NetworkGlobalId(params.network);
+
         if (params.version === 'v5r1') {
             return wallets[params.version].create({
                 publicKey: kp.publicKey,
                 walletId: {
-                    networkGlobalId: params.network === 'testnet' ? -3 : -239, // networkGlobalId: -3 for Testnet, -239 for Mainnet
+                    networkGlobalId: networkGlobalId,
                     context: {
                         workchain: params.workchain ?? 0,
                         subwalletNumber: params.subwalletNumber ?? 0,
                         walletVersion: 'v5r1',
                     },
                 },
+                domain,
             });
         }
 
@@ -95,6 +103,7 @@ export class MnemonicProvider implements SendProvider {
             workchain: params.workchain ?? 0,
             publicKey: kp.publicKey,
             walletId: params.walletId,
+            domain,
         });
     }
 

@@ -109,7 +109,7 @@ async function listVerifiers(ui: UIProvider): Promise<void> {
     }
 }
 
-async function getBackends(verifierId: string, network: 'mainnet' | 'testnet'): Promise<string[]> {
+async function getBackends(verifierId: string, network: 'mainnet' | 'testnet' | 'tetra'): Promise<string[]> {
     try {
         const config = await getVerifierConfig();
         const verifierConfig = config.verifiers.find((v) => v.id === verifierId && v.network === network);
