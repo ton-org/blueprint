@@ -1206,11 +1206,11 @@ __metadata:
     "@ton-api/client": "npm:^0.2.0"
     "@ton-api/ton-adapter": "npm:^0.2.0"
     "@ton-community/func-js": "npm:^0.10.0"
-    "@ton/core": "npm:^0.61.0"
+    "@ton/core": "npm:^0.63.1"
     "@ton/crypto": "npm:^3.3.0"
     "@ton/sandbox": "npm:^0.40.0"
     "@ton/tolk-js": "npm:^1.0.0"
-    "@ton/ton": "npm:^15.3.1"
+    "@ton/ton": "npm:^16.2.2"
     "@ton/toolchain": "the-ton-tech/toolchain#v1.6.0"
     "@tonconnect/sdk": "npm:^2.2.0"
     "@types/inquirer": "npm:^8.2.6"
@@ -1233,11 +1233,11 @@ __metadata:
   peerDependencies:
     "@tact-lang/compiler": ">=1.6.5"
     "@ton-community/func-js": ">=0.10.0"
-    "@ton/core": ">=0.61.0"
+    "@ton/core": ">=0.63.1"
     "@ton/crypto": ">=3.3.0"
     "@ton/sandbox": ">=0.40.0"
     "@ton/tolk-js": ">=0.13.0"
-    "@ton/ton": ">=15.2.1"
+    "@ton/ton": ">=16.2.2"
   peerDependenciesMeta:
     "@ton/sandbox":
       optional: true
@@ -1257,14 +1257,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/core@npm:^0.61.0":
-  version: 0.61.0
-  resolution: "@ton/core@npm:0.61.0"
-  dependencies:
-    symbol.inspect: "npm:1.0.1"
+"@ton/core@npm:^0.63.1":
+  version: 0.63.1
+  resolution: "@ton/core@npm:0.63.1"
   peerDependencies:
     "@ton/crypto": ">=3.2.0"
-  checksum: 10c0/0bec288efa33c2302bf2d783a7d723a7b24b31da1bce28907036110e0979b28faeb3bbea761c32b83ea07e8352230591ad655e896b9146e4c539ff53ed327fe3
+  checksum: 10c0/6839440c900efec8411b82a4861c0977de8bfbc96fb8b83f20aac6cddfa58aff48a410dd71951dd647618c7749b79bc82ab45ada21d1da1b916c8bb52562c6e3
   languageName: node
   linkType: hard
 
@@ -1323,19 +1321,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/ton@npm:^15.3.1":
-  version: 15.3.1
-  resolution: "@ton/ton@npm:15.3.1"
+"@ton/ton@npm:^16.2.2":
+  version: 16.2.2
+  resolution: "@ton/ton@npm:16.2.2"
   dependencies:
     axios: "npm:^1.6.7"
     dataloader: "npm:^2.0.0"
-    symbol.inspect: "npm:1.0.1"
-    teslabot: "npm:^1.3.0"
     zod: "npm:^3.21.4"
   peerDependencies:
-    "@ton/core": ">=0.60.0"
+    "@ton/core": ">=0.63.0 <1.0.0"
     "@ton/crypto": ">=3.2.0"
-  checksum: 10c0/11da9523cb65efb0d5a8a7132eeb96adf7065ff9e64c7ec4b9772fa3809c6ff9e02b7750465de03bf00daa53cf93b6214fcc5e2122cf72d3116afb4f83fe46d0
+  checksum: 10c0/8538a95df27a6a8fe01667f80d3741eb651ff498683f98a0d46f9cf5b7a02f5d59d38bd3ec2f59eab33004c53454f6d6e4f2450c48b4411577829d090ad737e7
   languageName: node
   linkType: hard
 
@@ -6641,7 +6637,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"teslabot@npm:^1.3.0, teslabot@npm:^1.5.0":
+"teslabot@npm:^1.5.0":
   version: 1.5.0
   resolution: "teslabot@npm:1.5.0"
   checksum: 10c0/8972005bfc14b9b4110f2b832679cd007012d9c08c2b634fe3ae9265d2816bd65cd0111c0336affdcb58b7279786202a9e7b12b4d8ae4dc3679c7fd795f285dd

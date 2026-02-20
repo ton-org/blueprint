@@ -6,3 +6,4 @@ coverage/
 # yarn
 yarn-error.log
 .yarn/
+package.tgz

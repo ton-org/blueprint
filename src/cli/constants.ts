@@ -127,6 +127,8 @@ ${chalk.cyan('--custom')} [api-endpoint] - use a custom API
 ${chalk.cyan('--custom-version')} - API version (v2, v4)
 ${chalk.cyan('--custom-key')} - API key (v2 only)
 ${chalk.cyan('--custom-type')} - network type (custom, mainnet, testnet)
+${chalk.cyan('--custom-domain')} - network domain (for custom l2 domain)
+${chalk.cyan('--custom-network-id')} - network global ID (for custom network)
 ${chalk.cyan('--tonconnect')}, ${chalk.cyan('--deeplink')}, ${chalk.cyan('--mnemonic')} - deployer options
 ${chalk.cyan('--tonscan')}, ${chalk.cyan('--tonviewer')}, ${chalk.cyan('--toncx')}, ${chalk.cyan('--dton')} - explorer (default: tonviewer)
 ${chalk.gray('[...args]')} (array of strings, optional) - Arguments passed directly to the script.
@@ -171,7 +173,7 @@ ${chalk.cyan('--compiler-version')} - specifies the exact compiler version to us
 ${chalk.cyan('--custom')} [api-endpoint] - use custom API (requires --custom-type)
 ${chalk.cyan('--custom-version')} - API version (v2 default)
 ${chalk.cyan('--custom-key')} - API key (v2 only)
-${chalk.cyan('--custom-type')} - network type (mainnet, testnet)`,
+${chalk.cyan('--custom-type')} - network type (mainnet, testnet, tetra)`,
 
     convert: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('convert')} ${chalk.yellow('[path to build script]')}
 
