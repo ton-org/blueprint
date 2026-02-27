@@ -33,9 +33,6 @@ export interface Config {
      */
     network?: 'mainnet' | 'testnet' | 'tetra' | CustomNetwork;
 
-    domain?: number;
-    networkId?: number;
-
     /**
      * If true, keeps compilable files (`*.compile.ts`) in a separate directory `compilables`.
      * When false or unset, compilables are stored in `wrappers` directory.

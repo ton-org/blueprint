@@ -55,8 +55,7 @@ export const argSpec = {
     '--custom-type': String,
     '--custom-version': String,
     '--custom-key': String,
-    '--custom-domain': Number,
-    '--custom-network-id': Number,
+    '--custom-global-id': Number,
 
     '--compiler-version': String,
 
@@ -403,13 +402,7 @@ function getOptionalNumberEnv(envName: string) {
     return value;
 }
 
-async function createMnemonicProvider(
-    client: BlueprintTonClient,
-    network: Network,
-    ui: UIProvider,
-    domain?: number,
-    networkId?: number,
-) {
+async function createMnemonicProvider(client: BlueprintTonClient, network: Network, ui: UIProvider, globalId?: number) {
     const mnemonic = process.env.WALLET_MNEMONIC ?? '';
     const walletVersion = process.env.WALLET_VERSION ?? '';
     if (mnemonic.length === 0 || walletVersion.length === 0) {
@@ -419,6 +412,7 @@ async function createMnemonicProvider(
     }
     const walletId = getOptionalNumberEnv('WALLET_ID');
     const subwalletNumber = getOptionalNumberEnv('SUBWALLET_NUMBER');
+    const walletNetworkId = getOptionalNumberEnv('WALLET_NETWORK_ID');
 
     const keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));
     return new MnemonicProvider({
@@ -429,8 +423,8 @@ async function createMnemonicProvider(
         walletId,
         subwalletNumber,
         network,
-        domain,
-        networkId,
+        globalId,
+        networkId: walletNetworkId,
     });
 }
 
@@ -566,15 +560,14 @@ class NetworkProviderBuilder {
                     this.config?.manifestUrl,
                 );
                 break;
-            case 'mnemonic':
-                provider = await createMnemonicProvider(
-                    client,
-                    network,
-                    this.ui,
-                    this.config?.domain,
-                    this.config?.networkId,
-                );
+            case 'mnemonic': {
+                let globalId: number | undefined = undefined;
+                if (typeof this.config?.network === 'object') {
+                    globalId = this.config.network.globalId;
+                }
+                provider = await createMnemonicProvider(client, network, this.ui, globalId);
                 break;
+            }
             default:
                 throw new Error('Unknown deploy option');
         }
@@ -584,7 +577,8 @@ class NetworkProviderBuilder {
 
     async build(): Promise<NetworkProvider> {
         let network = await this.chooseNetwork();
-        const explorer = this.chooseExplorer();
+        //
+        const explorer = network === 'tetra' ? 'tonviewer' : this.chooseExplorer();
 
         if (
             network !== 'custom' &&
@@ -612,21 +606,14 @@ class NetworkProviderBuilder {
                 if (inputType !== undefined) {
                     type = inputType as any; // checks come later
                 }
+                const globalId = this.args['--custom-global-id'];
                 configNetwork = {
                     endpoint: this.args['--custom'],
                     version,
                     key: this.args['--custom-key'],
+                    globalId,
                     type,
                 };
-
-                if (this.config && this.args['--custom-domain']) {
-                    const customDomain = this.args['--custom-domain'];
-                    this.config.domain = customDomain;
-                }
-
-                if (this.config && this.args['--custom-network-id']) {
-                    this.config.networkId = this.args['--custom-network-id'];
-                }
             }
             if (configNetwork === undefined) {
                 throw new Error('Custom network is (somehow) undefined');
