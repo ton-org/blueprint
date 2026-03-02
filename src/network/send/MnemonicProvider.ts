@@ -19,7 +19,8 @@ import { UIProvider } from '../../ui/UIProvider';
 import { BlueprintTonClient } from '../NetworkProvider';
 import { Network } from '../Network';
 import { wallets, WalletVersion } from './wallets';
-import { getW5NetworkGlobalId, TETRA_DOMAIN } from '../../utils/network.utils';
+import { getW5NetworkGlobalId } from '../utils';
+import { TETRA_DOMAIN } from '../constants';
 
 interface WalletInstance extends Contract {
     getSeqno(provider: ContractProvider): Promise<number>;

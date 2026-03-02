@@ -42,6 +42,7 @@ import { CustomNetwork } from '../config/CustomNetwork';
 import { Network } from './Network';
 import { WalletVersion } from './send/wallets';
 import { Explorer } from './Explorer';
+import { AVAILABLE_NETWORKS } from './constants';
 
 const INITIAL_DELAY = 400;
 const MAX_ATTEMPTS = 4;
@@ -487,11 +488,7 @@ class NetworkProviderBuilder {
             return typeof this.config.network === 'string' ? this.config.network : 'custom';
         }
 
-        network = await this.ui.choose(
-            'Which network do you want to use?',
-            ['mainnet', 'testnet', 'tetra', 'custom'],
-            (c) => c,
-        );
+        network = await this.ui.choose('Which network do you want to use?', AVAILABLE_NETWORKS, (c) => c);
         if (network === 'custom') {
             const defaultCustomEndpoint = 'http://localhost:8081/';
             this.args['--custom'] = (
@@ -644,8 +641,8 @@ class NetworkProviderBuilder {
             }
 
             if (configNetwork.type !== undefined) {
-                const ct = configNetwork.type.toLowerCase();
-                if (!['mainnet', 'testnet', 'custom', 'tetra'].includes(ct)) {
+                const ct = configNetwork.type.toLowerCase() as Network;
+                if (!AVAILABLE_NETWORKS.includes(ct)) {
                     throw new Error('Unknown network type: ' + ct);
                 }
                 network = ct as Network;
