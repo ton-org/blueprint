@@ -9,6 +9,7 @@ import {
     openContract,
     OpenedContract,
     SendMode,
+    SignatureDomain,
     StateInit,
 } from '@ton/core';
 import { KeyPair, keyPairFromSecretKey } from '@ton/crypto';
@@ -18,7 +19,8 @@ import { UIProvider } from '../../ui/UIProvider';
 import { BlueprintTonClient } from '../NetworkProvider';
 import { Network } from '../Network';
 import { wallets, WalletVersion } from './wallets';
-import { getW5NetworkGlobalId, TETRA_DOMAIN } from '../../utils/network.utils';
+import { getW5NetworkGlobalId } from '../utils';
+import { TETRA_DOMAIN } from '../constants';
 
 interface WalletInstance extends Contract {
     getSeqno(provider: ContractProvider): Promise<number>;
@@ -44,7 +46,7 @@ type MnemonicProviderParams = {
     client: BlueprintTonClient;
     ui: UIProvider;
     network: Network;
-    domain?: number;
+    globalId?: number;
     networkId?: number;
 };
 
@@ -79,12 +81,21 @@ export class MnemonicProvider implements SendProvider {
         this.ui = params.ui;
     }
 
+    private getDomain(params: MnemonicProviderParams): SignatureDomain | undefined {
+        if (params.globalId !== undefined) {
+            return { type: 'l2' as const, globalId: params.globalId };
+        }
+        if (params.network === 'tetra') {
+            return TETRA_DOMAIN;
+        }
+        return undefined;
+    }
+
     private createWallet(params: MnemonicProviderParams, kp: KeyPair): WalletInstance {
-        const networkDomain = params.network === 'tetra' ? TETRA_DOMAIN : undefined;
-        const domain = params.domain ? { type: 'l2' as const, globalId: params.domain } : networkDomain;
-        const networkGlobalId = params.networkId ?? getW5NetworkGlobalId(params.network);
+        const domain = this.getDomain(params);
 
         if (params.version === 'v5r1') {
+            const networkGlobalId = params.networkId ?? getW5NetworkGlobalId(params.network);
             return wallets[params.version].create({
                 publicKey: kp.publicKey,
                 walletId: {

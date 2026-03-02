@@ -31,6 +31,13 @@ export const tonDeepLink = (
         stateInit ? '&init=' + stateInit.toBoc().toString('base64url') : ''
     }`;
 
+function getNetworkPrefix(network: string) {
+    if (network === 'testnet' || network === 'tetra') {
+        return `${network}.`;
+    }
+    return '';
+}
+
 /**
  * Generates a link to view a TON address in a selected blockchain explorer.
  *
@@ -38,7 +45,7 @@ export const tonDeepLink = (
  * dynamically adds the testnet prefix when needed.
  *
  * @param {string} address - The TON address to view in explorer.
- * @param {string} network - The target network, either 'mainnet' or 'testnet'.
+ * @param {string} network - The target network.
  * @param {string} explorer - The desired explorer. Supported values: 'tonscan', 'tonviewer', 'toncx', 'dton'.
  * @returns {string} A full URL pointing to the address in the selected explorer.
  *
@@ -46,8 +53,9 @@ export const tonDeepLink = (
  * const link = getExplorerLink("EQC...", "testnet", "tonscan");
  * // "https://testnet.tonscan.org/address/EQC..."
  */
+
 export function getExplorerLink(address: string, network: string, explorer: Explorer) {
-    const networkPrefix = network === 'testnet' ? 'testnet.' : '';
+    const networkPrefix = getNetworkPrefix(network);
 
     switch (explorer) {
         case 'tonscan':

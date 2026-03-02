@@ -127,8 +127,7 @@ ${chalk.cyan('--custom')} [api-endpoint] - use a custom API
 ${chalk.cyan('--custom-version')} - API version (v2, v4)
 ${chalk.cyan('--custom-key')} - API key (v2 only)
 ${chalk.cyan('--custom-type')} - network type (custom, mainnet, testnet)
-${chalk.cyan('--custom-domain')} - network domain (for custom l2 domain)
-${chalk.cyan('--custom-network-id')} - network global ID (for custom network)
+${chalk.cyan('--custom-global-id')} - network global ID (for custom l2 domain)
 ${chalk.cyan('--tonconnect')}, ${chalk.cyan('--deeplink')}, ${chalk.cyan('--mnemonic')} - deployer options
 ${chalk.cyan('--tonscan')}, ${chalk.cyan('--tonviewer')}, ${chalk.cyan('--toncx')}, ${chalk.cyan('--dton')} - explorer (default: tonviewer)
 ${chalk.gray('[...args]')} (array of strings, optional) - Arguments passed directly to the script.
@@ -166,7 +165,7 @@ ${chalk.bold('SEE ALSO')}
 Verifies a deployed contract on ${chalk.underline('https://verifier.ton.org')}.
 
 ${chalk.bold('Flags:')}
-${chalk.cyan('--mainnet')}, ${chalk.cyan('--testnet')} - selects network
+${chalk.cyan('--mainnet')}, ${chalk.cyan('--testnet')}, ${chalk.cyan('--tetra')} - selects network
 ${chalk.cyan('--verifier')} - specifies the verifier ID to use (default: ${chalk.cyan('verifier.ton.org')})
 ${chalk.cyan('--list-verifiers')} - lists all available verifiers for the selected network (or both networks if none selected)
 ${chalk.cyan('--compiler-version')} - specifies the exact compiler version to use (e.g. ${chalk.cyan('0.4.4-newops.1')}). Note: this does not change the underlying compiler itself.

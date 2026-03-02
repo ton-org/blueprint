@@ -1,13 +1,5 @@
-import { Network } from '../network/Network';
-
-const MAINNET_NETWORK_GLOBAL_ID = -239;
-const TESTNET_NETWORK_GLOBAL_ID = -3;
-const TETRA_NETWORK_GLOBAL_ID = 662387;
-
-export const TETRA_DOMAIN = {
-    type: 'l2',
-    globalId: TETRA_NETWORK_GLOBAL_ID,
-} as const;
+import { Network } from './Network';
+import { MAINNET_NETWORK_GLOBAL_ID, TESTNET_NETWORK_GLOBAL_ID } from './constants';
 
 export function getW5NetworkGlobalId(network: Network): number {
     switch (network) {
@@ -18,5 +10,5 @@ export function getW5NetworkGlobalId(network: Network): number {
         case 'tetra':
             return MAINNET_NETWORK_GLOBAL_ID;
     }
-    return TESTNET_NETWORK_GLOBAL_ID;
+    return MAINNET_NETWORK_GLOBAL_ID;
 }

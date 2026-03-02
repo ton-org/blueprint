@@ -6,4 +6,5 @@ export type CustomNetwork = {
     version?: NetworkVersion;
     key?: string;
     type?: Network;
+    globalId?: number;
 };

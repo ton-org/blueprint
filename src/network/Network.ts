@@ -1,1 +1,3 @@
-export type Network = 'mainnet' | 'testnet' | 'tetra' | 'custom';
+import { AVAILABLE_NETWORKS } from './constants';
+
+export type Network = (typeof AVAILABLE_NETWORKS)[number];
