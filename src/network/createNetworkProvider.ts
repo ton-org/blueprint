@@ -574,8 +574,6 @@ class NetworkProviderBuilder {
 
     async build(): Promise<NetworkProvider> {
         let network = await this.chooseNetwork();
-        //
-        const explorer = network === 'tetra' ? 'tonviewer' : this.chooseExplorer();
 
         if (
             network !== 'custom' &&
@@ -703,6 +701,7 @@ class NetworkProviderBuilder {
 
         const sender = new SendProviderSender(sendProvider);
 
+        const explorer = network === 'tetra' ? 'tonviewer' : this.chooseExplorer();
         return new NetworkProviderImpl(tc, sender, network, explorer, this.ui);
     }
 }
