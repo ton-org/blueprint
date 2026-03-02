@@ -10,5 +10,5 @@ export function getW5NetworkGlobalId(network: Network): number {
         case 'tetra':
             return MAINNET_NETWORK_GLOBAL_ID;
     }
-    return TESTNET_NETWORK_GLOBAL_ID;
+    return MAINNET_NETWORK_GLOBAL_ID;
 }

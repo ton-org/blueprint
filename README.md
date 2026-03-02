@@ -27,9 +27,6 @@ A development environment for TON blockchain for writing, testing, and deploying
 * [Configuration](#configuration)
   * [Plugins](#plugins)
   * [Custom network](#custom-network)
-* [CLI reference](#cli-reference)
-  * [Command flags](#command-flags)
-  * [Environment variables](#environment-variables)
 * [Contributors](#contributors)
 * [License](#license)
 * [Donations](#donations)
@@ -139,7 +136,7 @@ Start by adding the following environment variables to your `.env` file:
 **Optional variables:**
 * **`WALLET_ID`**: The wallet ID (can be used with versions below `v5r1`).
 * **`SUBWALLET_NUMBER`**: The subwallet number used to build the wallet ID (can be used with `v5r1` wallets).
-* **`WALLET_NETWORK_ID`**: TODO
+* **`WALLET_NETWORK_ID`**: Network ID used to build the wallet ID (v5 wallets). Defaults: `-3` testnet, `-239` mainnet and other networks (tetra, custom).
 
 Once your environment is set up, you can use the mnemonic wallet for deployment with the appropriate configuration.
 
