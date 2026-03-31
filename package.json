@@ -59,7 +59,7 @@
         "@ton-api/ton-adapter": "^0.2.0",
         "@tonconnect/sdk": "^2.2.0",
         "arg": "^5.0.2",
-        "axios": "1.13.5",
+        "axios": "1.14.0",
         "chalk": "^4.1.0",
         "dotenv": "^16.1.4",
         "inquirer": "^8.2.5",
