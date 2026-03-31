@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.44.1] - 2026-03-31
 
-- Pin axios version
+- Pin axios to version 1.14.0 to prevent installation of compromised version 1.14.1 containing remote access trojan (RAT). See https://github.com/axios/axios/issues/10604
 
 ## [0.44.0] - 2026-03-02
 
