@@ -28,7 +28,7 @@
         "@ton/crypto": "^3.3.0",
         "@ton/sandbox": "^0.40.0",
         "@ton/tolk-js": "^1.0.0",
-        "@ton/ton": "^16.2.2",
+        "@ton/ton": "^16.2.3",
         "@ton/toolchain": "the-ton-tech/toolchain#v1.6.0",
         "@types/inquirer": "^8.2.6",
         "@types/jest": "^30.0.0",
@@ -47,7 +47,7 @@
         "@ton/crypto": ">=3.3.0",
         "@ton/sandbox": ">=0.40.0",
         "@ton/tolk-js": ">=0.13.0",
-        "@ton/ton": ">=16.2.2"
+        "@ton/ton": ">=16.2.3"
     },
     "peerDependenciesMeta": {
         "@ton/sandbox": {
