@@ -1210,7 +1210,7 @@ __metadata:
     "@ton/crypto": "npm:^3.3.0"
     "@ton/sandbox": "npm:^0.40.0"
     "@ton/tolk-js": "npm:^1.0.0"
-    "@ton/ton": "npm:^16.2.2"
+    "@ton/ton": "npm:^16.2.3"
     "@ton/toolchain": "the-ton-tech/toolchain#v1.6.0"
     "@tonconnect/sdk": "npm:^2.2.0"
     "@types/inquirer": "npm:^8.2.6"
@@ -1218,7 +1218,7 @@ __metadata:
     "@types/node": "npm:^20.2.5"
     "@types/qrcode-terminal": "npm:^0.12.0"
     arg: "npm:^5.0.2"
-    axios: "npm:^1.7.7"
+    axios: "npm:1.14.0"
     chalk: "npm:^4.1.0"
     dotenv: "npm:^16.1.4"
     eslint: "npm:^9.28.0"
@@ -1237,7 +1237,7 @@ __metadata:
     "@ton/crypto": ">=3.3.0"
     "@ton/sandbox": ">=0.40.0"
     "@ton/tolk-js": ">=0.13.0"
-    "@ton/ton": ">=16.2.2"
+    "@ton/ton": ">=16.2.3"
   peerDependenciesMeta:
     "@ton/sandbox":
       optional: true
@@ -1321,17 +1321,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/ton@npm:^16.2.2":
-  version: 16.2.2
-  resolution: "@ton/ton@npm:16.2.2"
+"@ton/ton@npm:^16.2.3":
+  version: 16.2.3
+  resolution: "@ton/ton@npm:16.2.3"
   dependencies:
-    axios: "npm:^1.6.7"
+    axios: "npm:1.14.0"
     dataloader: "npm:^2.0.0"
     zod: "npm:^3.21.4"
   peerDependencies:
     "@ton/core": ">=0.63.0 <1.0.0"
     "@ton/crypto": ">=3.2.0"
-  checksum: 10c0/8538a95df27a6a8fe01667f80d3741eb651ff498683f98a0d46f9cf5b7a02f5d59d38bd3ec2f59eab33004c53454f6d6e4f2450c48b4411577829d090ad737e7
+  checksum: 10c0/8ba7ad503929dae8a2639e21cde5d0247694c4e839541683d5e85e511d26855870774db519375aefd8c963f99ef4bfc88a704c8caab9115ee5db925e6363bb86
   languageName: node
   linkType: hard
 
@@ -2185,14 +2185,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.7, axios@npm:^1.7.7":
-  version: 1.9.0
-  resolution: "axios@npm:1.9.0"
+"axios@npm:1.14.0":
+  version: 1.14.0
+  resolution: "axios@npm:1.14.0"
   dependencies:
-    follow-redirects: "npm:^1.15.6"
-    form-data: "npm:^4.0.0"
-    proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/9371a56886c2e43e4ff5647b5c2c3c046ed0a3d13482ef1d0135b994a628c41fbad459796f101c655e62f0c161d03883454474d2e435b2e021b1924d9f24994c
+    follow-redirects: "npm:^1.15.11"
+    form-data: "npm:^4.0.5"
+    proxy-from-env: "npm:^2.1.0"
+  checksum: 10c0/2541f4aa215a7d1842429dad006fc682d82bc0e74bd14500823f7d8cce3bbae0e0a8c328c8538946718f366ab8ce5a4c12e9ad40e5a0f3482ff8bff0cd115d45
   languageName: node
   linkType: hard
 
@@ -3508,13 +3508,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.15.6":
-  version: 1.15.9
-  resolution: "follow-redirects@npm:1.15.9"
+"follow-redirects@npm:^1.15.11":
+  version: 1.15.11
+  resolution: "follow-redirects@npm:1.15.11"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 10c0/5829165bd112c3c0e82be6c15b1a58fa9dcfaede3b3c54697a82fe4a62dd5ae5e8222956b448d2f98e331525f05d00404aba7d696de9e761ef6e42fdc780244f
+  checksum: 10c0/d301f430542520a54058d4aeeb453233c564aaccac835d29d15e050beb33f339ad67d9bddbce01739c5dc46a6716dbe3d9d0d5134b1ca203effa11a7ef092343
   languageName: node
   linkType: hard
 
@@ -3537,15 +3537,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.0":
-  version: 4.0.2
-  resolution: "form-data@npm:4.0.2"
+"form-data@npm:^4.0.5":
+  version: 4.0.5
+  resolution: "form-data@npm:4.0.5"
   dependencies:
     asynckit: "npm:^0.4.0"
     combined-stream: "npm:^1.0.8"
     es-set-tostringtag: "npm:^2.1.0"
+    hasown: "npm:^2.0.2"
     mime-types: "npm:^2.1.12"
-  checksum: 10c0/e534b0cf025c831a0929bf4b9bbe1a9a6b03e273a8161f9947286b9b13bf8fb279c6944aae0070c4c311100c6d6dbb815cd955dc217728caf73fad8dc5b8ee9c
+  checksum: 10c0/dd6b767ee0bbd6d84039db12a0fa5a2028160ffbfaba1800695713b46ae974a5f6e08b3356c3195137f8530dcd9dfcb5d5ae1eeff53d0db1e5aad863b619ce3b
   languageName: node
   linkType: hard
 
@@ -5938,10 +5939,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proxy-from-env@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "proxy-from-env@npm:1.1.0"
-  checksum: 10c0/fe7dd8b1bdbbbea18d1459107729c3e4a2243ca870d26d34c2c1bcd3e4425b7bcc5112362df2d93cc7fb9746f6142b5e272fd1cc5c86ddf8580175186f6ad42b
+"proxy-from-env@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "proxy-from-env@npm:2.1.0"
+  checksum: 10c0/ed01729fd4d094eab619cd7e17ce3698b3413b31eb102c4904f9875e677cd207392795d5b4adee9cec359dfd31c44d5ad7595a3a3ad51c40250e141512281c58
   languageName: node
   linkType: hard
 

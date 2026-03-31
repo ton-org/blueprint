@@ -1,6 +1,6 @@
 {
     "name": "@ton/blueprint",
-    "version": "0.44.0",
+    "version": "0.44.1",
     "description": "Framework for development of TON smart contracts",
     "main": "dist/index.js",
     "bin": "./dist/cli/cli.js",
@@ -28,7 +28,7 @@
         "@ton/crypto": "^3.3.0",
         "@ton/sandbox": "^0.40.0",
         "@ton/tolk-js": "^1.0.0",
-        "@ton/ton": "^16.2.2",
+        "@ton/ton": "^16.2.3",
         "@ton/toolchain": "the-ton-tech/toolchain#v1.6.0",
         "@types/inquirer": "^8.2.6",
         "@types/jest": "^30.0.0",
@@ -47,7 +47,7 @@
         "@ton/crypto": ">=3.3.0",
         "@ton/sandbox": ">=0.40.0",
         "@ton/tolk-js": ">=0.13.0",
-        "@ton/ton": ">=16.2.2"
+        "@ton/ton": ">=16.2.3"
     },
     "peerDependenciesMeta": {
         "@ton/sandbox": {
@@ -59,7 +59,7 @@
         "@ton-api/ton-adapter": "^0.2.0",
         "@tonconnect/sdk": "^2.2.0",
         "arg": "^5.0.2",
-        "axios": "^1.7.7",
+        "axios": "1.14.0",
         "chalk": "^4.1.0",
         "dotenv": "^16.1.4",
         "inquirer": "^8.2.5",
