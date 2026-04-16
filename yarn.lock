@@ -1210,7 +1210,7 @@ __metadata:
     "@ton/crypto": "npm:^3.3.0"
     "@ton/sandbox": "npm:^0.40.0"
     "@ton/tolk-js": "npm:^1.0.0"
-    "@ton/ton": "npm:^16.2.3"
+    "@ton/ton": "npm:^16.2.4"
     "@ton/toolchain": "the-ton-tech/toolchain#v1.6.0"
     "@tonconnect/sdk": "npm:^2.2.0"
     "@types/inquirer": "npm:^8.2.6"
@@ -1218,7 +1218,7 @@ __metadata:
     "@types/node": "npm:^20.2.5"
     "@types/qrcode-terminal": "npm:^0.12.0"
     arg: "npm:^5.0.2"
-    axios: "npm:1.14.0"
+    axios: "npm:1.15.0"
     chalk: "npm:^4.1.0"
     dotenv: "npm:^16.1.4"
     eslint: "npm:^9.28.0"
@@ -1237,7 +1237,7 @@ __metadata:
     "@ton/crypto": ">=3.3.0"
     "@ton/sandbox": ">=0.40.0"
     "@ton/tolk-js": ">=0.13.0"
-    "@ton/ton": ">=16.2.3"
+    "@ton/ton": ">=16.2.4"
   peerDependenciesMeta:
     "@ton/sandbox":
       optional: true
@@ -1321,17 +1321,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/ton@npm:^16.2.3":
-  version: 16.2.3
-  resolution: "@ton/ton@npm:16.2.3"
+"@ton/ton@npm:^16.2.4":
+  version: 16.2.4
+  resolution: "@ton/ton@npm:16.2.4"
   dependencies:
-    axios: "npm:1.14.0"
+    axios: "npm:1.15.0"
     dataloader: "npm:^2.0.0"
     zod: "npm:^3.21.4"
   peerDependencies:
     "@ton/core": ">=0.63.0 <1.0.0"
     "@ton/crypto": ">=3.2.0"
-  checksum: 10c0/8ba7ad503929dae8a2639e21cde5d0247694c4e839541683d5e85e511d26855870774db519375aefd8c963f99ef4bfc88a704c8caab9115ee5db925e6363bb86
+  checksum: 10c0/406e98b7d044137250a9a517874f4e397c87dd86a7d4bcf84a619d9bdc154cb08e099fc636a7aaed7e64a6c81272c0feb9c530f4e8337ca8e293048f779b3306
   languageName: node
   linkType: hard
 
@@ -2185,14 +2185,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.14.0":
-  version: 1.14.0
-  resolution: "axios@npm:1.14.0"
+"axios@npm:1.15.0":
+  version: 1.15.0
+  resolution: "axios@npm:1.15.0"
   dependencies:
     follow-redirects: "npm:^1.15.11"
     form-data: "npm:^4.0.5"
     proxy-from-env: "npm:^2.1.0"
-  checksum: 10c0/2541f4aa215a7d1842429dad006fc682d82bc0e74bd14500823f7d8cce3bbae0e0a8c328c8538946718f366ab8ce5a4c12e9ad40e5a0f3482ff8bff0cd115d45
+  checksum: 10c0/47e0f860e98d4d7aa145e89ce0cae00e1fb0f1d2485f065c21fce955ddb1dba4103a46bd0e47acd18a27208a7f62c96249e620db575521b92a968619ab133409
   languageName: node
   linkType: hard
 

@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.44.2] - 2026-04-16
+
+- Pin axios to version 1.15.0 to prevent installation of critically vulnerable version 1.14.0 (CVE-2026-40175, CVE-2025-62718). See https://github.com/advisories/GHSA-fvcv-3m26-pcqx and https://github.com/advisories/GHSA-3p68-rc4w-qgx5
+
 ## [0.44.1] - 2026-03-31
 
 - Pin axios to version 1.14.0 to prevent installation of compromised version 1.14.1 containing remote access trojan (RAT). See https://github.com/axios/axios/issues/10604
@@ -42,7 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added `blueprint test --coverage` command 
+- Added `blueprint test --coverage` command
 
 ### Changed
 
@@ -105,7 +109,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed Tolk counter template 
+- Fixed Tolk counter template
 
 ## [0.35.0] - 2025-06-02
 
@@ -270,7 +274,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added support for scripts in subdirectories, for example `scripts/counter/deploy.ts`
-- Added the ability to specify test files in `blueprint test` command, for example `blueprint test Counter` 
+- Added the ability to specify test files in `blueprint test` command, for example `blueprint test Counter`
 
 ### Changed
 
