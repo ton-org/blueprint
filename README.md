@@ -371,3 +371,28 @@ MIT
 ## Donations
 
 TON - `EQAQR1d1Q4NaE5EefwUMdrr1QvXg-8mDB0XI2-fwDBD0nYxC`
+
+## Common pitfalls
+
+### Package imports: @ton/core vs @ton/ton
+
+A frequent source of confusion when developing with Blueprint is which package provides which utility. Here is a quick reference:
+
+| Utility | Correct import |
+|---|---|
+| `Cell`, `beginCell`, `Address`, `toNano` | `@ton/core` |
+| `internal()` message creator | `@ton/core` |
+| `WalletContractV4`, `TonClient` | `@ton/ton` |
+| `mnemonicNew`, `mnemonicToWalletKey` | `@ton/crypto` |
+
+```typescript
+// ✅ Correct
+import { internal, Cell, toNano, Address } from '@ton/core';
+import { WalletContractV4 } from '@ton/ton';
+import { mnemonicNew } from '@ton/crypto';
+
+// ❌ Wrong — internal() does not exist in @ton/ton
+import { internal } from '@ton/ton';
+```
+
+> **Note:** `@ton/ton` depends on and re-exports many things from `@ton/core`, but message creation utilities like `internal()` must be imported from `@ton/core` directly.
