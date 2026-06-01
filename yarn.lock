@@ -1210,7 +1210,7 @@ __metadata:
     "@ton/crypto": "npm:^3.3.0"
     "@ton/sandbox": "npm:^0.40.0"
     "@ton/tolk-js": "npm:^1.0.0"
-    "@ton/ton": "npm:^16.2.4"
+    "@ton/ton": "npm:^16.3.0"
     "@ton/toolchain": "the-ton-tech/toolchain#v1.6.0"
     "@tonconnect/sdk": "npm:^2.2.0"
     "@types/inquirer": "npm:^8.2.6"
@@ -1218,7 +1218,7 @@ __metadata:
     "@types/node": "npm:^20.2.5"
     "@types/qrcode-terminal": "npm:^0.12.0"
     arg: "npm:^5.0.2"
-    axios: "npm:1.15.0"
+    axios: "npm:^1.15.0"
     chalk: "npm:^4.1.0"
     dotenv: "npm:^16.1.4"
     eslint: "npm:^9.28.0"
@@ -1321,17 +1321,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ton/ton@npm:^16.2.4":
-  version: 16.2.4
-  resolution: "@ton/ton@npm:16.2.4"
+"@ton/ton@npm:^16.3.0":
+  version: 16.3.0
+  resolution: "@ton/ton@npm:16.3.0"
   dependencies:
-    axios: "npm:1.15.0"
+    axios: "npm:^1.15.0"
     dataloader: "npm:^2.0.0"
     zod: "npm:^3.21.4"
   peerDependencies:
     "@ton/core": ">=0.63.0 <1.0.0"
     "@ton/crypto": ">=3.2.0"
-  checksum: 10c0/406e98b7d044137250a9a517874f4e397c87dd86a7d4bcf84a619d9bdc154cb08e099fc636a7aaed7e64a6c81272c0feb9c530f4e8337ca8e293048f779b3306
+  checksum: 10c0/f10a483742a55a04bd8cee622665ac5e4a3b1995c2e7cbad53133db15754dba3d08fcc8539a287c3dfbb383441794ec63a49812b2a539dff6c50aaf949cbaa0f
   languageName: node
   linkType: hard
 
@@ -1958,6 +1958,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"agent-base@npm:6":
+  version: 6.0.2
+  resolution: "agent-base@npm:6.0.2"
+  dependencies:
+    debug: "npm:4"
+  checksum: 10c0/dc4f757e40b5f3e3d674bc9beb4f1048f4ee83af189bae39be99f57bf1f48dde166a8b0a5342a84b5944ee8e6ed1e5a9d801858f4ad44764e84957122fe46261
+  languageName: node
+  linkType: hard
+
 "agent-base@npm:^7.1.0, agent-base@npm:^7.1.2":
   version: 7.1.3
   resolution: "agent-base@npm:7.1.3"
@@ -2185,14 +2194,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.15.0":
-  version: 1.15.0
-  resolution: "axios@npm:1.15.0"
+"axios@npm:^1.15.0":
+  version: 1.16.1
+  resolution: "axios@npm:1.16.1"
   dependencies:
-    follow-redirects: "npm:^1.15.11"
+    follow-redirects: "npm:^1.16.0"
     form-data: "npm:^4.0.5"
+    https-proxy-agent: "npm:^5.0.1"
     proxy-from-env: "npm:^2.1.0"
-  checksum: 10c0/47e0f860e98d4d7aa145e89ce0cae00e1fb0f1d2485f065c21fce955ddb1dba4103a46bd0e47acd18a27208a7f62c96249e620db575521b92a968619ab133409
+  checksum: 10c0/2f77e37e6552bbff8a772d058fb09500198e9188c6b20dc799d82dbe12a8cb506f6eed4e4e62a9ba612a35cbab496faa26d68f9bff14a53af6d15c3e136391a7
   languageName: node
   linkType: hard
 
@@ -3508,13 +3518,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.15.11":
-  version: 1.15.11
-  resolution: "follow-redirects@npm:1.15.11"
+"follow-redirects@npm:^1.16.0":
+  version: 1.16.0
+  resolution: "follow-redirects@npm:1.16.0"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 10c0/d301f430542520a54058d4aeeb453233c564aaccac835d29d15e050beb33f339ad67d9bddbce01739c5dc46a6716dbe3d9d0d5134b1ca203effa11a7ef092343
+  checksum: 10c0/a1e2900163e6f1b4d1ed5c221b607f41decbab65534c63fe7e287e40a5d552a6496e7d9d7d976fa4ba77b4c51c11e5e9f683f10b43011ea11e442ff128d0e181
   languageName: node
   linkType: hard
 
@@ -3755,14 +3765,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^16.2.0":
-  version: 16.2.0
-  resolution: "globals@npm:16.2.0"
-  checksum: 10c0/c2b3ea163faa6f8a38076b471b12f4bda891f7df7f7d2e8294fb4801d735a51a73431bf4c1696c5bf5dbca5e0a0db894698acfcbd3068730c6b12eef185dea25
-  languageName: node
-  linkType: hard
-
-"globals@npm:^16.4.0":
+"globals@npm:^16.2.0, globals@npm:^16.4.0":
   version: 16.4.0
   resolution: "globals@npm:16.4.0"
   checksum: 10c0/a14b447a78b664b42f6d324e8675fcae6fe5e57924fecc1f6328dce08af9b2ca3a3138501e1b1f244a49814a732dc60cfc1aa24e714e0b64ac8bd18910bfac90
@@ -3906,6 +3909,16 @@ __metadata:
     agent-base: "npm:^7.1.0"
     debug: "npm:^4.3.4"
   checksum: 10c0/4207b06a4580fb85dd6dff521f0abf6db517489e70863dca1a0291daa7f2d3d2d6015a57bd702af068ea5cf9f1f6ff72314f5f5b4228d299c0904135d2aef921
+  languageName: node
+  linkType: hard
+
+"https-proxy-agent@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "https-proxy-agent@npm:5.0.1"
+  dependencies:
+    agent-base: "npm:6"
+    debug: "npm:4"
+  checksum: 10c0/6dd639f03434003577c62b27cafdb864784ef19b2de430d8ae2a1d45e31c4fd60719e5637b44db1a88a046934307da7089e03d6089ec3ddacc1189d8de8897d1
   languageName: node
   linkType: hard
 
