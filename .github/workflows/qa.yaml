@@ -1,23 +1,21 @@
-name: QA
+name: harastokashe-bit
+
+# Define shared paths to ignore
+.paths-ignore: &paths-ignore
+  - '.github/workflows/publish.yml'
+  - '.github/workflows/publish-dev.yml'
+  - '.github/ISSUE_TEMPLATE/*'
+  - '*.md'
+  - '*.svg'
 
 on:
   push:
-    paths-ignore:
-      - '.github/workflows/publish.yml'
-      - '.github/workflows/publish-dev.yml'
-      - '.github/ISSUE_TEMPLATE/*'
-      - '*.md'
-      - '*.svg'
+    paths-ignore: *paths-ignore
     branches:
       - main
       - develop
   pull_request:
-    paths-ignore:
-      - '.github/workflows/publish.yml'
-      - '.github/workflows/publish-dev.yml'
-      - '.github/ISSUE_TEMPLATE/*'
-      - '*.md'
-      - '*.svg'
+    paths-ignore: *paths-ignore
     branches:
       - main
       - develop
@@ -28,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: the-ton-tech/toolchain/lint@v1.6.0
+
   build:
     needs: lint
     runs-on: ${{ matrix.os }}
