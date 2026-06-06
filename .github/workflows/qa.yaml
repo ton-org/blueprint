@@ -5,8 +5,6 @@ on:
     paths-ignore:
       - '.github/workflows/publish.yml'
       - '.github/workflows/publish-dev.yml'
-      - '.github/workflows/reward.yml'
-      - '.github/workflows/reward-merged-prs.yml'
       - '.github/ISSUE_TEMPLATE/*'
       - '*.md'
       - '*.svg'
@@ -17,8 +15,6 @@ on:
     paths-ignore:
       - '.github/workflows/publish.yml'
       - '.github/workflows/publish-dev.yml'
-      - '.github/workflows/reward.yml'
-      - '.github/workflows/reward-merged-prs.yml'
       - '.github/ISSUE_TEMPLATE/*'
       - '*.md'
       - '*.svg'
