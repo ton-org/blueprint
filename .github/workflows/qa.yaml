@@ -9,8 +9,7 @@ on:
       - '*.md'
       - '*.svg'
     branches:
-      - main
-      - develop
+      - master
   pull_request:
     paths-ignore:
       - '.github/workflows/publish.yml'
@@ -19,9 +18,7 @@ on:
       - '*.md'
       - '*.svg'
     branches:
-      - main
-      - develop
-
+      - master
 jobs:
   lint:
     name: Lint
