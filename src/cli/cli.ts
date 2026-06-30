@@ -43,8 +43,17 @@ async function main() {
     });
 
     if (args._.length === 0) {
+        printDeprecationNotice();
+        console.log();
         showHelp();
         process.exit(0);
+    }
+
+    const command = args._[0];
+
+    if (command === 'help' || command === 'create') {
+        printDeprecationNotice();
+        console.log();
     }
 
     let effectiveRunners: Record<string, Runner> = {};
@@ -72,8 +81,6 @@ async function main() {
         ...effectiveRunners,
         ...runners,
     };
-
-    const command = args._[0];
 
     const runner = effectiveRunners[command];
     if (!runner) {
@@ -133,4 +140,8 @@ function showHelp() {
     }
 
     console.log(``);
+}
+
+function printDeprecationNotice() {
+    console.log(`${chalk.red('!')} Deprecated. Use https://ton-blockchain.github.io/acton/ instead.`);
 }
