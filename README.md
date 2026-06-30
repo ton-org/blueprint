@@ -1,3 +1,6 @@
+> [!CAUTION]
+> Deprecated. Use [Acton](https://ton-blockchain.github.io/acton/) instead.
+
 <img src="https://raw.githubusercontent.com/ton-org/blueprint/main/logo.svg" width=400 >
 
 # Blueprint
@@ -163,7 +166,7 @@ Before developing, make sure that your current working directory is located in t
 ### Creating contracts
 
 1. Run interactive: &nbsp;&nbsp; `npx blueprint create` &nbsp; or &nbsp; `yarn blueprint create`
-2. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `tolk-empty`, `func-empty`, `tact-empty`, `tolk-counter`, `func-counter`, `tact-counter`)
+2. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `tolk-empty`, `tolk-counter`, `func-empty` (deprecated), `func-counter` (deprecated), `tact-empty` (deprecated), `tact-counter` (deprecated))
    * Example: `yarn blueprint create MyNewContract --type tolk-empty`
 
 ### Renaming contracts

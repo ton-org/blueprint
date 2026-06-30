@@ -6,11 +6,11 @@ export const templateTypes: { name: string; value: string }[] = [
         value: 'tolk-empty',
     },
     {
-        name: 'An empty contract (FunC)',
+        name: 'An empty contract (FunC, deprecated)',
         value: 'func-empty',
     },
     {
-        name: 'An empty contract (Tact)',
+        name: 'An empty contract (Tact, deprecated)',
         value: 'tact-empty',
     },
     {
@@ -18,11 +18,11 @@ export const templateTypes: { name: string; value: string }[] = [
         value: 'tolk-counter',
     },
     {
-        name: 'A simple counter contract (FunC)',
+        name: 'A simple counter contract (FunC, deprecated)',
         value: 'func-counter',
     },
     {
-        name: 'A simple counter contract (Tact)',
+        name: 'A simple counter contract (Tact, deprecated)',
         value: 'tact-counter',
     },
 ];
