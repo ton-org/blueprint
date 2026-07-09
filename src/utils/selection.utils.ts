@@ -22,10 +22,15 @@ export const findCompiles = async (directory?: string): Promise<File[]> => {
         withFileTypes: true,
     });
     const compilables = files.filter((file) => file.isFile() && file.name.endsWith(COMPILE_END));
-    return compilables.map(extractFile).map((file) => ({
-        path: path.join(file.path, file.name),
-        name: file.name.slice(0, file.name.length - COMPILE_END.length),
-    }));
+    return compilables.map(extractFile).map((file) => {
+        const filePath = path.join(file.path, file.name);
+        const relativePath = path.relative(dir, filePath).split(path.sep).join('/');
+
+        return {
+            path: filePath,
+            name: relativePath.slice(0, relativePath.length - COMPILE_END.length),
+        };
+    });
 };
 
 export const findContracts = async () => {

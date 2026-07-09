@@ -1,5 +1,5 @@
 import qrcode from 'qrcode-terminal';
-import TonConnect, { IStorage, WalletInfo, WalletInfoRemote } from '@tonconnect/sdk';
+import TonConnect, { CHAIN, IStorage, WalletInfo, WalletInfoRemote } from '@tonconnect/sdk';
 import { Address, beginCell, Cell, StateInit, storeStateInit } from '@ton/core';
 
 import { SendProvider } from './SendProvider';
@@ -99,23 +99,26 @@ export class TonConnectProvider implements SendProvider {
     async sendTransaction(address: Address, amount: bigint, payload?: Cell, stateInit?: StateInit) {
         this.ui.setActionPrompt('Sending transaction. Approve in your wallet...');
 
-        const result = await this.connector.sendTransaction({
-            validUntil: Date.now() + 5 * 60 * 1000,
-            messages: [
-                {
-                    address: address.toString(),
-                    amount: amount.toString(),
-                    payload: payload?.toBoc().toString('base64'),
-                    stateInit: stateInit
-                        ? beginCell().storeWritable(storeStateInit(stateInit)).endCell().toBoc().toString('base64')
-                        : undefined,
-                },
-            ],
-        });
+        try {
+            const result = await this.connector.sendTransaction({
+                validUntil: Math.floor(Date.now() / 1000) + 5 * 60,
+                network: this.network === 'testnet' ? CHAIN.TESTNET : CHAIN.MAINNET,
+                messages: [
+                    {
+                        address: address.toString(),
+                        amount: amount.toString(),
+                        payload: payload?.toBoc().toString('base64'),
+                        stateInit: stateInit
+                            ? beginCell().storeWritable(storeStateInit(stateInit)).endCell().toBoc().toString('base64')
+                            : undefined,
+                    },
+                ],
+            });
 
-        this.ui.clearActionPrompt();
-        this.ui.write('Sent transaction');
-
-        return result;
+            this.ui.write('Sent transaction');
+            return result;
+        } finally {
+            this.ui.clearActionPrompt();
+        }
     }
 }

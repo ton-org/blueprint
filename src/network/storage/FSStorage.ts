@@ -19,8 +19,11 @@ export class FSStorage implements Storage {
     }
 
     private async writeObject(obj: StorageObject): Promise<void> {
-        await fs.mkdir(path.dirname(this.path), { recursive: true });
-        await fs.writeFile(this.path, JSON.stringify(obj));
+        const directory = path.dirname(this.path);
+        await fs.mkdir(directory, { recursive: true, mode: 0o700 });
+        await fs.chmod(directory, 0o700);
+        await fs.writeFile(this.path, JSON.stringify(obj), { mode: 0o600 });
+        await fs.chmod(this.path, 0o600);
     }
 
     async setItem(key: string, value: string): Promise<void> {
