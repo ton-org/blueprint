@@ -2,6 +2,7 @@ node_modules
 dist
 .idea
 coverage/
+temp/
 
 # yarn
 yarn-error.log

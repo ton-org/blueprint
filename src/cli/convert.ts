@@ -92,6 +92,10 @@ function parseCompileString(str: string, src_dir: string, _ui: UIProvider) {
     };
 }
 
+export function extractCompileStrings(content: string): RegExpMatchArray[] {
+    return Array.from(content.replace(/\\[\r?\n]+/g, '').matchAll(/\s?func\s+(.*)(?:\r?\n|$)/g));
+}
+
 export const convert: Runner = async (_args: Args, ui: UIProvider) => {
     const localArgs = arg({ ...argSpec, ...helpArgs });
     if (localArgs['--help']) {
@@ -109,9 +113,9 @@ export const convert: Runner = async (_args: Args, ui: UIProvider) => {
     const content = readFileSync(filePath, { encoding: 'utf-8' });
 
     const srcDir = path.dirname(filePath);
-    const compileStrings = content.replace(/\\[\r?\n]+/g, '').matchAll(/\s?func\s+(.*)\n/g);
+    const compileStrings = extractCompileStrings(content);
 
-    if (compileStrings === null) {
+    if (compileStrings.length === 0) {
         throw new Error(`No func related commands found in ${filePath}`);
     }
 
