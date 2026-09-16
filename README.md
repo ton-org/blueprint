@@ -372,7 +372,3 @@ Special thanks to [@qdevstudio](https://t.me/qdevstudio) for their logo for blue
 ## License
 
 MIT
-
-## Donations
-
-TON - `EQAQR1d1Q4NaE5EefwUMdrr1QvXg-8mDB0XI2-fwDBD0nYxC`
