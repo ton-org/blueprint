@@ -71,7 +71,7 @@ export const availableCommands: CommandInfo[] = [
         example: 'blueprint help',
     },
     { name: 'set', description: 'sets configuration values', example: 'blueprint set' },
-    { name: 'verify', description: 'verifies a deployed contract on verifier.ton.org', example: 'blueprint verify' },
+    { name: 'verify', description: 'verifies contract source code on verifier.ton.org', example: 'blueprint verify' },
     {
         name: 'convert',
         description: 'converts legacy bash build scripts to Blueprint wrappers',
@@ -162,17 +162,18 @@ ${chalk.bold('SEE ALSO')}
 
     verify: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('verify')} ${chalk.yellow('[contract name]')} ${chalk.gray('[flags]')}
 
-Verifies a deployed contract on ${chalk.underline('https://verifier.ton.org')}.
+Verifies contract source code on ${chalk.underline('https://verifier.ton.org')}.
 
 ${chalk.bold('Flags:')}
-${chalk.cyan('--mainnet')}, ${chalk.cyan('--testnet')}, ${chalk.cyan('--tetra')} - selects network
-${chalk.cyan('--verifier')} - specifies the verifier ID to use (default: ${chalk.cyan('verifier.ton.org')})
-${chalk.cyan('--list-verifiers')} - lists all available verifiers for the selected network (or both networks if none selected)
-${chalk.cyan('--compiler-version')} - specifies the exact compiler version to use (e.g. ${chalk.cyan('0.4.4-newops.1')}). Note: this does not change the underlying compiler itself.
-${chalk.cyan('--custom')} [api-endpoint] - use custom API (requires --custom-type)
-${chalk.cyan('--custom-version')} - API version (v2 default)
-${chalk.cyan('--custom-key')} - API key (v2 only)
-${chalk.cyan('--custom-type')} - network type (mainnet, testnet, tetra)`,
+${chalk.cyan('--address')} - checks that the deployed contract has the compiled code hash
+${chalk.cyan('--compiler-version')} - uses an exact compiler version on the verifier (defaults to the local compiler version)
+${chalk.cyan('--dry-run')} - prepares the request without paying or uploading sources
+${chalk.cyan('--payment-tx-hash')} - reuses a finalized verifier payment transaction
+${chalk.cyan('--tonconnect')}, ${chalk.cyan('--deeplink')}, ${chalk.cyan('--mnemonic')} - selects the wallet used for the testnet verification payment
+
+${chalk.bold('Environment:')}
+${chalk.cyan('BLUEPRINT_VERIFY_BACKEND')} - overrides the verifier URL
+${chalk.cyan('BLUEPRINT_VERIFY_API_KEY')} - temporarily skips payment for migration`,
 
     convert: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('convert')} ${chalk.yellow('[path to build script]')}
 
