@@ -1,451 +1,67 @@
-import path from 'path';
-
-import { Address, Cell, Contract, ContractProvider, Dictionary, toNano } from '@ton/core';
+import { Address } from '@ton/core';
 import arg from 'arg';
 
 import { doCompile } from '../compile/compile';
+import { argSpec } from '../network/createNetworkProvider';
+import { runVerificationFlow } from '../verify/flow';
+import { PaymentWalletOptions } from '../verify/payment';
+import { prepareVerification } from '../verify/source';
+import { VerifierClient } from '../verify/VerifierClient';
 import { UIProvider } from '../ui/UIProvider';
 import { Args, extractFirstArg, Runner, RunnerContext } from './Runner';
-import { argSpec, createNetworkProvider } from '../network/createNetworkProvider';
 import { selectContract } from './build';
-import { sleep } from '../utils';
 import { helpArgs, helpMessages } from './constants';
 
-type FuncCompilerSettings = {
-    compiler: 'func';
-    compilerSettings: {
-        funcVersion: string;
-        commandLine: string;
+const verifyArgSpec = {
+    ...argSpec,
+    ...helpArgs,
+    '--address': String,
+    '--dry-run': Boolean,
+    '--payment-tx-hash': String,
+};
+
+function walletOptions(args: arg.Result<typeof verifyArgSpec>): PaymentWalletOptions {
+    return {
+        '--tonconnect': args['--tonconnect'],
+        '--deeplink': args['--deeplink'],
+        '--mnemonic': args['--mnemonic'],
+        '--tonscan': args['--tonscan'],
+        '--tonviewer': args['--tonviewer'],
+        '--toncx': args['--toncx'],
+        '--dton': args['--dton'],
     };
-};
-
-type TactCompilerSettings = {
-    compiler: 'tact';
-    compilerSettings: {
-        tactVersion: string;
-    };
-};
-
-type TolkCompilerSettings = {
-    compiler: 'tolk';
-    compilerSettings: {
-        tolkVersion: string;
-    };
-};
-
-type CompilerSettings = FuncCompilerSettings | TolkCompilerSettings | TactCompilerSettings;
-
-type SourceObject = {
-    includeInCommand: boolean;
-    isEntrypoint: boolean;
-    isStdLib: boolean;
-    hasIncludeDirectives: boolean;
-    folder: string;
-};
-
-type SourcesObject = {
-    knownContractHash: string; // base64
-    knownContractAddress: string;
-    senderAddress: string;
-    sources: SourceObject[];
-} & CompilerSettings;
-
-type VerifierConfig = {
-    verifiers: Array<{
-        id: string;
-        network: string;
-        backends: string[];
-    }>;
-    // other fields are also present, but intentionally omitted
-};
-
-const DEFAULT_VERIFIER_ID = 'verifier.ton.org';
-const VERIFIER_CONFIG_URL = 'https://raw.githubusercontent.com/ton-community/contract-verifier-config/main/config.json';
-const MAINNET_VERIFIER_REGISTRY = Address.parse('EQD-BJSVUJviud_Qv7Ymfd3qzXdrmV525e3YDzWQoHIAiInL');
-const TESTNET_VERIFIER_REGISTRY = Address.parse('EQCsdKYwUaXkgJkz2l0ol6qT_WxeRbE_wBCwnEybmR0u5TO8');
-
-async function getVerifierConfig(): Promise<VerifierConfig> {
-    try {
-        const response = await fetch(VERIFIER_CONFIG_URL);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch verifier config: ${response.status} ${response.statusText}`);
-        }
-        return await response.json();
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        throw new Error(`Unable to fetch contract verifier config: ${errorMessage}`);
-    }
-}
-
-async function listVerifiers(ui: UIProvider): Promise<void> {
-    try {
-        const config = await getVerifierConfig();
-
-        ui.write('\nAvailable verifiers:');
-        const mainnetVerifiers = config.verifiers.filter((v) => v.network === 'mainnet');
-        const testnetVerifiers = config.verifiers.filter((v) => v.network === 'testnet');
-
-        if (mainnetVerifiers.length > 0) {
-            ui.write('\n  Mainnet:');
-            mainnetVerifiers.forEach((v) => {
-                ui.write(`    - ${v.id}`);
-            });
-        }
-
-        if (testnetVerifiers.length > 0) {
-            ui.write('\n  Testnet:');
-            testnetVerifiers.forEach((v) => {
-                ui.write(`    - ${v.id}`);
-            });
-        }
-
-        if (mainnetVerifiers.length === 0 && testnetVerifiers.length === 0) {
-            ui.write('  (none)');
-        }
-        ui.write('');
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        throw new Error(`Unable to list verifiers: ${errorMessage}`);
-    }
-}
-
-async function getBackends(verifierId: string, network: 'mainnet' | 'testnet' | 'tetra'): Promise<string[]> {
-    try {
-        const config = await getVerifierConfig();
-        const verifierConfig = config.verifiers.find((v) => v.id === verifierId && v.network === network);
-
-        if (!verifierConfig) {
-            const availableVerifiers = config.verifiers
-                .filter((v) => v.network === network)
-                .map((v) => v.id)
-                .join(', ');
-            throw new Error(
-                `Verifier '${verifierId}' not found for ${network} network. Available verifiers: ${availableVerifiers || 'none'}`,
-            );
-        }
-
-        return verifierConfig.backends;
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        throw new Error(`Unable to fetch contract verifier backends: ${errorMessage}`);
-    }
-}
-
-function removeRandom<T>(els: T[]): T {
-    return els.splice(Math.floor(Math.random() * els.length), 1)[0];
-}
-
-class VerifierRegistry implements Contract {
-    constructor(readonly address: Address) {}
-
-    async getVerifiers(provider: ContractProvider) {
-        const res = await provider.get('get_verifiers', []);
-        const item = res.stack.readCell();
-        const c = item.beginParse();
-        const d = c.loadDict(Dictionary.Keys.BigUint(256), {
-            serialize: () => {
-                throw undefined;
-            },
-            parse: (s) => s,
-        });
-
-        return Array.from(d.values()).map((v) => {
-            const admin = v.loadAddress();
-            const quorom = v.loadUint(8);
-            const pubKeyEndpoints = v.loadDict(Dictionary.Keys.BigUint(256), Dictionary.Values.Uint(32));
-
-            return {
-                admin: admin,
-                quorum: quorom,
-                pubKeyEndpoints: new Map<bigint, number>(Array.from(pubKeyEndpoints).map(([k, v]) => [k, v])),
-                name: v.loadRef().beginParse().loadStringTail(),
-                url: v.loadRef().beginParse().loadStringTail(),
-            };
-        });
-    }
-}
-class SourceRegistry implements Contract {
-    constructor(readonly address: Address) {}
-    async getVerifierRegistry(provider: ContractProvider) {
-        const { stack } = await provider.get('get_verifier_registry_address', []);
-        return stack.readAddress();
-    }
-}
-
-async function lookupCodeHash(hash: Buffer, ui: UIProvider, retryCount: number = 5): Promise<string | undefined> {
-    type QueryResponse = {
-        data: {
-            account_states: Array<{
-                address: string;
-                workchain: number;
-            }>;
-        };
-    };
-
-    let queryResponse: QueryResponse;
-    let foundAddr: string | undefined;
-    let done = false;
-    const graphqlUrl = 'https://dton.io/graphql/';
-    const query = `{
-        account_states(page:0, page_size:1, account_state_state_init_code_hash: "${hash.toString('hex').toUpperCase()}")
-        {
-            address
-            workchain
-        }
-    }`;
-
-    do {
-        try {
-            ui.write('Checking if such a contract is already deployed...');
-            const resp = await fetch(graphqlUrl, {
-                method: 'POST',
-                body: JSON.stringify({ query }),
-                headers: { 'Content-Type': 'application/json' },
-            });
-            if (resp.ok) {
-                queryResponse = await resp.json();
-                const states = queryResponse.data.account_states;
-                if (states.length > 0) {
-                    const state = states[0];
-                    foundAddr = Address.parseRaw(`${state.workchain}:${state.address}`).toString();
-                } else {
-                    ui.write('No such contract was found!');
-                }
-                done = true;
-            } else {
-                retryCount--;
-            }
-            // Meh
-        } catch (e: any) {
-            retryCount--;
-            if (e.cause) {
-                if (e.cause.code == 'ETIMEDOUT') {
-                    ui.write('API timed out, waiting...');
-                    await sleep(5000);
-                }
-            } else {
-                ui.write(e);
-            }
-        }
-    } while (!done && retryCount > 0);
-
-    return foundAddr;
 }
 
 export const verify: Runner = async (_args: Args, ui: UIProvider, context: RunnerContext) => {
-    const localArgs = arg({ ...argSpec, ...helpArgs });
+    const localArgs = arg(verifyArgSpec);
     if (localArgs['--help']) {
         ui.write(helpMessages['verify']);
         return;
     }
 
-    if (localArgs['--list-verifiers']) {
-        await listVerifiers(ui);
-        return;
-    }
-
-    const preciseVersion = localArgs['--compiler-version'];
-
     const selectedContract = await selectContract(ui, extractFirstArg(localArgs));
-
-    const networkProvider = await createNetworkProvider(ui, localArgs, context.config, false);
-
-    const sender = networkProvider.sender();
-
-    const senderAddress = sender.address;
-    if (senderAddress === undefined) {
-        throw new Error('Sender address needs to be known');
-    }
-
-    const network = networkProvider.network();
-    if (network === 'custom') {
-        throw new Error('Cannot use custom network');
-    }
-
+    ui.write(`Compiling ${selectedContract}...`);
     const result = await doCompile(selectedContract, { buildLibrary: false });
-    const resHash = result.code.hash();
-
-    ui.write(`Compiled code hash hex: ${resHash.toString('hex')}`);
-    ui.write('We can look up the address with such code hash in the blockchain automatically');
-
-    const passManually = await ui.prompt('Do you want to specify the address manually?');
-    let addr: string;
-
-    if (passManually) {
-        addr = (await ui.inputAddress('Deployed contract address')).toString();
-    } else {
-        const alreadyDeployed = await lookupCodeHash(resHash, ui);
-        if (alreadyDeployed) {
-            ui.write(`Contract is already deployed at: ${alreadyDeployed}\nUsing that address.`);
-            ui.write(`https://tonscan.org/address/${alreadyDeployed}`);
-            addr = alreadyDeployed;
-        } else {
-            ui.write("Please enter the contract's address manually");
-            addr = (await ui.inputAddress('Deployed contract address')).toString();
-        }
+    const codeHash = result.code.hash().toString('hex');
+    const address = localArgs['--address']?.trim() || undefined;
+    if (address) {
+        Address.parse(address);
     }
 
-    let src: SourcesObject;
-    const fd = new FormData();
+    const prepared = prepareVerification(result, localArgs['--compiler-version']);
+    const client = new VerifierClient();
 
-    if (result.lang === 'func') {
-        for (const f of result.snapshot) {
-            fd.append(f.filename, new Blob([f.content]), path.basename(f.filename));
-        }
+    ui.write(`Compiled code hash: ${codeHash}`);
+    ui.write(`Using backend: ${client.backend}`);
+    ui.write(`Collected ${prepared.files.length} source file${prepared.files.length === 1 ? '' : 's'}`);
 
-        src = {
-            compiler: 'func',
-            compilerSettings: {
-                funcVersion: preciseVersion ?? result.version,
-                commandLine: '-SPA ' + result.targets.join(' '),
-            },
-            knownContractAddress: addr,
-            knownContractHash: result.code.hash().toString('base64'),
-            sources: result.snapshot.map((s) => ({
-                includeInCommand: result.targets.includes(s.filename),
-                isEntrypoint: result.targets.includes(s.filename),
-                isStdLib: false,
-                hasIncludeDirectives: true,
-                folder: path.dirname(s.filename),
-            })),
-            senderAddress: senderAddress.toString(),
-        };
-    } else if (result.lang === 'tact') {
-        let pkg: { name: string; content: Buffer } | undefined = undefined;
-        for (const [k, v] of result.fs) {
-            if (k.endsWith('.pkg')) {
-                pkg = {
-                    name: k,
-                    content: v,
-                };
-                break;
-            }
-        }
-        if (pkg === undefined) {
-            throw new Error('Could not find .pkg in compilation results');
-        }
-
-        fd.append(path.basename(pkg.name), new Blob([pkg.content]), path.basename(pkg.name));
-
-        src = {
-            compiler: 'tact',
-            compilerSettings: {
-                tactVersion: '',
-            },
-            knownContractAddress: addr,
-            knownContractHash: result.code.hash().toString('base64'),
-            sources: [
-                {
-                    includeInCommand: true,
-                    isEntrypoint: false,
-                    isStdLib: false,
-                    hasIncludeDirectives: false,
-                    folder: '',
-                },
-            ],
-            senderAddress: senderAddress.toString(),
-        };
-    } else if (result.lang === 'tolk') {
-        for (const f of result.snapshot) {
-            fd.append(f.filename, new Blob([f.content]), path.basename(f.filename));
-        }
-
-        src = {
-            compiler: 'tolk',
-            compilerSettings: {
-                tolkVersion: preciseVersion ?? result.version,
-            },
-            knownContractAddress: addr,
-            knownContractHash: result.code.hash().toString('base64'),
-            sources: result.snapshot.map((s) => ({
-                includeInCommand: true,
-                isStdLib: false,
-                hasIncludeDirectives: true,
-                isEntrypoint: s === result.snapshot[0],
-                folder: path.dirname(s.filename),
-            })),
-            senderAddress: senderAddress.toString(),
-        };
-    } else {
-        // future proofing
-
-        throw new Error('Unsupported language ' + (result as any).lang);
-    }
-
-    fd.append(
-        'json',
-        new Blob([JSON.stringify(src)], {
-            type: 'application/json',
-        }),
-        'blob',
-    );
-
-    const verifierId = localArgs['--verifier'] ?? DEFAULT_VERIFIER_ID;
-    const sourceRegistryAddress = network === 'mainnet' ? MAINNET_VERIFIER_REGISTRY : TESTNET_VERIFIER_REGISTRY;
-
-    const sourceRegistry = networkProvider.open(new SourceRegistry(sourceRegistryAddress));
-
-    const verifierRegistry = networkProvider.open(new VerifierRegistry(await sourceRegistry.getVerifierRegistry()));
-
-    const verifiers = await verifierRegistry.getVerifiers();
-    const verifier = verifiers.find((v) => v.name === verifierId);
-    if (!verifier) {
-        const availableVerifiers = verifiers.map((v) => v.name).join(', ');
-        throw new Error(
-            `Verifier '${verifierId}' is not registered in the verifier registry. Available verifiers: ${availableVerifiers || 'none'}`,
-        );
-    }
-
-    const backends = await getBackends(verifierId, network);
-    const backendUrl = removeRandom(backends);
-
-    const sourceResponse = await fetch(`${backendUrl}/source`, {
-        method: 'POST',
-        body: fd,
+    await runVerificationFlow(ui, client, {
+        codeHash,
+        address,
+        prepared,
+        dryRun: localArgs['--dry-run'] ?? false,
+        paymentTransactionHash: localArgs['--payment-tx-hash'],
+        walletOptions: walletOptions(localArgs),
+        config: context.config,
     });
-
-    if (sourceResponse.status !== 200) {
-        throw new Error('Could not compile on backend:\n' + (await sourceResponse.json()));
-    }
-
-    const sourceResult = await sourceResponse.json();
-
-    if (sourceResult.compileResult.result !== 'similar') {
-        throw new Error(sourceResult.compileResult.error);
-    }
-
-    let msgCell = sourceResult.msgCell;
-    let acquiredSigs = 1;
-
-    while (acquiredSigs < verifier.quorum) {
-        const backendUrl = removeRandom(backends);
-        ui.write(`Using backend: ${backendUrl}`);
-        const signResponse = await fetch(`${backendUrl}/sign`, {
-            method: 'POST',
-            body: JSON.stringify({
-                messageCell: msgCell,
-            }),
-            headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (signResponse.status !== 200) {
-            throw new Error('Could not sign on backend:\n' + (await signResponse.text()));
-        }
-
-        const signResult = await signResponse.json();
-
-        msgCell = signResult.msgCell;
-        acquiredSigs++;
-    }
-
-    const c = Cell.fromBoc(Buffer.from(msgCell.data))[0];
-
-    await networkProvider.sender().send({
-        to: verifierRegistry.address,
-        value: toNano('0.5'),
-        body: c,
-    });
-
-    const testnetFlag = network === 'testnet' ? '?testnet=true' : '';
-    ui.write(`Contract successfully verified at https://verifier.ton.org/${addr}${testnetFlag}`);
 };

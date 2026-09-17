@@ -1,0 +1,140 @@
+import { Config } from '../config/Config';
+import { UIProvider } from '../ui/UIProvider';
+import { sleep } from '../utils';
+import {
+    normalizeCodeHash,
+    normalizeTransactionHash,
+    PaymentTicket,
+    VerifierClient,
+    VerifyResponse,
+} from './VerifierClient';
+import { PaymentWalletOptions, sendVerifierPayment, validatePaymentTicket } from './payment';
+import { PreparedVerification } from './source';
+
+const VERIFIER_STATUS_POLL_ATTEMPTS = 50;
+const VERIFIER_STATUS_POLL_INTERVAL = 1000;
+
+export type VerificationFlowOptions = {
+    codeHash: string;
+    address?: string;
+    prepared: PreparedVerification;
+    compilerVersion?: string;
+    dryRun: boolean;
+    paymentTransactionHash?: string;
+    walletOptions: PaymentWalletOptions;
+    config?: Config;
+};
+
+type PaymentSender = typeof sendVerifierPayment;
+
+function writeVerificationDetails(ui: UIProvider, response: VerifyResponse): void {
+    if (response.source_bundle_hash) {
+        ui.write(`Source bundle: ${response.source_bundle_hash}`);
+    }
+    if (response.storage_revision) {
+        ui.write(`Storage revision: ${response.storage_revision}`);
+    }
+}
+
+export function validateVerificationResult(codeHash: string, response: VerifyResponse): void {
+    if (response.verification_result === 'mismatch') {
+        throw new Error(
+            `Verification failed: compiled code hash ${response.compiled_code_hash ?? '<unknown>'} does not match target code hash ${response.code_hash}`,
+        );
+    }
+    if (response.verification_result === 'match' && normalizeCodeHash(response.compiled_code_hash ?? '') !== codeHash) {
+        throw new Error('TON verifier reported a match without a matching compiled code hash');
+    }
+}
+
+async function waitForExistingVerification(
+    ui: UIProvider,
+    client: VerifierClient,
+    codeHash: string,
+    address?: string,
+): Promise<boolean> {
+    let previousStatus: 'queued' | 'compiling' | undefined;
+    for (let attempt = 1; attempt <= VERIFIER_STATUS_POLL_ATTEMPTS; attempt++) {
+        const result = await client.status(codeHash, address);
+        if (result.status === 'unverified') {
+            return false;
+        }
+        if (result.status === 'verified') {
+            ui.write('Contract was already verified');
+            ui.write(`View at: ${client.link(codeHash)}`);
+            return true;
+        }
+        if (result.status !== previousStatus) {
+            ui.write(result.status === 'queued' ? 'Verification is queued' : 'Verification is compiling');
+        }
+
+        previousStatus = result.status;
+        if (attempt < VERIFIER_STATUS_POLL_ATTEMPTS) {
+            await sleep(VERIFIER_STATUS_POLL_INTERVAL);
+        }
+    }
+
+    throw new Error(`Verification is still queued or compiling after ${VERIFIER_STATUS_POLL_ATTEMPTS} status checks`);
+}
+
+export async function runVerificationFlow(
+    ui: UIProvider,
+    client: VerifierClient,
+    options: VerificationFlowOptions,
+    paymentSender: PaymentSender = sendVerifierPayment,
+): Promise<void> {
+    const { codeHash, address, prepared } = options;
+    if (await waitForExistingVerification(ui, client, codeHash, address)) {
+        return;
+    }
+
+    let paymentTransactionHash = options.paymentTransactionHash
+        ? normalizeTransactionHash(options.paymentTransactionHash)
+        : undefined;
+    let ticket: PaymentTicket | undefined;
+
+    if (!client.usesApiKey && !paymentTransactionHash) {
+        ui.write('Requesting verification ticket...');
+        const response = await client.takeTicket(codeHash);
+        if (response.status === 'already_verified') {
+            ui.write('Contract was already verified');
+            writeVerificationDetails(ui, {
+                code_hash: response.code_hash,
+                verification_result: 'already_verified',
+                source_bundle_hash: response.source_bundle_hash,
+                storage_revision: response.storage_revision,
+            });
+            ui.write(`View at: ${client.link(codeHash)}`);
+            return;
+        }
+
+        ticket = response;
+        const payment = validatePaymentTicket(ticket);
+        ui.write('Payment network: TON testnet');
+        ui.write(`Payment amount: ${payment.amount.toString()} nanoTON`);
+        ui.write(`Payment address: ${payment.address.toString({ testOnly: true })}`);
+        ui.write(`Payment comment: ${ticket.comment}`);
+    }
+
+    if (options.dryRun) {
+        ui.write('Dry run: skipping payment and source upload');
+        return;
+    }
+
+    if (!client.usesApiKey && !paymentTransactionHash) {
+        paymentTransactionHash = await paymentSender(ui, options.config, options.walletOptions, ticket!);
+        ui.write(`Payment finalized: ${paymentTransactionHash}`);
+    }
+
+    ui.write('Sending sources to TON verifier...');
+    const verification = await client.verify(prepared, codeHash, address, paymentTransactionHash);
+    validateVerificationResult(codeHash, verification);
+
+    ui.write(
+        verification.verification_result === 'already_verified'
+            ? 'Contract was already verified'
+            : 'Contract verification completed!',
+    );
+    writeVerificationDetails(ui, verification);
+    ui.write(`View at: ${client.link(codeHash)}`);
+}
