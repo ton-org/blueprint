@@ -2,7 +2,12 @@ import { Config } from '../config/Config';
 import { UIProvider } from '../ui/UIProvider';
 import { sleep } from '../utils';
 import { normalizeCodeHash, normalizeTransactionHash, VerifierClient, VerifyResponse } from './VerifierClient';
-import { PaymentWalletOptions, sendVerifierPayment, validatePaymentTicket } from './payment';
+import {
+    formatVerifierPaymentAddress,
+    PaymentWalletOptions,
+    sendVerifierPayment,
+    validatePaymentTicket,
+} from './payment';
 import { PreparedVerification } from './source';
 
 const VERIFIER_STATUS_POLL_ATTEMPTS = 50;
@@ -110,9 +115,9 @@ export async function runVerificationFlow(
         }
 
         const payment = validatePaymentTicket(ticket);
-        ui.write('Payment network: TON testnet');
+        ui.write(`Payment network: TON ${payment.network}`);
         ui.write(`Payment amount: ${payment.amount.toString()} nanoTON`);
-        ui.write(`Payment address: ${payment.address.toString({ testOnly: true })}`);
+        ui.write(`Payment address: ${formatVerifierPaymentAddress(payment.network, payment.address)}`);
         ui.write(`Payment comment: ${ticket.comment}`);
 
         if (options.dryRun) {

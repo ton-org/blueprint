@@ -70,7 +70,7 @@ describe('VerifierClient', () => {
         const client = new VerifierClient('http://verifier.test', undefined, fetchMock as unknown as typeof fetch);
 
         await expect(client.takeTicket('a'.repeat(64))).rejects.toThrow(
-            'Payment transaction was not found on TON testnet.',
+            'Payment transaction was not found on the requested TON network.',
         );
     });
 

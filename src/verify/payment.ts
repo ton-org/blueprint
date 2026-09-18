@@ -1,7 +1,7 @@
 import { Address, beginCell, Cell, Transaction } from '@ton/core';
 
 import { Config } from '../config/Config';
-import { TESTNET_NETWORK } from '../network/constants';
+import { MAINNET_NETWORK, TESTNET_NETWORK } from '../network/constants';
 import { Args as NetworkArgs, createNetworkProvider } from '../network/createNetworkProvider';
 import { Network } from '../network/Network';
 import { UIProvider } from '../ui/UIProvider';
@@ -24,8 +24,12 @@ export function buildVerifierPaymentComment(codeHash: string): string {
     return `${VERIFIER_PAYMENT_COMMENT_PREFIX}:${VERIFIER_PAYMENT_COMMENT_VERSION}:${codeHash}`;
 }
 
+export function formatVerifierPaymentAddress(network: Network, address: Address): string {
+    return address.toString({ testOnly: network === TESTNET_NETWORK });
+}
+
 export function buildVerifierPaymentPrompt(network: Network, amount: bigint, address: Address): string {
-    return `Send ${amount.toString()} nanoTON on ${network} to ${address.toString({ testOnly: network === TESTNET_NETWORK })}?`;
+    return `Send ${amount.toString()} nanoTON on ${network} to ${formatVerifierPaymentAddress(network, address)}?`;
 }
 
 export function validatePaymentTicket(ticket: PaymentTicket): { address: Address; amount: bigint; network: Network } {
@@ -106,11 +110,16 @@ export function isPaymentTransaction(
     return !transaction.description.aborted;
 }
 
-export function paymentNetworkArgs(options: PaymentWalletOptions = {}): NetworkArgs {
+export function paymentNetworkArgs(network: Network, options: PaymentWalletOptions = {}): NetworkArgs {
+    if (network !== MAINNET_NETWORK && network !== TESTNET_NETWORK) {
+        throw new Error(`Unsupported verifier payment network: ${network}`);
+    }
+
+    const networkArgs = network === MAINNET_NETWORK ? { '--mainnet': true } : { '--testnet': true };
     return {
         ...options,
+        ...networkArgs,
         _: [],
-        '--testnet': true,
     } as NetworkArgs;
 }
 
@@ -165,7 +174,7 @@ export async function sendVerifierPayment(
         throw new Error('Verification payment cancelled');
     }
 
-    const networkProvider = await createNetworkProvider(ui, paymentNetworkArgs(walletOptions), config, false);
+    const networkProvider = await createNetworkProvider(ui, paymentNetworkArgs(network, walletOptions), config, false);
     const stateBeforePayment = await networkProvider.getContractState(address);
     const lastTransaction = stateBeforePayment.last;
     let baselineLt = 0n;

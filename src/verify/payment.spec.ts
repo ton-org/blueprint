@@ -137,10 +137,14 @@ describe('isPaymentTransaction', () => {
 });
 
 describe('paymentNetworkArgs', () => {
-    it('always pays on testnet while retaining the selected wallet', () => {
-        expect(paymentNetworkArgs({ '--tonconnect': true })).toMatchObject({
+    it('uses the payment network while retaining the selected wallet', () => {
+        expect(paymentNetworkArgs(TESTNET_NETWORK, { '--tonconnect': true })).toMatchObject({
             '--testnet': true,
             '--tonconnect': true,
+        });
+        expect(paymentNetworkArgs(MAINNET_NETWORK, { '--mnemonic': true })).toMatchObject({
+            '--mainnet': true,
+            '--mnemonic': true,
         });
     });
 });

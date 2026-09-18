@@ -117,7 +117,7 @@ function friendlyVerifierError(error: string): string {
         payment_recovery_in_progress: 'TON verifier is rebuilding payment history. Try again shortly.',
         verification_retryable: 'Verifier source storage is temporarily unavailable. The payment remains reusable.',
         payment_tx_hash_invalid: 'Payment transaction hash is invalid.',
-        payment_not_found: 'Payment transaction was not found on TON testnet.',
+        payment_not_found: 'Payment transaction was not found on the requested TON network.',
         payment_invalid: 'Payment transaction is not a finalized incoming payment to the verifier wallet.',
         payment_insufficient: 'Payment amount is too small.',
         payment_code_hash_mismatch: 'Payment transaction is for a different code hash.',
