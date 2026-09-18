@@ -135,13 +135,17 @@ function isTransientVerifierError(error: string): boolean {
 
 export class VerifierClient {
     readonly backend: string;
+    private readonly apiKey: string | undefined;
+    private readonly fetchImpl: typeof fetch;
 
     constructor(
         backend: string = verifierBackend(),
-        private readonly apiKey: string | undefined = verifierApiKey(),
-        private readonly fetchImpl: typeof fetch = fetch,
+        apiKey: string | undefined = verifierApiKey(),
+        fetchImpl: typeof fetch = fetch,
     ) {
         this.backend = backend.trim().replace(/\/+$/, '');
+        this.apiKey = apiKey;
+        this.fetchImpl = fetchImpl;
         if (this.backend === '') {
             throw new Error('Verifier backend URL must not be empty');
         }

@@ -12,7 +12,14 @@ import { Args, extractFirstArg, Runner, RunnerContext } from './Runner';
 import { selectContract } from './build';
 import { helpArgs, helpMessages } from './constants';
 
-const verifyArgSpec = {
+type VerifyArgSpec = typeof argSpec &
+    typeof helpArgs & {
+        '--address': StringConstructor;
+        '--dry-run': BooleanConstructor;
+        '--payment-tx-hash': StringConstructor;
+    };
+
+const verifyArgSpec: VerifyArgSpec = {
     ...argSpec,
     ...helpArgs,
     '--address': String,

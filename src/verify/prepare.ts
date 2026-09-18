@@ -88,6 +88,11 @@ function prepareFiles(result: CompileResult): UploadPart[] {
             return prepareFuncFiles(result);
         case 'tolk':
             return prepareTolkFiles(result);
+        default: {
+            const unsupportedResult: never = result;
+            const language = (unsupportedResult as { lang?: unknown }).lang;
+            throw new Error(`Unsupported compiler language: ${String(language)}`);
+        }
     }
 }
 
