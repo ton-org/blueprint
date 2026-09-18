@@ -1,3 +1,6 @@
+import { spawnSync } from 'child_process';
+import path from 'path';
+
 import { parseVerifyArgs } from './verify';
 
 describe('verify arguments', () => {
@@ -11,4 +14,15 @@ describe('verify arguments', () => {
             expect(() => parseVerifyArgs(['verify', option])).toThrow();
         },
     );
+
+    it('exits with an error for an unsupported option', () => {
+        const result = spawnSync(
+            process.execPath,
+            ['--require', 'ts-node/register', path.join(__dirname, 'cli.ts'), 'verify', '--mainnet', '--help'],
+            { encoding: 'utf8' },
+        );
+
+        expect(result.status).toBe(1);
+        expect(result.stderr).toContain('unknown or unexpected option: --mainnet');
+    });
 });
