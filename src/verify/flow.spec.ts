@@ -1,5 +1,6 @@
 import { UIProvider } from '../ui/UIProvider';
 import { runVerificationFlow, VerificationFlowOptions } from './flow';
+import { buildVerifierPaymentComment } from './payment';
 import { PaymentTicket, VerifierClient, VerifyResponse } from './VerifierClient';
 
 const codeHash = 'ab'.repeat(32);
@@ -77,7 +78,7 @@ function paymentTicket(): PaymentTicket {
         network: 'testnet',
         payment_address: `0:${'01'.repeat(32)}`,
         amount_nano: '10000000',
-        comment: `acton-verify:v1:${codeHash}`,
+        comment: buildVerifierPaymentComment(codeHash),
     };
 }
 

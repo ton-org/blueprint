@@ -1,12 +1,18 @@
 import { Address, internal, Transaction } from '@ton/core';
 
 import { PaymentTicket } from './VerifierClient';
-import { buildTextCommentBody, isPaymentTransaction, paymentNetworkArgs, validatePaymentTicket } from './payment';
+import {
+    buildTextCommentBody,
+    buildVerifierPaymentComment,
+    isPaymentTransaction,
+    paymentNetworkArgs,
+    validatePaymentTicket,
+} from './payment';
 
 const codeHash = 'ab'.repeat(32);
 const paymentAddress = new Address(0, Buffer.alloc(32, 1));
 const senderAddress = new Address(0, Buffer.alloc(32, 2));
-const comment = `acton-verify:v1:${codeHash}`;
+const comment = buildVerifierPaymentComment(codeHash);
 
 function paymentTicket(overrides: Partial<PaymentTicket> = {}): PaymentTicket {
     return {
@@ -45,6 +51,12 @@ describe('buildTextCommentBody', () => {
 
         expect(body.loadUint(32)).toBe(0);
         expect(body.loadStringTail()).toBe('verification payment');
+    });
+});
+
+describe('buildVerifierPaymentComment', () => {
+    it('combines the verifier name, protocol version, and normalized code hash', () => {
+        expect(buildVerifierPaymentComment(`0x${codeHash.toUpperCase()}`)).toBe(`acton-verify:v1:${codeHash}`);
     });
 });
 

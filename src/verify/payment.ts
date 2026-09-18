@@ -6,7 +6,8 @@ import { UIProvider } from '../ui/UIProvider';
 import { sleep } from '../utils';
 import { PaymentTicket, normalizeCodeHash } from './VerifierClient';
 
-const VERIFIER_PAYMENT_COMMENT_PREFIX = 'acton-verify:v1:';
+const VERIFIER_PAYMENT_COMMENT_PREFIX = 'acton-verify';
+const VERIFIER_PAYMENT_COMMENT_VERSION = 'v1';
 const PAYMENT_POLL_ATTEMPTS = 60;
 const PAYMENT_POLL_INTERVAL = 1000;
 
@@ -16,11 +17,15 @@ export function buildTextCommentBody(comment: string): Cell {
     return beginCell().storeUint(0, 32).storeStringTail(comment).endCell();
 }
 
+export function buildVerifierPaymentComment(codeHash: string): string {
+    return `${VERIFIER_PAYMENT_COMMENT_PREFIX}:${VERIFIER_PAYMENT_COMMENT_VERSION}:${normalizeCodeHash(codeHash)}`;
+}
+
 export function validatePaymentTicket(ticket: PaymentTicket): { address: Address; amount: bigint } {
     if (ticket.network !== 'testnet') {
         throw new Error(`TON verifier requested payment on unsupported network: ${ticket.network}`);
     }
-    if (ticket.comment !== `${VERIFIER_PAYMENT_COMMENT_PREFIX}${normalizeCodeHash(ticket.code_hash)}`) {
+    if (ticket.comment !== buildVerifierPaymentComment(ticket.code_hash)) {
         throw new Error('TON verifier returned a payment comment for a different code hash');
     }
 
