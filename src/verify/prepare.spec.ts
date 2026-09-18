@@ -38,6 +38,25 @@ describe('prepareVerification', () => {
         ]);
     });
 
+    it('marks only the first FunC target as the entrypoint', () => {
+        const result: CompileResult = {
+            lang: 'func',
+            code: beginCell().endCell(),
+            fiftCode: '',
+            targets: ['contracts/first.fc', 'contracts/second.fc'],
+            version: '0.4.6',
+            snapshot: [
+                { filename: 'contracts/first.fc', content: '() first() {}' },
+                { filename: 'contracts/second.fc', content: '() second() {}' },
+            ],
+        };
+
+        const prepared = prepareVerification(result);
+
+        expect(prepared.files.map((file) => file.source.is_entrypoint)).toEqual([true, false]);
+        expect(prepared.files.map((file) => file.source.include_in_command)).toEqual([true, true]);
+    });
+
     it('uses the first Tolk snapshot file as the entrypoint', () => {
         const result: CompileResult = {
             lang: 'tolk',

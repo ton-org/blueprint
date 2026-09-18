@@ -58,12 +58,17 @@ function prepareTactFiles(result: TactCompileResult): UploadPart[] {
 }
 
 function prepareFuncFiles(result: FuncCompileResult): UploadPart[] {
-    const targets = new Set(result.targets.map((target) => normalizeVerifierSourcePath(target)));
+    const targetPaths = result.targets.map((target) => normalizeVerifierSourcePath(target));
+    const targets = new Set(targetPaths);
+    const entrypoint = targetPaths[0];
+    if (entrypoint === undefined) {
+        throw new Error('Compiler did not return FunC targets for verification');
+    }
 
     return prepareSnapshotFiles(result.snapshot, (path) => {
         const isTarget = targets.has(path);
         return {
-            is_entrypoint: isTarget,
+            is_entrypoint: path === entrypoint,
             include_in_command: isTarget,
             is_stdlib: isCompilerLibrarySourcePath(path),
             has_include_directives: true,
