@@ -345,10 +345,10 @@ export class VerifierClient {
                 );
             } catch (error) {
                 lastError = error;
-                if (
-                    error instanceof InvalidVerifierResponseError ||
-                    (error instanceof Error && error.message.startsWith('TON verifier request failed:'))
-                ) {
+                if (error instanceof InvalidVerifierResponseError) {
+                    throw error;
+                }
+                if (error instanceof Error && error.message.startsWith('TON verifier request failed:')) {
                     throw error;
                 }
                 if (attempt < SOURCE_UPLOAD_ATTEMPTS) {
