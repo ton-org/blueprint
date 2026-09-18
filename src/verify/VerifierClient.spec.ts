@@ -1,5 +1,6 @@
 import { beginCell } from '@ton/core';
 
+import { BLUEPRINT_USER_AGENT } from '../utils';
 import {
     DEFAULT_VERIFIER_BACKEND,
     normalizeTransactionHash,
@@ -49,11 +50,12 @@ describe('VerifierClient', () => {
             status: 'unverified',
         });
 
-        const calls = fetchMock.mock.calls as unknown as Array<[URL, RequestInit?]>;
-        const url = calls[0][0];
+        const calls = fetchMock.mock.calls as unknown as Array<[URL, RequestInit]>;
+        const [url, init] = calls[0];
         expect(url.toString()).toBe(
             `http://verifier.test/api/v1/verification/status?code_hash=${codeHash}&address=EQAddress`,
         );
+        expect(new Headers(init.headers).get('User-Agent')).toBe(BLUEPRINT_USER_AGENT);
     });
 
     it('rejects a response for a different code hash', async () => {
@@ -72,6 +74,11 @@ describe('VerifierClient', () => {
         await expect(client.takeTicket('a'.repeat(64))).rejects.toThrow(
             'Payment transaction was not found on the requested TON network.',
         );
+
+        const calls = fetchMock.mock.calls as unknown as Array<[string, RequestInit]>;
+        const headers = new Headers(calls[0][1].headers);
+        expect(headers.get('User-Agent')).toBe(BLUEPRINT_USER_AGENT);
+        expect(headers.get('Content-Type')).toBe('application/json');
     });
 
     it('uploads multipart sources with the API key', async () => {
@@ -97,8 +104,10 @@ describe('VerifierClient', () => {
 
         const calls = fetchMock.mock.calls as unknown as Array<[URL, RequestInit]>;
         const init = calls[0][1];
+        const headers = new Headers(init.headers);
         expect(init.method).toBe('POST');
-        expect(init.headers).toEqual({ 'X-Verifier-Key': 'test-key' });
+        expect(headers.get('User-Agent')).toBe(BLUEPRINT_USER_AGENT);
+        expect(headers.get('X-Verifier-Key')).toBe('test-key');
         expect(init.body).toBeInstanceOf(FormData);
         expect((init.body as FormData).getAll('files')).toHaveLength(1);
     });

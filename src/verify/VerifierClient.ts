@@ -1,5 +1,5 @@
-import { sleep } from '../utils';
-import { buildVerifyForm, PreparedVerification } from './source';
+import { BLUEPRINT_USER_AGENT, sleep } from '../utils';
+import { buildVerifyForm, type PreparedVerification } from './source';
 
 export const DEFAULT_VERIFIER_BACKEND = 'https://verifier.ton.org';
 export const VERIFY_BACKEND_ENV = 'BLUEPRINT_VERIFY_BACKEND';
@@ -166,7 +166,7 @@ export class VerifierClient {
             url.searchParams.set('address', address);
         }
 
-        const response = await this.fetchImpl(url);
+        const response = await this.request(url);
         if (!response.ok) {
             throw new Error(
                 `Verification status request failed: HTTP ${response.status}\n${await responseError(response)}`,
@@ -178,7 +178,7 @@ export class VerifierClient {
     }
 
     async takeTicket(codeHash: string): Promise<TicketResponse> {
-        const response = await this.fetchImpl(this.apiUrl('take_ticket'), {
+        const response = await this.request(this.apiUrl('take_ticket'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ code_hash: codeHash }),
@@ -207,7 +207,7 @@ export class VerifierClient {
                     // TODO: Remove X-Verifier-Key support after the legacy verifier migration is complete.
                     headers['X-Verifier-Key'] = this.apiKey;
                 }
-                const response = await this.fetchImpl(this.apiUrl('verify'), {
+                const response = await this.request(this.apiUrl('verify'), {
                     method: 'POST',
                     headers,
                     body: buildVerifyForm(prepared, codeHash, address, paymentTransactionHash),
@@ -243,5 +243,14 @@ export class VerifierClient {
 
     private apiUrl(endpoint: string): string {
         return `${this.backend}/api/v1/${endpoint}`;
+    }
+
+    private request(
+        input: Parameters<typeof fetch>[0],
+        init: Parameters<typeof fetch>[1] = {},
+    ): ReturnType<typeof fetch> {
+        const headers = new Headers(init?.headers);
+        headers.set('User-Agent', BLUEPRINT_USER_AGENT);
+        return this.fetchImpl(input, { ...init, headers });
     }
 }
