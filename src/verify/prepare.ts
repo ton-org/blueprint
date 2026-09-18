@@ -99,7 +99,9 @@ export function prepareVerification(result: CompileResult, compilerVersion?: str
 
     return {
         language: result.lang,
-        compileParams: { compiler_version: compilerVersion ?? result.version },
+        compileParams: {
+            compiler_version: compilerVersion === undefined ? result.version : compilerVersion,
+        },
         files,
     };
 }

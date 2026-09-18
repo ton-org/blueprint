@@ -45,13 +45,23 @@ type VerifierErrorResponse = {
 };
 
 export function verifierBackend(env: Record<string, string | undefined> = process.env): string {
-    const configured = env[VERIFY_BACKEND_ENV]?.trim().replace(/\/+$/, '');
-    return configured || DEFAULT_VERIFIER_BACKEND;
+    const value = env[VERIFY_BACKEND_ENV];
+    if (value === undefined) {
+        return DEFAULT_VERIFIER_BACKEND;
+    }
+
+    const configured = value.trim().replace(/\/+$/, '');
+    return configured === '' ? DEFAULT_VERIFIER_BACKEND : configured;
 }
 
 export function verifierApiKey(env: Record<string, string | undefined> = process.env): string | undefined {
-    const value = env[VERIFY_API_KEY_ENV]?.trim();
-    return value || undefined;
+    const value = env[VERIFY_API_KEY_ENV];
+    if (value === undefined) {
+        return undefined;
+    }
+
+    const apiKey = value.trim();
+    return apiKey === '' ? undefined : apiKey;
 }
 
 export function normalizeCodeHash(hash: string): string {
@@ -88,13 +98,19 @@ async function responseError(response: Response): Promise<string> {
     const text = await response.text();
     try {
         const parsed = JSON.parse(text) as VerifierErrorResponse;
-        if (parsed.error) {
+        if (parsed.error !== undefined && parsed.error !== '') {
             return parsed.error;
         }
     } catch (_) {
         // Proxies and transport layers may return plain text instead of the API error schema.
     }
-    return text || response.statusText || 'Unknown error';
+    if (text !== '') {
+        return text;
+    }
+    if (response.statusText !== '') {
+        return response.statusText;
+    }
+    return 'Unknown error';
 }
 
 function friendlyVerifierError(error: string): string {
@@ -111,7 +127,8 @@ function friendlyVerifierError(error: string): string {
         payment_used: 'Payment transaction was already used for a verification.',
         payment_in_progress: 'Payment transaction is already being processed.',
     };
-    return messages[code] ?? error;
+    const message = messages[code];
+    return message === undefined ? error : message;
 }
 
 function isTransientVerifierError(error: string): boolean {
@@ -128,7 +145,7 @@ export class VerifierClient {
         private readonly fetchImpl: typeof fetch = fetch,
     ) {
         this.backend = backend.trim().replace(/\/+$/, '');
-        if (!this.backend) {
+        if (this.backend === '') {
             throw new Error('Verifier backend URL must not be empty');
         }
     }
@@ -144,7 +161,7 @@ export class VerifierClient {
     async status(codeHash: string, address?: string): Promise<VerificationStatusResponse> {
         const url = new URL(this.apiUrl('verification/status'));
         url.searchParams.set('code_hash', codeHash);
-        if (address) {
+        if (address !== undefined) {
             url.searchParams.set('address', address);
         }
 
@@ -185,7 +202,7 @@ export class VerifierClient {
         for (let attempt = 1; attempt <= SOURCE_UPLOAD_ATTEMPTS; attempt++) {
             try {
                 const headers: Record<string, string> = {};
-                if (this.apiKey) {
+                if (this.apiKey !== undefined) {
                     // TODO: Remove X-Verifier-Key support after the legacy verifier migration is complete.
                     headers['X-Verifier-Key'] = this.apiKey;
                 }

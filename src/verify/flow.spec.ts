@@ -57,11 +57,16 @@ function verifierClient(
 ): VerifierClient {
     return {
         backend: 'http://verifier.test',
-        usesApiKey: options.usesApiKey ?? true,
+        usesApiKey: options.usesApiKey === undefined ? true : options.usesApiKey,
         link: jest.fn((hash: string) => `http://verifier.test/${hash}`),
         status: jest.fn(async () => ({ code_hash: codeHash, status: 'unverified' as const })),
-        takeTicket: jest.fn(async () => options.ticket!),
-        verify: jest.fn(async () => options.verification ?? verifyResponse()),
+        takeTicket: jest.fn(async () => {
+            if (options.ticket === undefined) {
+                throw new Error('Payment ticket is not configured for this test');
+            }
+            return options.ticket;
+        }),
+        verify: jest.fn(async () => (options.verification === undefined ? verifyResponse() : options.verification)),
     } as unknown as VerifierClient;
 }
 

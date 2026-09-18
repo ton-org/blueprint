@@ -23,8 +23,8 @@ function paymentTicket(overrides: Partial<PaymentTicket> = {}): PaymentTicket {
 function paymentTransaction(overrides: { amount?: bigint; comment?: string; lt?: bigint } = {}): Transaction {
     const message = internal({
         to: paymentAddress,
-        value: overrides.amount ?? 10_000_000n,
-        body: buildTextCommentBody(overrides.comment ?? comment),
+        value: overrides.amount === undefined ? 10_000_000n : overrides.amount,
+        body: buildTextCommentBody(overrides.comment === undefined ? comment : overrides.comment),
         bounce: true,
     });
     if (message.info.type !== 'internal') {
@@ -33,7 +33,7 @@ function paymentTransaction(overrides: { amount?: bigint; comment?: string; lt?:
     message.info.src = senderAddress;
 
     return {
-        lt: overrides.lt ?? 2n,
+        lt: overrides.lt === undefined ? 2n : overrides.lt,
         inMessage: message,
         description: { type: 'generic', aborted: false },
     } as unknown as Transaction;

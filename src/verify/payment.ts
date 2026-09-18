@@ -55,11 +55,19 @@ export function isPaymentTransaction(
     amount: bigint,
     comment: string,
 ): boolean {
-    if (transaction.lt <= baselineLt || transaction.inMessage?.info.type !== 'internal') {
+    if (transaction.lt <= baselineLt) {
         return false;
     }
 
-    const info = transaction.inMessage.info;
+    const inMessage = transaction.inMessage;
+    if (inMessage === null || inMessage === undefined) {
+        return false;
+    }
+    if (inMessage.info.type !== 'internal') {
+        return false;
+    }
+
+    const info = inMessage.info;
     if (!info.dest.equals(paymentAddress)) {
         return false;
     }
@@ -77,7 +85,7 @@ export function isPaymentTransaction(
             return false;
         }
     }
-    if (messageComment(transaction.inMessage.body) !== comment) {
+    if (messageComment(inMessage.body) !== comment) {
         return false;
     }
     if (!('aborted' in transaction.description)) {
@@ -111,14 +119,15 @@ async function waitForPaymentTransaction(
     try {
         for (let attempt = 1; attempt <= PAYMENT_POLL_ATTEMPTS; attempt++) {
             const state = await networkProvider.getContractState(paymentAddress);
-            if (state.last && state.last.lt > baselineLt) {
+            const lastTransaction = state.last;
+            if (lastTransaction !== null && lastTransaction !== undefined && lastTransaction.lt > baselineLt) {
                 const transactions = await networkProvider
                     .provider(paymentAddress)
-                    .getTransactions(paymentAddress, state.last.lt, state.last.hash, 100);
+                    .getTransactions(paymentAddress, lastTransaction.lt, lastTransaction.hash, 100);
                 const payment = transactions.find((transaction) =>
                     isPaymentTransaction(transaction, baselineLt, paymentAddress, senderAddress, amount, comment),
                 );
-                if (payment) {
+                if (payment !== undefined) {
                     return payment.hash().toString('hex');
                 }
             }
@@ -151,7 +160,11 @@ export async function sendVerifierPayment(
 
     const networkProvider = await createNetworkProvider(ui, paymentNetworkArgs(walletOptions), config, false);
     const stateBeforePayment = await networkProvider.getContractState(address);
-    const baselineLt = stateBeforePayment.last?.lt ?? 0n;
+    const lastTransaction = stateBeforePayment.last;
+    let baselineLt = 0n;
+    if (lastTransaction !== null && lastTransaction !== undefined) {
+        baselineLt = lastTransaction.lt;
+    }
     const senderAddress = networkProvider.sender().address;
 
     await networkProvider.sender().send({

@@ -22,22 +22,28 @@ export type VerificationFlowOptions = {
 type PaymentSender = typeof sendVerifierPayment;
 
 function writeVerificationDetails(ui: UIProvider, response: VerifyResponse): void {
-    if (response.source_bundle_hash) {
+    if (response.source_bundle_hash !== undefined) {
         ui.write(`Source bundle: ${response.source_bundle_hash}`);
     }
-    if (response.storage_revision) {
+    if (response.storage_revision !== undefined) {
         ui.write(`Storage revision: ${response.storage_revision}`);
     }
 }
 
 export function validateVerificationResult(codeHash: string, response: VerifyResponse): void {
+    const compiledCodeHash = response.compiled_code_hash;
     if (response.verification_result === 'mismatch') {
         throw new Error(
-            `Verification failed: compiled code hash ${response.compiled_code_hash ?? '<unknown>'} does not match target code hash ${response.code_hash}`,
+            `Verification failed: compiled code hash ${compiledCodeHash === undefined ? '<unknown>' : compiledCodeHash} does not match target code hash ${response.code_hash}`,
         );
     }
-    if (response.verification_result === 'match' && normalizeCodeHash(response.compiled_code_hash ?? '') !== codeHash) {
-        throw new Error('TON verifier reported a match without a matching compiled code hash');
+    if (response.verification_result === 'match') {
+        if (compiledCodeHash === undefined) {
+            throw new Error('TON verifier reported a match without a matching compiled code hash');
+        }
+        if (normalizeCodeHash(compiledCodeHash) !== codeHash) {
+            throw new Error('TON verifier reported a match without a matching compiled code hash');
+        }
     }
 }
 

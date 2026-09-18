@@ -75,7 +75,7 @@ export function buildVerifyForm(
 ): FormData {
     const form = new FormData();
     form.append('code_hash', codeHash);
-    if (address) {
+    if (address !== undefined) {
         form.append('address', address);
     }
     if (paymentTransactionHash !== null && paymentTransactionHash !== undefined) {

@@ -30,7 +30,7 @@ function walletOptions(args: arg.Result<typeof verifyArgSpec>): PaymentWalletOpt
 
 export const verify: Runner = async (_args: Args, ui: UIProvider, context: RunnerContext) => {
     const localArgs = arg(verifyArgSpec);
-    if (localArgs['--help']) {
+    if (localArgs['--help'] === true) {
         ui.write(helpMessages['verify']);
         return;
     }
@@ -39,8 +39,10 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
     ui.write(`Compiling ${selectedContract}...`);
     const result = await doCompile(selectedContract, { buildLibrary: false });
     const codeHash = result.code.hash().toString('hex');
-    const address = localArgs['--address']?.trim() || undefined;
-    if (address) {
+    const addressArgument = localArgs['--address'];
+    const trimmedAddress = addressArgument === undefined ? undefined : addressArgument.trim();
+    const address = trimmedAddress === undefined || trimmedAddress === '' ? undefined : trimmedAddress;
+    if (address !== undefined) {
         Address.parse(address);
     }
 
@@ -55,7 +57,7 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
         codeHash,
         address,
         prepared,
-        dryRun: localArgs['--dry-run'] ?? false,
+        dryRun: localArgs['--dry-run'] === undefined ? false : localArgs['--dry-run'],
         paymentTransactionHash: localArgs['--payment-tx-hash'],
         walletOptions: walletOptions(localArgs),
         config: context.config,
