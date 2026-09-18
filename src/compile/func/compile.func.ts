@@ -10,6 +10,7 @@ export type FuncCompileResult = {
     targets: string[];
     snapshot: SourceSnapshot[];
     version: string;
+    optLevel?: number;
     debugInfo?: DebugInfo;
     marks?: Cell;
 };
@@ -39,6 +40,7 @@ export async function doCompileFunc(config: CompilerConfig): Promise<FuncCompile
         targets,
         snapshot: cr.snapshot,
         version: await getFuncVersion(),
+        optLevel: config.optLevel,
         debugInfo: cr.debugInfo,
         marks: cr.debugMarksBoc === undefined ? undefined : Cell.fromBase64(cr.debugMarksBoc),
     };

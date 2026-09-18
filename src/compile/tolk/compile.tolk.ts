@@ -10,6 +10,8 @@ export type TolkCompileResult = {
     code: Cell;
     snapshot: SourceSnapshot[];
     version: string;
+    optimizationLevel?: number;
+    experimentalOptions?: string;
 };
 
 export async function doCompileTolk(config: TolkCompilerConfig): Promise<TolkCompileResult> {
@@ -29,6 +31,8 @@ export async function doCompileTolk(config: TolkCompilerConfig): Promise<TolkCom
             content: e.contents,
         })),
         version: await getTolkCompilerVersion(),
+        optimizationLevel: config.optimizationLevel,
+        experimentalOptions: config.experimentalOptions,
     };
 }
 
