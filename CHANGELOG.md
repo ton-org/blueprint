@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.46.0] - 2026-09-18
+
+### Added
+
+- Added a new `blueprint verify` flow for FunC, Tact, and Tolk contracts using the verifier.ton.org API
+- Added verification payment support through TonConnect, deep links, and mnemonic wallets
+- Added `--address`, `--dry-run`, and `--payment-tx-hash` options to `blueprint verify`
+- Added `BLUEPRINT_VERIFY_BACKEND` and `BLUEPRINT_VERIFY_API_KEY` environment variables for verifier configuration
+
+### Changed
+
+- `blueprint verify` now uses the locally installed compiler version by default and supports overriding it with `--compiler-version`
+
+### Removed
+
+- Removed legacy verifier selection, verifier listing, and custom network options from `blueprint verify`
+
 ## [0.45.0] - 2026-06-30
 
 - Blueprint has been marked as deprecated in favor of [Acton](https://ton-blockchain.github.io/acton/)
