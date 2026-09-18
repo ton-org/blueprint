@@ -93,65 +93,75 @@ function invalidVerifierResponse(context: string, message: string): never {
     throw new InvalidVerifierResponseError(`${context} returned an invalid response: ${message}`);
 }
 
-function responseObject(value: unknown, context: string): object {
-    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-        invalidVerifierResponse(context, 'expected a JSON object');
-    }
-    return value;
-}
-
-function requiredString(response: object, field: string, context: string): string {
-    const value: unknown = Reflect.get(response, field);
-    if (typeof value !== 'string') {
-        invalidVerifierResponse(context, `${field} must be a string`);
-    }
-    return value;
-}
-
-async function responseJson(response: Response, context: string): Promise<unknown> {
-    try {
-        return await response.json();
-    } catch (_) {
-        invalidVerifierResponse(context, 'expected valid JSON');
-    }
-}
-
-function parseVerificationStatusResponse(value: unknown): VerificationStatusResponse {
+async function parseVerificationStatusResponse(response: Response): Promise<VerificationStatusResponse> {
     const context = 'Verification status';
-    const response = responseObject(value, context);
-    const status: unknown = Reflect.get(response, 'status');
+    const body = await response.json();
+    const codeHash: unknown = body.code_hash;
+    const status: unknown = body.status;
+
+    if (typeof codeHash !== 'string') {
+        invalidVerifierResponse(context, 'code_hash must be a string');
+    }
     if (status !== 'unverified' && status !== 'queued' && status !== 'compiling' && status !== 'verified') {
         invalidVerifierResponse(context, `unknown status: ${String(status)}`);
     }
 
     return {
-        code_hash: requiredString(response, 'code_hash', context),
+        code_hash: codeHash,
         status,
     };
 }
 
-function parseTicketResponse(value: unknown): TicketResponse {
+async function parseTicketResponse(response: Response): Promise<TicketResponse> {
     const context = 'Verification ticket';
-    const response = responseObject(value, context);
-    const status: unknown = Reflect.get(response, 'status');
-    const codeHash = requiredString(response, 'code_hash', context);
+    const body = await response.json();
+    const codeHash: unknown = body.code_hash;
+    const status: unknown = body.status;
+
+    if (typeof codeHash !== 'string') {
+        invalidVerifierResponse(context, 'code_hash must be a string');
+    }
 
     if (status === 'already_verified') {
+        const sourceBundleHash: unknown = body.source_bundle_hash;
+        const storageRevision: unknown = body.storage_revision;
+        if (typeof sourceBundleHash !== 'string') {
+            invalidVerifierResponse(context, 'source_bundle_hash must be a string');
+        }
+        if (typeof storageRevision !== 'string') {
+            invalidVerifierResponse(context, 'storage_revision must be a string');
+        }
         return {
             status,
             code_hash: codeHash,
-            source_bundle_hash: requiredString(response, 'source_bundle_hash', context),
-            storage_revision: requiredString(response, 'storage_revision', context),
+            source_bundle_hash: sourceBundleHash,
+            storage_revision: storageRevision,
         };
     }
     if (status === 'payment_required') {
+        const network: unknown = body.network;
+        const paymentAddress: unknown = body.payment_address;
+        const amountNano: unknown = body.amount_nano;
+        const comment: unknown = body.comment;
+        if (typeof network !== 'string') {
+            invalidVerifierResponse(context, 'network must be a string');
+        }
+        if (typeof paymentAddress !== 'string') {
+            invalidVerifierResponse(context, 'payment_address must be a string');
+        }
+        if (typeof amountNano !== 'string') {
+            invalidVerifierResponse(context, 'amount_nano must be a string');
+        }
+        if (typeof comment !== 'string') {
+            invalidVerifierResponse(context, 'comment must be a string');
+        }
         return {
             status,
             code_hash: codeHash,
-            network: requiredString(response, 'network', context),
-            payment_address: requiredString(response, 'payment_address', context),
-            amount_nano: requiredString(response, 'amount_nano', context),
-            comment: requiredString(response, 'comment', context),
+            network,
+            payment_address: paymentAddress,
+            amount_nano: amountNano,
+            comment,
         };
     }
 
@@ -241,7 +251,7 @@ export class VerifierClient {
                 `Verification status request failed: HTTP ${response.status}\n${await responseError(response)}`,
             );
         }
-        const result = parseVerificationStatusResponse(await responseJson(response, 'Verification status'));
+        const result = await parseVerificationStatusResponse(response);
         ensureCodeHash(codeHash, result.code_hash, 'Verification status');
         return result;
     }
@@ -256,7 +266,7 @@ export class VerifierClient {
             throw new Error(friendlyVerifierError(await responseError(response)));
         }
 
-        const ticket = parseTicketResponse(await responseJson(response, 'Verification ticket'));
+        const ticket = await parseTicketResponse(response);
         ensureCodeHash(codeHash, ticket.code_hash, 'Verification ticket');
         return ticket;
     }
