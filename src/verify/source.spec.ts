@@ -20,6 +20,8 @@ describe('normalizeVerifierSourcePath', () => {
         expect(() => normalizeVerifierSourcePath('contracts/contract name.tolk')).toThrow('unsupported');
         expect(() => normalizeVerifierSourcePath('contracts/a+b.tolk')).toThrow('unsupported');
         expect(() => normalizeVerifierSourcePath('contracts/../main.tolk')).toThrow('Invalid source path');
+        expect(() => normalizeVerifierSourcePath('contracts/./main.tolk')).toThrow('Invalid source path');
+        expect(() => normalizeVerifierSourcePath('contracts//main.tolk')).toThrow('Invalid source path');
         expect(() => normalizeVerifierSourcePath('contracts/.git/main.tolk')).toThrow('reserved');
         expect(() => normalizeVerifierSourcePath('output/main.tolk')).toThrow('reserved');
     });

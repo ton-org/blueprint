@@ -23,6 +23,14 @@ export type PreparedVerification = {
     files: UploadPart[];
 };
 
+function isInvalidSourcePathComponent(component: string): boolean {
+    return component === '' || component === '..' || component.endsWith('.');
+}
+
+export function isCompilerLibrarySourcePath(sourcePath: string): boolean {
+    return sourcePath.startsWith('@stdlib/') || sourcePath.startsWith('@fiftlib/');
+}
+
 export function normalizeVerifierSourcePath(filename: string, projectRoot: string = process.cwd()): string {
     const slashPath = filename.replace(/\\/g, '/');
     const normalizedRoot = projectRoot.replace(/\\/g, '/').replace(/\/+$/, '');
@@ -36,42 +44,23 @@ export function normalizeVerifierSourcePath(filename: string, projectRoot: strin
     }
 
     relativePath = relativePath.replace(/^\.\//, '');
-    if (relativePath.split('/').includes('..')) {
+    const components = relativePath.split('/');
+    if (components.some(isInvalidSourcePathComponent)) {
         throw new Error(`Invalid source path for TON verifier: ${filename}`);
     }
 
-    const normalized = path.posix.normalize(relativePath);
-    if (
-        normalized.length === 0 ||
-        normalized === '.' ||
-        normalized === '..' ||
-        normalized.startsWith('../') ||
-        path.posix.isAbsolute(normalized)
-    ) {
-        throw new Error(`Invalid source path for TON verifier: ${filename}`);
-    }
+    const normalized = components.join('/');
     if (normalized.length > 128) {
         throw new Error(`Source path is longer than 128 characters: ${normalized}`);
     }
-    const isCompilerLibrary = normalized.startsWith('@stdlib/') || normalized.startsWith('@fiftlib/');
-    const portablePath = isCompilerLibrary ? normalized.slice(1) : normalized;
+    const portablePath = isCompilerLibrarySourcePath(normalized) ? normalized.slice(1) : normalized;
     if (!/^[A-Za-z0-9/._-]+$/.test(portablePath)) {
         throw new Error(`Source path contains characters unsupported by TON verifier: ${normalized}`);
     }
-    if (
-        normalized
-            .split('/')
-            .some(
-                (component) =>
-                    component.length === 0 || component === '.' || component === '..' || component.endsWith('.'),
-            )
-    ) {
-        throw new Error(`Invalid source path for TON verifier: ${normalized}`);
-    }
-    if (normalized.split('/').some((component) => component.toLowerCase() === '.git')) {
+    if (components.some((component) => component.toLowerCase() === '.git')) {
         throw new Error(`Source path contains the reserved .git directory: ${normalized}`);
     }
-    if (normalized.split('/')[0].toLowerCase() === 'output') {
+    if (components[0].toLowerCase() === 'output') {
         throw new Error(`Source path contains the reserved output directory: ${normalized}`);
     }
 
