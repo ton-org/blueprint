@@ -91,11 +91,7 @@ export function isPaymentTransaction(
     if (!('aborted' in transaction.description)) {
         return false;
     }
-    if (transaction.description.aborted !== false) {
-        return false;
-    }
-
-    return true;
+    return !transaction.description.aborted;
 }
 
 export function paymentNetworkArgs(options: PaymentWalletOptions = {}): NetworkArgs {

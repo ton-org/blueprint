@@ -30,7 +30,7 @@ function walletOptions(args: arg.Result<typeof verifyArgSpec>): PaymentWalletOpt
 
 export const verify: Runner = async (_args: Args, ui: UIProvider, context: RunnerContext) => {
     const localArgs = arg(verifyArgSpec);
-    if (localArgs['--help'] === true) {
+    if (localArgs['--help']) {
         ui.write(helpMessages['verify']);
         return;
     }
