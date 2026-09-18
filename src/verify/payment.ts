@@ -1,6 +1,7 @@
 import { Address, beginCell, Cell, Transaction } from '@ton/core';
 
 import { Config } from '../config/Config';
+import { TESTNET_NETWORK } from '../network/constants';
 import { Args as NetworkArgs, createNetworkProvider } from '../network/createNetworkProvider';
 import { UIProvider } from '../ui/UIProvider';
 import { sleep } from '../utils';
@@ -23,7 +24,7 @@ export function buildVerifierPaymentComment(codeHash: string): string {
 }
 
 export function validatePaymentTicket(ticket: PaymentTicket): { address: Address; amount: bigint } {
-    if (ticket.network !== 'testnet') {
+    if (ticket.network !== TESTNET_NETWORK) {
         throw new Error(`TON verifier requested payment on unsupported network: ${ticket.network}`);
     }
     if (ticket.comment !== buildVerifierPaymentComment(ticket.code_hash)) {

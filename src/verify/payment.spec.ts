@@ -1,5 +1,6 @@
 import { Address, internal, Transaction } from '@ton/core';
 
+import { TESTNET_NETWORK } from '../network/constants';
 import { PaymentTicket } from './VerifierClient';
 import {
     buildTextCommentBody,
@@ -18,7 +19,7 @@ function paymentTicket(overrides: Partial<PaymentTicket> = {}): PaymentTicket {
     return {
         status: 'payment_required',
         code_hash: codeHash,
-        network: 'testnet',
+        network: TESTNET_NETWORK,
         payment_address: paymentAddress.toString({ testOnly: true }),
         amount_nano: '10000000',
         comment,

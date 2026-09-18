@@ -1,4 +1,5 @@
 import { UIProvider } from '../ui/UIProvider';
+import { TESTNET_NETWORK } from '../network/constants';
 import { runVerificationFlow, VerificationFlowOptions } from './flow';
 import { buildVerifierPaymentComment } from './payment';
 import { PaymentTicket, VerifierClient, VerifyResponse } from './VerifierClient';
@@ -75,7 +76,7 @@ function paymentTicket(): PaymentTicket {
     return {
         status: 'payment_required',
         code_hash: codeHash,
-        network: 'testnet',
+        network: TESTNET_NETWORK,
         payment_address: `0:${'01'.repeat(32)}`,
         amount_nano: '10000000',
         comment: buildVerifierPaymentComment(codeHash),
