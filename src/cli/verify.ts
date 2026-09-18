@@ -2,7 +2,6 @@ import { Address } from '@ton/core';
 import arg from 'arg';
 
 import { doCompile } from '../compile/compile';
-import { argSpec } from '../network/createNetworkProvider';
 import { runVerificationFlow } from '../verify/flow';
 import { PaymentWalletOptions } from '../verify/payment';
 import { prepareVerification } from '../verify/prepare';
@@ -12,20 +11,20 @@ import { Args, extractFirstArg, Runner, RunnerContext } from './Runner';
 import { selectContract } from './build';
 import { helpArgs, helpMessages } from './constants';
 
-type VerifyArgSpec = typeof argSpec &
-    typeof helpArgs & {
-        '--address': StringConstructor;
-        '--dry-run': BooleanConstructor;
-        '--payment-tx-hash': StringConstructor;
-    };
-
-const verifyArgSpec: VerifyArgSpec = {
-    ...argSpec,
+const verifyArgSpec = {
     ...helpArgs,
+    '--compiler-version': String,
+    '--tonconnect': Boolean,
+    '--deeplink': Boolean,
+    '--mnemonic': Boolean,
     '--address': String,
     '--dry-run': Boolean,
     '--payment-tx-hash': String,
 };
+
+export function parseVerifyArgs(argv: string[] = process.argv.slice(2)): arg.Result<typeof verifyArgSpec> {
+    return arg(verifyArgSpec, { argv });
+}
 
 function walletOptions(args: arg.Result<typeof verifyArgSpec>): PaymentWalletOptions {
     return {
@@ -36,7 +35,7 @@ function walletOptions(args: arg.Result<typeof verifyArgSpec>): PaymentWalletOpt
 }
 
 export const verify: Runner = async (_args: Args, ui: UIProvider, context: RunnerContext) => {
-    const localArgs = arg(verifyArgSpec);
+    const localArgs = parseVerifyArgs();
     if (localArgs['--help']) {
         ui.write(helpMessages['verify']);
         return;
