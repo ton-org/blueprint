@@ -13,6 +13,14 @@ import {
 
 type SourceOptions = Omit<VerifierSource, 'path'>;
 
+const SOURCE_EXTENSIONS = {
+    func: ['fc', 'func'],
+    tolk: ['tolk'],
+    tact: ['pkg', 'tact'],
+} as const satisfies Record<CompileResult['lang'], readonly string[]>;
+
+const KNOWN_SOURCE_EXTENSIONS = new Set<string>(Object.values(SOURCE_EXTENSIONS).flat());
+
 function prepareSnapshotFiles(
     snapshot: SourceSnapshot[],
     sourceOptions: (path: string, index: number) => SourceOptions,
@@ -21,13 +29,15 @@ function prepareSnapshotFiles(
         throw new Error('Compiler did not return source files for verification');
     }
 
-    const seenPaths = new Set<string>();
+    const seenPaths = new Map<string, string>();
     return snapshot.map((file, index) => {
         const path = normalizeVerifierSourcePath(file.filename);
-        if (seenPaths.has(path)) {
-            throw new Error(`Compiler returned duplicate source path: ${path}`);
+        const normalizedPath = path.toLowerCase();
+        const existingPath = seenPaths.get(normalizedPath);
+        if (existingPath !== undefined) {
+            throw new Error(`Compiler returned duplicate source paths: ${existingPath}, ${path}`);
         }
-        seenPaths.add(path);
+        seenPaths.set(normalizedPath, path);
 
         return {
             source: { path, ...sourceOptions(path, index) },
@@ -76,6 +86,26 @@ function prepareFuncFiles(result: FuncCompileResult): UploadPart[] {
     });
 }
 
+function validateSourceExtensions(language: CompileResult['lang'], files: UploadPart[]): void {
+    const allowedExtensions: readonly string[] = SOURCE_EXTENSIONS[language];
+    for (const file of files) {
+        const sourcePath = file.source.path;
+        const filename = sourcePath.slice(sourcePath.lastIndexOf('/') + 1).toLowerCase();
+        const extensions = filename.split('.').slice(1);
+        const sourceExtensionCount = extensions.filter((extension) => KNOWN_SOURCE_EXTENSIONS.has(extension)).length;
+        const extension = extensions.at(-1);
+
+        if (sourceExtensionCount > 1) {
+            throw new Error(`Source path contains multiple source extensions: ${sourcePath}`);
+        }
+        if (extension === undefined || !allowedExtensions.includes(extension)) {
+            throw new Error(
+                `Source extension does not match ${language}: ${sourcePath}; expected .${allowedExtensions.join(', .')}`,
+            );
+        }
+    }
+}
+
 function prepareTolkFiles(result: TolkCompileResult): UploadPart[] {
     return prepareSnapshotFiles(result.snapshot, (path, index) => ({
         is_entrypoint: index === 0,
@@ -106,6 +136,7 @@ export function prepareVerification(result: CompileResult, compilerVersion?: str
     if (files.length > 256) {
         throw new Error('TON verifier accepts at most 256 source files');
     }
+    validateSourceExtensions(result.lang, files);
 
     return {
         language: result.lang,

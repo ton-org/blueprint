@@ -57,6 +57,37 @@ describe('prepareVerification', () => {
         expect(prepared.files.map((file) => file.source.include_in_command)).toEqual([true, true]);
     });
 
+    it('rejects case-insensitive duplicate source paths', () => {
+        const result: CompileResult = {
+            lang: 'tolk',
+            code: beginCell().endCell(),
+            fiftCode: '',
+            stderr: '',
+            version: '1.2.0',
+            snapshot: [
+                { filename: 'contracts/Main.tolk', content: 'tolk 1.0' },
+                { filename: 'contracts/main.tolk', content: 'tolk 1.0' },
+            ],
+        };
+
+        expect(() => prepareVerification(result)).toThrow('duplicate source paths');
+    });
+
+    it('rejects mismatching and repeated source extensions', () => {
+        const result: CompileResult = {
+            lang: 'tolk',
+            code: beginCell().endCell(),
+            fiftCode: '',
+            stderr: '',
+            version: '1.2.0',
+            snapshot: [{ filename: 'contracts/main.fc', content: 'tolk 1.0' }],
+        };
+
+        expect(() => prepareVerification(result)).toThrow('does not match tolk');
+        result.snapshot[0].filename = 'contracts/main.fc.tolk';
+        expect(() => prepareVerification(result)).toThrow('multiple source extensions');
+    });
+
     it('uses the first Tolk snapshot file as the entrypoint', () => {
         const result: CompileResult = {
             lang: 'tolk',
