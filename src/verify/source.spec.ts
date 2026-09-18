@@ -18,7 +18,16 @@ describe('normalizeVerifierSourcePath', () => {
             'outside the project directory',
         );
         expect(() => normalizeVerifierSourcePath('contracts/contract name.tolk')).toThrow('unsupported');
+        expect(() => normalizeVerifierSourcePath('contracts/a+b.tolk')).toThrow('unsupported');
+        expect(() => normalizeVerifierSourcePath('contracts/../main.tolk')).toThrow('Invalid source path');
         expect(() => normalizeVerifierSourcePath('contracts/.git/main.tolk')).toThrow('reserved');
+        expect(() => normalizeVerifierSourcePath('output/main.tolk')).toThrow('reserved');
+    });
+
+    it('allows compiler virtual library paths required by FunC', () => {
+        expect(normalizeVerifierSourcePath('@stdlib/stdlib.fc')).toBe('@stdlib/stdlib.fc');
+        expect(normalizeVerifierSourcePath('@fiftlib/fift.fc')).toBe('@fiftlib/fift.fc');
+        expect(() => normalizeVerifierSourcePath('@dependency/main.fc')).toThrow('unsupported');
     });
 });
 
