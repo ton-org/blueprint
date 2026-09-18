@@ -27,10 +27,10 @@ export type VerificationFlowOptions = {
 type PaymentSender = typeof sendVerifierPayment;
 
 function writeVerificationDetails(ui: UIProvider, response: VerifyResponse): void {
-    if (response.source_bundle_hash !== undefined) {
+    if (response.source_bundle_hash !== null) {
         ui.write(`Source bundle: ${response.source_bundle_hash}`);
     }
-    if (response.storage_revision !== undefined) {
+    if (response.storage_revision !== null) {
         ui.write(`Storage revision: ${response.storage_revision}`);
     }
 }
@@ -39,11 +39,11 @@ export function validateVerificationResult(codeHash: string, response: VerifyRes
     const compiledCodeHash = response.compiled_code_hash;
     if (response.verification_result === 'mismatch') {
         throw new Error(
-            `Verification failed: compiled code hash ${compiledCodeHash === undefined ? '<unknown>' : compiledCodeHash} does not match target code hash ${response.code_hash}`,
+            `Verification failed: compiled code hash ${compiledCodeHash === null ? '<unknown>' : compiledCodeHash} does not match target code hash ${response.code_hash}`,
         );
     }
     if (response.verification_result === 'match') {
-        if (compiledCodeHash === undefined) {
+        if (compiledCodeHash === null) {
             throw new Error('TON verifier reported a match without a matching compiled code hash');
         }
         if (compiledCodeHash !== codeHash) {
@@ -106,6 +106,7 @@ export async function runVerificationFlow(
             ui.write('Contract was already verified');
             writeVerificationDetails(ui, {
                 code_hash: ticket.code_hash,
+                compiled_code_hash: null,
                 verification_result: 'already_verified',
                 source_bundle_hash: ticket.source_bundle_hash,
                 storage_revision: ticket.storage_revision,

@@ -46,6 +46,8 @@ function verifyResponse(overrides: Partial<VerifyResponse> = {}): VerifyResponse
         code_hash: codeHash,
         compiled_code_hash: codeHash,
         verification_result: 'match',
+        source_bundle_hash: null,
+        storage_revision: null,
         ...overrides,
     };
 }

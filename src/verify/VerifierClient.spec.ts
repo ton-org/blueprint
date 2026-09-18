@@ -100,6 +100,8 @@ describe('VerifierClient', () => {
                 code_hash: codeHash,
                 compiled_code_hash: codeHash,
                 verification_result: 'match',
+                source_bundle_hash: null,
+                storage_revision: null,
             }),
         );
         const client = new VerifierClient('http://verifier.test', 'test-key', fetchMock as unknown as typeof fetch);
@@ -122,5 +124,30 @@ describe('VerifierClient', () => {
         expect(headers.get('X-Verifier-Key')).toBe('test-key');
         expect(init.body).toBeInstanceOf(FormData);
         expect((init.body as FormData).getAll('files')).toHaveLength(1);
+    });
+
+    it('rejects an unknown verification result without retrying', async () => {
+        const codeHash = 'a'.repeat(64);
+        const fetchMock = jest.fn(async () =>
+            jsonResponse({
+                code_hash: codeHash,
+                compiled_code_hash: codeHash,
+                verification_result: 'unexpected',
+                source_bundle_hash: null,
+                storage_revision: null,
+            }),
+        );
+        const client = new VerifierClient('http://verifier.test', 'test-key', fetchMock as unknown as typeof fetch);
+        const prepared = prepareVerification({
+            lang: 'tolk',
+            code: beginCell().endCell(),
+            fiftCode: '',
+            stderr: '',
+            version: '1.2.0',
+            snapshot: [{ filename: 'main.tolk', content: 'tolk 1.0' }],
+        });
+
+        await expect(client.verify(prepared, codeHash)).rejects.toThrow('unknown verification_result: unexpected');
+        expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 });

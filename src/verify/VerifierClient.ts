@@ -34,10 +34,10 @@ export type PaymentTicket = Extract<TicketResponse, { status: 'payment_required'
 
 export type VerifyResponse = {
     code_hash: string;
-    compiled_code_hash?: string;
+    compiled_code_hash: string | null;
     verification_result: 'already_verified' | 'match' | 'mismatch';
-    source_bundle_hash?: string;
-    storage_revision?: string;
+    source_bundle_hash: string | null;
+    storage_revision: string | null;
 };
 
 class InvalidVerifierResponseError extends Error {}
@@ -168,6 +168,44 @@ async function parseTicketResponse(response: Response): Promise<TicketResponse> 
     invalidVerifierResponse(context, `unknown status: ${String(status)}`);
 }
 
+async function parseVerifyResponse(response: Response): Promise<VerifyResponse> {
+    const context = 'TON verifier';
+    const body = await response.json();
+    const codeHash: unknown = body.code_hash;
+    const compiledCodeHash: unknown = body.compiled_code_hash;
+    const verificationResult: unknown = body.verification_result;
+    const sourceBundleHash: unknown = body.source_bundle_hash;
+    const storageRevision: unknown = body.storage_revision;
+
+    if (typeof codeHash !== 'string') {
+        invalidVerifierResponse(context, 'code_hash must be a string');
+    }
+    if (compiledCodeHash !== null && typeof compiledCodeHash !== 'string') {
+        invalidVerifierResponse(context, 'compiled_code_hash must be a string or null');
+    }
+    if (
+        verificationResult !== 'already_verified' &&
+        verificationResult !== 'match' &&
+        verificationResult !== 'mismatch'
+    ) {
+        invalidVerifierResponse(context, `unknown verification_result: ${String(verificationResult)}`);
+    }
+    if (sourceBundleHash !== null && typeof sourceBundleHash !== 'string') {
+        invalidVerifierResponse(context, 'source_bundle_hash must be a string or null');
+    }
+    if (storageRevision !== null && typeof storageRevision !== 'string') {
+        invalidVerifierResponse(context, 'storage_revision must be a string or null');
+    }
+
+    return {
+        code_hash: codeHash,
+        compiled_code_hash: compiledCodeHash,
+        verification_result: verificationResult,
+        source_bundle_hash: sourceBundleHash,
+        storage_revision: storageRevision,
+    };
+}
+
 async function responseError(response: Response): Promise<string> {
     const text = await response.text();
     try {
@@ -292,7 +330,7 @@ export class VerifierClient {
                     body: buildVerifyForm(prepared, codeHash, address, paymentTransactionHash),
                 });
                 if (response.ok) {
-                    const result = (await response.json()) as VerifyResponse;
+                    const result = await parseVerifyResponse(response);
                     ensureCodeHash(codeHash, result.code_hash, 'TON verifier');
                     return result;
                 }
@@ -307,7 +345,10 @@ export class VerifierClient {
                 );
             } catch (error) {
                 lastError = error;
-                if (error instanceof Error && error.message.startsWith('TON verifier request failed:')) {
+                if (
+                    error instanceof InvalidVerifierResponseError ||
+                    (error instanceof Error && error.message.startsWith('TON verifier request failed:'))
+                ) {
                     throw error;
                 }
                 if (attempt < SOURCE_UPLOAD_ATTEMPTS) {
