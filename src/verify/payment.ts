@@ -1,4 +1,4 @@
-import { Address, beginCell, Cell, ContractProvider, Transaction } from '@ton/core';
+import { Address, beginCell, Cell, ContractProvider, fromNano, Transaction } from '@ton/core';
 
 import { Config } from '../config/Config';
 import { MAINNET_NETWORK, TESTNET_NETWORK } from '../network/constants';
@@ -28,8 +28,12 @@ export function formatVerifierPaymentAddress(network: Network, address: Address)
     return address.toString({ testOnly: network === TESTNET_NETWORK });
 }
 
+export function formatVerifierPaymentAmount(amount: bigint): string {
+    return `${fromNano(amount)} GRAM`;
+}
+
 export function buildVerifierPaymentPrompt(network: Network, amount: bigint, address: Address): string {
-    return `Send ${amount.toString()} nanoTON on ${network} to ${formatVerifierPaymentAddress(network, address)}?`;
+    return `Send ${formatVerifierPaymentAmount(amount)} on ${network} to ${formatVerifierPaymentAddress(network, address)}?`;
 }
 
 export function validatePaymentTicket(ticket: PaymentTicket): { address: Address; amount: bigint; network: Network } {

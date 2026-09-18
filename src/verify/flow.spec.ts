@@ -123,6 +123,7 @@ describe('runVerificationFlow', () => {
         expect(client.takeTicket).toHaveBeenCalledWith(codeHash);
         expect(paymentSender).not.toHaveBeenCalled();
         expect(client.verify).not.toHaveBeenCalled();
+        expect(ui.write).toHaveBeenCalledWith('Payment amount: 0.01 GRAM');
     });
 
     it('passes the finalized payment hash to verification', async () => {

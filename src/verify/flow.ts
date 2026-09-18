@@ -4,6 +4,7 @@ import { sleep } from '../utils';
 import { normalizeCodeHash, normalizeTransactionHash, VerifierClient, VerifyResponse } from './VerifierClient';
 import {
     formatVerifierPaymentAddress,
+    formatVerifierPaymentAmount,
     PaymentWalletOptions,
     sendVerifierPayment,
     validatePaymentTicket,
@@ -117,7 +118,7 @@ export async function runVerificationFlow(
 
         const payment = validatePaymentTicket(ticket);
         ui.write(`Payment network: TON ${payment.network}`);
-        ui.write(`Payment amount: ${payment.amount.toString()} nanoTON`);
+        ui.write(`Payment amount: ${formatVerifierPaymentAmount(payment.amount)}`);
         ui.write(`Payment address: ${formatVerifierPaymentAddress(payment.network, payment.address)}`);
         ui.write(`Payment comment: ${ticket.comment}`);
 

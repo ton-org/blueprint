@@ -7,6 +7,7 @@ import {
     buildVerifierPaymentComment,
     buildVerifierPaymentPrompt,
     findPaymentTransaction,
+    formatVerifierPaymentAmount,
     isPaymentTransaction,
     paymentNetworkArgs,
     validatePaymentTicket,
@@ -76,9 +77,16 @@ describe('buildVerifierPaymentComment', () => {
 
 describe('buildVerifierPaymentPrompt', () => {
     it('includes the network from the payment ticket', () => {
-        expect(buildVerifierPaymentPrompt(MAINNET_NETWORK, 10_000_000n, paymentAddress)).toBe(
-            `Send 10000000 nanoTON on mainnet to ${paymentAddress.toString()}?`,
+        expect(buildVerifierPaymentPrompt(MAINNET_NETWORK, 100_000n, paymentAddress)).toBe(
+            `Send 0.0001 GRAM on mainnet to ${paymentAddress.toString()}?`,
         );
+    });
+});
+
+describe('formatVerifierPaymentAmount', () => {
+    it('formats nanoGRAMs without losing precision', () => {
+        expect(formatVerifierPaymentAmount(100_000n)).toBe('0.0001 GRAM');
+        expect(formatVerifierPaymentAmount(1_234_500_000n)).toBe('1.2345 GRAM');
     });
 });
 
