@@ -78,7 +78,7 @@ describe('buildVerifierPaymentComment', () => {
 describe('buildVerifierPaymentPrompt', () => {
     it('includes the network from the payment ticket', () => {
         expect(buildVerifierPaymentPrompt(MAINNET_NETWORK, 100_000n, paymentAddress)).toBe(
-            `Send 0.0001 GRAM on mainnet to ${paymentAddress.toString()}?`,
+            `Send 0.0001 GRAM on TON mainnet to ${paymentAddress.toString()}?`,
         );
     });
 });

@@ -42,9 +42,13 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
     }
 
     const selectedContract = await selectContract(ui, extractFirstArg(localArgs));
-    ui.write(`Compiling ${selectedContract}...`);
+    ui.write(`  → Contract: ${selectedContract}`);
+    ui.write('  → Compiling contract');
     const result = await doCompile(selectedContract, { buildLibrary: false });
     const codeHash = result.code.hash().toString('hex');
+    ui.write('  ✓ Compiled successfully');
+    ui.write(`  → Code hash: 0x${codeHash}`);
+
     const addressArgument = localArgs['--address'];
     const trimmedAddress = addressArgument === undefined ? undefined : addressArgument.trim();
     const address = trimmedAddress === undefined || trimmedAddress === '' ? undefined : trimmedAddress;
@@ -52,12 +56,13 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
         Address.parse(address);
     }
 
+    ui.write('  → Collecting source files');
     const prepared = prepareVerification(result, localArgs['--compiler-version']);
     const client = new VerifierClient();
 
-    ui.write(`Compiled code hash: ${codeHash}`);
-    ui.write(`Using backend: ${client.backend}`);
-    ui.write(`Collected ${prepared.files.length} source file${prepared.files.length === 1 ? '' : 's'}`);
+    ui.write(`  ✓ Collected ${prepared.files.length} source file${prepared.files.length === 1 ? '' : 's'}`);
+    ui.write('  → Using TON verifier');
+    ui.write(`  → Using backend: ${client.backend}/api/v1/verify`);
 
     await runVerificationFlow(ui, client, {
         codeHash,
