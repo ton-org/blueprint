@@ -5,7 +5,7 @@ import { doCompile } from '../compile/compile';
 import { argSpec } from '../network/createNetworkProvider';
 import { runVerificationFlow } from '../verify/flow';
 import { PaymentWalletOptions } from '../verify/payment';
-import { prepareVerification } from '../verify/source';
+import { prepareVerification } from '../verify/prepare';
 import { VerifierClient } from '../verify/VerifierClient';
 import { UIProvider } from '../ui/UIProvider';
 import { Args, extractFirstArg, Runner, RunnerContext } from './Runner';

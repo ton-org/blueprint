@@ -7,7 +7,7 @@ import {
     verifierApiKey,
     verifierBackend,
 } from './VerifierClient';
-import { prepareVerification } from './source';
+import { prepareVerification } from './prepare';
 
 function jsonResponse(body: unknown, status: number = 200): Response {
     return new Response(JSON.stringify(body), {
