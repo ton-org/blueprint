@@ -78,7 +78,7 @@ export function getTransactionLink(
     network: string,
     explorer: Explorer,
 ) {
-    const networkPrefix = network === 'testnet' ? 'testnet.' : '';
+    const networkPrefix = getNetworkPrefix(network);
 
     switch (explorer) {
         case 'tonscan':

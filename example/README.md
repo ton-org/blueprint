@@ -51,12 +51,12 @@ Starter template for a new TON project - FunC contracts, unit tests, compilation
   * FunC contracts are located in `contracts/*.fc`
     * Standalone root contracts are located in `contracts/*.fc`
     * Shared imports (when breaking code to multiple files) are in `contracts/imports/*.fc`
-  * Tests in TypeScript are located in `test/*.spec.ts`
+  * Tests in TypeScript are located in `tests/*.spec.ts`
   * Wrapper classes for interacting with the contract are located in `wrappers/*.ts`
   * Any scripts (including deployers) are located in `scripts/*.ts`
 
 * Build
-  * Builder configs are located in `wrappers/*.compile.ts`
+  * Builder configs are located in `compilables/*.compile.ts`
   * In the root repo dir, run in terminal `yarn blueprint build`
   * Compilation errors will appear on screen, if applicable
   * Resulting build artifacts include:

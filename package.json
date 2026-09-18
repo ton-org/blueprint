@@ -14,7 +14,7 @@
         "dist/**/*"
     ],
     "scripts": {
-        "build": "rm -rf dist && tsc && cp -r src/templates dist/",
+        "build": "node scripts/build.js",
         "test": "jest src",
         "release": "yarn build && yarn publish --access public",
         "lint": "eslint . --max-warnings 0",

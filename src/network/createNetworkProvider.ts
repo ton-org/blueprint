@@ -332,31 +332,34 @@ class NetworkProviderImpl implements NetworkProvider {
 
         const inMessageHash = this.obtainInMessageHash();
 
-        for (let i = 1; i <= attempts; i++) {
-            this._ui.setActionPrompt(`Awaiting transaction... [Attempt ${i}/${attempts}]`);
-            const result = await this.isTransactionApplied(this._sender.address, inMessageHash);
-            if (result.isApplied) {
-                const { transaction } = result;
-                this._ui.clearActionPrompt();
-                this._ui.write(`Transaction ${inMessageHash.toString('hex')} successfully applied!`);
-                this._ui.write(
-                    `You can view it at ${getTransactionLink(
-                        {
-                            ...transaction,
-                            hash: transaction.hash(),
-                            address: this._sender.address,
-                        },
-                        this._network,
-                        this._explorer,
-                    )}`,
-                );
-                return;
+        try {
+            for (let i = 1; i <= attempts; i++) {
+                this._ui.setActionPrompt(`Awaiting transaction... [Attempt ${i}/${attempts}]`);
+                const result = await this.isTransactionApplied(this._sender.address, inMessageHash);
+                if (result.isApplied) {
+                    const { transaction } = result;
+                    this._ui.write(`Transaction ${inMessageHash.toString('hex')} successfully applied!`);
+                    this._ui.write(
+                        `You can view it at ${getTransactionLink(
+                            {
+                                ...transaction,
+                                hash: transaction.hash(),
+                                address: this._sender.address,
+                            },
+                            this._network,
+                            this._explorer,
+                        )}`,
+                    );
+                    return;
+                }
+
+                await sleep(sleepDuration);
             }
 
-            await sleep(sleepDuration);
+            throw new Error("Transaction was not applied. Check your wallet's transactions");
+        } finally {
+            this._ui.clearActionPrompt();
         }
-
-        throw new Error("Transaction was not applied. Check your wallet's transactions");
     }
 
     /**
@@ -507,7 +510,7 @@ class NetworkProviderBuilder {
                 tonviewer: this.args['--tonviewer'],
                 toncx: this.args['--toncx'],
                 dton: this.args['--dton'],
-            }) ?? 'tonscan'
+            }) ?? 'tonviewer'
         );
     }
 
@@ -546,10 +549,15 @@ class NetworkProviderBuilder {
         let provider: SendProvider;
         switch (deployUsing) {
             case 'deeplink':
+                if (network === 'custom' || network === 'tetra') {
+                    throw new Error('Deeplink cannot work with custom or tetra network.');
+                }
                 provider = new DeeplinkProvider(network, this.ui);
                 break;
             case 'tonconnect':
-                if (network === 'custom') throw new Error('Tonkeeper cannot work with custom network.');
+                if (network === 'custom' || network === 'tetra') {
+                    throw new Error('TonConnect cannot work with custom or tetra network.');
+                }
                 provider = new TonConnectProvider(
                     new FSStorage(storagePath),
                     this.ui,
@@ -561,6 +569,9 @@ class NetworkProviderBuilder {
                 let globalId: number | undefined = undefined;
                 if (typeof this.config?.network === 'object') {
                     globalId = this.config.network.globalId;
+                }
+                if (this.args['--custom-global-id'] !== undefined) {
+                    globalId = this.args['--custom-global-id'];
                 }
                 provider = await createMnemonicProvider(client, network, this.ui, globalId);
                 break;
@@ -579,7 +590,8 @@ class NetworkProviderBuilder {
             network !== 'custom' &&
             (this.args['--custom-key'] !== undefined ||
                 this.args['--custom-type'] !== undefined ||
-                this.args['--custom-version'] !== undefined)
+                this.args['--custom-version'] !== undefined ||
+                this.args['--custom-global-id'] !== undefined)
         ) {
             throw new Error('Cannot use custom parameters with a non-custom network');
         }

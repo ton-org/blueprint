@@ -1,8 +1,8 @@
-import { execSync } from 'child_process';
+import { execFileSync } from 'node:child_process';
 
 import arg from 'arg';
 
-import { Runner } from './Runner';
+import { Args, Runner } from './Runner';
 import { helpArgs, helpMessages } from './constants';
 
 export const argSpec = {
@@ -12,12 +12,24 @@ export const argSpec = {
     '--ui': Boolean,
 };
 
+const blueprintFlags = new Set(['--gas-report', '-g', '--ui']);
+
+export function getTestArgs(args: Args): string[] {
+    return args._.slice(1).filter((arg) => !blueprintFlags.has(arg));
+}
+
 async function coverage(): Promise<void> {
-    execSync(
-        `npm test -- --reporters @ton/blueprint/dist/jest/CoverageReporter --setupFilesAfterEnv @ton/blueprint/dist/jest/coverageSetup`,
-        {
-            stdio: 'inherit',
-        },
+    execFileSync(
+        process.platform === 'win32' ? 'npm.cmd' : 'npm',
+        [
+            'test',
+            '--',
+            '--reporters',
+            '@ton/blueprint/dist/jest/CoverageReporter',
+            '--setupFilesAfterEnv',
+            '@ton/blueprint/dist/jest/coverageSetup',
+        ],
+        { stdio: 'inherit' },
     );
 }
 
@@ -35,15 +47,12 @@ export const test: Runner = async (args, ui) => {
         return;
     }
 
-    let testArgs = args._.slice(1); // first argument is `test`, need to get rid of it
-    if (localArgs['--gas-report']) {
-        testArgs = testArgs.slice(1);
-    }
+    let testArgs = getTestArgs(args);
     if (localArgs['--ui']) {
-        testArgs = [...testArgs.slice(1), '--setupFilesAfterEnv', '@ton/sandbox/dist/jest/uiSetup'];
+        testArgs = [...testArgs, '--setupFilesAfterEnv', '@ton/sandbox/dist/jest/uiSetup'];
     }
 
-    execSync(`npm test -- ${testArgs.join(' ')}`, {
+    execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['test', '--', ...testArgs], {
         stdio: 'inherit',
         env: {
             ...process.env,

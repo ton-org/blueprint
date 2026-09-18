@@ -16,18 +16,16 @@ export type TactCompileResult = {
     version: string;
 };
 
-function findTactBoc(fs: Map<string, Buffer>): Cell {
-    let buf: Buffer | undefined = undefined;
-    for (const [k, v] of fs) {
-        if (k.endsWith('.code.boc')) {
-            buf = v;
-            break;
-        }
+export function findTactBoc(fs: Map<string, Buffer>, name: string): Cell {
+    const bocs = [...fs.entries()].filter(([key]) => key.endsWith('.code.boc'));
+    const matching = bocs.filter(([key]) => key.endsWith(`_${name}.code.boc`));
+    const target = matching.length === 1 ? matching[0][1] : bocs.length === 1 ? bocs[0][1] : undefined;
+
+    if (target === undefined) {
+        throw new Error(`Could not find unique BOC for Tact contract '${name}'`);
     }
-    if (buf === undefined) {
-        throw new Error('Could not find boc in tact compilation result');
-    }
-    return Cell.fromBoc(buf)[0];
+
+    return Cell.fromBoc(target)[0];
 }
 
 export function getTactConfigForContract(name: string): TactCompilerConfig | undefined {
@@ -105,7 +103,7 @@ export async function doCompileTact(
         throw new Error('Could not compile tact');
     }
 
-    const code = findTactBoc(fs.overwrites);
+    const code = findTactBoc(fs.overwrites, name);
 
     return {
         lang: 'tact',
