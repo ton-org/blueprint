@@ -1,4 +1,5 @@
 import { Config } from '../config/Config';
+import { Network } from '../network/Network';
 import { UIProvider } from '../ui/UIProvider';
 import { sleep } from '../utils';
 import { normalizeCodeHash, normalizeTransactionHash, VerifierClient, VerifyResponse } from './VerifierClient';
@@ -29,10 +30,10 @@ type PaymentSender = typeof sendVerifierPayment;
 
 function writeVerificationDetails(ui: UIProvider, response: VerifyResponse): void {
     if (response.source_bundle_hash !== null) {
-        ui.write(`Source bundle: ${response.source_bundle_hash}`);
+        ui.write(`  → Source bundle: ${response.source_bundle_hash}`);
     }
     if (response.storage_revision !== null) {
-        ui.write(`Storage revision: ${response.storage_revision}`);
+        ui.write(`  → Storage revision: ${response.storage_revision}`);
     }
 }
 
@@ -66,12 +67,13 @@ async function waitForExistingVerification(
             return false;
         }
         if (result.status === 'verified') {
-            ui.write('Contract was already verified');
+            ui.write('  ✓ Contract was already verified');
+            ui.write('');
             ui.write(`View at: ${client.link(codeHash)}`);
             return true;
         }
         if (result.status !== previousStatus) {
-            ui.write(result.status === 'queued' ? 'Verification is queued' : 'Verification is compiling');
+            ui.write(result.status === 'queued' ? '  → Verification is queued' : '  → Verification is compiling');
         }
 
         previousStatus = result.status;
@@ -99,12 +101,13 @@ export async function runVerificationFlow(
         options.paymentTransactionHash === null || options.paymentTransactionHash === undefined
             ? undefined
             : normalizeTransactionHash(options.paymentTransactionHash);
+    let paymentNetwork: Network | undefined;
 
-    if (!client.usesApiKey && (paymentTransactionHash === null || paymentTransactionHash === undefined)) {
-        ui.write('Requesting verification ticket...');
+    if (!client.usesApiKey) {
+        ui.write('  → Requesting verification ticket');
         const ticket = await client.takeTicket(codeHash);
         if (ticket.status === 'already_verified') {
-            ui.write('Contract was already verified');
+            ui.write('  ✓ Contract was already verified');
             writeVerificationDetails(ui, {
                 code_hash: ticket.code_hash,
                 compiled_code_hash: null,
@@ -112,39 +115,51 @@ export async function runVerificationFlow(
                 source_bundle_hash: ticket.source_bundle_hash,
                 storage_revision: ticket.storage_revision,
             });
+            ui.write('');
             ui.write(`View at: ${client.link(codeHash)}`);
             return;
         }
 
         const payment = validatePaymentTicket(ticket);
-        ui.write(`Payment network: TON ${payment.network}`);
-        ui.write(`Payment amount: ${formatVerifierPaymentAmount(payment.amount)}`);
-        ui.write(`Payment address: ${formatVerifierPaymentAddress(payment.network, payment.address)}`);
-        ui.write(`Payment comment: ${ticket.comment}`);
+        paymentNetwork = payment.network;
+        ui.write(`  → Payment network: TON ${payment.network}`);
+        ui.write(`  → Payment amount: ${formatVerifierPaymentAmount(payment.amount)}`);
+        ui.write(`  → Payment address: ${formatVerifierPaymentAddress(payment.network, payment.address)}`);
+        ui.write(`  → Payment comment: ${ticket.comment}`);
 
-        if (options.dryRun) {
-            ui.write('Dry run: skipping payment and source upload');
-            return;
+        if (paymentTransactionHash === undefined) {
+            if (!options.dryRun) {
+                paymentTransactionHash = await paymentSender(ui, options.config, options.walletOptions, ticket);
+                ui.write(`  ✓ Payment finalized: ${paymentTransactionHash}`);
+            }
+        } else {
+            ui.write(`  → Reusing ${payment.network} payment transaction: ${paymentTransactionHash}`);
         }
-
-        paymentTransactionHash = await paymentSender(ui, options.config, options.walletOptions, ticket);
-        ui.write(`Payment finalized: ${paymentTransactionHash}`);
     }
 
     if (options.dryRun) {
-        ui.write('Dry run: skipping payment and source upload');
+        const skipped = paymentNetwork === undefined ? 'source upload' : `${paymentNetwork} payment and source upload`;
+        ui.write(`  ℹ Dry run mode: skipping ${skipped}`);
+        ui.write('');
+        ui.write('✓ TON verifier request prepared successfully!');
+        ui.write(`  Backend: ${client.backend}/api/v1/verify`);
+        ui.write(`  Source files: ${prepared.files.length}`);
         return;
     }
 
-    ui.write('Sending sources to TON verifier...');
+    ui.write('  → Sending sources to TON verifier');
     const verification = await client.verify(prepared, codeHash, address, paymentTransactionHash);
     validateVerificationResult(codeHash, verification);
 
-    ui.write(
-        verification.verification_result === 'already_verified'
-            ? 'Contract was already verified'
-            : 'Contract verification completed!',
-    );
+    if (verification.verification_result === 'already_verified') {
+        ui.write('  ✓ Contract was already verified');
+    } else {
+        ui.write('  ✓ TON verifier accepted source bundle');
+    }
     writeVerificationDetails(ui, verification);
+    ui.write('');
+    if (verification.verification_result === 'match') {
+        ui.write('✓ Contract verification completed!');
+    }
     ui.write(`View at: ${client.link(codeHash)}`);
 }

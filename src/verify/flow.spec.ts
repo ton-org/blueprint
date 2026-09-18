@@ -96,6 +96,11 @@ describe('runVerificationFlow', () => {
         expect(client.takeTicket).not.toHaveBeenCalled();
         expect(paymentSender).not.toHaveBeenCalled();
         expect(client.verify).toHaveBeenCalledWith(prepared, codeHash, undefined, undefined);
+        expect(ui.write).toHaveBeenNthCalledWith(1, '  → Sending sources to TON verifier');
+        expect(ui.write).toHaveBeenNthCalledWith(2, '  ✓ TON verifier accepted source bundle');
+        expect(ui.write).toHaveBeenNthCalledWith(3, '');
+        expect(ui.write).toHaveBeenNthCalledWith(4, '✓ Contract verification completed!');
+        expect(ui.write).toHaveBeenNthCalledWith(5, `View at: http://verifier.test/${codeHash}`);
     });
 
     it('normalizes the code hash once at the flow boundary', async () => {
@@ -123,7 +128,8 @@ describe('runVerificationFlow', () => {
         expect(client.takeTicket).toHaveBeenCalledWith(codeHash);
         expect(paymentSender).not.toHaveBeenCalled();
         expect(client.verify).not.toHaveBeenCalled();
-        expect(ui.write).toHaveBeenCalledWith('Payment amount: 0.01 GRAM');
+        expect(ui.write).toHaveBeenCalledWith('  → Payment amount: 0.01 GRAM');
+        expect(ui.write).toHaveBeenCalledWith('✓ TON verifier request prepared successfully!');
     });
 
     it('passes the finalized payment hash to verification', async () => {
@@ -136,6 +142,21 @@ describe('runVerificationFlow', () => {
 
         expect(paymentSender).toHaveBeenCalledWith(ui, undefined, {}, ticket);
         expect(client.verify).toHaveBeenCalledWith(prepared, codeHash, undefined, 'cd'.repeat(32));
+    });
+
+    it('requests a ticket and reports a reused payment transaction', async () => {
+        const ui = uiProvider();
+        const ticket = paymentTicket();
+        const client = verifierClient({ usesApiKey: false, ticket });
+        const paymentSender = jest.fn();
+        const paymentTransactionHash = 'cd'.repeat(32);
+
+        await runVerificationFlow(ui, client, flowOptions({ paymentTransactionHash }), paymentSender);
+
+        expect(client.takeTicket).toHaveBeenCalledWith(codeHash);
+        expect(paymentSender).not.toHaveBeenCalled();
+        expect(ui.write).toHaveBeenCalledWith(`  → Reusing testnet payment transaction: ${paymentTransactionHash}`);
+        expect(client.verify).toHaveBeenCalledWith(prepared, codeHash, undefined, paymentTransactionHash);
     });
 
     it('rejects a verifier match with a different compiled hash', async () => {
@@ -157,6 +178,6 @@ describe('runVerificationFlow', () => {
         await runVerificationFlow(ui, client, flowOptions());
 
         expect(client.verify).not.toHaveBeenCalled();
-        expect(ui.write).toHaveBeenCalledWith('Contract was already verified');
+        expect(ui.write).toHaveBeenCalledWith('  ✓ Contract was already verified');
     });
 });
