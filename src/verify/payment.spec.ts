@@ -28,7 +28,9 @@ function paymentTicket(overrides: Partial<PaymentTicket> = {}): PaymentTicket {
     };
 }
 
-function paymentTransaction(overrides: { amount?: bigint; comment?: string; lt?: bigint } = {}): Transaction {
+function paymentTransaction(
+    overrides: { amount?: bigint; comment?: string; lt?: bigint; sender?: Address | null } = {},
+): Transaction {
     const message = internal({
         to: paymentAddress,
         value: overrides.amount === undefined ? 10_000_000n : overrides.amount,
@@ -38,7 +40,7 @@ function paymentTransaction(overrides: { amount?: bigint; comment?: string; lt?:
     if (message.info.type !== 'internal') {
         throw new Error('Expected an internal message');
     }
-    message.info.src = senderAddress;
+    message.info.src = overrides.sender === undefined ? senderAddress : overrides.sender;
 
     return {
         lt: overrides.lt === undefined ? 2n : overrides.lt,
@@ -117,6 +119,26 @@ describe('isPaymentTransaction', () => {
         expect(
             isPaymentTransaction(
                 paymentTransaction({ comment: 'wrong' }),
+                1n,
+                paymentAddress,
+                senderAddress,
+                10_000_000n,
+                comment,
+            ),
+        ).toBe(false);
+        expect(
+            isPaymentTransaction(
+                paymentTransaction({ sender: new Address(0, Buffer.alloc(32, 3)) }),
+                1n,
+                paymentAddress,
+                senderAddress,
+                10_000_000n,
+                comment,
+            ),
+        ).toBe(false);
+        expect(
+            isPaymentTransaction(
+                paymentTransaction({ sender: null }),
                 1n,
                 paymentAddress,
                 senderAddress,

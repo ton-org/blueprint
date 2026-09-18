@@ -67,7 +67,7 @@ export function isPaymentTransaction(
     transaction: Transaction,
     baselineLt: bigint,
     paymentAddress: Address,
-    senderAddress: Address | undefined,
+    senderAddress: Address,
     amount: bigint,
     comment: string,
 ): boolean {
@@ -93,13 +93,11 @@ export function isPaymentTransaction(
     if (info.bounced) {
         return false;
     }
-    if (senderAddress !== undefined) {
-        if (info.src === null || info.src === undefined) {
-            return false;
-        }
-        if (!info.src.equals(senderAddress)) {
-            return false;
-        }
+    if (info.src === null || info.src === undefined) {
+        return false;
+    }
+    if (!info.src.equals(senderAddress)) {
+        return false;
     }
     if (messageComment(inMessage.body) !== comment) {
         return false;
@@ -128,7 +126,7 @@ async function waitForPaymentTransaction(
     networkProvider: Awaited<ReturnType<typeof createNetworkProvider>>,
     baselineLt: bigint,
     paymentAddress: Address,
-    senderAddress: Address | undefined,
+    senderAddress: Address,
     amount: bigint,
     comment: string,
     network: Network,
@@ -181,9 +179,13 @@ export async function sendVerifierPayment(
     if (lastTransaction !== null && lastTransaction !== undefined) {
         baselineLt = lastTransaction.lt;
     }
-    const senderAddress = networkProvider.sender().address;
+    const sender = networkProvider.sender();
+    let senderAddress = sender.address;
+    if (senderAddress === undefined) {
+        senderAddress = await ui.inputAddress('Enter the address of the wallet sending the verification payment');
+    }
 
-    await networkProvider.sender().send({
+    await sender.send({
         to: address,
         value: amount,
         bounce: true,
