@@ -1,6 +1,7 @@
 import { spawnSync } from 'child_process';
 import path from 'path';
 
+import { helpMessages } from './constants';
 import { parseVerifyArgs } from './verify';
 
 describe('verify arguments', () => {
@@ -24,5 +25,10 @@ describe('verify arguments', () => {
 
         expect(result.status).toBe(1);
         expect(result.stderr).toContain('unknown or unexpected option: --mainnet');
+    });
+
+    it('keeps the payment network out of wallet help', () => {
+        expect(helpMessages.verify).toContain('wallet used for the verification payment');
+        expect(helpMessages.verify).not.toContain('testnet verification payment');
     });
 });

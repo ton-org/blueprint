@@ -169,7 +169,7 @@ ${chalk.cyan('--address')} - checks that the deployed contract has the compiled 
 ${chalk.cyan('--compiler-version')} - uses an exact compiler version on the verifier (defaults to the local compiler version)
 ${chalk.cyan('--dry-run')} - prepares the request without paying or uploading sources
 ${chalk.cyan('--payment-tx-hash')} - reuses a finalized verifier payment transaction
-${chalk.cyan('--tonconnect')}, ${chalk.cyan('--deeplink')}, ${chalk.cyan('--mnemonic')} - selects the wallet used for the testnet verification payment
+${chalk.cyan('--tonconnect')}, ${chalk.cyan('--deeplink')}, ${chalk.cyan('--mnemonic')} - selects the wallet used for the verification payment
 
 ${chalk.bold('Environment:')}
 ${chalk.cyan('BLUEPRINT_VERIFY_BACKEND')} - overrides the verifier URL
