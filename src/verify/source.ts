@@ -27,6 +27,11 @@ function isInvalidSourcePathComponent(component: string): boolean {
     return component === '' || component === '..' || component.endsWith('.');
 }
 
+function isOutsideProject(relativePath: string, pathImplementation: typeof path.posix): boolean {
+    const firstComponent = relativePath.split(pathImplementation.sep)[0];
+    return firstComponent === '..' || pathImplementation.isAbsolute(relativePath);
+}
+
 function relativeSourcePath(filename: string, projectRoot: string): string {
     const isWindowsPath = path.win32.isAbsolute(filename) && !path.posix.isAbsolute(filename);
     const pathImplementation = isWindowsPath ? path.win32 : path.posix;
@@ -35,11 +40,7 @@ function relativeSourcePath(filename: string, projectRoot: string): string {
     }
 
     const normalizedRelativePath = pathImplementation.relative(projectRoot, filename);
-    if (
-        normalizedRelativePath === '..' ||
-        normalizedRelativePath.startsWith(`..${pathImplementation.sep}`) ||
-        pathImplementation.isAbsolute(normalizedRelativePath)
-    ) {
+    if (isOutsideProject(normalizedRelativePath, pathImplementation)) {
         throw new Error(`Source file is outside the project directory and cannot be verified: ${filename}`);
     }
 
