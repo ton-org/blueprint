@@ -38,20 +38,21 @@ function prepareSnapshotFiles(
 
 function prepareTactFiles(result: TactCompileResult): UploadPart[] {
     const pkg = Array.from(result.fs.entries()).find(([filename]) => filename.endsWith('.pkg'));
-    if (!pkg) {
+    if (pkg === undefined) {
         throw new Error('Could not find .pkg in Tact compilation results');
     }
+    const [packagePath, packageContent] = pkg;
 
     return [
         {
             source: {
-                path: normalizeVerifierSourcePath(pkg[0]),
+                path: normalizeVerifierSourcePath(packagePath),
                 is_entrypoint: false,
                 include_in_command: true,
                 is_stdlib: false,
                 has_include_directives: false,
             },
-            content: pkg[1],
+            content: packageContent,
         },
     ];
 }

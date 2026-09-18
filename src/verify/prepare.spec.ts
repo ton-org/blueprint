@@ -79,4 +79,15 @@ describe('prepareVerification', () => {
             has_include_directives: false,
         });
     });
+
+    it('rejects Tact compilation results without a package', () => {
+        const result: CompileResult = {
+            lang: 'tact',
+            code: beginCell().endCell(),
+            version: '1.6.13',
+            fs: new Map([['build/Counter.code.boc', Buffer.from('boc')]]),
+        };
+
+        expect(() => prepareVerification(result)).toThrow('Could not find .pkg');
+    });
 });
