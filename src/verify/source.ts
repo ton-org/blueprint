@@ -27,27 +27,21 @@ function isInvalidSourcePathComponent(component: string): boolean {
     return component === '' || component === '..' || component.endsWith('.');
 }
 
-function isOutsideProject(relativePath: string, pathImplementation: typeof path.posix): boolean {
-    const firstComponent = relativePath.split(pathImplementation.sep)[0];
-    return firstComponent === '..' || pathImplementation.isAbsolute(relativePath);
+function isOutsideProject(relativePath: string): boolean {
+    const firstComponent = relativePath.split(path.sep)[0];
+    return firstComponent === '..' || path.isAbsolute(relativePath);
 }
 
 function relativeSourcePath(filename: string, projectRoot: string): string {
-    const isWindowsPath = path.win32.isAbsolute(filename) && !path.posix.isAbsolute(filename);
-    const pathImplementation = isWindowsPath ? path.win32 : path.posix;
-    if (!pathImplementation.isAbsolute(filename)) {
+    if (!path.isAbsolute(filename)) {
         return filename;
     }
 
-    const normalizedRelativePath = pathImplementation.relative(projectRoot, filename);
-    if (isOutsideProject(normalizedRelativePath, pathImplementation)) {
+    const relativePath = path.relative(projectRoot, filename);
+    if (isOutsideProject(relativePath)) {
         throw new Error(`Source file is outside the project directory and cannot be verified: ${filename}`);
     }
-
-    // Do not return `normalizedRelativePath`: normalization would hide invalid `.` and `..` components.
-    const slashPath = filename.replace(/\\/g, '/');
-    const slashRoot = projectRoot.replace(/\\/g, '/').replace(/\/+$/, '');
-    return slashPath.split('/').slice(slashRoot.split('/').length).join('/');
+    return relativePath;
 }
 
 export function isCompilerLibrarySourcePath(sourcePath: string): boolean {
@@ -55,6 +49,10 @@ export function isCompilerLibrarySourcePath(sourcePath: string): boolean {
 }
 
 export function normalizeVerifierSourcePath(filename: string, projectRoot: string = process.cwd()): string {
+    if (filename.replace(/\\/g, '/').split('/').includes('..')) {
+        throw new Error(`Invalid source path for TON verifier: ${filename}`);
+    }
+
     const relativePath = relativeSourcePath(filename, projectRoot).replace(/\\/g, '/').replace(/^\.\//, '');
     const components = relativePath.split('/');
     if (components.some(isInvalidSourcePathComponent)) {

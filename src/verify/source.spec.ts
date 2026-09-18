@@ -27,16 +27,10 @@ describe('normalizeVerifierSourcePath', () => {
         expect(normalizeVerifierSourcePath(path.join(process.cwd(), 'contracts', 'main.tolk'))).toBe(
             'contracts/main.tolk',
         );
-        expect(normalizeVerifierSourcePath('C:\\Project\\contracts\\main.tolk', 'c:\\project')).toBe(
-            'contracts/main.tolk',
-        );
     });
 
     it('rejects paths that the verifier cannot store safely', () => {
         expect(() => normalizeVerifierSourcePath(path.resolve(process.cwd(), '..', 'main.tolk'))).toThrow(
-            'outside the project directory',
-        );
-        expect(() => normalizeVerifierSourcePath('C:\\outside\\main.tolk', 'C:\\project')).toThrow(
             'outside the project directory',
         );
         expect(() => normalizeVerifierSourcePath('contracts/contract name.tolk')).toThrow('unsupported');
