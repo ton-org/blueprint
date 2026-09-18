@@ -1,7 +1,6 @@
 > [!CAUTION]
-> Deprecated. Use [Acton](https://ton-blockchain.github.io/acton/) instead.
->
-> Pull requests are not accepted at the moment; please bring any problems or tasks to issues.
+> Blueprint is deprecated. Please use [Acton](https://ton-blockchain.github.io/acton/) instead. Pull requests are not accepted at the
+moment; please bring any problems or tasks to [issues](https://github.com/ton-org/blueprint/issues).
 
 <img src="https://raw.githubusercontent.com/ton-org/blueprint/main/logo.svg" width=400 >
 
