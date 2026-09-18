@@ -1,8 +1,9 @@
-import { UIProvider } from '../ui/UIProvider';
+import type { UIProvider } from '../ui/UIProvider';
 import { TESTNET_NETWORK } from '../network/constants';
-import { runVerificationFlow, VerificationFlowOptions } from './flow';
+import { runVerificationFlow } from './flow';
+import type { VerificationFlowOptions } from './flow';
 import { buildVerifierPaymentComment } from './payment';
-import { PaymentTicket, VerifierClient, VerifyResponse } from './VerifierClient';
+import type { PaymentTicket, VerifierClient, VerifyResponse } from './VerifierClient';
 
 const codeHash = 'ab'.repeat(32);
 const prepared = {

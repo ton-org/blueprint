@@ -1,6 +1,7 @@
 import path from 'path';
 
-import { buildVerifyForm, normalizeVerifierSourcePath, PreparedVerification } from './source';
+import { buildVerifyForm, normalizeVerifierSourcePath } from './source';
+import type { PreparedVerification } from './source';
 
 const windowsOnly = process.platform === 'win32' ? it : it.skip;
 

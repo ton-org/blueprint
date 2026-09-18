@@ -1,6 +1,6 @@
 import { beginCell } from '@ton/core';
 
-import { CompileResult } from '../compile/compile';
+import type { CompileResult } from '../compile/compile';
 import { prepareVerification } from './prepare';
 
 describe('prepareVerification', () => {

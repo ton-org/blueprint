@@ -1,7 +1,8 @@
-import { Address, internal, Transaction } from '@ton/core';
+import { Address, internal } from '@ton/core';
+import type { Transaction } from '@ton/core';
 
 import { MAINNET_NETWORK, TESTNET_NETWORK } from '../network/constants';
-import { PaymentTicket } from './VerifierClient';
+import type { PaymentTicket } from './VerifierClient';
 import {
     buildTextCommentBody,
     buildVerifierPaymentComment,

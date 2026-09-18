@@ -4,11 +4,12 @@ import chalk from 'chalk';
 
 import { doCompile } from '../compile/compile';
 import { runVerificationFlow } from '../verify/flow';
-import { PaymentWalletOptions } from '../verify/payment';
+import type { PaymentWalletOptions } from '../verify/payment';
 import { prepareVerification } from '../verify/prepare';
 import { VerifierClient } from '../verify/VerifierClient';
-import { UIProvider } from '../ui/UIProvider';
-import { Args, extractFirstArg, Runner, RunnerContext } from './Runner';
+import type { UIProvider } from '../ui/UIProvider';
+import { extractFirstArg } from './Runner';
+import type { Args, Runner, RunnerContext } from './Runner';
 import { selectContract } from './build';
 import { helpArgs, helpMessages } from './constants';
 

@@ -1,12 +1,14 @@
-import { Address, beginCell, Cell, ContractProvider, fromNano, Transaction } from '@ton/core';
+import { Address, beginCell, fromNano } from '@ton/core';
+import type { Cell, ContractProvider, Transaction } from '@ton/core';
 
-import { Config } from '../config/Config';
+import type { Config } from '../config/Config';
 import { MAINNET_NETWORK, TESTNET_NETWORK } from '../network/constants';
-import { Args as NetworkArgs, createNetworkProvider } from '../network/createNetworkProvider';
-import { Network } from '../network/Network';
-import { UIProvider } from '../ui/UIProvider';
+import { createNetworkProvider } from '../network/createNetworkProvider';
+import type { Args as NetworkArgs } from '../network/createNetworkProvider';
+import type { Network } from '../network/Network';
+import type { UIProvider } from '../ui/UIProvider';
 import { sleep } from '../utils';
-import { PaymentTicket } from './VerifierClient';
+import type { PaymentTicket } from './VerifierClient';
 
 const VERIFIER_PAYMENT_COMMENT_PREFIX = 'acton-verify';
 const VERIFIER_PAYMENT_COMMENT_VERSION = 'v1';

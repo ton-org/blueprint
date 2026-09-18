@@ -1,18 +1,19 @@
 import chalk from 'chalk';
 
-import { Config } from '../config/Config';
-import { Network } from '../network/Network';
-import { UIProvider } from '../ui/UIProvider';
+import type { Config } from '../config/Config';
+import type { Network } from '../network/Network';
+import type { UIProvider } from '../ui/UIProvider';
 import { sleep } from '../utils';
-import { normalizeCodeHash, normalizeTransactionHash, VerifierClient, VerifyResponse } from './VerifierClient';
+import { normalizeCodeHash, normalizeTransactionHash } from './VerifierClient';
+import type { VerifierClient, VerifyResponse } from './VerifierClient';
 import {
     formatVerifierPaymentAddress,
     formatVerifierPaymentAmount,
-    PaymentWalletOptions,
     sendVerifierPayment,
     validatePaymentTicket,
 } from './payment';
-import { PreparedVerification } from './source';
+import type { PaymentWalletOptions } from './payment';
+import type { PreparedVerification } from './source';
 
 const VERIFIER_STATUS_POLL_ATTEMPTS = 50;
 const VERIFIER_STATUS_POLL_INTERVAL = 1000;

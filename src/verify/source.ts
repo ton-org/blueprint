@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { CompileResult } from '../compile/compile';
+import type { CompileResult } from '../compile/compile';
 
 export type VerifierSource = {
     path: string;

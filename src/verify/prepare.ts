@@ -1,15 +1,10 @@
-import { CompileResult } from '../compile/compile';
-import { FuncCompileResult } from '../compile/func/compile.func';
-import { SourceSnapshot } from '../compile/SourceSnapshot';
-import { TactCompileResult } from '../compile/tact/compile.tact';
-import { TolkCompileResult } from '../compile/tolk/compile.tolk';
-import {
-    isCompilerLibrarySourcePath,
-    normalizeVerifierSourcePath,
-    PreparedVerification,
-    UploadPart,
-    VerifierSource,
-} from './source';
+import type { CompileResult } from '../compile/compile';
+import type { FuncCompileResult } from '../compile/func/compile.func';
+import type { SourceSnapshot } from '../compile/SourceSnapshot';
+import type { TactCompileResult } from '../compile/tact/compile.tact';
+import type { TolkCompileResult } from '../compile/tolk/compile.tolk';
+import { isCompilerLibrarySourcePath, normalizeVerifierSourcePath } from './source';
+import type { PreparedVerification, UploadPart, VerifierSource } from './source';
 
 type SourceOptions = Omit<VerifierSource, 'path'>;
 
@@ -128,7 +123,7 @@ function validateSourceExtensions(language: CompileResult['lang'], files: Upload
         const sourcePath = file.source.path;
         const filename = sourcePath.slice(sourcePath.lastIndexOf('/') + 1).toLowerCase();
         const extensions = filename.split('.').slice(1);
-        const sourceExtensionCount = extensions.filter((extension) => KNOWN_SOURCE_EXTENSIONS.has(extension)).length;
+        const sourceExtensionCount = extensions.filter((candidate) => KNOWN_SOURCE_EXTENSIONS.has(candidate)).length;
         const extension = extensions.at(-1);
 
         if (sourceExtensionCount > 1) {
