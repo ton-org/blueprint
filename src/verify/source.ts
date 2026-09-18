@@ -27,27 +27,34 @@ function isInvalidSourcePathComponent(component: string): boolean {
     return component === '' || component === '..' || component.endsWith('.');
 }
 
+function relativeSourcePath(filename: string, projectRoot: string): string {
+    const isWindowsPath = path.win32.isAbsolute(filename) && !path.posix.isAbsolute(filename);
+    const pathImplementation = isWindowsPath ? path.win32 : path.posix;
+    if (!pathImplementation.isAbsolute(filename)) {
+        return filename;
+    }
+
+    const normalizedRelativePath = pathImplementation.relative(projectRoot, filename);
+    if (
+        normalizedRelativePath === '..' ||
+        normalizedRelativePath.startsWith(`..${pathImplementation.sep}`) ||
+        pathImplementation.isAbsolute(normalizedRelativePath)
+    ) {
+        throw new Error(`Source file is outside the project directory and cannot be verified: ${filename}`);
+    }
+
+    // Do not return `normalizedRelativePath`: normalization would hide invalid `.` and `..` components.
+    const slashPath = filename.replace(/\\/g, '/');
+    const slashRoot = projectRoot.replace(/\\/g, '/').replace(/\/+$/, '');
+    return slashPath.split('/').slice(slashRoot.split('/').length).join('/');
+}
+
 export function isCompilerLibrarySourcePath(sourcePath: string): boolean {
     return sourcePath.startsWith('@stdlib/') || sourcePath.startsWith('@fiftlib/');
 }
 
 export function normalizeVerifierSourcePath(filename: string, projectRoot: string = process.cwd()): string {
-    const slashPath = filename.replace(/\\/g, '/');
-    const normalizedRoot = projectRoot.replace(/\\/g, '/').replace(/\/+$/, '');
-    const isWindowsAbsolutePath = /^[A-Za-z]:\//.test(slashPath);
-    const isAbsolutePath = path.posix.isAbsolute(slashPath) || isWindowsAbsolutePath;
-    let relativePath = slashPath;
-
-    if (isAbsolutePath) {
-        const comparablePath = isWindowsAbsolutePath ? slashPath.toLowerCase() : slashPath;
-        const comparableRoot = isWindowsAbsolutePath ? normalizedRoot.toLowerCase() : normalizedRoot;
-        if (comparablePath !== comparableRoot && !comparablePath.startsWith(`${comparableRoot}/`)) {
-            throw new Error(`Source file is outside the project directory and cannot be verified: ${filename}`);
-        }
-        relativePath = slashPath.slice(normalizedRoot.length).replace(/^\/+/, '');
-    }
-
-    relativePath = relativePath.replace(/^\.\//, '');
+    const relativePath = relativeSourcePath(filename, projectRoot).replace(/\\/g, '/').replace(/^\.\//, '');
     const components = relativePath.split('/');
     if (components.some(isInvalidSourcePathComponent)) {
         throw new Error(`Invalid source path for TON verifier: ${filename}`);
