@@ -105,9 +105,13 @@ process.on('SIGINT', () => {
     process.exit(130);
 });
 
-main()
-    .catch(console.error)
-    .then(() => process.exit(0));
+main().then(
+    () => process.exit(0),
+    (error: unknown) => {
+        console.error(error);
+        process.exit(1);
+    },
+);
 
 function showHelp() {
     console.log(

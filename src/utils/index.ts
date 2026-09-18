@@ -4,3 +4,4 @@ export * from './ton.utils';
 export * from './selection.utils';
 export * from './string.utils';
 export * from './file.utils';
+export * from './buildInfo.utils';
