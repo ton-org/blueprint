@@ -1,10 +1,11 @@
 import { Address, internal, Transaction } from '@ton/core';
 
-import { TESTNET_NETWORK } from '../network/constants';
+import { MAINNET_NETWORK, TESTNET_NETWORK } from '../network/constants';
 import { PaymentTicket } from './VerifierClient';
 import {
     buildTextCommentBody,
     buildVerifierPaymentComment,
+    buildVerifierPaymentPrompt,
     isPaymentTransaction,
     paymentNetworkArgs,
     validatePaymentTicket,
@@ -61,12 +62,21 @@ describe('buildVerifierPaymentComment', () => {
     });
 });
 
+describe('buildVerifierPaymentPrompt', () => {
+    it('includes the network from the payment ticket', () => {
+        expect(buildVerifierPaymentPrompt(MAINNET_NETWORK, 10_000_000n, paymentAddress)).toBe(
+            `Send 10000000 nanoTON on mainnet to ${paymentAddress.toString()}?`,
+        );
+    });
+});
+
 describe('validatePaymentTicket', () => {
     it('accepts a matching testnet payment quote', () => {
         const payment = validatePaymentTicket(paymentTicket());
 
         expect(payment.address.equals(paymentAddress)).toBe(true);
         expect(payment.amount).toBe(10_000_000n);
+        expect(payment.network).toBe(TESTNET_NETWORK);
     });
 
     it('rejects an unexpected network, comment, or amount', () => {

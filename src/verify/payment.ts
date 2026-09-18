@@ -3,6 +3,7 @@ import { Address, beginCell, Cell, Transaction } from '@ton/core';
 import { Config } from '../config/Config';
 import { TESTNET_NETWORK } from '../network/constants';
 import { Args as NetworkArgs, createNetworkProvider } from '../network/createNetworkProvider';
+import { Network } from '../network/Network';
 import { UIProvider } from '../ui/UIProvider';
 import { sleep } from '../utils';
 import { PaymentTicket } from './VerifierClient';
@@ -23,7 +24,11 @@ export function buildVerifierPaymentComment(codeHash: string): string {
     return `${VERIFIER_PAYMENT_COMMENT_PREFIX}:${VERIFIER_PAYMENT_COMMENT_VERSION}:${codeHash}`;
 }
 
-export function validatePaymentTicket(ticket: PaymentTicket): { address: Address; amount: bigint } {
+export function buildVerifierPaymentPrompt(network: Network, amount: bigint, address: Address): string {
+    return `Send ${amount.toString()} nanoTON on ${network} to ${address.toString({ testOnly: network === TESTNET_NETWORK })}?`;
+}
+
+export function validatePaymentTicket(ticket: PaymentTicket): { address: Address; amount: bigint; network: Network } {
     if (ticket.network !== TESTNET_NETWORK) {
         throw new Error(`TON verifier requested payment on unsupported network: ${ticket.network}`);
     }
@@ -39,7 +44,7 @@ export function validatePaymentTicket(ticket: PaymentTicket): { address: Address
     if (amount <= 0n) {
         throw new Error('TON verifier returned an invalid payment amount');
     }
-    return { address, amount };
+    return { address, amount, network: ticket.network };
 }
 
 function messageComment(body: Cell): string | undefined {
@@ -117,6 +122,7 @@ async function waitForPaymentTransaction(
     senderAddress: Address | undefined,
     amount: bigint,
     comment: string,
+    network: Network,
 ): Promise<string> {
     ui.setActionPrompt('Waiting for finalized verifier payment...');
     try {
@@ -143,7 +149,7 @@ async function waitForPaymentTransaction(
     }
 
     throw new Error(
-        `Payment was sent, but its recipient transaction did not appear on TON testnet within ${PAYMENT_POLL_ATTEMPTS} seconds`,
+        `Payment was sent, but its recipient transaction did not appear on TON ${network} within ${PAYMENT_POLL_ATTEMPTS} seconds`,
     );
 }
 
@@ -153,10 +159,8 @@ export async function sendVerifierPayment(
     walletOptions: PaymentWalletOptions,
     ticket: PaymentTicket,
 ): Promise<string> {
-    const { address, amount } = validatePaymentTicket(ticket);
-    const confirmed = await ui.prompt(
-        `Send ${amount.toString()} nanoTON on testnet to ${address.toString({ testOnly: true })}?`,
-    );
+    const { address, amount, network } = validatePaymentTicket(ticket);
+    const confirmed = await ui.prompt(buildVerifierPaymentPrompt(network, amount, address));
     if (!confirmed) {
         throw new Error('Verification payment cancelled');
     }
@@ -185,5 +189,6 @@ export async function sendVerifierPayment(
         senderAddress,
         amount,
         ticket.comment,
+        network,
     );
 }
