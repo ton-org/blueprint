@@ -2,6 +2,8 @@ import path from 'path';
 
 import { buildVerifyForm, normalizeVerifierSourcePath, PreparedVerification } from './source';
 
+const windowsOnly = process.platform === 'win32' ? it : it.skip;
+
 function preparedVerification(): PreparedVerification {
     return {
         language: 'tolk',
@@ -46,6 +48,33 @@ describe('normalizeVerifierSourcePath', () => {
         expect(normalizeVerifierSourcePath('@stdlib/stdlib.fc')).toBe('@stdlib/stdlib.fc');
         expect(normalizeVerifierSourcePath('@fiftlib/fift.fc')).toBe('@fiftlib/fift.fc');
         expect(() => normalizeVerifierSourcePath('@dependency/main.fc')).toThrow('unsupported');
+    });
+
+    windowsOnly('normalizes project-local Windows paths', () => {
+        expect(normalizeVerifierSourcePath('C:\\Project\\contracts\\main.tolk', 'c:\\project')).toBe(
+            'contracts/main.tolk',
+        );
+        expect(normalizeVerifierSourcePath('C:/Project/contracts\\main.tolk', 'C:\\Project')).toBe(
+            'contracts/main.tolk',
+        );
+        expect(
+            normalizeVerifierSourcePath(
+                '\\\\server\\share\\project\\contracts\\main.tolk',
+                '\\\\server\\share\\project',
+            ),
+        ).toBe('contracts/main.tolk');
+    });
+
+    windowsOnly('rejects Windows paths outside the project', () => {
+        expect(() => normalizeVerifierSourcePath('C:\\outside\\main.tolk', 'C:\\project')).toThrow(
+            'outside the project directory',
+        );
+        expect(() => normalizeVerifierSourcePath('D:\\project\\main.tolk', 'C:\\project')).toThrow(
+            'outside the project directory',
+        );
+        expect(() =>
+            normalizeVerifierSourcePath('\\\\other\\share\\project\\main.tolk', '\\\\server\\share\\project'),
+        ).toThrow('outside the project directory');
     });
 });
 
