@@ -41,7 +41,7 @@ export function validateVerificationResult(codeHash: string, response: VerifyRes
         if (compiledCodeHash === undefined) {
             throw new Error('TON verifier reported a match without a matching compiled code hash');
         }
-        if (normalizeCodeHash(compiledCodeHash) !== codeHash) {
+        if (compiledCodeHash !== codeHash) {
             throw new Error('TON verifier reported a match without a matching compiled code hash');
         }
     }
@@ -83,7 +83,8 @@ export async function runVerificationFlow(
     options: VerificationFlowOptions,
     paymentSender: PaymentSender = sendVerifierPayment,
 ): Promise<void> {
-    const { codeHash, address, prepared } = options;
+    const codeHash = normalizeCodeHash(options.codeHash);
+    const { address, prepared } = options;
     if (await waitForExistingVerification(ui, client, codeHash, address)) {
         return;
     }

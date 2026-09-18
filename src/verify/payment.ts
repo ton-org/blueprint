@@ -4,10 +4,11 @@ import { Config } from '../config/Config';
 import { Args as NetworkArgs, createNetworkProvider } from '../network/createNetworkProvider';
 import { UIProvider } from '../ui/UIProvider';
 import { sleep } from '../utils';
-import { PaymentTicket, normalizeCodeHash } from './VerifierClient';
+import { PaymentTicket } from './VerifierClient';
 
 const VERIFIER_PAYMENT_COMMENT_PREFIX = 'acton-verify';
 const VERIFIER_PAYMENT_COMMENT_VERSION = 'v1';
+
 const PAYMENT_POLL_ATTEMPTS = 60;
 const PAYMENT_POLL_INTERVAL = 1000;
 
@@ -18,7 +19,7 @@ export function buildTextCommentBody(comment: string): Cell {
 }
 
 export function buildVerifierPaymentComment(codeHash: string): string {
-    return `${VERIFIER_PAYMENT_COMMENT_PREFIX}:${VERIFIER_PAYMENT_COMMENT_VERSION}:${normalizeCodeHash(codeHash)}`;
+    return `${VERIFIER_PAYMENT_COMMENT_PREFIX}:${VERIFIER_PAYMENT_COMMENT_VERSION}:${codeHash}`;
 }
 
 export function validatePaymentTicket(ticket: PaymentTicket): { address: Address; amount: bigint } {

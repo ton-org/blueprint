@@ -55,8 +55,8 @@ describe('buildTextCommentBody', () => {
 });
 
 describe('buildVerifierPaymentComment', () => {
-    it('combines the verifier name, protocol version, and normalized code hash', () => {
-        expect(buildVerifierPaymentComment(`0x${codeHash.toUpperCase()}`)).toBe(`acton-verify:v1:${codeHash}`);
+    it('combines the verifier name, protocol version, and code hash', () => {
+        expect(buildVerifierPaymentComment(codeHash)).toBe(`acton-verify:v1:${codeHash}`);
     });
 });
 

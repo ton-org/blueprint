@@ -86,11 +86,8 @@ export function normalizeTransactionHash(value: string): string {
 }
 
 function ensureCodeHash(expected: string, actual: string, context: string): void {
-    const normalizedActual = normalizeCodeHash(actual);
-    if (normalizedActual !== expected) {
-        throw new Error(
-            `${context} returned a different code hash: expected ${expected}, received ${normalizedActual}`,
-        );
+    if (actual !== expected) {
+        throw new Error(`${context} returned a different code hash: expected ${expected}, received ${actual}`);
     }
 }
 

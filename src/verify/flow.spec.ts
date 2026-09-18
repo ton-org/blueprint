@@ -95,6 +95,16 @@ describe('runVerificationFlow', () => {
         expect(client.verify).toHaveBeenCalledWith(prepared, codeHash, undefined, undefined);
     });
 
+    it('normalizes the code hash once at the flow boundary', async () => {
+        const ui = uiProvider();
+        const client = verifierClient();
+
+        await runVerificationFlow(ui, client, flowOptions({ codeHash: `0x${codeHash.toUpperCase()}` }));
+
+        expect(client.status).toHaveBeenCalledWith(codeHash, undefined);
+        expect(client.verify).toHaveBeenCalledWith(prepared, codeHash, undefined, undefined);
+    });
+
     it('gets a ticket but does not pay or upload during a dry run', async () => {
         const ui = uiProvider();
         const client = verifierClient({ usesApiKey: false, ticket: paymentTicket() });
