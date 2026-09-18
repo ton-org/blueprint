@@ -25,10 +25,6 @@ function walletOptions(args: arg.Result<typeof verifyArgSpec>): PaymentWalletOpt
         '--tonconnect': args['--tonconnect'],
         '--deeplink': args['--deeplink'],
         '--mnemonic': args['--mnemonic'],
-        '--tonscan': args['--tonscan'],
-        '--tonviewer': args['--tonviewer'],
-        '--toncx': args['--toncx'],
-        '--dton': args['--dton'],
     };
 }
 

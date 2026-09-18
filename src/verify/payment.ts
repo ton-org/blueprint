@@ -10,10 +10,7 @@ const VERIFIER_PAYMENT_COMMENT_PREFIX = 'acton-verify:v1:';
 const PAYMENT_POLL_ATTEMPTS = 60;
 const PAYMENT_POLL_INTERVAL = 1000;
 
-export type PaymentWalletOptions = Pick<
-    NetworkArgs,
-    '--tonconnect' | '--deeplink' | '--mnemonic' | '--tonscan' | '--tonviewer' | '--toncx' | '--dton'
->;
+export type PaymentWalletOptions = Pick<NetworkArgs, '--tonconnect' | '--deeplink' | '--mnemonic'>;
 
 export function validatePaymentTicket(ticket: PaymentTicket): { address: Address; amount: bigint } {
     if (ticket.network !== 'testnet') {
