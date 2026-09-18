@@ -144,14 +144,14 @@ export function buildVerifyForm(
     prepared: PreparedVerification,
     codeHash: string,
     address?: string,
-    paymentTransactionHash?: string,
+    paymentTransactionHash?: string | null,
 ): FormData {
     const form = new FormData();
     form.append('code_hash', codeHash);
     if (address) {
         form.append('address', address);
     }
-    if (paymentTransactionHash) {
+    if (paymentTransactionHash !== null && paymentTransactionHash !== undefined) {
         form.append('tx_hash', paymentTransactionHash);
     }
     form.append('language', prepared.language);

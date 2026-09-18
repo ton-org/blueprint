@@ -178,7 +178,7 @@ export class VerifierClient {
         prepared: PreparedVerification,
         codeHash: string,
         address?: string,
-        paymentTransactionHash?: string,
+        paymentTransactionHash?: string | null,
     ): Promise<VerifyResponse> {
         let lastError: unknown;
 

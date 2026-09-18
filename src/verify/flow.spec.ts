@@ -94,7 +94,12 @@ describe('runVerificationFlow', () => {
         const client = verifierClient({ usesApiKey: false, ticket: paymentTicket() });
         const paymentSender = jest.fn();
 
-        await runVerificationFlow(ui, client, flowOptions({ dryRun: true }), paymentSender);
+        await runVerificationFlow(
+            ui,
+            client,
+            flowOptions({ dryRun: true, paymentTransactionHash: null }),
+            paymentSender,
+        );
 
         expect(client.takeTicket).toHaveBeenCalledWith(codeHash);
         expect(paymentSender).not.toHaveBeenCalled();

@@ -121,4 +121,19 @@ describe('buildVerifyForm', () => {
         expect(JSON.parse(String(form.get('sources')))).toEqual([prepared.files[0].source]);
         expect(form.getAll('files')).toHaveLength(1);
     });
+
+    it('omits tx_hash only when it is nullish', () => {
+        const prepared = prepareVerification({
+            lang: 'tolk',
+            code: beginCell().endCell(),
+            fiftCode: '',
+            stderr: '',
+            version: '1.2.0',
+            snapshot: [{ filename: 'main.tolk', content: 'tolk 1.0' }],
+        });
+
+        expect(buildVerifyForm(prepared, 'a'.repeat(64), undefined, null).has('tx_hash')).toBe(false);
+        expect(buildVerifyForm(prepared, 'a'.repeat(64), undefined, undefined).has('tx_hash')).toBe(false);
+        expect(buildVerifyForm(prepared, 'a'.repeat(64), undefined, '').has('tx_hash')).toBe(true);
+    });
 });
