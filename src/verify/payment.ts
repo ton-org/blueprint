@@ -56,17 +56,34 @@ export function isPaymentTransaction(
     }
 
     const info = transaction.inMessage.info;
-    if (
-        !info.dest.equals(paymentAddress) ||
-        info.value.coins < amount ||
-        info.bounced ||
-        (senderAddress !== undefined && !info.src?.equals(senderAddress)) ||
-        messageComment(transaction.inMessage.body) !== comment
-    ) {
+    if (!info.dest.equals(paymentAddress)) {
+        return false;
+    }
+    if (info.value.coins < amount) {
+        return false;
+    }
+    if (info.bounced) {
+        return false;
+    }
+    if (senderAddress !== undefined) {
+        if (info.src === null || info.src === undefined) {
+            return false;
+        }
+        if (!info.src.equals(senderAddress)) {
+            return false;
+        }
+    }
+    if (messageComment(transaction.inMessage.body) !== comment) {
+        return false;
+    }
+    if (!('aborted' in transaction.description)) {
+        return false;
+    }
+    if (transaction.description.aborted !== false) {
         return false;
     }
 
-    return !('aborted' in transaction.description) || !transaction.description.aborted;
+    return true;
 }
 
 export function paymentNetworkArgs(options: PaymentWalletOptions = {}): NetworkArgs {

@@ -96,6 +96,15 @@ describe('isPaymentTransaction', () => {
             ),
         ).toBe(false);
     });
+
+    it('rejects transactions without an explicit successful aborted flag', () => {
+        const transaction = {
+            ...paymentTransaction(),
+            description: { type: 'storage' },
+        } as unknown as Transaction;
+
+        expect(isPaymentTransaction(transaction, 1n, paymentAddress, senderAddress, 10_000_000n, comment)).toBe(false);
+    });
 });
 
 describe('paymentNetworkArgs', () => {
