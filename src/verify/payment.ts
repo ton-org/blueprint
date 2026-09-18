@@ -1,4 +1,4 @@
-import { Address, beginCell, Cell, Transaction } from '@ton/core';
+import { Address, beginCell, Cell, ContractProvider, Transaction } from '@ton/core';
 
 import { Config } from '../config/Config';
 import { MAINNET_NETWORK, TESTNET_NETWORK } from '../network/constants';
@@ -108,6 +108,48 @@ export function isPaymentTransaction(
     return !transaction.description.aborted;
 }
 
+function transactionHashBuffer(hash: bigint): Buffer {
+    return Buffer.from(hash.toString(16).padStart(64, '0'), 'hex');
+}
+
+export async function findPaymentTransaction(
+    provider: Pick<ContractProvider, 'getTransactions'>,
+    latestTransaction: { lt: bigint; hash: Buffer },
+    baselineLt: bigint,
+    paymentAddress: Address,
+    senderAddress: Address,
+    amount: bigint,
+    comment: string,
+): Promise<Transaction | undefined> {
+    let cursor = latestTransaction;
+    while (cursor.lt > baselineLt) {
+        const transactions = await provider.getTransactions(paymentAddress, cursor.lt, cursor.hash, 100);
+        if (transactions.length === 0) {
+            return undefined;
+        }
+
+        for (const transaction of transactions) {
+            if (transaction.lt <= baselineLt) {
+                return undefined;
+            }
+            if (isPaymentTransaction(transaction, baselineLt, paymentAddress, senderAddress, amount, comment)) {
+                return transaction;
+            }
+        }
+
+        const oldestTransaction = transactions[transactions.length - 1];
+        if (oldestTransaction === undefined || oldestTransaction.prevTransactionLt <= baselineLt) {
+            return undefined;
+        }
+        cursor = {
+            lt: oldestTransaction.prevTransactionLt,
+            hash: transactionHashBuffer(oldestTransaction.prevTransactionHash),
+        };
+    }
+
+    return undefined;
+}
+
 export function paymentNetworkArgs(network: Network, options: PaymentWalletOptions = {}): NetworkArgs {
     if (network !== MAINNET_NETWORK && network !== TESTNET_NETWORK) {
         throw new Error(`Unsupported verifier payment network: ${network}`);
@@ -137,11 +179,14 @@ async function waitForPaymentTransaction(
             const state = await networkProvider.getContractState(paymentAddress);
             const lastTransaction = state.last;
             if (lastTransaction !== null && lastTransaction !== undefined && lastTransaction.lt > baselineLt) {
-                const transactions = await networkProvider
-                    .provider(paymentAddress)
-                    .getTransactions(paymentAddress, lastTransaction.lt, lastTransaction.hash, 100);
-                const payment = transactions.find((transaction) =>
-                    isPaymentTransaction(transaction, baselineLt, paymentAddress, senderAddress, amount, comment),
+                const payment = await findPaymentTransaction(
+                    networkProvider.provider(paymentAddress),
+                    lastTransaction,
+                    baselineLt,
+                    paymentAddress,
+                    senderAddress,
+                    amount,
+                    comment,
                 );
                 if (payment !== undefined) {
                     return payment.hash().toString('hex');

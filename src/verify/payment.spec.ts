@@ -6,6 +6,7 @@ import {
     buildTextCommentBody,
     buildVerifierPaymentComment,
     buildVerifierPaymentPrompt,
+    findPaymentTransaction,
     isPaymentTransaction,
     paymentNetworkArgs,
     validatePaymentTicket,
@@ -29,7 +30,14 @@ function paymentTicket(overrides: Partial<PaymentTicket> = {}): PaymentTicket {
 }
 
 function paymentTransaction(
-    overrides: { amount?: bigint; comment?: string; lt?: bigint; sender?: Address | null } = {},
+    overrides: {
+        amount?: bigint;
+        comment?: string;
+        lt?: bigint;
+        previousLt?: bigint;
+        previousHash?: bigint;
+        sender?: Address | null;
+    } = {},
 ): Transaction {
     const message = internal({
         to: paymentAddress,
@@ -44,6 +52,8 @@ function paymentTransaction(
 
     return {
         lt: overrides.lt === undefined ? 2n : overrides.lt,
+        prevTransactionLt: overrides.previousLt === undefined ? 1n : overrides.previousLt,
+        prevTransactionHash: overrides.previousHash === undefined ? 1n : overrides.previousHash,
         inMessage: message,
         description: { type: 'generic', aborted: false },
     } as unknown as Transaction;
@@ -155,6 +165,39 @@ describe('isPaymentTransaction', () => {
         } as unknown as Transaction;
 
         expect(isPaymentTransaction(transaction, 1n, paymentAddress, senderAddress, 10_000_000n, comment)).toBe(false);
+    });
+});
+
+describe('findPaymentTransaction', () => {
+    it('follows transaction history pages until the payment or baseline', async () => {
+        const previousHash = 0x42n;
+        const newerTransaction = paymentTransaction({
+            lt: 3n,
+            previousLt: 2n,
+            previousHash,
+            comment: 'different payment',
+        });
+        const payment = paymentTransaction({ lt: 2n, previousLt: 1n });
+        const getTransactions = jest.fn().mockResolvedValueOnce([newerTransaction]).mockResolvedValueOnce([payment]);
+
+        await expect(
+            findPaymentTransaction(
+                { getTransactions },
+                { lt: 3n, hash: Buffer.alloc(32, 1) },
+                1n,
+                paymentAddress,
+                senderAddress,
+                10_000_000n,
+                comment,
+            ),
+        ).resolves.toBe(payment);
+        expect(getTransactions).toHaveBeenNthCalledWith(
+            2,
+            paymentAddress,
+            2n,
+            Buffer.from(previousHash.toString(16).padStart(64, '0'), 'hex'),
+            100,
+        );
     });
 });
 
