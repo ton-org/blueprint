@@ -12,6 +12,10 @@ const PAYMENT_POLL_INTERVAL = 1000;
 
 export type PaymentWalletOptions = Pick<NetworkArgs, '--tonconnect' | '--deeplink' | '--mnemonic'>;
 
+export function buildTextCommentBody(comment: string): Cell {
+    return beginCell().storeUint(0, 32).storeStringTail(comment).endCell();
+}
+
 export function validatePaymentTicket(ticket: PaymentTicket): { address: Address; amount: bigint } {
     if (ticket.network !== 'testnet') {
         throw new Error(`TON verifier requested payment on unsupported network: ${ticket.network}`);
@@ -154,7 +158,7 @@ export async function sendVerifierPayment(
         to: address,
         value: amount,
         bounce: true,
-        body: beginCell().storeUint(0, 32).storeStringTail(ticket.comment).endCell(),
+        body: buildTextCommentBody(ticket.comment),
     });
 
     return await waitForPaymentTransaction(

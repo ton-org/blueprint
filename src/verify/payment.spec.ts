@@ -1,7 +1,7 @@
-import { Address, beginCell, internal, Transaction } from '@ton/core';
+import { Address, internal, Transaction } from '@ton/core';
 
 import { PaymentTicket } from './VerifierClient';
-import { isPaymentTransaction, paymentNetworkArgs, validatePaymentTicket } from './payment';
+import { buildTextCommentBody, isPaymentTransaction, paymentNetworkArgs, validatePaymentTicket } from './payment';
 
 const codeHash = 'ab'.repeat(32);
 const paymentAddress = new Address(0, Buffer.alloc(32, 1));
@@ -24,10 +24,7 @@ function paymentTransaction(overrides: { amount?: bigint; comment?: string; lt?:
     const message = internal({
         to: paymentAddress,
         value: overrides.amount ?? 10_000_000n,
-        body: beginCell()
-            .storeUint(0, 32)
-            .storeStringTail(overrides.comment ?? comment)
-            .endCell(),
+        body: buildTextCommentBody(overrides.comment ?? comment),
         bounce: true,
     });
     if (message.info.type !== 'internal') {
@@ -41,6 +38,15 @@ function paymentTransaction(overrides: { amount?: bigint; comment?: string; lt?:
         description: { type: 'generic', aborted: false },
     } as unknown as Transaction;
 }
+
+describe('buildTextCommentBody', () => {
+    it('serializes a zero-opcode text comment', () => {
+        const body = buildTextCommentBody('verification payment').beginParse();
+
+        expect(body.loadUint(32)).toBe(0);
+        expect(body.loadStringTail()).toBe('verification payment');
+    });
+});
 
 describe('validatePaymentTicket', () => {
     it('accepts a matching testnet payment quote', () => {
