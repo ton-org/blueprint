@@ -34,10 +34,14 @@ export function isCompilerLibrarySourcePath(sourcePath: string): boolean {
 export function normalizeVerifierSourcePath(filename: string, projectRoot: string = process.cwd()): string {
     const slashPath = filename.replace(/\\/g, '/');
     const normalizedRoot = projectRoot.replace(/\\/g, '/').replace(/\/+$/, '');
+    const isWindowsAbsolutePath = /^[A-Za-z]:\//.test(slashPath);
+    const isAbsolutePath = path.posix.isAbsolute(slashPath) || isWindowsAbsolutePath;
     let relativePath = slashPath;
 
-    if (path.posix.isAbsolute(slashPath)) {
-        if (slashPath !== normalizedRoot && !slashPath.startsWith(`${normalizedRoot}/`)) {
+    if (isAbsolutePath) {
+        const comparablePath = isWindowsAbsolutePath ? slashPath.toLowerCase() : slashPath;
+        const comparableRoot = isWindowsAbsolutePath ? normalizedRoot.toLowerCase() : normalizedRoot;
+        if (comparablePath !== comparableRoot && !comparablePath.startsWith(`${comparableRoot}/`)) {
             throw new Error(`Source file is outside the project directory and cannot be verified: ${filename}`);
         }
         relativePath = slashPath.slice(normalizedRoot.length).replace(/^\/+/, '');
