@@ -40,9 +40,7 @@ export type VerifyResponse = {
     storage_revision?: string;
 };
 
-type VerifierErrorResponse = {
-    error?: string;
-};
+class InvalidVerifierResponseError extends Error {}
 
 export function verifierBackend(env: Record<string, string | undefined> = process.env): string {
     const value = env[VERIFY_BACKEND_ENV];
@@ -91,12 +89,83 @@ function ensureCodeHash(expected: string, actual: string, context: string): void
     }
 }
 
+function invalidVerifierResponse(context: string, message: string): never {
+    throw new InvalidVerifierResponseError(`${context} returned an invalid response: ${message}`);
+}
+
+function responseObject(value: unknown, context: string): object {
+    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+        invalidVerifierResponse(context, 'expected a JSON object');
+    }
+    return value;
+}
+
+function requiredString(response: object, field: string, context: string): string {
+    const value: unknown = Reflect.get(response, field);
+    if (typeof value !== 'string') {
+        invalidVerifierResponse(context, `${field} must be a string`);
+    }
+    return value;
+}
+
+async function responseJson(response: Response, context: string): Promise<unknown> {
+    try {
+        return await response.json();
+    } catch (_) {
+        invalidVerifierResponse(context, 'expected valid JSON');
+    }
+}
+
+function parseVerificationStatusResponse(value: unknown): VerificationStatusResponse {
+    const context = 'Verification status';
+    const response = responseObject(value, context);
+    const status: unknown = Reflect.get(response, 'status');
+    if (status !== 'unverified' && status !== 'queued' && status !== 'compiling' && status !== 'verified') {
+        invalidVerifierResponse(context, `unknown status: ${String(status)}`);
+    }
+
+    return {
+        code_hash: requiredString(response, 'code_hash', context),
+        status,
+    };
+}
+
+function parseTicketResponse(value: unknown): TicketResponse {
+    const context = 'Verification ticket';
+    const response = responseObject(value, context);
+    const status: unknown = Reflect.get(response, 'status');
+    const codeHash = requiredString(response, 'code_hash', context);
+
+    if (status === 'already_verified') {
+        return {
+            status,
+            code_hash: codeHash,
+            source_bundle_hash: requiredString(response, 'source_bundle_hash', context),
+            storage_revision: requiredString(response, 'storage_revision', context),
+        };
+    }
+    if (status === 'payment_required') {
+        return {
+            status,
+            code_hash: codeHash,
+            network: requiredString(response, 'network', context),
+            payment_address: requiredString(response, 'payment_address', context),
+            amount_nano: requiredString(response, 'amount_nano', context),
+            comment: requiredString(response, 'comment', context),
+        };
+    }
+
+    invalidVerifierResponse(context, `unknown status: ${String(status)}`);
+}
+
 async function responseError(response: Response): Promise<string> {
     const text = await response.text();
     try {
-        const parsed = JSON.parse(text) as VerifierErrorResponse;
-        if (parsed.error !== undefined && parsed.error !== '') {
-            return parsed.error;
+        const parsed: unknown = JSON.parse(text);
+        if (typeof parsed === 'object' && parsed !== null && 'error' in parsed && typeof parsed.error === 'string') {
+            if (parsed.error !== '') {
+                return parsed.error;
+            }
         }
     } catch (_) {
         // Proxies and transport layers may return plain text instead of the API error schema.
@@ -172,7 +241,7 @@ export class VerifierClient {
                 `Verification status request failed: HTTP ${response.status}\n${await responseError(response)}`,
             );
         }
-        const result = (await response.json()) as VerificationStatusResponse;
+        const result = parseVerificationStatusResponse(await responseJson(response, 'Verification status'));
         ensureCodeHash(codeHash, result.code_hash, 'Verification status');
         return result;
     }
@@ -187,7 +256,7 @@ export class VerifierClient {
             throw new Error(friendlyVerifierError(await responseError(response)));
         }
 
-        const ticket = (await response.json()) as TicketResponse;
+        const ticket = parseTicketResponse(await responseJson(response, 'Verification ticket'));
         ensureCodeHash(codeHash, ticket.code_hash, 'Verification ticket');
         return ticket;
     }

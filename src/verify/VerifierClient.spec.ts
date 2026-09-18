@@ -65,6 +65,18 @@ describe('VerifierClient', () => {
         await expect(client.status('a'.repeat(64))).rejects.toThrow('returned a different code hash');
     });
 
+    it('rejects unknown status and ticket variants', async () => {
+        const codeHash = 'a'.repeat(64);
+        const fetchMock = jest
+            .fn()
+            .mockResolvedValueOnce(jsonResponse({ code_hash: codeHash, status: 'waiting' }))
+            .mockResolvedValueOnce(jsonResponse({ code_hash: codeHash, status: 'free' }));
+        const client = new VerifierClient('http://verifier.test', undefined, fetchMock as unknown as typeof fetch);
+
+        await expect(client.status(codeHash)).rejects.toThrow('unknown status: waiting');
+        await expect(client.takeTicket(codeHash)).rejects.toThrow('unknown status: free');
+    });
+
     it('turns verifier payment errors into actionable messages', async () => {
         const fetchMock = jest.fn(async () =>
             jsonResponse({ error: 'payment_not_found: transaction is not indexed' }, 402),
