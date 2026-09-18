@@ -57,6 +57,22 @@ describe('prepareVerification', () => {
         expect(prepared.files.map((file) => file.source.include_in_command)).toEqual([true, true]);
     });
 
+    it('rejects a non-default FunC optimization level', () => {
+        const result: CompileResult = {
+            lang: 'func',
+            code: beginCell().endCell(),
+            fiftCode: '',
+            targets: ['contracts/main.fc'],
+            version: '0.4.6',
+            optLevel: 1,
+            snapshot: [{ filename: 'contracts/main.fc', content: '() recv_internal() {}' }],
+        };
+
+        expect(() => prepareVerification(result)).toThrow('does not support FunC optLevel 1');
+        result.optLevel = 2;
+        expect(() => prepareVerification(result)).not.toThrow();
+    });
+
     it('rejects case-insensitive duplicate source paths', () => {
         const result: CompileResult = {
             lang: 'tolk',
@@ -105,6 +121,23 @@ describe('prepareVerification', () => {
 
         expect(prepared.compileParams).toEqual({ compiler_version: '1.2.1' });
         expect(prepared.files.map((file) => file.source.is_entrypoint)).toEqual([true, false]);
+    });
+
+    it('rejects unsupported Tolk compiler settings', () => {
+        const result: CompileResult = {
+            lang: 'tolk',
+            code: beginCell().endCell(),
+            fiftCode: '',
+            stderr: '',
+            version: '1.2.0',
+            optimizationLevel: 1,
+            snapshot: [{ filename: 'contracts/main.tolk', content: 'tolk 1.0' }],
+        };
+
+        expect(() => prepareVerification(result)).toThrow('does not support Tolk optimizationLevel 1');
+        result.optimizationLevel = 2;
+        result.experimentalOptions = 'some-feature';
+        expect(() => prepareVerification(result)).toThrow('does not support Tolk experimentalOptions');
     });
 
     it('uploads the Tact package emitted by the compiler', () => {

@@ -21,6 +21,42 @@ const SOURCE_EXTENSIONS = {
 
 const KNOWN_SOURCE_EXTENSIONS = new Set<string>(Object.values(SOURCE_EXTENSIONS).flat());
 
+function validateCompilerSettings(result: CompileResult): void {
+    if (result.lang === 'func') {
+        const optLevel = result.optLevel;
+        switch (optLevel) {
+            case undefined:
+            case 0:
+            case 2:
+                break;
+            default:
+                throw new Error(
+                    `TON verifier does not support FunC optLevel ${optLevel}; expected the default value 2`,
+                );
+        }
+    }
+
+    if (result.lang === 'tolk') {
+        const optimizationLevel = result.optimizationLevel;
+        switch (optimizationLevel) {
+            case undefined:
+            case 2:
+                break;
+            default:
+                throw new Error(
+                    `TON verifier does not support Tolk optimizationLevel ${optimizationLevel}; expected the default value 2`,
+                );
+        }
+
+        const experimentalOptions = result.experimentalOptions;
+        if (experimentalOptions !== undefined) {
+            if (experimentalOptions.trim() !== '') {
+                throw new Error('TON verifier does not support Tolk experimentalOptions');
+            }
+        }
+    }
+}
+
 function prepareSnapshotFiles(
     snapshot: SourceSnapshot[],
     sourceOptions: (path: string, index: number) => SourceOptions,
@@ -132,6 +168,7 @@ function prepareFiles(result: CompileResult): UploadPart[] {
 }
 
 export function prepareVerification(result: CompileResult, compilerVersion?: string): PreparedVerification {
+    validateCompilerSettings(result);
     const files = prepareFiles(result);
     if (files.length > 256) {
         throw new Error('TON verifier accepts at most 256 source files');
