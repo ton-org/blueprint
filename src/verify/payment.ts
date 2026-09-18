@@ -33,7 +33,7 @@ export function formatVerifierPaymentAmount(amount: bigint): string {
 }
 
 export function buildVerifierPaymentPrompt(network: Network, amount: bigint, address: Address): string {
-    return `Send ${formatVerifierPaymentAmount(amount)} on ${network} to ${formatVerifierPaymentAddress(network, address)}?`;
+    return `Send ${formatVerifierPaymentAmount(amount)} on TON ${network} to ${formatVerifierPaymentAddress(network, address)}?`;
 }
 
 export function validatePaymentTicket(ticket: PaymentTicket): { address: Address; amount: bigint; network: Network } {
@@ -177,7 +177,7 @@ async function waitForPaymentTransaction(
     comment: string,
     network: Network,
 ): Promise<string> {
-    ui.setActionPrompt('Waiting for finalized verifier payment...');
+    ui.setActionPrompt('Waiting for finalized recipient transaction');
     try {
         for (let attempt = 1; attempt <= PAYMENT_POLL_ATTEMPTS; attempt++) {
             const state = await networkProvider.getContractState(paymentAddress);
@@ -237,7 +237,8 @@ export async function sendVerifierPayment(
     await sender.send({
         to: address,
         value: amount,
-        bounce: true,
+        // Blueprint send providers choose the bounce behavior internally; undefined avoids the ignored-option warning.
+        bounce: undefined,
         body: buildTextCommentBody(ticket.comment),
     });
 
