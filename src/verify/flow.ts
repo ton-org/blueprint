@@ -1,3 +1,5 @@
+import chalk from 'chalk';
+
 import { Config } from '../config/Config';
 import { Network } from '../network/Network';
 import { UIProvider } from '../ui/UIProvider';
@@ -30,10 +32,10 @@ type PaymentSender = typeof sendVerifierPayment;
 
 function writeVerificationDetails(ui: UIProvider, response: VerifyResponse): void {
     if (response.source_bundle_hash !== null) {
-        ui.write(`  → Source bundle: ${response.source_bundle_hash}`);
+        ui.write(`  ${chalk.blue.bold('→')} Source bundle: ${chalk.dim(response.source_bundle_hash)}`);
     }
     if (response.storage_revision !== null) {
-        ui.write(`  → Storage revision: ${response.storage_revision}`);
+        ui.write(`  ${chalk.blue.bold('→')} Storage revision: ${chalk.dim(response.storage_revision)}`);
     }
 }
 
@@ -67,13 +69,17 @@ async function waitForExistingVerification(
             return false;
         }
         if (result.status === 'verified') {
-            ui.write('  ✓ Contract was already verified');
+            ui.write(`  ${chalk.green.bold('✓')} Contract was already verified`);
             ui.write('');
-            ui.write(`View at: ${client.link(codeHash)}`);
+            ui.write(`View at: ${chalk.blue(client.link(codeHash))}`);
             return true;
         }
         if (result.status !== previousStatus) {
-            ui.write(result.status === 'queued' ? '  → Verification is queued' : '  → Verification is compiling');
+            ui.write(
+                result.status === 'queued'
+                    ? `  ${chalk.blue.bold('→')} Verification is queued`
+                    : `  ${chalk.blue.bold('→')} Verification is compiling`,
+            );
         }
 
         previousStatus = result.status;
@@ -104,10 +110,10 @@ export async function runVerificationFlow(
     let paymentNetwork: Network | undefined;
 
     if (!client.usesApiKey) {
-        ui.write('  → Requesting verification ticket');
+        ui.write(`  ${chalk.blue.bold('→')} Requesting verification ticket`);
         const ticket = await client.takeTicket(codeHash);
         if (ticket.status === 'already_verified') {
-            ui.write('  ✓ Contract was already verified');
+            ui.write(`  ${chalk.green.bold('✓')} Contract was already verified`);
             writeVerificationDetails(ui, {
                 code_hash: ticket.code_hash,
                 compiled_code_hash: null,
@@ -116,50 +122,56 @@ export async function runVerificationFlow(
                 storage_revision: ticket.storage_revision,
             });
             ui.write('');
-            ui.write(`View at: ${client.link(codeHash)}`);
+            ui.write(`View at: ${chalk.blue(client.link(codeHash))}`);
             return;
         }
 
         const payment = validatePaymentTicket(ticket);
         paymentNetwork = payment.network;
-        ui.write(`  → Payment network: TON ${payment.network}`);
-        ui.write(`  → Payment amount: ${formatVerifierPaymentAmount(payment.amount)}`);
-        ui.write(`  → Payment address: ${formatVerifierPaymentAddress(payment.network, payment.address)}`);
-        ui.write(`  → Payment comment: ${ticket.comment}`);
+        ui.write(`  ${chalk.blue.bold('→')} Payment network: TON ${payment.network}`);
+        ui.write(
+            `  ${chalk.blue.bold('→')} Payment amount: ${chalk.cyan(formatVerifierPaymentAmount(payment.amount))}`,
+        );
+        ui.write(
+            `  ${chalk.blue.bold('→')} Payment address: ${chalk.dim(formatVerifierPaymentAddress(payment.network, payment.address))}`,
+        );
+        ui.write(`  ${chalk.blue.bold('→')} Payment comment: ${chalk.dim(ticket.comment)}`);
 
         if (paymentTransactionHash === undefined) {
             if (!options.dryRun) {
                 paymentTransactionHash = await paymentSender(ui, options.config, options.walletOptions, ticket);
-                ui.write(`  ✓ Payment finalized: ${paymentTransactionHash}`);
+                ui.write(`  ${chalk.green.bold('✓')} Payment finalized: ${chalk.dim(paymentTransactionHash)}`);
             }
         } else {
-            ui.write(`  → Reusing ${payment.network} payment transaction: ${paymentTransactionHash}`);
+            ui.write(
+                `  ${chalk.blue.bold('→')} Reusing ${payment.network} payment transaction: ${chalk.dim(paymentTransactionHash)}`,
+            );
         }
     }
 
     if (options.dryRun) {
         const skipped = paymentNetwork === undefined ? 'source upload' : `${paymentNetwork} payment and source upload`;
-        ui.write(`  ℹ Dry run mode: skipping ${skipped}`);
+        ui.write(`  ${chalk.blue.bold('ℹ')} Dry run mode: skipping ${skipped}`);
         ui.write('');
-        ui.write('✓ TON verifier request prepared successfully!');
-        ui.write(`  Backend: ${client.backend}/api/v1/verify`);
-        ui.write(`  Source files: ${prepared.files.length}`);
+        ui.write(chalk.green.bold('✓ TON verifier request prepared successfully!'));
+        ui.write(`  Backend: ${chalk.dim(`${client.backend}/api/v1/verify`)}`);
+        ui.write(`  Source files: ${chalk.dim(prepared.files.length.toString())}`);
         return;
     }
 
-    ui.write('  → Sending sources to TON verifier');
+    ui.write(`  ${chalk.blue.bold('→')} Sending sources to TON verifier`);
     const verification = await client.verify(prepared, codeHash, address, paymentTransactionHash);
     validateVerificationResult(codeHash, verification);
 
     if (verification.verification_result === 'already_verified') {
-        ui.write('  ✓ Contract was already verified');
+        ui.write(`  ${chalk.green.bold('✓')} Contract was already verified`);
     } else {
-        ui.write('  ✓ TON verifier accepted source bundle');
+        ui.write(`  ${chalk.green.bold('✓')} TON verifier accepted source bundle`);
     }
     writeVerificationDetails(ui, verification);
     ui.write('');
     if (verification.verification_result === 'match') {
-        ui.write('✓ Contract verification completed!');
+        ui.write(chalk.green.bold('✓ Contract verification completed!'));
     }
-    ui.write(`View at: ${client.link(codeHash)}`);
+    ui.write(`View at: ${chalk.blue(client.link(codeHash))}`);
 }

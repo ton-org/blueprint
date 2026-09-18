@@ -1,5 +1,6 @@
 import { Address } from '@ton/core';
 import arg from 'arg';
+import chalk from 'chalk';
 
 import { doCompile } from '../compile/compile';
 import { runVerificationFlow } from '../verify/flow';
@@ -42,12 +43,12 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
     }
 
     const selectedContract = await selectContract(ui, extractFirstArg(localArgs));
-    ui.write(`  → Contract: ${selectedContract}`);
-    ui.write('  → Compiling contract');
+    ui.write(`  ${chalk.blue.bold('→')} Contract: ${chalk.cyan(selectedContract)}`);
+    ui.write(`  ${chalk.blue.bold('→')} Compiling contract`);
     const result = await doCompile(selectedContract, { buildLibrary: false });
     const codeHash = result.code.hash().toString('hex');
-    ui.write('  ✓ Compiled successfully');
-    ui.write(`  → Code hash: 0x${codeHash}`);
+    ui.write(`  ${chalk.green.bold('✓')} Compiled successfully`);
+    ui.write(`  ${chalk.blue.bold('→')} Code hash: ${chalk.dim(`0x${codeHash}`)}`);
 
     const addressArgument = localArgs['--address'];
     const trimmedAddress = addressArgument === undefined ? undefined : addressArgument.trim();
@@ -56,13 +57,15 @@ export const verify: Runner = async (_args: Args, ui: UIProvider, context: Runne
         Address.parse(address);
     }
 
-    ui.write('  → Collecting source files');
+    ui.write(`  ${chalk.blue.bold('→')} Collecting source files`);
     const prepared = prepareVerification(result, localArgs['--compiler-version']);
     const client = new VerifierClient();
 
-    ui.write(`  ✓ Collected ${prepared.files.length} source file${prepared.files.length === 1 ? '' : 's'}`);
-    ui.write('  → Using TON verifier');
-    ui.write(`  → Using backend: ${client.backend}/api/v1/verify`);
+    ui.write(
+        `  ${chalk.green.bold('✓')} Collected ${prepared.files.length} source file${prepared.files.length === 1 ? '' : 's'}`,
+    );
+    ui.write(`  ${chalk.blue.bold('→')} Using TON verifier`);
+    ui.write(`  ${chalk.blue.bold('→')} Using backend: ${chalk.dim(`${client.backend}/api/v1/verify`)}`);
 
     await runVerificationFlow(ui, client, {
         codeHash,
