@@ -3,7 +3,7 @@ import path from 'path';
 
 import arg from 'arg';
 
-import { COMPILABLES_DIR, CONTRACTS_DIR, SCRIPTS_DIR, TACT_ROOT_CONFIG, TESTS_DIR, WRAPPERS_DIR } from '../paths';
+import { COMPILABLES_DIR, CONTRACTS_DIR, SCRIPTS_DIR, TESTS_DIR, WRAPPERS_DIR } from '../paths';
 import { Args, extractFirstArg, extractSecondArg, Runner, RunnerContext } from './Runner';
 import { validateContractName, findContracts, toLowerCase, toSnakeCase, extractFile } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
@@ -107,7 +107,6 @@ export const rename: Runner = async (_args: Args, ui: UIProvider, _context: Runn
         toSnakeCase,
         toLowerCase,
         (name) => `deploy${name}`,
-        (name) => `${name}_${name}`,
         (name) => `increment${name}`,
         (name) => `${toLowerCase(name)}ConfigToCell`,
         (name) => `${name}Config`,
@@ -120,9 +119,6 @@ export const rename: Runner = async (_args: Args, ui: UIProvider, _context: Runn
     const renameContext = new RenameContext(replaces);
     for (const directory of [SCRIPTS_DIR, WRAPPERS_DIR, CONTRACTS_DIR, TESTS_DIR, COMPILABLES_DIR]) {
         await renameContext.prepareRenameExactOccurrencesInDirectory(directory);
-    }
-    if (existsSync(TACT_ROOT_CONFIG)) {
-        await renameContext.prepareRenameContentInFile(TACT_ROOT_CONFIG);
     }
     await renameContext.applyEffects();
 
