@@ -10,20 +10,12 @@ export const templateTypes: { name: string; value: string }[] = [
         value: 'func-empty',
     },
     {
-        name: 'An empty contract (Tact, deprecated)',
-        value: 'tact-empty',
-    },
-    {
         name: 'A simple counter contract (Tolk)',
         value: 'tolk-counter',
     },
     {
         name: 'A simple counter contract (FunC, deprecated)',
         value: 'func-counter',
-    },
-    {
-        name: 'A simple counter contract (Tact, deprecated)',
-        value: 'tact-counter',
     },
 ];
 
