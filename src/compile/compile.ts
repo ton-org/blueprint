@@ -4,10 +4,9 @@ import path from 'path';
 import { beginCell, Cell } from '@ton/core';
 
 import { COMPILABLES_DIR, WRAPPERS_DIR } from '../paths';
-import { CompilableConfig, CompilerConfig, isCompilableConfig } from './CompilerConfig';
+import { CompilableConfig, CompilerConfig } from './CompilerConfig';
 import { getConfig } from '../config/utils';
 import { doCompileFunc, FuncCompileResult, getFuncVersion, DoCompileFuncConfig } from './func/compile.func';
-import { doCompileTact, TactCompileResult, getTactVersion, getTactConfigForContract } from './tact/compile.tact';
 import { doCompileTolk, TolkCompileResult, getTolkVersion } from './tolk/compile.tolk';
 import { findCompiles } from '../utils';
 import { SupportedLang } from './SupportedLang';
@@ -31,6 +30,10 @@ export function extractCompilableConfig(path: string): CompilableConfig {
 
     mod.compile.lang ??= 'func';
 
+    if (mod.compile.lang !== 'func' && mod.compile.lang !== 'tolk') {
+        throw new Error(`Unsupported compiler language: ${mod.compile.lang}`);
+    }
+
     return mod.compile;
 }
 
@@ -39,9 +42,7 @@ export const COMPILE_END = '.compile.ts';
 /**
  * Retrieves the compiler configuration for a specific contract.
  *
- * This function checks if a Tact configuration exists for the given contract
- * `tact.config.json`. If found, it returns that configuration. Otherwise, it falls back
- * to loading and extracting the `.compile.ts` configuration file from the appropriate
+ * Loads and extracts the `.compile.ts` configuration file from the appropriate
  * compilables directory (`compilables/` or `wrappers/`).
  *
  * @param {string} name - The name of the contract
@@ -53,11 +54,6 @@ export const COMPILE_END = '.compile.ts';
  * console.log('Compiler config:', config);
  */
 export async function getCompilerConfigForContract(name: string): Promise<CompilerConfig> {
-    const tactConfig = getTactConfigForContract(name);
-    if (tactConfig) {
-        return tactConfig;
-    }
-
     const compilablesDirectory = await getCompilablesDirectory();
     const compilables = await findCompiles(compilablesDirectory);
     const compilable = compilables.find((c) => c.name === name);
@@ -68,57 +64,34 @@ export async function getCompilerConfigForContract(name: string): Promise<Compil
     return extractCompilableConfig(pathToExtract);
 }
 
-export type CompileResult = TactCompileResult | FuncCompileResult | TolkCompileResult;
+export type CompileResult = FuncCompileResult | TolkCompileResult;
 
-async function doCompileInner(name: string, config: CompilerConfig): Promise<CompileResult> {
-    if (isCompilableConfig(config)) {
-        if (config.lang === 'tact') {
-            return await doCompileTact(config, name);
-        }
-
-        if (config.lang === 'tolk') {
-            return await doCompileTolk({
-                entrypointFileName: config.entrypoint,
-                fsReadCallback: (path) => readFileSync(path).toString(),
-                optimizationLevel: config.optimizationLevel,
-                withStackComments: config.withStackComments,
-                withSrcLineComments: config.withSrcLineComments,
-                experimentalOptions: config.experimentalOptions,
-            });
-        }
-
-        return await doCompileFunc({
-            targets: config.targets,
-            sources: config.sources ?? ((path: string) => readFileSync(path).toString()),
-            optLevel: config.optLevel,
-            debugInfo: config.debugInfo,
-        } as DoCompileFuncConfig);
+async function doCompileInner(config: CompilerConfig): Promise<CompileResult> {
+    if (config.lang === 'tolk') {
+        return await doCompileTolk({
+            entrypointFileName: config.entrypoint,
+            fsReadCallback: (path) => readFileSync(path).toString(),
+            optimizationLevel: config.optimizationLevel,
+            withStackComments: config.withStackComments,
+            withSrcLineComments: config.withSrcLineComments,
+            experimentalOptions: config.experimentalOptions,
+        });
     }
 
-    return await doCompileTact(config, name);
-}
-
-function getCompilerName(config: CompilerConfig): SupportedLang {
-    if (isCompilableConfig(config)) {
-        return config.lang ?? 'func';
-    }
-
-    return 'tact';
+    return await doCompileFunc({
+        targets: config.targets,
+        sources: config.sources ?? ((path: string) => readFileSync(path).toString()),
+        optLevel: config.optLevel,
+        debugInfo: config.debugInfo,
+    } as DoCompileFuncConfig);
 }
 
 async function getCompilerVersion(config: CompilerConfig): Promise<string> {
-    if (isCompilableConfig(config)) {
-        if (config.lang === 'tact') {
-            return getTactVersion();
-        }
-        if (config.lang === 'tolk') {
-            return getTolkVersion();
-        }
-
-        return getFuncVersion();
+    if (config.lang === 'tolk') {
+        return getTolkVersion();
     }
 
-    return getTactVersion();
+    return getFuncVersion();
 }
 
 export async function getCompilerOptions(config: CompilerConfig): Promise<{
@@ -126,7 +99,7 @@ export async function getCompilerOptions(config: CompilerConfig): Promise<{
     version: string;
 }> {
     return {
-        lang: getCompilerName(config),
+        lang: config.lang ?? 'func',
         version: await getCompilerVersion(config),
     };
 }
@@ -140,25 +113,25 @@ export function libraryCellFromCode(code: Cell) {
 export async function doCompile(name: string, opts?: CompileOpts): Promise<CompileResult> {
     const config = await getCompilerConfigForContract(name);
 
-    if (opts?.debugInfo && isCompilableConfig(config) && (config.lang === undefined || config.lang === 'func')) {
+    if (opts?.debugInfo && (config.lang === undefined || config.lang === 'func')) {
         config.debugInfo = true;
     }
 
-    if ('preCompileHook' in config && config.preCompileHook !== undefined) {
+    if (config.preCompileHook !== undefined) {
         await config.preCompileHook({
             userData: opts?.hookUserData,
         });
     }
 
-    const res = await doCompileInner(name, config);
+    const res = await doCompileInner(config);
 
-    if ('postCompileHook' in config && config.postCompileHook !== undefined) {
+    if (config.postCompileHook !== undefined) {
         await config.postCompileHook(res.code, {
             userData: opts?.hookUserData,
         });
     }
 
-    const buildLibrary = opts?.buildLibrary ?? ('buildLibrary' in config && config.buildLibrary === true);
+    const buildLibrary = opts?.buildLibrary ?? config.buildLibrary;
 
     if (buildLibrary) {
         res.code = libraryCellFromCode(res.code);
@@ -180,7 +153,7 @@ export type CompileOpts = {
 };
 
 /**
- * Compiles a contract using the specified configuration for `tact`, `func`, or `tolk` languages.
+ * Compiles a contract using the specified configuration for `func` or `tolk` languages.
  *
  * This function resolves the appropriate compiler configuration for a given contract name,
  * runs any defined pre-compile and post-compile hooks, and returns the resulting compiled code
@@ -208,4 +181,4 @@ export async function compile(name: string, opts?: CompileOpts): Promise<Cell> {
     return result.code;
 }
 
-export type { TactCompileResult, TolkCompileResult, FuncCompileResult };
+export type { TolkCompileResult, FuncCompileResult };
