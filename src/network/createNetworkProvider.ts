@@ -51,7 +51,6 @@ const CONFIG_ADDRESS = Address.parse('-1:555555555555555555555555555555555555555
 export const argSpec = {
     '--mainnet': Boolean,
     '--testnet': Boolean,
-    '--tetra': Boolean,
     '--custom': String,
     '--custom-type': String,
     '--custom-version': String,
@@ -473,7 +472,6 @@ class NetworkProviderBuilder {
         let network = oneOrZeroOf({
             mainnet: this.args['--mainnet'],
             testnet: this.args['--testnet'],
-            tetra: this.args['--tetra'],
             custom: this.args['--custom'] !== undefined,
         });
 
@@ -508,7 +506,7 @@ class NetworkProviderBuilder {
         );
     }
 
-    async chooseSendProvider(network: Network, client: BlueprintTonClient): Promise<SendProvider> {
+    async chooseSendProvider(network: Network, client: BlueprintTonClient, globalId?: number): Promise<SendProvider> {
         let deployUsing = oneOrZeroOf({
             tonconnect: this.args['--tonconnect'],
             deeplink: this.args['--deeplink'],
@@ -554,14 +552,9 @@ class NetworkProviderBuilder {
                     this.config?.manifestUrl,
                 );
                 break;
-            case 'mnemonic': {
-                let globalId: number | undefined = undefined;
-                if (typeof this.config?.network === 'object') {
-                    globalId = this.config.network.globalId;
-                }
+            case 'mnemonic':
                 provider = await createMnemonicProvider(client, network, this.ui, globalId);
                 break;
-            }
             default:
                 throw new Error('Unknown deploy option');
         }
@@ -572,18 +565,23 @@ class NetworkProviderBuilder {
     async build(): Promise<NetworkProvider> {
         let network = await this.chooseNetwork();
 
+        if (!AVAILABLE_NETWORKS.includes(network)) {
+            throw new Error('Unknown network: ' + network);
+        }
+
         if (
             network !== 'custom' &&
             (this.args['--custom-key'] !== undefined ||
                 this.args['--custom-type'] !== undefined ||
-                this.args['--custom-version'] !== undefined)
+                this.args['--custom-version'] !== undefined ||
+                this.args['--custom-global-id'] !== undefined)
         ) {
             throw new Error('Cannot use custom parameters with a non-custom network');
         }
 
         let tc;
+        let configNetwork: CustomNetwork | undefined = undefined;
         if (network === 'custom') {
-            let configNetwork: CustomNetwork | undefined = undefined;
             if (this.config?.network !== undefined && typeof this.config.network !== 'string') {
                 configNetwork = this.config.network;
             }
@@ -598,12 +596,10 @@ class NetworkProviderBuilder {
                 if (inputType !== undefined) {
                     type = inputType as any; // checks come later
                 }
-                const globalId = this.args['--custom-global-id'];
                 configNetwork = {
                     endpoint: this.args['--custom'],
                     version,
                     key: this.args['--custom-key'],
-                    globalId,
                     type,
                 };
             }
@@ -645,47 +641,40 @@ class NetworkProviderBuilder {
                 throw new Error('The usage of this network provider requires either mainnet or testnet');
             }
         } else {
-            if (network === 'tetra') {
-                tc = new ContractAdapter(
-                    new TonApiClient({
-                        baseUrl: 'https://tetra.tonapi.io',
-                    }),
-                );
-            } else {
-                const httpAdapter: AxiosAdapter = async (config: InternalAxiosRequestConfig) => {
-                    let r: AxiosResponse;
-                    let delay = INITIAL_DELAY;
-                    let attempts = 0;
-                    while (true) {
-                        r = await axios({
-                            ...config,
-                            adapter: undefined,
-                            validateStatus: (status: number) => (status >= 200 && status < 300) || status === 429,
-                        });
-                        if (r.status !== 429) {
-                            return r;
-                        }
-                        await sleep(delay);
-                        delay *= 2;
-                        attempts++;
-                        if (attempts >= MAX_ATTEMPTS) {
-                            throw new Error('Max attempts reached');
-                        }
+            const httpAdapter: AxiosAdapter = async (config: InternalAxiosRequestConfig) => {
+                let r: AxiosResponse;
+                let delay = INITIAL_DELAY;
+                let attempts = 0;
+                while (true) {
+                    r = await axios({
+                        ...config,
+                        adapter: undefined,
+                        validateStatus: (status: number) => (status >= 200 && status < 300) || status === 429,
+                    });
+                    if (r.status !== 429) {
+                        return r;
                     }
-                };
+                    await sleep(delay);
+                    delay *= 2;
+                    attempts++;
+                    if (attempts >= MAX_ATTEMPTS) {
+                        throw new Error('Max attempts reached');
+                    }
+                }
+            };
 
-                tc = new TonClient({
-                    timeout: this.config?.requestTimeout,
-                    endpoint:
-                        network === 'mainnet'
-                            ? 'https://toncenter.com/api/v2/jsonRPC'
-                            : 'https://testnet.toncenter.com/api/v2/jsonRPC',
-                    httpAdapter,
-                });
-            }
+            tc = new TonClient({
+                timeout: this.config?.requestTimeout,
+                endpoint:
+                    network === 'mainnet'
+                        ? 'https://toncenter.com/api/v2/jsonRPC'
+                        : 'https://testnet.toncenter.com/api/v2/jsonRPC',
+                httpAdapter,
+            });
         }
 
-        const sendProvider = await this.chooseSendProvider(network, tc);
+        const globalId = this.args['--custom-global-id'] ?? configNetwork?.globalId;
+        const sendProvider = await this.chooseSendProvider(network, tc, globalId);
 
         try {
             await sendProvider.connect();
@@ -698,7 +687,7 @@ class NetworkProviderBuilder {
 
         const sender = new SendProviderSender(sendProvider);
 
-        const explorer = network === 'tetra' ? 'tonviewer' : this.chooseExplorer();
+        const explorer = this.chooseExplorer();
         return new NetworkProviderImpl(tc, sender, network, explorer, this.ui);
     }
 }

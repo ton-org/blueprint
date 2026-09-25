@@ -31,7 +31,7 @@ export interface Config {
      *     },
      * };
      */
-    network?: 'mainnet' | 'testnet' | 'tetra' | CustomNetwork;
+    network?: 'mainnet' | 'testnet' | CustomNetwork;
 
     /**
      * If true, keeps compilable files (`*.compile.ts`) in a separate directory `compilables`.

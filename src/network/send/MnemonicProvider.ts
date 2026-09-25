@@ -20,7 +20,6 @@ import { BlueprintTonClient } from '../NetworkProvider';
 import { Network } from '../Network';
 import { wallets, WalletVersion } from './wallets';
 import { getW5NetworkGlobalId } from '../utils';
-import { TETRA_DOMAIN } from '../constants';
 
 interface WalletInstance extends Contract {
     getSeqno(provider: ContractProvider): Promise<number>;
@@ -84,9 +83,6 @@ export class MnemonicProvider implements SendProvider {
     private getDomain(params: MnemonicProviderParams): SignatureDomain | undefined {
         if (params.globalId !== undefined) {
             return { type: 'l2' as const, globalId: params.globalId };
-        }
-        if (params.network === 'tetra') {
-            return TETRA_DOMAIN;
         }
         return undefined;
     }

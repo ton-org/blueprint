@@ -32,7 +32,7 @@ export const tonDeepLink = (
     }`;
 
 function getNetworkPrefix(network: string) {
-    if (network === 'testnet' || network === 'tetra') {
+    if (network === 'testnet') {
         return `${network}.`;
     }
     return '';
@@ -78,7 +78,7 @@ export function getTransactionLink(
     network: string,
     explorer: Explorer,
 ) {
-    const networkPrefix = network === 'testnet' ? 'testnet.' : '';
+    const networkPrefix = getNetworkPrefix(network);
 
     switch (explorer) {
         case 'tonscan':

@@ -9,7 +9,7 @@ describe('verify arguments', () => {
         expect(parseVerifyArgs(['verify', option])).toEqual(expect.objectContaining({ [option]: true }));
     });
 
-    it.each(['--mainnet', '--testnet', '--tetra', '--custom', '--tonscan', '--tonviewer', '--toncx', '--dton'])(
+    it.each(['--mainnet', '--testnet', '--custom', '--tonscan', '--tonviewer', '--toncx', '--dton'])(
         'rejects the unrelated %s option',
         (option) => {
             expect(() => parseVerifyArgs(['verify', option])).toThrow();
