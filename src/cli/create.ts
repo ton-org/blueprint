@@ -52,7 +52,6 @@ async function createFiles(templatePath: string, realPath: string, replaces: { [
 
 function getFileExtension(lang: string): string {
     if (lang === 'func') return 'fc';
-    if (lang === 'tolk') return 'tolk';
     return 'tact';
 }
 
@@ -107,6 +106,14 @@ export const create: Runner = async (_args: Args, ui: UIProvider) => {
     const [lang, template] = which.split('-');
 
     const snakeName = toSnakeCase(name);
+    if (lang === 'tolk') {
+        ui.write(`Tolk templates are no longer available in Blueprint. Use Acton to create a new Tolk project:
+  ${chalk.cyan(`acton new ${snakeName} --template ${template}`)}
+
+Get started: https://ton-blockchain.github.io/acton/`);
+        return;
+    }
+
     const contractPath = unixPath.join('contracts', snakeName + '.' + getFileExtension(lang));
 
     const replaces = {

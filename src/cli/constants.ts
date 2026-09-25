@@ -90,6 +90,12 @@ export const availableCommands: CommandInfo[] = [
     },
 ];
 
+const tolkHelpMessage = `Use Acton to create a new Tolk project:
+  ${chalk.cyan('acton new my_contract --template empty')}
+  ${chalk.cyan('acton new my_counter --template counter')}
+
+Get started: https://ton-blockchain.github.io/acton/`;
+
 export const helpMessages = {
     help: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('help')} [${chalk.yellow('command')}]
 
@@ -101,11 +107,18 @@ Blueprint is generally invoked as follows:
 ${chalk.bold('List of available commands:')}
 ${availableCommands.map((c) => `  ${chalk.cyanBright(c.name)}${' '.repeat(Math.max(0, 20 - c.name.length))}${c.description}`).join('\n')}
 
+${chalk.bold('Tolk contracts:')}
+${tolkHelpMessage}
+
 To get more information about a command, run ${chalk.cyan('blueprint help <command>')}`,
 
     create: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('create')} ${chalk.yellow('[contract name]')} ${chalk.gray('[flags]')}
 
 Creates a new contract together with supporting files according to a template.
+
+Selecting a Tolk template shows the corresponding Acton command instead of creating files.
+
+${tolkHelpMessage}
 
 Contract name must be specified in PascalCase and may only include characters a-z, A-Z, 0-9. If not specified on the command line, it will be asked interactively.
 
