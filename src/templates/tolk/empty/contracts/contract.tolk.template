@@ -1,4 +1,0 @@
-{{snakeName}}.tolk
-fun onInternalMessage(in: InMessage) {
-
-}

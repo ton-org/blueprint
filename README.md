@@ -166,9 +166,16 @@ Before developing, make sure that your current working directory is located in t
 
 ### Creating contracts
 
+For new Tolk projects, use [Acton](https://ton-blockchain.github.io/acton/). Selecting a Tolk template in `blueprint create` prints the corresponding Acton command instead of creating files:
+
+* Empty contract: `acton new my_contract --template empty`
+* Counter contract: `acton new my_counter --template counter`
+
+To select a contract template in Blueprint:
+
 1. Run interactive: &nbsp;&nbsp; `npx blueprint create` &nbsp; or &nbsp; `yarn blueprint create`
 2. Non-interactive: &nbsp; `npx/yarn blueprint create <CONTRACT> --type <TYPE>` (type can be `tolk-empty`, `tolk-counter`, `func-empty` (deprecated), `func-counter` (deprecated), `tact-empty` (deprecated), `tact-counter` (deprecated))
-   * Example: `yarn blueprint create MyNewContract --type tolk-empty`
+   * Example: `yarn blueprint create MyNewContract --type func-empty`
 
 ### Renaming contracts
 
