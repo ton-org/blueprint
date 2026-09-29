@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.47.1] - 2026-09-29
+
+### Fixed
+
+- Fixed TonConnect manifest and logo URLs and documentation links to use the `master` branch instead of the deleted `main` branch
+
 ## [0.47.0] - 2026-09-29
 
 ### Changed
