@@ -74,7 +74,36 @@ describe('VerifierClient', () => {
         const client = new VerifierClient('http://verifier.test', undefined, fetchMock as unknown as typeof fetch);
 
         await expect(client.status(codeHash)).rejects.toThrow('unknown status: waiting');
-        await expect(client.takeTicket(codeHash)).rejects.toThrow('unknown status: free');
+        await expect(client.takeTicket(codeHash, 'func', '0.4.6')).rejects.toThrow('unknown status: free');
+    });
+
+    it('requests a ticket with the compiler name and exact version', async () => {
+        const codeHash = 'a'.repeat(64);
+        const ticket = {
+            status: 'payment_required',
+            code_hash: codeHash,
+            network: 'mainnet',
+            payment_address: `0:${'01'.repeat(32)}`,
+            amount_nano: '10000000',
+            comment: `acton-verify:v1:${codeHash}`,
+        };
+        const fetchMock = jest.fn(async () => jsonResponse(ticket));
+        const client = new VerifierClient('http://verifier.test', undefined, fetchMock as unknown as typeof fetch);
+
+        await expect(client.takeTicket(codeHash, 'func', '0.4.6')).resolves.toEqual(ticket);
+
+        const calls = fetchMock.mock.calls as unknown as Array<[string, RequestInit]>;
+        const [url, init] = calls[0];
+        expect(url).toBe('http://verifier.test/api/v1/take_ticket');
+        expect(init.method).toBe('POST');
+        expect(JSON.parse(String(init.body))).toEqual({
+            code_hash: codeHash,
+            compiler: 'func',
+            compiler_version: '0.4.6',
+        });
+        const headers = new Headers(init.headers);
+        expect(headers.get('User-Agent')).toBe(BLUEPRINT_USER_AGENT);
+        expect(headers.get('Content-Type')).toBe('application/json');
     });
 
     it('turns verifier payment errors into actionable messages', async () => {
@@ -83,7 +112,7 @@ describe('VerifierClient', () => {
         );
         const client = new VerifierClient('http://verifier.test', undefined, fetchMock as unknown as typeof fetch);
 
-        await expect(client.takeTicket('a'.repeat(64))).rejects.toThrow(
+        await expect(client.takeTicket('a'.repeat(64), 'func', '0.4.6')).rejects.toThrow(
             'Payment transaction was not found on the requested TON network.',
         );
 
