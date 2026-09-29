@@ -1,1 +1,1 @@
-export type SupportedLang = 'tolk' | 'func';
+export type SupportedLang = 'func';

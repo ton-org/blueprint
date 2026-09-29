@@ -7,7 +7,6 @@ import { COMPILABLES_DIR, WRAPPERS_DIR } from '../paths';
 import { CompilableConfig, CompilerConfig } from './CompilerConfig';
 import { getConfig } from '../config/utils';
 import { doCompileFunc, FuncCompileResult, getFuncVersion, DoCompileFuncConfig } from './func/compile.func';
-import { doCompileTolk, TolkCompileResult, getTolkVersion } from './tolk/compile.tolk';
 import { findCompiles } from '../utils';
 import { SupportedLang } from './SupportedLang';
 
@@ -30,7 +29,7 @@ export function extractCompilableConfig(path: string): CompilableConfig {
 
     mod.compile.lang ??= 'func';
 
-    if (mod.compile.lang !== 'func' && mod.compile.lang !== 'tolk') {
+    if (mod.compile.lang !== 'func') {
         throw new Error(`Unsupported compiler language: ${mod.compile.lang}`);
     }
 
@@ -64,20 +63,9 @@ export async function getCompilerConfigForContract(name: string): Promise<Compil
     return extractCompilableConfig(pathToExtract);
 }
 
-export type CompileResult = FuncCompileResult | TolkCompileResult;
+export type CompileResult = FuncCompileResult;
 
 async function doCompileInner(config: CompilerConfig): Promise<CompileResult> {
-    if (config.lang === 'tolk') {
-        return await doCompileTolk({
-            entrypointFileName: config.entrypoint,
-            fsReadCallback: (path) => readFileSync(path).toString(),
-            optimizationLevel: config.optimizationLevel,
-            withStackComments: config.withStackComments,
-            withSrcLineComments: config.withSrcLineComments,
-            experimentalOptions: config.experimentalOptions,
-        });
-    }
-
     return await doCompileFunc({
         targets: config.targets,
         sources: config.sources ?? ((path: string) => readFileSync(path).toString()),
@@ -86,21 +74,13 @@ async function doCompileInner(config: CompilerConfig): Promise<CompileResult> {
     } as DoCompileFuncConfig);
 }
 
-async function getCompilerVersion(config: CompilerConfig): Promise<string> {
-    if (config.lang === 'tolk') {
-        return getTolkVersion();
-    }
-
-    return getFuncVersion();
-}
-
 export async function getCompilerOptions(config: CompilerConfig): Promise<{
     lang: SupportedLang;
     version: string;
 }> {
     return {
         lang: config.lang ?? 'func',
-        version: await getCompilerVersion(config),
+        version: await getFuncVersion(),
     };
 }
 
@@ -113,7 +93,7 @@ export function libraryCellFromCode(code: Cell) {
 export async function doCompile(name: string, opts?: CompileOpts): Promise<CompileResult> {
     const config = await getCompilerConfigForContract(name);
 
-    if (opts?.debugInfo && (config.lang === undefined || config.lang === 'func')) {
+    if (opts?.debugInfo) {
         config.debugInfo = true;
     }
 
@@ -153,7 +133,7 @@ export type CompileOpts = {
 };
 
 /**
- * Compiles a contract using the specified configuration for `func` or `tolk` languages.
+ * Compiles a FunC contract using the specified configuration.
  *
  * This function resolves the appropriate compiler configuration for a given contract name,
  * runs any defined pre-compile and post-compile hooks, and returns the resulting compiled code
@@ -181,4 +161,4 @@ export async function compile(name: string, opts?: CompileOpts): Promise<Cell> {
     return result.code;
 }
 
-export type { TolkCompileResult, FuncCompileResult };
+export type { FuncCompileResult };

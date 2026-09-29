@@ -7,15 +7,15 @@ import type { PaymentTicket, VerifierClient, VerifyResponse } from './VerifierCl
 
 const codeHash = 'ab'.repeat(32);
 const prepared = {
-    language: 'tolk' as const,
-    compileParams: { compiler_version: '1.2.0' },
+    language: 'func' as const,
+    compileParams: { compiler_version: '0.4.6' },
     files: [
         {
             source: {
-                path: 'main.tolk',
+                path: 'main.fc',
                 is_entrypoint: true,
             },
-            content: 'tolk 1.0',
+            content: '() recv_internal() {}',
         },
     ],
 };

@@ -84,7 +84,7 @@ export interface NetworkProvider {
      * @param {number} [sleepDuration=2000] - Duration to wait between attempts, in milliseconds.
      * @example
      * await contract.sendDeploy(provider.sender(), toNano('0.05'));
-     * await provider.waitForDeploy(tolkTest.address);
+     * await provider.waitForDeploy(contract.address);
      * // run methods on `contract`
      * @returns {Promise<void>} A promise that resolves when the contract is deployed or the attempts are exhausted.
      */

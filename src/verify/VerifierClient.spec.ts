@@ -106,12 +106,12 @@ describe('VerifierClient', () => {
         );
         const client = new VerifierClient('http://verifier.test', 'test-key', fetchMock as unknown as typeof fetch);
         const prepared = prepareVerification({
-            lang: 'tolk',
+            lang: 'func',
             code: beginCell().endCell(),
             fiftCode: '',
-            stderr: '',
-            version: '1.2.0',
-            snapshot: [{ filename: 'main.tolk', content: 'tolk 1.0' }],
+            targets: ['main.fc'],
+            version: '0.4.6',
+            snapshot: [{ filename: 'main.fc', content: '() recv_internal() {}' }],
         });
 
         await expect(client.verify(prepared, codeHash)).resolves.toMatchObject({ verification_result: 'match' });
@@ -139,12 +139,12 @@ describe('VerifierClient', () => {
         );
         const client = new VerifierClient('http://verifier.test', 'test-key', fetchMock as unknown as typeof fetch);
         const prepared = prepareVerification({
-            lang: 'tolk',
+            lang: 'func',
             code: beginCell().endCell(),
             fiftCode: '',
-            stderr: '',
-            version: '1.2.0',
-            snapshot: [{ filename: 'main.tolk', content: 'tolk 1.0' }],
+            targets: ['main.fc'],
+            version: '0.4.6',
+            snapshot: [{ filename: 'main.fc', content: '() recv_internal() {}' }],
         });
 
         await expect(client.verify(prepared, codeHash)).rejects.toThrow('unknown verification_result: unexpected');

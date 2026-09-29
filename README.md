@@ -45,7 +45,9 @@ npm create ton@latest
 
 ## Overview
 
-Blueprint is an all-in-one development environment designed to enhance the process of creating, testing, and deploying smart contracts on TON blockchain using [Tolk](https://docs.ton.org/develop/tolk/overview) and [FunC](https://docs.ton.org/develop/func/overview) languages.
+Blueprint is an all-in-one development environment designed to enhance the process of creating, testing, and deploying smart contracts on TON blockchain using the [FunC](https://docs.ton.org/develop/func/overview) language.
+
+Tolk compilation and verification are no longer supported in Blueprint. Use [Acton](https://ton-blockchain.github.io/acton/) for Tolk projects.
 
 ### Core features
 
@@ -56,10 +58,9 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 
 ### Tech stack
 
-1. Compiling Tolk with https://github.com/ton-blockchain/tolk-js
-2. Compiling FunC with https://github.com/ton-community/func-js
-3. Testing smart contracts with https://github.com/ton-org/sandbox
-4. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect) or a `ton://` deeplink
+1. Compiling FunC with https://github.com/ton-community/func-js
+2. Testing smart contracts with https://github.com/ton-org/sandbox
+3. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect) or a `ton://` deeplink
 
 ### Requirements
 
@@ -139,10 +140,6 @@ Start by adding the following environment variables to your `.env` file:
 
 Once your environment is set up, you can use the mnemonic wallet for deployment with the appropriate configuration.
 
-### Updating Tolk version
-
-Tolk version can be updated to the latest using `npm update/yarn upgrade @ton/tolk-js` command
-
 ### Updating FunC version
 
 FunC version can be updated to a specific version using `npx/yarn blueprint set func` command, or to the latest using `npm update/yarn upgrade @ton-community/func-js` command
@@ -176,11 +173,6 @@ To select a contract template in Blueprint:
 
 ### Writing contract code
 
-#### Tolk
-1. Implement the contract in `contracts/<CONTRACT>.tolk`; if you wish, split into multiple files
-2. Implement wrapper TypeScript class in `wrappers/<CONTRACT>.ts` to encode messages and decode getters
-
-#### FunC
 1. Implement the standalone FunC root contract in `contracts/<CONTRACT>.fc`
 2. Implement shared FunC imports (if breaking code to multiple files) in `contracts/imports/*.fc`
 3. Implement wrapper TypeScript class in `wrappers/<CONTRACT>.ts` to encode messages and decode getters

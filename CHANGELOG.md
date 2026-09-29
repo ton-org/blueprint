@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Removed Tact support, including contract templates, compilation, verification, and `tact.config.json` discovery
 - Removed the `buildAllTact` and `TactCompileResult` exports and the `@tact-lang/compiler` dependency
+- Removed Tolk compilation and verification support; use [Acton](https://ton-blockchain.github.io/acton/) for Tolk projects
+- Removed the `TolkCompileResult` export and the `@ton/tolk-js` dependency
 
 ## [0.46.0] - 2026-09-18
 

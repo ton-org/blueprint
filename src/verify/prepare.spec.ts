@@ -75,74 +75,57 @@ describe('prepareVerification', () => {
 
     it('rejects case-insensitive duplicate source paths', () => {
         const result: CompileResult = {
-            lang: 'tolk',
+            lang: 'func',
             code: beginCell().endCell(),
             fiftCode: '',
-            stderr: '',
-            version: '1.2.0',
+            targets: ['contracts/main.fc'],
+            version: '0.4.6',
             snapshot: [
-                { filename: 'contracts/Main.tolk', content: 'tolk 1.0' },
-                { filename: 'contracts/main.tolk', content: 'tolk 1.0' },
+                { filename: 'contracts/Main.fc', content: '() recv_internal() {}' },
+                { filename: 'contracts/main.fc', content: '() recv_internal() {}' },
             ],
         };
 
         expect(() => prepareVerification(result)).toThrow('duplicate source paths');
     });
 
-    it('rejects mismatching and repeated source extensions', () => {
+    it.each(['txt', 'tolk'])('rejects mismatching .%s and repeated source extensions', (extension) => {
         const result: CompileResult = {
-            lang: 'tolk',
+            lang: 'func',
             code: beginCell().endCell(),
             fiftCode: '',
-            stderr: '',
-            version: '1.2.0',
-            snapshot: [{ filename: 'contracts/main.fc', content: 'tolk 1.0' }],
+            targets: ['contracts/main.fc'],
+            version: '0.4.6',
+            snapshot: [{ filename: `contracts/main.${extension}`, content: '() recv_internal() {}' }],
         };
 
-        expect(() => prepareVerification(result)).toThrow('does not match tolk');
-        result.snapshot[0].filename = 'contracts/main.fc.tolk';
+        expect(() => prepareVerification(result)).toThrow('does not match func');
+        result.snapshot[0].filename = 'contracts/main.fc.func';
         expect(() => prepareVerification(result)).toThrow('multiple source extensions');
     });
 
-    it('uses the first Tolk snapshot file as the entrypoint', () => {
+    it('uses the FunC target as the entrypoint and overrides the compiler version', () => {
         const result: CompileResult = {
-            lang: 'tolk',
+            lang: 'func',
             code: beginCell().endCell(),
             fiftCode: '',
-            stderr: '',
-            version: '1.2.0',
+            targets: ['contracts/main.fc'],
+            version: '0.4.5',
             snapshot: [
-                { filename: 'contracts/main.tolk', content: 'tolk 1.0' },
-                { filename: 'contracts/imported.tolk', content: 'tolk 1.0' },
+                { filename: 'contracts/imported.fc', content: '() helper() {}' },
+                { filename: 'contracts/main.fc', content: '() recv_internal() {}' },
             ],
         };
 
-        const prepared = prepareVerification(result, '1.2.1');
+        const prepared = prepareVerification(result, '0.4.6');
 
-        expect(prepared.compileParams).toEqual({ compiler_version: '1.2.1' });
-        expect(prepared.files.map((file) => file.source.is_entrypoint)).toEqual([true, false]);
+        expect(prepared.compileParams).toEqual({ compiler_version: '0.4.6' });
+        expect(prepared.files.map((file) => file.source.is_entrypoint)).toEqual([false, true]);
     });
 
-    it('rejects unsupported Tolk compiler settings', () => {
-        const result: CompileResult = {
-            lang: 'tolk',
-            code: beginCell().endCell(),
-            fiftCode: '',
-            stderr: '',
-            version: '1.2.0',
-            optimizationLevel: 1,
-            snapshot: [{ filename: 'contracts/main.tolk', content: 'tolk 1.0' }],
-        };
+    it.each(['tact', 'tolk', 'unknown'])('rejects unsupported compiler language %s', (lang) => {
+        const result = { lang } as unknown as CompileResult;
 
-        expect(() => prepareVerification(result)).toThrow('does not support Tolk optimizationLevel 1');
-        result.optimizationLevel = 2;
-        result.experimentalOptions = 'some-feature';
-        expect(() => prepareVerification(result)).toThrow('does not support Tolk experimentalOptions');
-    });
-
-    it('rejects unsupported compiler languages', () => {
-        const result = { lang: 'tact' } as unknown as CompileResult;
-
-        expect(() => prepareVerification(result)).toThrow('Unsupported compiler language: tact');
+        expect(() => prepareVerification(result)).toThrow(`Unsupported compiler language: ${lang}`);
     });
 });

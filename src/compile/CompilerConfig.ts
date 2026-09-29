@@ -1,6 +1,5 @@
 import { Cell } from '@ton/core';
 
-import { TolkCompilerConfig } from './tolk/config';
 import { FuncCompilerConfig } from './func/config';
 
 export type HookParams = {
@@ -45,6 +44,6 @@ export type CommonCompilerConfig = {
     buildLibrary?: boolean;
 };
 
-export type CompilableConfig = (FuncCompilerConfig | TolkCompilerConfig) & CommonCompilerConfig;
+export type CompilableConfig = FuncCompilerConfig & CommonCompilerConfig;
 
 export type CompilerConfig = CompilableConfig;
