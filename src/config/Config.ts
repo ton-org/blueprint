@@ -61,7 +61,7 @@ export interface Config {
     /**
      * Manifest url passed to TonConnect provider.
      *
-     * @default https://raw.githubusercontent.com/ton-org/blueprint/main/tonconnect/manifest.json
+     * @default https://raw.githubusercontent.com/ton-org/blueprint/master/tonconnect/manifest.json
      */
     manifestUrl?: string;
 }

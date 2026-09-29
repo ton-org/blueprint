@@ -52,9 +52,9 @@ https://github.com/ton-org/blueprint/pull/new/name-of-your-feature
 ```
 (note the name of your branch in the URL)
 
-### Step 5 — update your branch from main
+### Step 5 — update your branch from master
 
-This step may be necessary in case the `main`/`develop` branch has changed since you created your branch
+This step may be necessary in case the `master`/`develop` branch has changed since you created your branch
 
 > [!NOTE]
 > A tidy, linear Git history  https://www.bitsnbites.eu/a-tidy-linear-git-history/
@@ -63,10 +63,10 @@ Get the latest upstream changes and update the working branch:
 
 ```shell
 git fetch --prune origin
-git rebase --autostash --ignore-date origin/main
+git rebase --autostash --ignore-date origin/master
 ```
 > [!WARNING]
-> Please note that you get the current state of the `main` branch from the **origin** remote for pushing to your own branch
+> Please note that you get the current state of the `master` branch from the **origin** remote for pushing to your own branch
 
 During the rebase, there may be conflicts, they need to be resolved; once the conflicts are resolved, you can continue the rebase:
 

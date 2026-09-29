@@ -12,7 +12,7 @@ moment; please bring any problems or tasks to [issues](https://github.com/ton-or
 >
 > Do not send testnet Gram to pay for Tact verification: verification will fail, and you may lose the testnet GRAM you send.
 
-<img src="https://raw.githubusercontent.com/ton-org/blueprint/main/logo.svg" width=400 >
+<img src="https://raw.githubusercontent.com/ton-org/blueprint/master/logo.svg" width=400 >
 
 # Blueprint
 
@@ -349,7 +349,7 @@ export const config: Config = {
 
 By default, the manifest URL is set to:
 ```
-https://raw.githubusercontent.com/ton-org/blueprint/main/tonconnect/manifest.json
+https://raw.githubusercontent.com/ton-org/blueprint/master/tonconnect/manifest.json
 ```
 
 ## Contributors
