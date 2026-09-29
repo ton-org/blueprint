@@ -1,7 +1,6 @@
 import type { CompileResult } from '../compile/compile';
 import type { FuncCompileResult } from '../compile/func/compile.func';
 import type { SourceSnapshot } from '../compile/SourceSnapshot';
-import type { TolkCompileResult } from '../compile/tolk/compile.tolk';
 import { isCompilerLibrarySourcePath, normalizeVerifierSourcePath } from './source';
 import type { PreparedVerification, UploadPart, VerifierSource } from './source';
 
@@ -9,57 +8,32 @@ type SourceOptions = Omit<VerifierSource, 'path'>;
 
 const SOURCE_EXTENSIONS = {
     func: ['fc', 'func'],
-    tolk: ['tolk'],
 } as const satisfies Record<CompileResult['lang'], readonly string[]>;
 
 const KNOWN_SOURCE_EXTENSIONS = new Set<string>(Object.values(SOURCE_EXTENSIONS).flat());
 
 function validateCompilerSettings(result: CompileResult): void {
-    if (result.lang === 'func') {
-        const optLevel = result.optLevel;
-        switch (optLevel) {
-            case undefined:
-            case 0:
-            case 2:
-                break;
-            default:
-                throw new Error(
-                    `TON verifier does not support FunC optLevel ${optLevel}; expected the default value 2`,
-                );
-        }
-    }
-
-    if (result.lang === 'tolk') {
-        const optimizationLevel = result.optimizationLevel;
-        switch (optimizationLevel) {
-            case undefined:
-            case 2:
-                break;
-            default:
-                throw new Error(
-                    `TON verifier does not support Tolk optimizationLevel ${optimizationLevel}; expected the default value 2`,
-                );
-        }
-
-        const experimentalOptions = result.experimentalOptions;
-        if (experimentalOptions !== undefined) {
-            if (experimentalOptions.trim() !== '') {
-                throw new Error('TON verifier does not support Tolk experimentalOptions');
-            }
-        }
+    const optLevel = result.optLevel;
+    switch (optLevel) {
+        case undefined:
+        case 0:
+        case 2:
+            break;
+        default:
+            throw new Error(`TON verifier does not support FunC optLevel ${optLevel}; expected the default value 2`);
     }
 }
 
 function prepareSnapshotFiles(
     snapshot: SourceSnapshot[],
-    sourceOptions: (path: string, index: number) => SourceOptions,
+    sourceOptions: (path: string) => SourceOptions,
 ): UploadPart[] {
     if (snapshot.length === 0) {
         throw new Error('Compiler did not return source files for verification');
     }
 
     const seenPaths = new Map<string, string>();
-    return snapshot.map((file, index) => {
+    return snapshot.map((file) => {
         const path = normalizeVerifierSourcePath(file.filename);
         const normalizedPath = path.toLowerCase();
         const existingPath = seenPaths.get(normalizedPath);
@@ -69,7 +43,7 @@ function prepareSnapshotFiles(
         seenPaths.set(normalizedPath, path);
 
         return {
-            source: { path, ...sourceOptions(path, index) },
+            source: { path, ...sourceOptions(path) },
             content: file.content,
         };
     });
@@ -114,32 +88,13 @@ function validateSourceExtensions(language: CompileResult['lang'], files: Upload
     }
 }
 
-function prepareTolkFiles(result: TolkCompileResult): UploadPart[] {
-    return prepareSnapshotFiles(result.snapshot, (path, index) => ({
-        is_entrypoint: index === 0,
-        include_in_command: true,
-        is_stdlib: isCompilerLibrarySourcePath(path),
-        has_include_directives: true,
-    }));
-}
-
-function prepareFiles(result: CompileResult): UploadPart[] {
-    switch (result.lang) {
-        case 'func':
-            return prepareFuncFiles(result);
-        case 'tolk':
-            return prepareTolkFiles(result);
-        default: {
-            const unsupportedResult: never = result;
-            const language = (unsupportedResult as { lang?: unknown }).lang;
-            throw new Error(`Unsupported compiler language: ${String(language)}`);
-        }
-    }
-}
-
 export function prepareVerification(result: CompileResult, compilerVersion?: string): PreparedVerification {
+    if (result.lang !== 'func') {
+        throw new Error(`Unsupported compiler language: ${String(result.lang)}`);
+    }
+
     validateCompilerSettings(result);
-    const files = prepareFiles(result);
+    const files = prepareFuncFiles(result);
     if (files.length > 256) {
         throw new Error('TON verifier accepts at most 256 source files');
     }

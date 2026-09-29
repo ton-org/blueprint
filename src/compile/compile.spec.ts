@@ -1,7 +1,3 @@
-import { mkdtempSync, rmSync, writeFileSync } from 'fs';
-import { tmpdir } from 'os';
-import path from 'path';
-
 import { Cell } from '@ton/core';
 
 import { CompilerConfig } from './CompilerConfig';
@@ -13,28 +9,16 @@ jest.mock('../config/utils', () => ({ getConfig: jest.fn() }));
 jest.mock('test-contract-config', () => ({ compile: {} }), { virtual: true });
 
 describe('compilation', () => {
-    let directory: string;
-
-    beforeAll(() => {
-        directory = mkdtempSync(path.join(tmpdir(), 'blueprint-compile-'));
-        writeFileSync(path.join(directory, 'main.tolk'), 'fun onInternalMessage() {}');
-    });
-
-    afterAll(() => {
-        rmSync(directory, { recursive: true, force: true });
-    });
-
     beforeEach(() => {
         jest.mocked(findCompiles).mockResolvedValue([{ name: 'Contract', path: 'test-contract-config' }]);
     });
 
-    it.each(['func', 'tolk'] as const)('compiles %s with hooks and library options', async (lang) => {
+    it.each([undefined, 'func'] as const)('compiles FunC with lang=%s, hooks and library options', async (lang) => {
         let rawCode: Cell | undefined;
         const calls: string[] = [];
         const config: CompilerConfig = {
-            ...(lang === 'func'
-                ? { sources: [{ filename: 'main.fc', content: '() recv_internal() impure { }' }] }
-                : { lang, entrypoint: path.join(directory, 'main.tolk') }),
+            lang,
+            sources: [{ filename: 'main.fc', content: '() recv_internal() impure { }' }],
             buildLibrary: true,
             preCompileHook: async ({ userData }) => {
                 expect(userData).toBe('test-data');
@@ -50,11 +34,11 @@ describe('compilation', () => {
         jest.requireMock('test-contract-config').compile = config;
 
         // FunC configurations without an explicit language must still work.
-        expect(await getCompilerOptions(config)).toEqual({ lang, version: expect.any(String) });
+        expect(await getCompilerOptions(config)).toEqual({ lang: 'func', version: expect.any(String) });
 
         const result = await doCompile('Contract', { hookUserData: 'test-data' });
 
-        expect(result.lang).toBe(lang);
+        expect(result.lang).toBe('func');
         expect(result.fiftCode.length).toBeGreaterThan(0);
         expect(result.snapshot.length).toBeGreaterThan(0);
         expect(calls).toEqual(['pre', 'post']);
@@ -65,7 +49,7 @@ describe('compilation', () => {
         expect(regular.code.equals(rawCode!)).toBe(true);
     });
 
-    it.each(['tact', 'unknown'])('rejects unsupported language %s before running hooks', async (lang) => {
+    it.each(['tact', 'tolk', 'unknown'])('rejects unsupported language %s before running hooks', async (lang) => {
         const preCompileHook = jest.fn();
         jest.requireMock('test-contract-config').compile = { lang, preCompileHook };
 

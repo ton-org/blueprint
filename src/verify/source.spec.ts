@@ -7,18 +7,18 @@ const windowsOnly = process.platform === 'win32' ? it : it.skip;
 
 function preparedVerification(): PreparedVerification {
     return {
-        language: 'tolk',
-        compileParams: { compiler_version: '1.2.0' },
+        language: 'func',
+        compileParams: { compiler_version: '0.4.6' },
         files: [
             {
                 source: {
-                    path: 'main.tolk',
+                    path: 'main.fc',
                     is_entrypoint: true,
                     include_in_command: true,
                     is_stdlib: false,
                     has_include_directives: true,
                 },
-                content: 'tolk 1.0',
+                content: '() recv_internal() {}',
             },
         ],
     };
@@ -26,23 +26,21 @@ function preparedVerification(): PreparedVerification {
 
 describe('normalizeVerifierSourcePath', () => {
     it('normalizes relative and project-local absolute paths', () => {
-        expect(normalizeVerifierSourcePath('./contracts/main.tolk')).toBe('contracts/main.tolk');
-        expect(normalizeVerifierSourcePath(path.join(process.cwd(), 'contracts', 'main.tolk'))).toBe(
-            'contracts/main.tolk',
-        );
+        expect(normalizeVerifierSourcePath('./contracts/main.fc')).toBe('contracts/main.fc');
+        expect(normalizeVerifierSourcePath(path.join(process.cwd(), 'contracts', 'main.fc'))).toBe('contracts/main.fc');
     });
 
     it('rejects paths that the verifier cannot store safely', () => {
-        expect(() => normalizeVerifierSourcePath(path.resolve(process.cwd(), '..', 'main.tolk'))).toThrow(
+        expect(() => normalizeVerifierSourcePath(path.resolve(process.cwd(), '..', 'main.fc'))).toThrow(
             'outside the project directory',
         );
-        expect(() => normalizeVerifierSourcePath('contracts/contract name.tolk')).toThrow('unsupported');
-        expect(() => normalizeVerifierSourcePath('contracts/a+b.tolk')).toThrow('unsupported');
-        expect(() => normalizeVerifierSourcePath('contracts/../main.tolk')).toThrow('Invalid source path');
-        expect(() => normalizeVerifierSourcePath('contracts/./main.tolk')).toThrow('Invalid source path');
-        expect(() => normalizeVerifierSourcePath('contracts//main.tolk')).toThrow('Invalid source path');
-        expect(() => normalizeVerifierSourcePath('contracts/.git/main.tolk')).toThrow('reserved');
-        expect(() => normalizeVerifierSourcePath('output/main.tolk')).toThrow('reserved');
+        expect(() => normalizeVerifierSourcePath('contracts/contract name.fc')).toThrow('unsupported');
+        expect(() => normalizeVerifierSourcePath('contracts/a+b.fc')).toThrow('unsupported');
+        expect(() => normalizeVerifierSourcePath('contracts/../main.fc')).toThrow('Invalid source path');
+        expect(() => normalizeVerifierSourcePath('contracts/./main.fc')).toThrow('Invalid source path');
+        expect(() => normalizeVerifierSourcePath('contracts//main.fc')).toThrow('Invalid source path');
+        expect(() => normalizeVerifierSourcePath('contracts/.git/main.fc')).toThrow('reserved');
+        expect(() => normalizeVerifierSourcePath('output/main.fc')).toThrow('reserved');
     });
 
     it('allows compiler virtual library paths required by FunC', () => {
@@ -52,29 +50,22 @@ describe('normalizeVerifierSourcePath', () => {
     });
 
     windowsOnly('normalizes project-local Windows paths', () => {
-        expect(normalizeVerifierSourcePath('C:\\Project\\contracts\\main.tolk', 'c:\\project')).toBe(
-            'contracts/main.tolk',
-        );
-        expect(normalizeVerifierSourcePath('C:/Project/contracts\\main.tolk', 'C:\\Project')).toBe(
-            'contracts/main.tolk',
-        );
+        expect(normalizeVerifierSourcePath('C:\\Project\\contracts\\main.fc', 'c:\\project')).toBe('contracts/main.fc');
+        expect(normalizeVerifierSourcePath('C:/Project/contracts\\main.fc', 'C:\\Project')).toBe('contracts/main.fc');
         expect(
-            normalizeVerifierSourcePath(
-                '\\\\server\\share\\project\\contracts\\main.tolk',
-                '\\\\server\\share\\project',
-            ),
-        ).toBe('contracts/main.tolk');
+            normalizeVerifierSourcePath('\\\\server\\share\\project\\contracts\\main.fc', '\\\\server\\share\\project'),
+        ).toBe('contracts/main.fc');
     });
 
     windowsOnly('rejects Windows paths outside the project', () => {
-        expect(() => normalizeVerifierSourcePath('C:\\outside\\main.tolk', 'C:\\project')).toThrow(
+        expect(() => normalizeVerifierSourcePath('C:\\outside\\main.fc', 'C:\\project')).toThrow(
             'outside the project directory',
         );
-        expect(() => normalizeVerifierSourcePath('D:\\project\\main.tolk', 'C:\\project')).toThrow(
+        expect(() => normalizeVerifierSourcePath('D:\\project\\main.fc', 'C:\\project')).toThrow(
             'outside the project directory',
         );
         expect(() =>
-            normalizeVerifierSourcePath('\\\\other\\share\\project\\main.tolk', '\\\\server\\share\\project'),
+            normalizeVerifierSourcePath('\\\\other\\share\\project\\main.fc', '\\\\server\\share\\project'),
         ).toThrow('outside the project directory');
     });
 });
@@ -88,8 +79,8 @@ describe('buildVerifyForm', () => {
         expect(form.get('code_hash')).toBe('a'.repeat(64));
         expect(form.get('address')).toBe('EQAddress');
         expect(form.get('tx_hash')).toBe('b'.repeat(64));
-        expect(form.get('language')).toBe('tolk');
-        expect(JSON.parse(String(form.get('compile_params')))).toEqual({ compiler_version: '1.2.0' });
+        expect(form.get('language')).toBe('func');
+        expect(JSON.parse(String(form.get('compile_params')))).toEqual({ compiler_version: '0.4.6' });
         expect(JSON.parse(String(form.get('sources')))).toEqual([prepared.files[0].source]);
         expect(form.getAll('files')).toHaveLength(1);
     });

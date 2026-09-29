@@ -4,14 +4,7 @@ export { NetworkProvider, SenderWithSendResult } from './network/NetworkProvider
 
 export { createNetworkProvider } from './network/createNetworkProvider';
 
-export {
-    compile,
-    CompileOpts,
-    TolkCompileResult,
-    FuncCompileResult,
-    CompileResult,
-    libraryCellFromCode,
-} from './compile/compile';
+export { compile, CompileOpts, FuncCompileResult, CompileResult, libraryCellFromCode } from './compile/compile';
 
 export { CompilerConfig, HookParams } from './compile/CompilerConfig';
 
