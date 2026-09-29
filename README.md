@@ -2,6 +2,16 @@
 > Blueprint is deprecated. Please use [Acton](https://ton-blockchain.github.io/acton/) instead. Pull requests are not accepted at the
 moment; please bring any problems or tasks to [issues](https://github.com/ton-org/blueprint/issues).
 
+> [!IMPORTANT]
+> Tolk support has moved to [Acton](https://ton-blockchain.github.io/acton/).
+>
+> Tact is [deprecated](https://github.com/tact-lang/tact#readme). To continue using Tact, use Blueprint **0.46.0 or earlier**.
+
+> [!WARNING]
+> Tact contract verification is no longer available, including in Blueprint **0.46.0 and earlier**.
+>
+> Do not send testnet Gram to pay for Tact verification: verification will fail, and you may lose the testnet GRAM you send.
+
 <img src="https://raw.githubusercontent.com/ton-org/blueprint/main/logo.svg" width=400 >
 
 # Blueprint

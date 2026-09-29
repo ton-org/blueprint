@@ -7,12 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.47.0] - 2026-09-29
+
+### Changed
+
+- `blueprint verify` now sends the compiler name and version when requesting a verification ticket, allowing the verifier to reject disabled compilers before payment and source upload
+- Selecting a Tolk template in `blueprint create` now displays the corresponding [Acton](https://ton-blockchain.github.io/acton/) command instead of generating files
+- Updated the deprecation notice to clarify the migration to Acton and link to issues for reporting problems and tasks
+
+### Fixed
+
+- Fixed `--custom-global-id` not being passed to mnemonic wallets and added validation to reject it on non-custom networks
+
 ### Removed
 
 - Removed Tact support, including contract templates, compilation, verification, and `tact.config.json` discovery
 - Removed the `buildAllTact` and `TactCompileResult` exports and the `@tact-lang/compiler` dependency
 - Removed Tolk compilation and verification support; use [Acton](https://ton-blockchain.github.io/acton/) for Tolk projects
 - Removed the `TolkCompileResult` export and the `@ton/tolk-js` dependency
+- Removed built-in `tetra` network support, including the `--tetra` CLI flag and the `tetra` configuration option
+- Removed the bundled example project and its documentation links
 
 ## [0.46.0] - 2026-09-18
 
