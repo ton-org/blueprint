@@ -294,11 +294,15 @@ export class VerifierClient {
         return result;
     }
 
-    async takeTicket(codeHash: string): Promise<TicketResponse> {
+    async takeTicket(
+        codeHash: string,
+        compiler: PreparedVerification['language'],
+        compilerVersion: string,
+    ): Promise<TicketResponse> {
         const response = await this.request(this.apiUrl('take_ticket'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code_hash: codeHash }),
+            body: JSON.stringify({ code_hash: codeHash, compiler, compiler_version: compilerVersion }),
         });
         if (!response.ok) {
             throw new Error(friendlyVerifierError(await responseError(response)));

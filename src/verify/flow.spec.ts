@@ -3,7 +3,8 @@ import { TESTNET_NETWORK } from '../network/constants';
 import { runVerificationFlow } from './flow';
 import type { VerificationFlowOptions } from './flow';
 import { buildVerifierPaymentComment } from './payment';
-import type { PaymentTicket, VerifierClient, VerifyResponse } from './VerifierClient';
+import { VerifierClient } from './VerifierClient';
+import type { PaymentTicket, VerifyResponse } from './VerifierClient';
 
 const codeHash = 'ab'.repeat(32);
 const prepared = {
@@ -126,7 +127,7 @@ describe('runVerificationFlow', () => {
             paymentSender,
         );
 
-        expect(client.takeTicket).toHaveBeenCalledWith(codeHash);
+        expect(client.takeTicket).toHaveBeenCalledWith(codeHash, 'func', '0.4.6');
         expect(paymentSender).not.toHaveBeenCalled();
         expect(client.verify).not.toHaveBeenCalled();
         expect(ui.write).toHaveBeenCalledWith('  → Payment amount: 0.01 GRAM');
@@ -141,6 +142,7 @@ describe('runVerificationFlow', () => {
 
         await runVerificationFlow(ui, client, flowOptions(), paymentSender);
 
+        expect(client.takeTicket).toHaveBeenCalledWith(codeHash, 'func', '0.4.6');
         expect(paymentSender).toHaveBeenCalledWith(ui, undefined, {}, ticket);
         expect(client.verify).toHaveBeenCalledWith(prepared, codeHash, undefined, 'cd'.repeat(32));
     });
@@ -154,10 +156,42 @@ describe('runVerificationFlow', () => {
 
         await runVerificationFlow(ui, client, flowOptions({ paymentTransactionHash }), paymentSender);
 
-        expect(client.takeTicket).toHaveBeenCalledWith(codeHash);
+        expect(client.takeTicket).toHaveBeenCalledWith(codeHash, 'func', '0.4.6');
         expect(paymentSender).not.toHaveBeenCalled();
         expect(ui.write).toHaveBeenCalledWith(`  → Reusing testnet payment transaction: ${paymentTransactionHash}`);
         expect(client.verify).toHaveBeenCalledWith(prepared, codeHash, undefined, paymentTransactionHash);
+    });
+
+    it('uses the prepared compiler version for both the ticket and source upload', async () => {
+        const ui = uiProvider();
+        const client = verifierClient({ usesApiKey: false, ticket: paymentTicket() });
+        const paymentSender = jest.fn(async () => 'cd'.repeat(32));
+        const preparedWithOverride = {
+            ...prepared,
+            compileParams: { compiler_version: '0.4.5' },
+        };
+
+        await runVerificationFlow(ui, client, flowOptions({ prepared: preparedWithOverride }), paymentSender);
+
+        expect(client.takeTicket).toHaveBeenCalledWith(codeHash, 'func', '0.4.5');
+        expect(client.verify).toHaveBeenCalledWith(preparedWithOverride, codeHash, undefined, 'cd'.repeat(32));
+    });
+
+    it('stops before payment and source upload when the verifier disables the compiler', async () => {
+        const ui = uiProvider();
+        const error = 'compiler_disabled: func@0.4.6 is disabled by server configuration';
+        const fetchMock = jest
+            .fn()
+            .mockResolvedValueOnce(new Response(JSON.stringify({ code_hash: codeHash, status: 'unverified' })))
+            .mockResolvedValueOnce(new Response(JSON.stringify({ error }), { status: 403 }));
+        const client = new VerifierClient('http://verifier.test', undefined, fetchMock as unknown as typeof fetch);
+        const paymentSender = jest.fn();
+
+        await expect(runVerificationFlow(ui, client, flowOptions(), paymentSender)).rejects.toThrow(error);
+
+        expect(paymentSender).not.toHaveBeenCalled();
+        expect(fetchMock).toHaveBeenCalledTimes(2);
+        expect(fetchMock.mock.calls[1][0]).toBe('http://verifier.test/api/v1/take_ticket');
     });
 
     it('rejects a verifier match with a different compiled hash', async () => {

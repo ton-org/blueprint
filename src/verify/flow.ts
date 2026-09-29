@@ -112,7 +112,7 @@ export async function runVerificationFlow(
 
     if (!client.usesApiKey) {
         ui.write(`  ${chalk.blue.bold('→')} Requesting verification ticket`);
-        const ticket = await client.takeTicket(codeHash);
+        const ticket = await client.takeTicket(codeHash, prepared.language, prepared.compileParams.compiler_version);
         if (ticket.status === 'already_verified') {
             ui.write(`  ${chalk.green.bold('✓')} Contract was already verified`);
             writeVerificationDetails(ui, {
