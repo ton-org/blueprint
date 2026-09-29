@@ -3,16 +3,13 @@ import unixPath from 'path/posix';
 import { lstat, mkdir, open, readdir, readFile } from 'fs/promises';
 
 import arg from 'arg';
-import { Project } from '@tact-lang/compiler';
 import chalk from 'chalk';
 
 import { getConfig } from '../config/utils';
-import { getRootTactConfig, TactConfig, updateRootTactConfig } from '../config/tact.config';
 import { Args, extractFirstArg, Runner } from './Runner';
 import { executeTemplate, TEMPLATES_DIR } from '../template';
 import { validateContractName, selectOption, toSnakeCase } from '../utils';
 import { UIProvider } from '../ui/UIProvider';
-import { buildOne } from '../build';
 import { helpArgs, helpMessages, templateTypes } from './constants';
 
 async function createFile(templatePath: string, realPath: string, replaces: { [k: string]: string }) {
@@ -48,31 +45,6 @@ async function createFiles(templatePath: string, realPath: string, replaces: { [
             await createFile(tp, realPath, replaces);
         }
     }
-}
-
-function getFileExtension(lang: string): string {
-    if (lang === 'func') return 'fc';
-    return 'tact';
-}
-
-function addToTactConfig(contractName: string, contractPath: string) {
-    const tactConfig = getRootTactConfig();
-    const projectConfig = {
-        name: contractName,
-        path: contractPath,
-        output: path.join('build', contractName),
-        options: {
-            debug: false,
-            external: false,
-        },
-        mode: 'full',
-    } satisfies Project;
-
-    const newConfig: TactConfig = {
-        ...tactConfig,
-        projects: [...tactConfig.projects, projectConfig],
-    };
-    updateRootTactConfig(newConfig);
 }
 
 export const create: Runner = async (_args: Args, ui: UIProvider) => {
@@ -114,7 +86,7 @@ Get started: https://ton-blockchain.github.io/acton/`);
         return;
     }
 
-    const contractPath = unixPath.join('contracts', snakeName + '.' + getFileExtension(lang));
+    const contractPath = unixPath.join('contracts', snakeName + '.fc');
 
     const replaces = {
         name,
@@ -125,15 +97,9 @@ Get started: https://ton-blockchain.github.io/acton/`);
 
     const config = await getConfig();
 
-    if (lang === 'tact') {
-        await createFiles(path.join(TEMPLATES_DIR, lang, template), process.cwd(), replaces);
-        addToTactConfig(name, contractPath);
-        await buildOne(name, ui);
-    } else {
-        const commonPath = config?.separateCompilables ? 'common' : 'not-separated-common';
-        await createFiles(path.join(TEMPLATES_DIR, lang, commonPath), process.cwd(), replaces);
-        await createFiles(path.join(TEMPLATES_DIR, lang, template), process.cwd(), replaces);
-    }
+    const commonPath = config?.separateCompilables ? 'common' : 'not-separated-common';
+    await createFiles(path.join(TEMPLATES_DIR, lang, commonPath), process.cwd(), replaces);
+    await createFiles(path.join(TEMPLATES_DIR, lang, template), process.cwd(), replaces);
 };
 
 export async function requestContractName(message: string, ui: UIProvider): Promise<string> {

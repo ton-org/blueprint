@@ -1,7 +1,6 @@
 import type { CompileResult } from '../compile/compile';
 import type { FuncCompileResult } from '../compile/func/compile.func';
 import type { SourceSnapshot } from '../compile/SourceSnapshot';
-import type { TactCompileResult } from '../compile/tact/compile.tact';
 import type { TolkCompileResult } from '../compile/tolk/compile.tolk';
 import { isCompilerLibrarySourcePath, normalizeVerifierSourcePath } from './source';
 import type { PreparedVerification, UploadPart, VerifierSource } from './source';
@@ -11,7 +10,6 @@ type SourceOptions = Omit<VerifierSource, 'path'>;
 const SOURCE_EXTENSIONS = {
     func: ['fc', 'func'],
     tolk: ['tolk'],
-    tact: ['pkg', 'tact'],
 } as const satisfies Record<CompileResult['lang'], readonly string[]>;
 
 const KNOWN_SOURCE_EXTENSIONS = new Set<string>(Object.values(SOURCE_EXTENSIONS).flat());
@@ -77,27 +75,6 @@ function prepareSnapshotFiles(
     });
 }
 
-function prepareTactFiles(result: TactCompileResult): UploadPart[] {
-    const pkg = Array.from(result.fs.entries()).find(([filename]) => filename.endsWith('.pkg'));
-    if (pkg === undefined) {
-        throw new Error('Could not find .pkg in Tact compilation results');
-    }
-    const [packagePath, packageContent] = pkg;
-
-    return [
-        {
-            source: {
-                path: normalizeVerifierSourcePath(packagePath),
-                is_entrypoint: false,
-                include_in_command: true,
-                is_stdlib: false,
-                has_include_directives: false,
-            },
-            content: packageContent,
-        },
-    ];
-}
-
 function prepareFuncFiles(result: FuncCompileResult): UploadPart[] {
     const targetPaths = result.targets.map((target) => normalizeVerifierSourcePath(target));
     const targets = new Set(targetPaths);
@@ -148,8 +125,6 @@ function prepareTolkFiles(result: TolkCompileResult): UploadPart[] {
 
 function prepareFiles(result: CompileResult): UploadPart[] {
     switch (result.lang) {
-        case 'tact':
-            return prepareTactFiles(result);
         case 'func':
             return prepareFuncFiles(result);
         case 'tolk':

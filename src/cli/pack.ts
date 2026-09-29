@@ -10,9 +10,6 @@ import { helpArgs, helpMessages } from './constants';
 import { buildAll } from '../build';
 import { BUILD_DIR, PACKAGE_ENTRY_POINT, PACKAGE_JSON, TYPESCRIPT_CONFIG } from '../paths';
 import { distinct, findContracts } from '../utils';
-import { getCompilerConfigForContract } from '../compile/compile';
-import { isCompilableConfig } from '../compile/CompilerConfig';
-import { extractContractConfig } from '../compile/tact/compile.tact';
 
 async function correctTsConfig() {
     if (!existsSync(TYPESCRIPT_CONFIG)) {
@@ -35,23 +32,13 @@ async function correctTsConfig() {
     await fs.writeFile(TYPESCRIPT_CONFIG, JSON.stringify(newConfig, null, 2), 'utf8');
 }
 
-async function getContractWrapperPath(contract: string) {
-    const config = await getCompilerConfigForContract(contract);
-    if (isCompilableConfig(config)) {
-        return `./wrappers/${contract}`;
-    } else {
-        const contractConfig = extractContractConfig(config, contract);
-        return `./${contractConfig.output}/${contract}_${contract}`;
-    }
-}
-
 async function generatePackageEntryPoint() {
     const contracts = await findContracts();
 
     let entryPoint = 'import { Cell } from "@ton/core"\n';
 
     for (const contract of contracts) {
-        const wrapperPath = await getContractWrapperPath(contract);
+        const wrapperPath = `./wrappers/${contract}`;
 
         entryPoint += `import * as ${contract} from '${wrapperPath}';\n`;
         entryPoint += `export { ${contract} };\n`;

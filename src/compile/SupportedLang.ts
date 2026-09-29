@@ -1,1 +1,1 @@
-export type SupportedLang = 'tact' | 'tolk' | 'func';
+export type SupportedLang = 'tolk' | 'func';

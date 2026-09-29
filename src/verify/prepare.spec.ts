@@ -140,37 +140,9 @@ describe('prepareVerification', () => {
         expect(() => prepareVerification(result)).toThrow('does not support Tolk experimentalOptions');
     });
 
-    it('uploads the Tact package emitted by the compiler', () => {
-        const result: CompileResult = {
-            lang: 'tact',
-            code: beginCell().endCell(),
-            version: '1.6.13',
-            fs: new Map([
-                ['build/Counter.code.boc', Buffer.from('boc')],
-                ['build/Counter.pkg', Buffer.from('{"compiler":{"version":"1.6.13"}}')],
-            ]),
-        };
+    it('rejects unsupported compiler languages', () => {
+        const result = { lang: 'tact' } as unknown as CompileResult;
 
-        const prepared = prepareVerification(result);
-
-        expect(prepared.files).toHaveLength(1);
-        expect(prepared.files[0].source).toEqual({
-            path: 'build/Counter.pkg',
-            is_entrypoint: false,
-            include_in_command: true,
-            is_stdlib: false,
-            has_include_directives: false,
-        });
-    });
-
-    it('rejects Tact compilation results without a package', () => {
-        const result: CompileResult = {
-            lang: 'tact',
-            code: beginCell().endCell(),
-            version: '1.6.13',
-            fs: new Map([['build/Counter.code.boc', Buffer.from('boc')]]),
-        };
-
-        expect(() => prepareVerification(result)).toThrow('Could not find .pkg');
+        expect(() => prepareVerification(result)).toThrow('Unsupported compiler language: tact');
     });
 });

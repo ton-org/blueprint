@@ -3,7 +3,6 @@ import fs from 'fs/promises';
 import { existsSync } from 'fs';
 
 import { UIProvider } from '../ui/UIProvider';
-import { getRootTactConfig } from '../config/tact.config';
 import { COMPILE_END, getCompilablesDirectory } from '../compile/compile';
 import { File } from '../types/file';
 import { SCRIPTS_DIR } from '../paths';
@@ -30,12 +29,7 @@ export const findCompiles = async (directory?: string): Promise<File[]> => {
 
 export const findContracts = async () => {
     const compilables = await findCompiles();
-    const tactRootConfig = getRootTactConfig();
-
-    return distinct([
-        ...compilables.map((file) => file.name),
-        ...(tactRootConfig?.projects.map((project) => project.name) ?? []),
-    ]);
+    return distinct(compilables.map((file) => file.name));
 };
 
 export const findScripts = async (): Promise<File[]> => {

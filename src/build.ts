@@ -1,17 +1,10 @@
 import path from 'path';
 import fs from 'fs/promises';
 
-import {
-    doCompile,
-    extractCompilableConfig,
-    getCompilerConfigForContract,
-    getCompilerOptions,
-    libraryCellFromCode,
-} from './compile/compile';
+import { doCompile, getCompilerConfigForContract, getCompilerOptions, libraryCellFromCode } from './compile/compile';
 import { BUILD_DIR } from './paths';
 import { UIProvider } from './ui/UIProvider';
-import { findCompiles, findContracts } from './utils';
-import { getRootTactConfig } from './config/tact.config';
+import { findContracts } from './utils';
 
 export async function buildOne(contract: string, ui?: UIProvider) {
     ui?.write(`Build script running, compiling ${contract}`);
@@ -32,22 +25,6 @@ export async function buildOne(contract: string, ui?: UIProvider) {
         // Build raw code cell by default
         const result = await doCompile(contract, { buildLibrary: false });
 
-        if (result.lang === 'tact') {
-            for (const [k, v] of result.fs) {
-                await fs.mkdir(path.dirname(k), {
-                    recursive: true,
-                });
-                await fs.writeFile(k, v);
-            }
-
-            if (result.options !== undefined && result.options?.debug === true) {
-                ui?.clearActionPrompt();
-                ui?.write(
-                    '\n⚠️ Make sure to disable debug mode in contract wrappers before doing production deployments!',
-                );
-            }
-        }
-
         let libAttributes:
             | {
                   libraryHash: string;
@@ -58,7 +35,7 @@ export async function buildOne(contract: string, ui?: UIProvider) {
         const cell = result.code;
 
         // If build was configured as library, add attributes
-        if ('buildLibrary' in config && config.buildLibrary === true) {
+        if (config.buildLibrary === true) {
             const libCell = libraryCellFromCode(cell);
             libAttributes = {
                 libraryHash: libCell.hash().toString('hex'),
@@ -83,11 +60,9 @@ export async function buildOne(contract: string, ui?: UIProvider) {
         await fs.mkdir(BUILD_DIR, { recursive: true });
 
         await fs.writeFile(buildArtifactPath, JSON.stringify(res));
-        if (result.lang === 'func' || result.lang === 'tolk') {
-            const fiftFilepath = path.join(BUILD_DIR, contract, `${contract}.fif`);
-            await fs.mkdir(path.join(BUILD_DIR, contract), { recursive: true });
-            await fs.writeFile(fiftFilepath, result.fiftCode);
-        }
+        const fiftFilepath = path.join(BUILD_DIR, contract, `${contract}.fif`);
+        await fs.mkdir(path.join(BUILD_DIR, contract), { recursive: true });
+        await fs.writeFile(fiftFilepath, result.fiftCode);
 
         ui?.write(`\n✅ Wrote compilation artifact to ${path.relative(process.cwd(), buildArtifactPath)}`);
     } catch (e) {
@@ -109,15 +84,4 @@ async function buildContracts(contracts: string[], ui?: UIProvider) {
 
 export async function buildAll(ui?: UIProvider) {
     await buildContracts(await findContracts(), ui);
-}
-
-export async function buildAllTact(ui?: UIProvider) {
-    const legacyTactContract = (await findCompiles())
-        .filter((file) => extractCompilableConfig(file.path).lang === 'tact')
-        .map((file) => file.name);
-
-    const tactConfig = getRootTactConfig();
-    const tactContracts = [...legacyTactContract, ...tactConfig.projects.map((project) => project.name)];
-
-    await buildContracts(tactContracts, ui);
 }

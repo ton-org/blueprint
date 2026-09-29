@@ -10,20 +10,12 @@ export const templateTypes: { name: string; value: string }[] = [
         value: 'func-empty',
     },
     {
-        name: 'An empty contract (Tact, deprecated)',
-        value: 'tact-empty',
-    },
-    {
         name: 'A simple counter contract (Tolk)',
         value: 'tolk-counter',
     },
     {
         name: 'A simple counter contract (FunC, deprecated)',
         value: 'func-counter',
-    },
-    {
-        name: 'A simple counter contract (Tact, deprecated)',
-        value: 'tact-counter',
     },
 ];
 
@@ -151,7 +143,7 @@ blueprint run ${chalk.yellow('incrementCounter')} ${chalk.cyan('--testnet')} ${c
 
     build: `${chalk.bold('Usage:')} blueprint ${chalk.cyan('build')} ${chalk.yellow('[contract name]')} ${chalk.gray('[flags]')}
 
-Builds the specified contract according to the respective .compile.ts file. For Tact contracts, all generated files will be placed in the ${chalk.cyan('build/<contract name>')} folder.
+Builds the specified contract according to the respective .compile.ts file.
 
 ${chalk.bold('Flags:')}
 ${chalk.cyan('--all')} - builds all available contracts.`,

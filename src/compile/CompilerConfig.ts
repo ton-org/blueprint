@@ -2,7 +2,6 @@ import { Cell } from '@ton/core';
 
 import { TolkCompilerConfig } from './tolk/config';
 import { FuncCompilerConfig } from './func/config';
-import { TactCompilerConfig, TactLegacyCompilerConfig } from './tact/config';
 
 export type HookParams = {
     userData?: any;
@@ -46,11 +45,6 @@ export type CommonCompilerConfig = {
     buildLibrary?: boolean;
 };
 
-export type CompilableConfig = (TactLegacyCompilerConfig | FuncCompilerConfig | TolkCompilerConfig) &
-    CommonCompilerConfig;
+export type CompilableConfig = (FuncCompilerConfig | TolkCompilerConfig) & CommonCompilerConfig;
 
-export type CompilerConfig = TactCompilerConfig | CompilableConfig;
-
-export function isCompilableConfig(config: CompilerConfig): config is CompilableConfig {
-    return 'lang' in config;
-}
+export type CompilerConfig = CompilableConfig;
