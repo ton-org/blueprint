@@ -4,7 +4,6 @@ const globals = require('globals');
 
 module.exports = [
     ...base,
-    { ignores: ['example/**'] },
     {
         plugins: {
             '@typescript-eslint': tsEslint,

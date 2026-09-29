@@ -94,7 +94,7 @@ Blueprint is an all-in-one development environment designed to enhance the proce
 
 ### Building contracts
 
-1. You need a compilation script in `compilables/<CONTRACT>.compile.ts` - [example](/example/compilables/Counter.compile.ts)
+1. You need a compilation script in `compilables/<CONTRACT>.compile.ts`
 2. Run interactive: &nbsp;&nbsp; `npx blueprint build` &nbsp; or &nbsp; `yarn blueprint build`
 3. Non-interactive: &nbsp; `npx/yarn blueprint build <CONTRACT>` &nbsp; OR build all contracts &nbsp; `yarn blueprint build --all`
    * Example: `yarn blueprint build counter`
@@ -124,7 +124,7 @@ export async function run(provider: NetworkProvider, args: string[]) {
 
 #### Deploying contracts
 
-1. You need a deployment script in `scripts/deploy<CONTRACT>.ts` - [example](/example/scripts/deployCounter.ts)
+1. You need a deployment script in `scripts/deploy<CONTRACT>.ts`
 2. Run interactive: &nbsp;&nbsp; `npx blueprint run` &nbsp; or &nbsp; `yarn blueprint run`
 3. Non-interactive: &nbsp; `npx/yarn blueprint run deploy<CONTRACT> --<NETWORK> --<DEPLOY_METHOD>`
   * Example: `yarn blueprint run deployCounter --mainnet --tonconnect`
